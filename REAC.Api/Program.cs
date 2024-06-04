@@ -1,0 +1,137 @@
+using Core.Log.EntityFrameworkCore;
+using Core.Security;
+using Core.Security.Contracts;
+using Core.Security.Dtos;
+using Core.Security.Entities;
+using Core.Security.OptionsSetup;
+using Core.Security.Services;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Localization;
+using Microsoft.EntityFrameworkCore;
+using REAC.Api;
+using REAC.Api.Middlewares;
+using REAC.Api.OptionsSetup;
+using REAC.Domain.Shared.Constants;
+using REAC.EntityFrameworkCore.Entities.System;
+using REAC.EntityFrameworkCore.Seed;
+using Swashbuckle.AspNetCore.SwaggerUI;
+using System.Globalization;
+using System.Text.Json.Serialization;
+
+var builder = WebApplication.CreateBuilder(args);
+
+#region configure DBContexts
+
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
+builder.Services.AddDbContext<REACDBContext>(option => option.UseSqlServer(
+    builder.Configuration.GetConnectionString("AppConnectionString")
+    , sqlServerOptions => sqlServerOptions.CommandTimeout(180)
+));
+
+builder.Services.AddDbContext<IdentityContext>(option => option.UseSqlServer(
+    builder.Configuration.GetConnectionString("AppConnectionString")
+    , b => b.MigrationsAssembly(typeof(REACDBContext).Assembly.FullName)));
+
+builder.Services.AddDbContext<LogDbContext>(option => option.UseSqlServer(
+    builder.Configuration.GetConnectionString("AppConnectionString")
+    , b => b.MigrationsAssembly(typeof(REACDBContext).Assembly.FullName)));
+
+builder.Services.AddGenericRepository<REACDBContext>();
+
+#endregion
+// Add services to the container.
+
+#region Identity
+
+builder.Services.AddIdentity<User, Role>()
+    .AddEntityFrameworkStores<IdentityContext>().AddDefaultTokenProviders();
+builder.Services.ConfigureOptions<IdentityOptionsSetup>();
+
+#endregion 
+
+#region JWT Configurations
+
+builder.Services.AddScoped<IJwtProvider, JwtProvider>();
+builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("JWT"));
+builder.Services.AddAuthentication().AddJwtBearer(o => o.Configure(builder.Configuration));
+builder.Services.ConfigureOptions<AuthenticationOptionsSetup>();
+//builder.Services.ConfigureOptions<MvcOptionsSetup>();
+
+#endregion
+
+builder.Services.AddAppServices();
+
+//builder.Services.AddControllers();
+builder.Services.AddControllers()
+           .AddJsonOptions(options =>
+           {
+               options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
+               options.JsonSerializerOptions.MaxDepth = 64; // Increase the maximum depth as needed
+           });
+// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+builder.Services.ConfigureOptions<REACSwaggerGenOptions>();
+
+
+builder.Services.Configure<RequestLocalizationOptions>(options =>
+{
+    var supportedCultures = new[]
+    {
+        new CultureInfo("en-US"),
+        new CultureInfo("ar-SA"),
+    };
+
+    options.DefaultRequestCulture = new RequestCulture(culture: supportedCultures[0]);
+    options.SupportedCultures = supportedCultures;
+});
+
+var app = builder.Build();
+
+// Configure the HTTP request pipeline.
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI(c =>
+    {
+        c.EnableDeepLinking();
+
+        // Build a swagger endpoint for each API version and consumer
+        c.SwaggerEndpoint($"/swagger/{APISections.System}/swagger.json", $"{APISections.System} API V1");
+        c.SwaggerEndpoint($"/swagger/{APISections.Litigation}/swagger.json", $"{APISections.Litigation} API V1");
+        c.SwaggerEndpoint($"/swagger/{APISections.Reconciliation}/swagger.json", $"{APISections.Reconciliation} API V1");
+        c.SwaggerEndpoint($"/swagger/{APISections.WpfBusiness}/swagger.json", $"{APISections.WpfBusiness} API V1");
+        c.SwaggerEndpoint($"/swagger/{APISections.WpfSystem}/swagger.json", $"{APISections.WpfSystem} API V1");
+
+        c.DocExpansion(DocExpansion.List);
+    });
+}
+
+app.UseHttpsRedirection();
+
+app.UseAuthentication();
+app.UseAuthorization();
+
+app.UseMiddleware<AuthMiddleware>();
+
+
+app.MapControllers();
+
+app.Use(async (context, next) =>
+{
+    var cultureQuery = context.Request.Headers["culture"];
+    if (!string.IsNullOrWhiteSpace(cultureQuery))
+    {
+        var culture = new CultureInfo(cultureQuery);
+
+        CultureInfo.CurrentCulture = culture;
+        CultureInfo.CurrentUICulture = culture;
+    }
+    await next(context);
+});
+
+// Seed Data
+await app.Services.Seed();
+
+app.Run();

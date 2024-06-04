@@ -1,0 +1,71 @@
+﻿using Core.Log.EntityFrameworkCore;
+using Core.Security;
+using Core.Security.Entities;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using REAC.EntityFrameworkCore.Entities.System;
+using Ticketing.EntityFrameworkCore.SeedData;
+
+namespace REAC.EntityFrameworkCore.Seed
+{
+    public static class SeedExtension
+    {
+        /// <summary>
+        /// Seed initial data , apply migrations
+        /// </summary>
+        /// <param name="serviceProvider"></param>
+        /// <returns></returns>
+        public static async Task Seed(this IServiceProvider serviceProvider)
+        {
+            using var scope = serviceProvider.CreateScope();
+            var logger = scope.ServiceProvider.GetRequiredService<ILogger<string>>();
+            var context = scope.ServiceProvider.GetRequiredService<REACDBContext>();
+            var identityContext = scope.ServiceProvider.GetRequiredService<IdentityContext>();
+            var logDbContext = scope.ServiceProvider.GetRequiredService<LogDbContext>();
+            var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
+            var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<Role>>();
+
+            try
+            {
+                logger.LogInformation("Seed Data Starting");
+
+                context.Database.Migrate();
+                identityContext.Database.Migrate();
+                logDbContext.Database.Migrate();
+
+                await DefaultRolesCreator.CreateAsync(roleManager);
+                await DefaultUsersCreator.CreateAsync(userManager, roleManager, identityContext);
+                userManager.Dispose();
+                roleManager.Dispose();
+                await GenderSeedDataCreator.SeedAsync(context);
+                await IdentityTypeSeedDataCreator.SeedAsync(context);
+                await LitigationRequestCategorySeedDataCreator.SeedAsync(context);
+                await LitigationRequestContractTypeSeedDataCreator.SeedAsync(context);
+                await LitigationRequestCorrespondenceDestinationSeedDataCreator.SeedAsync(context);
+                await LitigationRequestExtendPeriodRequestStatusSeedDataCreator.SeedAsync(context);
+                await LitigationRequestMeetingDecisionSeedDataCreator.SeedAsync(context);
+                await LitigationRequestOwnerTypeSeedDataCreator.SeedAsync(context);
+                await LitigationRequestStatusSeedDataCreator.SeedAsync(context);
+                await SettingSeedDataCreator.SeedAsync(context);
+                await EmployeeSeedDataCreator.SeedAsync(context);
+                await DefaultWorkFlowDataCreator.CreateAsync(context);
+
+                context.SaveChanges();
+
+                logger.LogInformation("***********************************************");
+                logger.LogInformation("***********************************************");
+                logger.LogInformation("***********************************************");
+                logger.LogInformation("Seed Data End");
+                logger.LogInformation("***********************************************");
+                logger.LogInformation("***********************************************");
+                logger.LogInformation("***********************************************");
+            }
+            catch (Exception ex)
+            {
+                logger.LogInformation(ex, "Error occured during migrations");
+            }
+        }
+    }
+}
