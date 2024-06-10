@@ -1,0 +1,32 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="6.0.0" />
+	  <PackageReference Include="AutoMapper" Version="13.0.1" />
+	  <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.3" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.2">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Core\Log\Core.Log.Application\Core.Log.Application.csproj" />
+    <ProjectReference Include="..\REAC.Application.Contracts\REAC.Application.Contracts.csproj" />
+    <ProjectReference Include="..\REAC.Application\REAC.Application.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Attachments\Rent\adfdfsdf\" />
+    <Folder Include="Attachments\Rent\contractkey\References\" />
+    <Folder Include="Attachments\Rent\contractkey\Requests\" />
+  </ItemGroup>
+
+</Project>

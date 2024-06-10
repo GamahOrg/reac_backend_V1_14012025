@@ -1,0 +1,11 @@
+﻿using Core.Shared.Responses;
+using REAC.EntityFrameworkCore.Entities.System;
+
+namespace REAC.Application.Contracts.IAppServices.System
+{
+    public interface ISysSettingService : IBasicService<SysSetting, Guid>
+    {
+        public Task<DataResponse<SysSetting>> GetBySettingKey(string SettingKey);
+
+    }
+}

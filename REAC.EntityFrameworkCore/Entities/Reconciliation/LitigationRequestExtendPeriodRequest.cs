@@ -1,0 +1,33 @@
+﻿using Core.GenericRepository.Shared.BaseEntities;
+using REAC.Domain.Shared.Enum;
+using REAC.EntityFrameworkCore.Entities.Litigation;
+using REAC.EntityFrameworkCore.Entities.System;
+
+namespace REAC.EntityFrameworkCore.Entities.Reconciliation;
+
+public partial class LitigationRequestExtendPeriodRequest : AuditedBaseEntity<Guid>
+{
+    public Guid LitigationRequestId { get; set; }
+
+    public int RequiredDays { get; set; }
+
+    public string Reason { get; set; } = null!;
+
+    public Guid RequestedBy { get; set; }
+
+    public LitigationRequestExtendPeriodRequestStatus LitigationRequestExtendPeriodRequestStatusId { get; set; }
+
+    public DateTime? FinishedOn { get; set; }
+
+    public Guid? FinishedBy { get; set; }
+
+    public string? FinishStatusReason { get; set; }
+
+    public virtual SysEmployee? FinishedByNavigation { get; set; }
+
+    public virtual LitigationRequest LitigationRequest { get; set; } = null!;
+
+    public virtual ICollection<LitigationRequestExtendPeriodRequestFile> LitigationRequestExtendPeriodRequestFiles { get; set; } = new List<LitigationRequestExtendPeriodRequestFile>();
+
+    public virtual SysLitigationRequestExtendPeriodRequestStatus? LitigationRequestExtendPeriodRequestStatus { get; set; }
+}
