@@ -32,13 +32,13 @@ public partial class WorkFlowStepEvent : FullAuditedBaseEntity<Guid>
     #region InternalStatus
     public bool AllowChangeInternalStatus { get; set; }
 
-    public RequestStatus? InternalStatusId { get; set; }
+    public LitigationRequestStatus? InternalStatusId { get; set; }
     #endregion
 
     #region ExternalStatus
     public bool AllowChangeExternalStatus { get; set; }
 
-    public RequestStatus? ExternalStatusId { get; set; }
+    public LitigationRequestStatus? ExternalStatusId { get; set; }
     #endregion
 
     public bool SameEmployee { get; set; }

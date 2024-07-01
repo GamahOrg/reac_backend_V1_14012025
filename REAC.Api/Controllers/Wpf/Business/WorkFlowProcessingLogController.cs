@@ -6,7 +6,6 @@ using REAC.Application.Contracts.Dtos.Wpf.Business.WorkFlowProcessingLog;
 using REAC.Application.Contracts.IAppServices.Wpf.Business;
 using REAC.Domain.Shared.Constants;
 using REAC.EntityFrameworkCore.Entities.Wpf.Business;
-using REAC.Domain.Shared;
 
 namespace Bpf.Api.Controllers.Business
 {

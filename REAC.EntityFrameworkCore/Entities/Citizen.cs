@@ -15,6 +15,9 @@ public partial class Citizen : BaseEntity<Guid>
     public string IdentityNumber { get; set; } = null!;
 
     public string FullName { get; set; } = null!;
+    public string Nationality { get; set; } = null!;
+    public DateTime BirthDate { get; set; }
+    public string NationalAddress { get; set; }
 
     public string ShortName { get; set; } = null!;
 

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
-using Core.GenericRepository.IBaseRepository;
+using Core.GenericRepository.BaseRepository;
+using Core.Localizations;
 using Core.Log.Application.Contracts.IAppServices;
 using Core.Shared.Responses;
 using REAC.Application.Contracts.IAppServices;
@@ -25,6 +26,22 @@ namespace REAC.Application.AppServices.System
             else
                 return new DataResponse<SysSetting> { Data = null, IsDone = false };
 
+        }
+
+        public async Task<DataResponse<List<SysSetting>>> GetByAllSetting()
+        {
+            var SettingObj = (_repository.GetQueryable<SysSetting, Guid>()).Result.ToList();
+            if (SettingObj != null)
+                return new DataResponse<List<SysSetting>> { Data = SettingObj, IsDone = true };
+            else
+                return new DataResponse<List<SysSetting>> { Data = null, IsDone = false };
+        }
+
+        public async Task<DataResponse<SysSetting>> UpdateBySettingKey(SysSetting updateSetting)
+        {
+            _repository.Update<SysSetting, Guid>(updateSetting);
+            await _repository.SaveChangesAsync();
+            return new DataResponse<SysSetting> { Data = updateSetting, IsDone = true ,Message = Localizations.UpdateSuccefully};
         }
     }
 }

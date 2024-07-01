@@ -1,6 +1,6 @@
 ﻿namespace Core.Shared.Responses
 {
-    public class BaseResponse : Exception
+    public class BaseResponse 
     {
         public BaseResponse()
         {

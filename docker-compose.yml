@@ -1,0 +1,28 @@
+version: '3.4'
+
+
+networks:
+  reacnetwork:
+services:
+ mssql-container:
+    image: mcr.microsoft.com/mssql/server:latest
+    container_name: mssql-container
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=REACP@ss2024
+    ports:
+     - "8002:1433"
+    networks:
+        - reacnetwork
+ reac.api:
+    container_name: ReacApiContainer
+    image: ${DOCKER_REGISTRY-}reacapi
+    ports:
+        - 8001:80
+    build:
+      context: .
+      dockerfile: REAC.Api\Dockerfile
+    depends_on:
+          - mssql-container  
+    networks:
+        - reacnetwork

@@ -4,6 +4,9 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>95b44be3-dc2b-4879-837d-3634631f83bc</UserSecretsId>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <DockerComposeProjectPath>..\docker-compose.dcproj</DockerComposeProjectPath>
   </PropertyGroup>
 
   <ItemGroup>
@@ -14,6 +17,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.19.5" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
   </ItemGroup>
 
@@ -25,8 +29,10 @@
 
   <ItemGroup>
     <Folder Include="Attachments\Rent\adfdfsdf\" />
+    <Folder Include="Attachments\Rent\cb3d6b00-2966-49dd-96db-16f345d74ae2\d4b21df4-bd49-4e3b-b634-2a714e4ebcf2\" />
     <Folder Include="Attachments\Rent\contractkey\References\" />
     <Folder Include="Attachments\Rent\contractkey\Requests\" />
+    <Folder Include="Attachments\Rent\eef3e3232\" />
   </ItemGroup>
 
 </Project>

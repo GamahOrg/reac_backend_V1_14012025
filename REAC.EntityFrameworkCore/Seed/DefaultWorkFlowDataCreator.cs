@@ -53,13 +53,11 @@ namespace REAC.EntityFrameworkCore.Seed
                 await context.SaveChangesAsync();
             }
 
-
             if (!context.WorkFlows.Any())
             {
                 await context.WorkFlows.AddRangeAsync(GetWorkFlows());
                 await context.SaveChangesAsync();
             }
-
         }
 
         #region WorkFlow Step Event Security Level
@@ -437,7 +435,7 @@ namespace REAC.EntityFrameworkCore.Seed
                 new WorkFlow()
                 {
                     Id = Guid.Parse("15d87d0d-3cf4-4969-9c7e-933aeea0e5f5"),
-                    WorkFlowName = "طلب التراخيص",
+                    WorkFlowName = "تدقيق الدعوة",
                     CreatedOn = DateTime.UtcNow,
                     CreatedBy = Guid.NewGuid(),
                     IsDeleted = false,
@@ -446,109 +444,32 @@ namespace REAC.EntityFrameworkCore.Seed
                         new WorkFlowTranslation()
                         {
                             LanguageCode = "ar-SA",
-                            WorkFlowName = "طلب التراخيص"
+                            WorkFlowName = "تدقيق الدعوة"
                         },
                         new WorkFlowTranslation()
                         {
                             LanguageCode = "en-US",
-                            WorkFlowName = "License Request"
+                            WorkFlowName = "Lititgation Audit"
                         }
                     },
                     WorkFlowSteps = new List<WorkFlowStep>()
                     {
                         new WorkFlowStep()
                         {
-                            StepName = "معالجة الملاحظات",
-                            WorkModeId = StepWorkMode.None,
-                            Id = Guid.Parse("2a15b0d6-1f45-44f2-ba26-01c700b39203"),
-                            Order = 0,
-                            ActorTypeId = StepActorType.Client,
-                            CreationLogMessage = "جارى معالجة الملاحظات",
-                            CreatedOn = DateTime.UtcNow,
-                            CreatedBy = Guid.NewGuid(),
-                            IsDeleted = false,
-                            CreationNotificationPlanId = Guid.Parse("f7c76133-2b18-4238-9081-d1fefbefb7cb"),
-                            StageId = Guid.Parse("124e0e29-31e4-47f1-9536-aa35914b57e3"),
-                            InternalStatusId = RequestStatus.RequestHasBeenCreatedAndIsBeingStudied,
-                            ExternalStatusId = RequestStatus.RequestHasBeenCreatedAndIsBeingStudied,
-                            ShowForApplicant = true,
-                            WorkFlowStepEvents = new List<WorkFlowStepEvent>()
-                            {
-                                new WorkFlowStepEvent()
-                                {
-                                    Id = Guid.Parse("88b70280-7c6a-48e4-bf20-66ba537c580b"),
-                                    EventName = "إرسال الطلب",
-                                    AllowChangeInternalStatus = true,
-                                    InternalStatusId = RequestStatus.FeedbackHasBeenProcessedAndTheRequestHasBeenSent,
-                                    AllowChangeExternalStatus = true,
-                                    ExternalStatusId = RequestStatus.FeedbackHasBeenProcessedAndTheRequestHasBeenSent,
-                                    AllowCompletionNotificationPlan = true,
-                                    CompletionNotificationPlanId = Guid.Parse("f7c76133-2b18-4238-9081-d1fefbefb7cb"),
-                                    AllowFileUpload = true,
-                                    AllowChangeIsActive = true,
-                                    IsActiveValue = true,
-                                    AllowNotes = true,
-                                    IsAdminApprovalRequired = false,
-                                    SameEmployee = true,
-                                    AllowChangeIsFinished = true,
-                                    IsFinishedValue = false,
-                                    EventSecurityLevelId = EventSecurityLevel.UnSpecified,
-                                    LogMessage = "تم معالجة الملاحظات وإرسال الطلب",
-                                    ActionModeId = EventActionMode.GoPreviousStep,
-                                    CreatedOn = DateTime.UtcNow,
-                                    CreatedBy = Guid.NewGuid(),
-                                    IsDeleted = false,
-                                    ShowLogForApplicant = true,
-                                    ShowProcessingLogForApplicant = true,
-                                    Translations  = new List<WorkFlowStepEventTranslation>()
-                                    {
-                                        new WorkFlowStepEventTranslation()
-                                        {
-                                            LanguageCode = "ar-SA",
-                                            EventName = "إرسال الطلب",
-                                            LogMessage = "تم معالجة الملاحظات وإرسال الطلب",
-                                        },
-                                        new WorkFlowStepEventTranslation()
-                                        {
-                                            LanguageCode = "en-US",
-                                            EventName = "Send Request",
-                                            LogMessage = "Feedback has been processed and the request has been sent",
-                                        }
-                                    }
-                                }
-                            },
-                            Translations = new List<WorkFlowStepTranslation>()
-                            {
-                                new WorkFlowStepTranslation()
-                                {
-                                    LanguageCode = "ar-SA",
-                                    StepName = "معالجة الملاحظات",
-                                    CreationLogMessage = "جارى معالجة الملاحظات"
-                                },
-                                new WorkFlowStepTranslation()
-                                {
-                                    LanguageCode = "en-US",
-                                    StepName = "Processing Notes",
-                                    CreationLogMessage = "Feedback is being processed"
-                                }
-                            }
-                        },
-                        new WorkFlowStep()
-                        {
-                            StepName = "دراسة الطلب",
+                            StepName = "تدقيق الدعوى",
                             WorkModeId = StepWorkMode.None,
                             Id = Guid.Parse("15154695-a36b-4fda-8572-4874f661000e"),
                             Order = 1,
                             ActorTypeId = StepActorType.Department,
-                            CreationLogMessage = "تم إنشاء الطلب وجارى دراسته",
+                            CreationLogMessage = "تم إنشاء الدعوى وجارى تدقيقها",
                             CreatedOn = DateTime.UtcNow,
                             CreatedBy = Guid.NewGuid(),
                             IsDeleted = false,
                             CreationNotificationPlanId = Guid.Parse("f7c76133-2b18-4238-9081-d1fefbefb7cb"),
                             DepartmentId = _context.SysDepartments.FirstOrDefault().Id,
                             StageId = Guid.Parse("124e0e29-31e4-47f1-9536-aa35914b57e3"),
-                            InternalStatusId = RequestStatus.RequestHasBeenCreatedAndIsBeingStudied,
-                            ExternalStatusId = RequestStatus.RequestHasBeenCreatedAndIsBeingStudied,
+                            InternalStatusId = LitigationRequestStatus.New,
+                            ExternalStatusId = LitigationRequestStatus.New,
                             ShowForApplicant = true,
                             WorkFlowStepEvents = new List<WorkFlowStepEvent>()
                             {
@@ -557,20 +478,18 @@ namespace REAC.EntityFrameworkCore.Seed
                                     Id = Guid.Parse("3f01924e-59f4-44b7-9506-75c85b89b773"),
                                     EventName = "قبول",
                                     AllowChangeInternalStatus = true,
-                                    InternalStatusId = RequestStatus.RequestHasBeenAccepted,
+                                    InternalStatusId = LitigationRequestStatus.Received,
                                     AllowChangeExternalStatus = true,
-                                    ExternalStatusId = RequestStatus.RequestHasBeenAccepted,
-                                    AllowCompletionNotificationPlan = true,
-                                    CompletionNotificationPlanId = Guid.Parse("f7c76133-2b18-4238-9081-d1fefbefb7cb"),
+                                    ExternalStatusId = LitigationRequestStatus.Received,
+                                  
                                     AllowFileUpload = false,
-                                    AllowChangeIsActive = true,
+                                  
                                     IsActiveValue = false,
-                                    AllowChangeIsFinished = true,
-                                    IsFinishedValue = false,
+                                    AllowChangeIsFinished = false,
                                     EventSecurityLevelId = EventSecurityLevel.UnSpecified,
                                     AllowNotes = false,
-                                    IsAdminApprovalRequired = true,
-                                    LogMessage = "تم قبول الطلب",
+                                    IsAdminApprovalRequired = false,
+                                    LogMessage = "تم قبول الدعوى",
                                     CreatedOn = DateTime.UtcNow,
                                     CreatedBy = Guid.NewGuid(),
                                     IsDeleted = false,
@@ -583,13 +502,13 @@ namespace REAC.EntityFrameworkCore.Seed
                                         {
                                             LanguageCode = "ar-SA",
                                             EventName = "قبول",
-                                            LogMessage = "تم قبول الطلب",
+                                            LogMessage = "تم قبول الدعوى",
                                         },
                                         new WorkFlowStepEventTranslation()
                                         {
                                             LanguageCode = "en-US",
                                             EventName = "Accept",
-                                            LogMessage = "Request has been accepted",
+                                            LogMessage = "Litigation has been accepted",
                                         }
                                     }
                                 },
@@ -598,20 +517,20 @@ namespace REAC.EntityFrameworkCore.Seed
                                     Id = Guid.Parse("8d305628-46f7-45da-a177-77274c06d433"),
                                     EventName = "رفض",
                                     AllowChangeInternalStatus = true,
-                                    InternalStatusId = RequestStatus.RequestHasBeenRejected,
+                                    InternalStatusId = LitigationRequestStatus.Rejected,
                                     AllowChangeExternalStatus = true,
-                                    ExternalStatusId = RequestStatus.RequestHasBeenRejected,
+                                    ExternalStatusId = LitigationRequestStatus.Rejected,
                                     AllowCompletionNotificationPlan = true,
                                     CompletionNotificationPlanId = Guid.Parse("f7c76133-2b18-4238-9081-d1fefbefb7cb"),
                                     AllowFileUpload = false,
-                                    IsAdminApprovalRequired = true,
+                                    IsAdminApprovalRequired = false,
                                     AllowChangeIsActive = false,
                                     AllowChangeIsFinished = true,
                                     IsFinishedValue = true,
                                     EventSecurityLevelId = EventSecurityLevel.UnSpecified,
                                     SameEmployee = false,
                                     AllowNotes = true,
-                                    LogMessage = "تم رفض الطلب",
+                                    LogMessage = "تم رفض الدعوى",
                                     CreatedOn = DateTime.UtcNow,
                                     CreatedBy = Guid.NewGuid(),
                                     IsDeleted = false,
@@ -623,36 +542,34 @@ namespace REAC.EntityFrameworkCore.Seed
                                         {
                                             LanguageCode = "ar-SA",
                                             EventName = "رفض",
-                                            LogMessage = "تم رفض الطلب",
+                                            LogMessage = "تم رفض الدعوى",
                                         },
                                         new WorkFlowStepEventTranslation()
                                         {
                                             LanguageCode = "en-US",
-                                            EventName = "Rejact",
-                                            LogMessage = "Request has been Rejacted",
+                                            EventName = "Reject",
+                                            LogMessage = "Request has been Rejected",
                                         }
                                     }
                                 },
                                 new WorkFlowStepEvent()
                                 {
                                     Id = Guid.Parse("ab793310-f681-4b63-aa8b-ad9554adf2f3"),
-                                    EventName = "إغلاق",
+                                    EventName = "إرسال طلب مشارطة",
                                     AllowChangeInternalStatus = true,
-                                    InternalStatusId = RequestStatus.RequestHasBeenRejected,
+                                    InternalStatusId = LitigationRequestStatus.CharterRequestSent,
                                     AllowChangeExternalStatus = true,
-                                    ExternalStatusId = RequestStatus.RequestHasBeenRejected,
+                                    ExternalStatusId = LitigationRequestStatus.CharterRequestSent,
                                     AllowCompletionNotificationPlan = true,
                                     CompletionNotificationPlanId = Guid.Parse("f7c76133-2b18-4238-9081-d1fefbefb7cb"),
                                     AllowFileUpload = false,
-                                    IsAdminApprovalRequired = true,
-                                    AllowChangeIsActive = true,
-                                    IsActiveValue = false,
-                                    AllowChangeIsFinished = true,
-                                    IsFinishedValue = true,
+                                    IsAdminApprovalRequired = false,
+                                    AllowChangeIsActive = false,
+                                    AllowChangeIsFinished = false,
                                     EventSecurityLevelId = EventSecurityLevel.Specified,
                                     SameEmployee = false,
-                                    AllowNotes = true,
-                                    LogMessage = "تم إغلاق الطلب",
+                                    AllowNotes = false,
+                                    LogMessage = "تم إرسال طلب المشارطة",
                                     CreatedOn = DateTime.UtcNow,
                                     CreatedBy = Guid.NewGuid(),
                                     IsDeleted = false,
@@ -663,14 +580,14 @@ namespace REAC.EntityFrameworkCore.Seed
                                         new WorkFlowStepEventTranslation()
                                         {
                                             LanguageCode = "ar-SA",
-                                            EventName = "إغلاق",
-                                            LogMessage = "تم إغلاق الطلب",
+                                            EventName = "'طلب مشارطة",
+                                            LogMessage = "تم إرسال طلب مشارطة",
                                         },
                                         new WorkFlowStepEventTranslation()
                                         {
                                             LanguageCode = "en-US",
-                                            EventName = "Close",
-                                            LogMessage = "Request has been Closed",
+                                            EventName = "CharterPartyRequest",
+                                            LogMessage = "CharterPartyRequest has sent",
                                         }
                                     },
                                     WorkFlowStepEventSecurityLevelActors = new List<WorkFlowStepEventSecurityLevelActor>()
@@ -687,41 +604,36 @@ namespace REAC.EntityFrameworkCore.Seed
                                 new WorkFlowStepEvent()
                                 {
                                     Id = Guid.Parse("8a392baf-a959-429a-b2c9-eea05054ff11"),
-                                    EventName = "إرسال ملاحظات",
+                                    EventName = "إعادة الدعوى للتعديل",
                                     AllowChangeInternalStatus = true,
-                                    InternalStatusId = RequestStatus.FeedbackHasBeenSentToTheClient,
+                                    InternalStatusId = LitigationRequestStatus.SentBackForEdit,
                                     AllowChangeExternalStatus = true,
-                                    ExternalStatusId = RequestStatus.FeedbackHasBeenSentToTheClient,
-                                    AllowCompletionNotificationPlan = true,
-                                    CompletionNotificationPlanId = Guid.Parse("f7c76133-2b18-4238-9081-d1fefbefb7cb"),
+                                    ExternalStatusId = LitigationRequestStatus.SentBackForEdit,
                                     AllowFileUpload = false,
-                                    AllowChangeIsActive = true,
-                                    IsActiveValue = false,
-                                    AllowChangeIsFinished = true,
-                                    AllowNotes = false,
+                                    AllowChangeIsActive = false,
+                                    AllowNotes = true,
                                     EventSecurityLevelId = EventSecurityLevel.UnSpecified,
-                                    SameEmployee = false,
-                                    LogMessage = "تم دراسة الطلب وإرسال الملاحظات",
+                                    LogMessage = "تم إعادة الدعوى للتعديل",
                                     ActionModeId = EventActionMode.SpecificStep,
                                     CreatedOn = DateTime.UtcNow,
                                     CreatedBy = Guid.NewGuid(),
                                     IsDeleted = false,
                                     ShowLogForApplicant = true,
                                     ShowProcessingLogForApplicant = true,
-                                    NextWorkFlowStepDestinationId = Guid.Parse("2a15b0d6-1f45-44f2-ba26-01c700b39203"),
+                                   // NextWorkFlowStepDestinationId = Guid.Parse("2a15b0d6-1f45-44f2-ba26-01c700b39203"),
                                     Translations  = new List<WorkFlowStepEventTranslation>()
                                     {
                                         new WorkFlowStepEventTranslation()
                                         {
                                             LanguageCode = "ar-SA",
-                                            EventName = "إرسال ملاحظات",
-                                            LogMessage = "تم دراسة الطلب وإرسال الملاحظات",
+                                            EventName = "إعادة  الدعوى للتعديل",
+                                            LogMessage = "تم دراسة الدعوى وإعادتها للتعديل",
                                         },
                                         new WorkFlowStepEventTranslation()
                                         {
                                             LanguageCode = "en-US",
-                                            EventName = "Send Notes",
-                                            LogMessage = "Request was studied and comments were sent",
+                                            EventName = "Send Back For Edit",
+                                            LogMessage = "Request was studied and sent for edit",
                                         }
                                     }
                                 }
@@ -737,8 +649,8 @@ namespace REAC.EntityFrameworkCore.Seed
                                 new WorkFlowStepTranslation()
                                 {
                                     LanguageCode = "ar-SA",
-                                    StepName = "دراسة الطلب",
-                                    CreationLogMessage = "تم إنشاء الطلب وجارى دراسته"
+                                    StepName = "دراسة الدعوى",
+                                    CreationLogMessage = "تم إنشاء الدعوى وجارى دراستها"
                                 }
                             }
                         }

@@ -9,29 +9,46 @@ namespace REAC.Domain.Shared.Helpers
 {
     public class RequestCode   // رقم الدعوي
     {
-        public static string GenerateRequestCode(int litigationRequestContractTypeId, int litigationCount) 
+        public static string GenerateRequestCode(LitigationRequestContractType litigationRequestContractTypeId, int litigationCount)
         {
             string code = "";
+            var x = (int)LitigationRequestContractType.Rent;
             switch (litigationRequestContractTypeId)
             {
-                case (int)LitigationRequestContractType.Rent:
-                    code = "R0000" + (litigationCount + 1) + " - " + DateTime.Now.Year;
+                case LitigationRequestContractType.Rent:
+                    if (litigationCount != 0)
+                        code = "R" + (litigationCount + 1).ToString("D5") + "-" + DateTime.Now.ToString("yy");
+                    else
+                        code = "R00001" + "-" + DateTime.Now.ToString("yy"); 
                     break;
 
-                case (int)LitigationRequestContractType.Properties:
-                    code = "O0000 " + (litigationCount + 1) + " - " + DateTime.Now.Year;
+                case LitigationRequestContractType.Properties:
+                    if (litigationCount != 0)
+                        code = "O" + (litigationCount + 1).ToString("D5") + "-" + DateTime.Now.ToString("yy");
+                    else
+                        code = "O00001" + "-" + DateTime.Now.ToString("yy");
                     break;
 
-                case (int)LitigationRequestContractType.Wafi:
-                    code = "W0000 " + (litigationCount + 1) + " - " + DateTime.Now.Year;
+                case LitigationRequestContractType.Wafi:
+                    if (litigationCount != 0)
+                        code = "W" + (litigationCount + 1).ToString("D5") + "-" + DateTime.Now.ToString("yy");
+                    else
+                        code = "W00001" + "-" + DateTime.Now.ToString("yy");
                     break;
 
-                case (int)LitigationRequestContractType.RealEstateBrokerage:
-                    code = "B0000 " + (litigationCount + 1) + " - " + DateTime.Now.Year;
+                case LitigationRequestContractType.RealEstateBrokerage:
+                    if (litigationCount != 0)
+                        code = "B" + (litigationCount + 1).ToString("D5") + "-" + DateTime.Now.ToString("yy");
+                     else
+                        code = "B00001" + "-" + DateTime.Now.ToString("yy");
                     break;
 
-                case (int)LitigationRequestContractType.OtherServices:
-                    code = "N0000 " + (litigationCount + 1) + " - " + DateTime.Now.Year;
+                case LitigationRequestContractType.OtherServices:
+                    if (litigationCount != 0)
+                        code = "N" + (litigationCount + 1).ToString("D5") + "-" + DateTime.Now.ToString("yy");
+                    else
+                        code = "N00001" + "-" + DateTime.Now.ToString("yy");
+
                     break;
             }
 

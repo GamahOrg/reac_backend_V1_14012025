@@ -1,11 +1,9 @@
 ﻿using Core.GenericRepository.Shared.BaseEntities;
-using REAC.Domain.Shared;
 using REAC.Domain.Shared.Enum;
 using REAC.EntityFrameworkCore.Entities.Wpf.System;
 
 namespace REAC.EntityFrameworkCore.Entities.System;
 
-[EntityName("Department")]
 public partial class SysDepartment : FullAuditedBaseEntity<Guid>
 {
     public string DepartmentName { get; set; } = null!;

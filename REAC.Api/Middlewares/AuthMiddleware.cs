@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.Extensions.Primitives;
 using REAC.Application.Contracts.IAppServices.System;
-using REAC.Domain.Shared;
 using REAC.Domain.Shared.Constants;
 using REAC.EntityFrameworkCore.Entities.System;
 using System.IdentityModel.Tokens.Jwt;

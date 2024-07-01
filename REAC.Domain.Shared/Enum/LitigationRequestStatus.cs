@@ -20,7 +20,15 @@ public enum LitigationRequestStatus
     ///<summary>حفظ وإغلاق</summary>
     SaveAndClose = 9,
     ///<summary> حفظ كمسودة</summary>
-    SaveAsDraft = 10
+    SaveAsDraft = 10,
+    ///<summary>مرفوضة</summary>
+    Rejected = 11,
+    ///<summary>معاده للتعديل</summary>
+    SentBackForEdit = 12,
+    ///<summary>تم التعديل</summary>
+    Edited = 13,
+    ///<summary>قيد المشارطة</summary>
+    CharterRequestSent = 14
 
 
 }

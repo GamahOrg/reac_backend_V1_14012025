@@ -1,4 +1,5 @@
 ﻿
+using Bpf.Application.ModuleServices;
 using Core.Contracts;
 using Core.Log.Application.Contracts.IAppServices;
 using Core.Log.Application.Instance;
@@ -9,10 +10,15 @@ using REAC.Application.AppServices.Integration;
 using REAC.Application.AppServices.Litigation;
 using REAC.Application.AppServices.Reconciliation;
 using REAC.Application.AppServices.System;
+using REAC.Application.AppServices.Wpf.Business;
+using REAC.Application.AppServices.Wpf.System;
 using REAC.Application.Contracts.IAppServices;
 using REAC.Application.Contracts.IAppServices.Litigation;
 using REAC.Application.Contracts.IAppServices.Reconciliation;
 using REAC.Application.Contracts.IAppServices.System;
+using REAC.Application.Contracts.IAppServices.Wpf.Business;
+using REAC.Application.Contracts.IAppServices.Wpf.System;
+using REAC.Application.Contracts.IModuleServices;
 using REAC.Application.Services.Reconciliation;
 using REAC.IAppServices.System;
 using CitizenService = REAC.Application.AppServices.CitizenService;
@@ -30,12 +36,20 @@ namespace REAC.Api
             services.AddScoped<IHttpService, HttpService>();
 
             //services.AddScoped < IFacilityService, FacilityService>();
-
             // services.AddScoped<ICitizenService, CitizenService>();
+            // Register other services
+            services.AddScoped<IWorkFlowProcessingLogService, WorkFlowProcessingLogService>();
+            services.AddScoped<IBpfService, BpfService>();
+            services.AddScoped<IWorkFlowLogService, WorkFlowLogService>();
+            services.AddScoped<IWorkFlowStepService, WorkFlowStepService>();
             //services.AddScoped < IDelegationRequestService, DelegationRequestService>();
             //services.AddScoped < IFacilityService, FacilityService>();
             //services.AddScoped < IFacilityDelegatorService, FacilityDelegatorService>();
+            services.AddScoped<ICitizenLitigationRequestLawyerAgentService, CitizenLitigationRequestLawyerAgentService>();
             services.AddScoped<ICitizenService, CitizenService>();
+            services.AddScoped<ILitigationAreaService, LitigationAreaService>();
+            services.AddScoped<ILitigationCityService, LitigationCityService>();
+            services.AddScoped<ISysExemptionReductionCategoryService, SysExemptionReductionCategoryService>();
             services.AddScoped<ILitigationRequestService, LitigationRequestService>();
             services.AddScoped<IUserProviderService, LitigationRequestContractService>();
             services.AddScoped<ILitigationRequestCorrespondenceService, LitigationRequestCorrespondenceService>();
@@ -50,6 +64,7 @@ namespace REAC.Api
             services.AddScoped<ILitigationRequestNoteFileService, LitigationRequestNoteFileService>();
             services.AddScoped<ILitigationRequestRequestService, LitigationRequestRequestService>();
             services.AddScoped<ILitigationRequestRequestFileService, LitigationRequestRequestFileService>();
+            services.AddScoped<ILitigationRatingService, LitigationRatingService>();
             services.AddScoped<ISysDepartmentService, SysDepartmentService>();
             services.AddScoped<ISysEmployeeService, SysEmployeeService>();
             services.AddScoped<ISysFileManagerService, SysFileManagerService>();
@@ -75,5 +90,7 @@ namespace REAC.Api
             services.AddScoped<IJwtReader, JwtReader>();
 
         }
+
+       
     }
 }

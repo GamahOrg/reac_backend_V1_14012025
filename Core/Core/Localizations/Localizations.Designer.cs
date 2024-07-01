@@ -70,6 +70,15 @@ namespace Core.Localizations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to You are not permitted to view this contract.
+        /// </summary>
+        public static string ContractNotFound {
+            get {
+                return ResourceManager.GetString("ContractNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Home.
         /// </summary>
         public static string Home {
@@ -106,6 +115,15 @@ namespace Core.Localizations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to You don not have the permission to view litigation because you not create the litigation for your self or lawyer,agent or representative of any party.
+        /// </summary>
+        public static string NoPermissionToViewLitigation {
+            get {
+                return ResourceManager.GetString("NoPermissionToViewLitigation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to No Notifications.
         /// </summary>
         public static string NotFoundNotifications {
@@ -133,11 +151,38 @@ namespace Core.Localizations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Retrieved Succefully.
+        /// </summary>
+        public static string RetrievedSuccefully {
+            get {
+                return ResourceManager.GetString("RetrievedSuccefully", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to This File Type Not Allowed.
         /// </summary>
         public static string ThisFileTypeNotAllowed {
             get {
                 return ResourceManager.GetString("ThisFileTypeNotAllowed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Update Succefully.
+        /// </summary>
+        public static string UpdateSuccefully {
+            get {
+                return ResourceManager.GetString("UpdateSuccefully", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Upload Succefully.
+        /// </summary>
+        public static string UploadSuccefully {
+            get {
+                return ResourceManager.GetString("UploadSuccefully", resourceCulture);
             }
         }
         

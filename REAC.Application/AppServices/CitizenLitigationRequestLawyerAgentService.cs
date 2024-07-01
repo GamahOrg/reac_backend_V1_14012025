@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using Core.GenericRepository.BaseRepository;
-using Core.GenericRepository.IBaseRepository;
 using Core.Log.Application.Contracts.IAppServices;
 using Core.Shared.Responses;
 using Microsoft.AspNetCore.Authorization;
@@ -27,13 +26,13 @@ namespace REAC.Application.AppServices
         public async Task<List<string>> GetAgentCitizens(Guid? userId) // بجيب هنا كل المدعي عليهم اللي انا موكل عنهم
         {
             var quarable = await GetQueryableAsync();
-            var result = quarable.Where(x => x.LitigationRequestLawyerAgentId == userId && x.LitigationRequestLawyerAgent.LawLicenseNumber == null).Select(x => x.Citizen.IdentityNumber).ToList();
+            var result = quarable.Where(x => x.LitigationRequestLawyerAgent.CitizenId == userId && x.LitigationRequestLawyerAgent.LawLicenseNumber == null).Select(x => x.Citizen.IdentityNumber).ToList();
             return result;
         }
         public async Task<List<string>> GetLawyerCitizens(Guid? userId) // بجيب هنا كل المدعي عليهم اللي انا محامي عنهم
         {
             var quarable = await GetQueryableAsync();
-            var result = quarable.Where(x => x.LitigationRequestLawyerAgentId == userId && x.LitigationRequestLawyerAgent.LawLicenseNumber != null).Select(x => x.Citizen.IdentityNumber).ToList();
+            var result = quarable.Where(x => x.LitigationRequestLawyerAgent.CitizenId == userId && x.LitigationRequestLawyerAgent.LawLicenseNumber != null).Select(x => x.Citizen.IdentityNumber).ToList();
             return result;
         }
     }

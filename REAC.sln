@@ -41,7 +41,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Core.Log.Domain.Shared", "C
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Core.Log.EntityFrameworkCore", "Core\Log\Core.Log.EntityFrameworkCore\Core.Log.EntityFrameworkCore.csproj", "{AFA5C3AD-7AA3-4E85-9279-2132DCBC5164}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Integration", "Integration", "{AAE41FC7-CD17-4124-B325-9138E13DEE64}"
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{B2F83204-A554-4AB0-935A-B1D80C11239D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -109,6 +109,10 @@ Global
 		{AFA5C3AD-7AA3-4E85-9279-2132DCBC5164}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AFA5C3AD-7AA3-4E85-9279-2132DCBC5164}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AFA5C3AD-7AA3-4E85-9279-2132DCBC5164}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B2F83204-A554-4AB0-935A-B1D80C11239D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B2F83204-A554-4AB0-935A-B1D80C11239D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B2F83204-A554-4AB0-935A-B1D80C11239D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B2F83204-A554-4AB0-935A-B1D80C11239D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -127,7 +131,6 @@ Global
 		{2CD1FA63-3DC6-4220-8E1A-5B94FC98385E} = {E60D4C70-C3D2-494D-AA35-9FD0998131EE}
 		{824295AB-726D-41AF-B61D-EBE5BD23152B} = {E60D4C70-C3D2-494D-AA35-9FD0998131EE}
 		{AFA5C3AD-7AA3-4E85-9279-2132DCBC5164} = {E60D4C70-C3D2-494D-AA35-9FD0998131EE}
-		{AAE41FC7-CD17-4124-B325-9138E13DEE64} = {36D74188-C0A0-495F-8AA7-50C7F79EF622}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C8BFAB86-51FA-4440-B498-F7CCDBD24C6D}

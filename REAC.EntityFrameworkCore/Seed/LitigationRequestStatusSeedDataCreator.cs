@@ -184,7 +184,7 @@ public partial class LitigationRequestStatusSeedDataCreator : FullAuditedBaseEnt
                             }
                         }
                     },
-                     new SysLitigationRequestStatus
+                    new SysLitigationRequestStatus
                     {
                         Id = Domain.Shared.Enum.LitigationRequestStatus.SaveAsDraft,
                         RequestStatus = "حفظ كمسودة",
@@ -202,7 +202,83 @@ public partial class LitigationRequestStatusSeedDataCreator : FullAuditedBaseEnt
                                 LanguageCode = Constants.ArabicLanguage
                             }
                         }
-                    }
+                    },
+                    new SysLitigationRequestStatus
+                    {
+                        Id = Domain.Shared.Enum.LitigationRequestStatus.Rejected,
+                        RequestStatus = "مرفوضة",
+                        CreatedOn = DateTime.Now,
+                        Translations=new List<SysLitigationRequestStatusTranslation>
+                        {
+                            new SysLitigationRequestStatusTranslation
+                            {
+                                RequestStatus = "Rejected",
+                                LanguageCode = Constants.EnglishLanguage
+                            },
+                            new SysLitigationRequestStatusTranslation
+                            {
+                                RequestStatus =  "مرفوضة",
+                                LanguageCode = Constants.ArabicLanguage
+                            }
+                        }
+                    },
+                    new SysLitigationRequestStatus
+                    {
+                        Id = Domain.Shared.Enum.LitigationRequestStatus.SentBackForEdit,
+                        RequestStatus = "معادة للتعديل",
+                        CreatedOn = DateTime.Now,
+                        Translations=new List<SysLitigationRequestStatusTranslation>
+                        {
+                            new SysLitigationRequestStatusTranslation
+                            {
+                                RequestStatus = "SendBackForEdit",
+                                LanguageCode = Constants.EnglishLanguage
+                            },
+                            new SysLitigationRequestStatusTranslation
+                            {
+                                RequestStatus =  "معادة للتعديل",
+                                LanguageCode = Constants.ArabicLanguage
+                            }
+                        }
+                    },
+                    new SysLitigationRequestStatus
+                    {
+                        Id = Domain.Shared.Enum.LitigationRequestStatus.Edited,
+                        RequestStatus = "تم التعديل",
+                        CreatedOn = DateTime.Now,
+                        Translations=new List<SysLitigationRequestStatusTranslation>
+                        {
+                            new SysLitigationRequestStatusTranslation
+                            {
+                                RequestStatus = "Edited",
+                                LanguageCode = Constants.EnglishLanguage
+                            },
+                            new SysLitigationRequestStatusTranslation
+                            {
+                                RequestStatus =  "تم التعديل",
+                                LanguageCode = Constants.ArabicLanguage
+                            }
+                        }
+                    },
+                    new SysLitigationRequestStatus
+                    {
+                        Id = Domain.Shared.Enum.LitigationRequestStatus.CharterRequestSent,
+                        RequestStatus = "قيد المشارطة",
+                        CreatedOn = DateTime.Now,
+                        Translations=new List<SysLitigationRequestStatusTranslation>
+                        {
+                            new SysLitigationRequestStatusTranslation
+                            {
+                                RequestStatus = "CharterRequestSent ",
+                                LanguageCode = Constants.EnglishLanguage
+                            },
+                            new SysLitigationRequestStatusTranslation
+                            {
+                                RequestStatus =  "قيد المشارطة",
+                                LanguageCode = Constants.ArabicLanguage
+                            }
+                        }
+                    },
             });
     }
 }

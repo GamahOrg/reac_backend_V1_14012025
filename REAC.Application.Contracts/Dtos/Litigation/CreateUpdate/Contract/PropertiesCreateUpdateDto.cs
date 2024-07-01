@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Core.GenericRepository.Shared.BaseEntities;
+using Core.Shared.Responses;
+using Microsoft.AspNetCore.Http;
 using REAC.Domain.Shared.Enum;
 using System;
 using System.Collections.Generic;
@@ -8,15 +10,15 @@ using System.Threading.Tasks;
 
 namespace REAC.Application.Contracts.Dtos.Litigation.Create.Contract
 {
-    public class PropertiesCreateUpdateDto
+    public class PropertiesCreateUpdateDto : BaseEntity<Guid>
     {
         public string? AssociationName { get; set; } // اسم الجمعية
-        public string? AssociationCode { get; set; } // كود الجمعية
-        public IFormFile AssociationRegistrationCertificate { get; set; }
-        public IFormFile IncorporationAssociationLetter { get; set; }
-        public IFormFile AssociationInternalRegulations { get; set; }
-        public string FirstPartyCapacity { get; set; } = null!; // صفة المدعي
-        //public LitigationRequestOwnerType LitigationRequestOwnerTypeId { get; set; }  // مقدم الدعوي
-        public string? DelegationCitizenId { get; set; } // رقم صاحب التفويض
+        public string ContractKey { get; set; } // كود الجمعية
+        public Guid AssociationRegistrationCertificateId { get; set; }
+        public Guid IncorporationAssociationLetterId { get; set; }
+        public Guid AssociationInternalRegulationsId { get; set; }
+        public Guid? LeaseContractFileId { get; set; }
+        public LitigationRequestOwnerType FirstPartyCapacity { get; set; } // صفة المدعي
+        
     }
 }

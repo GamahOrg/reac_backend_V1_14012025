@@ -36,18 +36,54 @@ public partial class LitigationRequestOwnerTypeSeedDataCreator
                     },
                     new SysLitigationRequestOwnerType
                     {
-                        Id = LitigationRequestOwnerType.Delegator,
-                        LitigationRequestOwnerType = "مفوض",
+                        Id = LitigationRequestOwnerType.Agent,
+                        LitigationRequestOwnerType = "وكيل",
                         Translations=new List<SysLitigationRequestOwnerTypeTranslation>
                         {
                             new SysLitigationRequestOwnerTypeTranslation
                             {
-                                LitigationRequestOwnerType = "Delegator",
+                                LitigationRequestOwnerType = "Agent",
                                 LanguageCode = Constants.EnglishLanguage
                             },
                             new SysLitigationRequestOwnerTypeTranslation
                             {
-                                LitigationRequestOwnerType = "مفوض",
+                                LitigationRequestOwnerType = "وكيل",
+                                LanguageCode = Constants.ArabicLanguage
+                            }
+                        }
+                    },
+                      new SysLitigationRequestOwnerType
+                    {
+                        Id = LitigationRequestOwnerType.Lawyer,
+                        LitigationRequestOwnerType = "محامي",
+                        Translations=new List<SysLitigationRequestOwnerTypeTranslation>
+                        {
+                            new SysLitigationRequestOwnerTypeTranslation
+                            {
+                                LitigationRequestOwnerType = "Lawyer",
+                                LanguageCode = Constants.EnglishLanguage
+                            },
+                            new SysLitigationRequestOwnerTypeTranslation
+                            {
+                                LitigationRequestOwnerType = "محامي",
+                                LanguageCode = Constants.ArabicLanguage
+                            }
+                        }
+                    },
+                       new SysLitigationRequestOwnerType
+                    {
+                        Id = LitigationRequestOwnerType.CompanyRepresentative,
+                        LitigationRequestOwnerType = "ممثل شركة",
+                        Translations=new List<SysLitigationRequestOwnerTypeTranslation>
+                        {
+                            new SysLitigationRequestOwnerTypeTranslation
+                            {
+                                LitigationRequestOwnerType = "CompanyRepresentative",
+                                LanguageCode = Constants.EnglishLanguage
+                            },
+                            new SysLitigationRequestOwnerTypeTranslation
+                            {
+                                LitigationRequestOwnerType = "ممثل شركة",
                                 LanguageCode = Constants.ArabicLanguage
                             }
                         }

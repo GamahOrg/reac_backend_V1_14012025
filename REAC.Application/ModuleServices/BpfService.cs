@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using Core.GenericRepository.IBaseRepository;
+using Core.GenericRepository.BaseRepository;
 using Core.Shared.Responses;
 using Microsoft.EntityFrameworkCore;
 using REAC.Application.Contracts.Dtos.Wpf.Business.WorkFlowLog;

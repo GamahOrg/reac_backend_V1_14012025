@@ -1,5 +1,4 @@
 ﻿using Core.GenericRepository.BaseRepository;
-using Core.GenericRepository.IBaseRepository;
 using Microsoft.EntityFrameworkCore;
 
 namespace REAC.Api

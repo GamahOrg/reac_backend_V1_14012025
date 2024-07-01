@@ -1,6 +1,6 @@
 ﻿using Core.Contracts;
 using Core.Dtos;
-using Core.GenericRepository.IBaseRepository;
+using Core.GenericRepository.BaseRepository;
 using Core.Shared.Responses;
 
 namespace REAC.Application.AppServices.Integration;

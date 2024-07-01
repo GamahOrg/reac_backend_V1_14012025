@@ -1,9 +1,13 @@
 ﻿using AutoMapper;
-using Core.GenericRepository.IBaseRepository;
+using Core.GenericRepository.BaseRepository;
 using Core.Log.Application.Contracts.IAppServices;
+using Core.Shared.Responses;
+using REAC.Application.Contracts.Dtos.System.LitigationRequestAmountDtos;
+using REAC.Application.Contracts.Dtos.System.LitigationRequestContractTypeDtos;
 using REAC.Application.Contracts.IAppServices;
 using REAC.Application.Contracts.IAppServices.System;
 using REAC.EntityFrameworkCore.Entities.System;
+using System.Threading;
 
 
 namespace REAC.Application.AppServices.System

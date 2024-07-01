@@ -14,7 +14,7 @@ public partial class LitigationRequestContractCreateUpdateDto : BaseEntity<Guid>
 
     public Guid FirstPartyAccountId { get; set; }
 
-    public Guid FirstPartyFacilityId { get; set; }
+    public Guid? FirstPartyFacilityId { get; set; }
 
     public string FirstPartyCapacity { get; set; } = null!; // صفة المدعي
 

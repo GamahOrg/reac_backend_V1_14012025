@@ -13,7 +13,6 @@ using System.Globalization;
 using System.Linq.Expressions;
 using Core.GenericRepository.Extensions;
 using static Core.GenericRepository.Shared.RepositoryDelegates;
-using Core.GenericRepository.IBaseRepository;
 
 namespace Core.GenericRepository.BaseRepository
 {

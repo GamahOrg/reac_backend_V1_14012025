@@ -153,4 +153,19 @@
   <data name="YourIdentityNumberNotRelatedToAnyOfContractParties" xml:space="preserve">
     <value>رقم هويتك لا علاقة له بأي من أطراف العقد</value>
   </data>
+  <data name="NoPermissionToViewLitigation" xml:space="preserve">
+    <value>ليس لديك صلاحية رفع الدعوى لأنك لا تقيم الدعوى لنفسك أو لمحاميك أو وكيل أو ممثل لأي جهة</value>
+  </data>
+  <data name="UploadSuccefully" xml:space="preserve">
+    <value>تم رفع الملف بنجاح</value>
+  </data>
+  <data name="RetrievedSuccefully" xml:space="preserve">
+    <value>تم استرجاع البيانات بنجاح</value>
+  </data>
+  <data name="UpdateSuccefully" xml:space="preserve">
+    <value>تم التعديل بنجاح</value>
+  </data>
+  <data name="ContractNotFound" xml:space="preserve">
+    <value>لا يمكنك الاطلاع على بيانات هذا العقد</value>
+  </data>
 </root>
