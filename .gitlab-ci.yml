@@ -9,7 +9,8 @@ variables:
 
   # For docker image build
   APPLICATION_NAME: reac-backend-portal
-  BUILD_CONTEXT: /
+  BUILD_CONTEXT: .
+  DOCKERFILE_PATH: REAC.Api/Dockerfile
   IMAGE_TAG_NAME: ${PRE_IMAGE_TAG_NAME}/${APPLICATION_NAME}:${CI_COMMIT_SHORT_SHA}-${CI_COMMIT_BRANCH}
 
   # For gitops deployment
