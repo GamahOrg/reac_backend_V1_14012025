@@ -13,7 +13,7 @@ namespace REAC.EntityFrameworkCore.Entities.Litigation
         public string? AgencyNumber { get; set; }
         public string? LawLicenseNumber { get; set; }
         public DateTime? LawLicenseExpirationDate { get; set; }
-        public Guid CitizenId { get; set; } // One to one relation --> Lawyer is citizen
-        //public Citizen Citizen { get; set; }
+        public Guid CitizenId { get; set; }
+        public Citizen Citizen { get; set; }
     }
 }

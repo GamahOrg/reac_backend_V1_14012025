@@ -153,4 +153,19 @@
   <data name="YourIdentityNumberNotRelatedToAnyOfContractParties" xml:space="preserve">
     <value>Your Identity Number Not Related To Any Of Contract Parties</value>
   </data>
+  <data name="NoPermissionToViewLitigation" xml:space="preserve">
+    <value>You don not have the permission to view litigation because you not create the litigation for your self or lawyer,agent or representative of any party</value>
+  </data>
+  <data name="UploadSuccefully" xml:space="preserve">
+    <value>Upload Succefully</value>
+  </data>
+  <data name="RetrievedSuccefully" xml:space="preserve">
+    <value>Retrieved Succefully</value>
+  </data>
+  <data name="UpdateSuccefully" xml:space="preserve">
+    <value>Update Succefully</value>
+  </data>
+  <data name="ContractNotFound" xml:space="preserve">
+    <value>You are not permitted to view this contract</value>
+  </data>
 </root>

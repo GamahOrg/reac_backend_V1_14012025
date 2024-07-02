@@ -4,7 +4,6 @@ using Core.Security.Attributes;
 using REAC.Application.Contracts.IAppServices.Litigation;
 using REAC.Domain.Shared.Constants;
 using REAC.EntityFrameworkCore.Entities.Litigation;
-using REAC.Domain.Shared;
 
 namespace REAC.Api.Controllers.Litigation;
 

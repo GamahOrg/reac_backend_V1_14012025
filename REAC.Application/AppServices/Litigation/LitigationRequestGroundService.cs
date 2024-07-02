@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using Core.GenericRepository.IBaseRepository;
+using Core.GenericRepository.BaseRepository;
 using Core.Log.Application.Contracts.IAppServices;
 using Core.Shared.Responses;
 using REAC.Application.Contracts.IAppServices;

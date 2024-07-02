@@ -28,11 +28,26 @@ namespace REAC.Application.AppServices
             return identityExpirationDate;
         }
 
-        public async Task<List<string>> GetRepresentativeCitizens(Guid? userId) // بجيب هنا كل المدعي عليهم اللي انا ممثل عنهم
+        public async Task<ICollection<Facility>> GetRepresentativeCitizens(Guid? userId) // بجيب هنا كل المدعي عليهم اللي انا ممثل عنهم
         {
             var quarable = await GetQueryableAsync();
-            var result = quarable.Where(x => x.LitigationCompanyRepresentativeId == userId).Select(x => x.IdentityNumber).ToList();
+            var result = quarable.Where(x => x.LitigationCompanyRepresentativeId == userId).SelectMany(x => x.Facilities).ToList();
             return result;
+        }
+        public async Task<(Guid, bool)> CheckCitizenExist(string identityNumber)
+        {
+            var quarable = await GetQueryableAsync();
+            Guid citizenId = new Guid("00000000-0000-0000-0000-000000000000");
+            bool citizenExist = true;
+            var exist = quarable.Where(x => x.IdentityNumber == identityNumber).FirstOrDefault();
+            if (exist != null)
+            {
+                citizenId = exist.Id;
+            }
+            else
+                citizenExist = false;
+
+            return (citizenId, citizenExist);
         }
     }
 }

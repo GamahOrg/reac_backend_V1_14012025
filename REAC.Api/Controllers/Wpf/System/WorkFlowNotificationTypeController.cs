@@ -6,7 +6,6 @@ using REAC.Application.Contracts.Dtos.Wpf.System.WorkFlowNotificationType;
 using REAC.Application.Contracts.IAppServices.Wpf.System;
 using REAC.Domain.Shared.Constants;
 using REAC.EntityFrameworkCore.Entities.Wpf.System;
-using REAC.Domain.Shared;
 
 namespace Bpf.Api.Controllers.System
 {

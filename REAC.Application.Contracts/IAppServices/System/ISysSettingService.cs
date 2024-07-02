@@ -6,6 +6,8 @@ namespace REAC.Application.Contracts.IAppServices.System
     public interface ISysSettingService : IBasicService<SysSetting, Guid>
     {
         public Task<DataResponse<SysSetting>> GetBySettingKey(string SettingKey);
+        Task<DataResponse<List<SysSetting>>> GetByAllSetting();
+        Task<DataResponse<SysSetting>> UpdateBySettingKey(SysSetting updateSetting);
 
     }
 }

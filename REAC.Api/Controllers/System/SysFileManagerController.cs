@@ -7,7 +7,6 @@ using REAC.Application.Contracts;
 using REAC.Application.Contracts.Dtos.Shared;
 using REAC.Application.Contracts.Dtos.System;
 using REAC.Application.Contracts.IAppServices.System;
-using REAC.Domain.Shared;
 using REAC.Domain.Shared.Constants;
 using REAC.EntityFrameworkCore.Entities.System;
 

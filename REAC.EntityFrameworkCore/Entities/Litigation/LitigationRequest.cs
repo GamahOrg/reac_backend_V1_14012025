@@ -10,7 +10,9 @@ public partial class LitigationRequest : BaseEntity<Guid>
     public string? RequestCode { get; set; }
 
     public Guid ContractId { get; set; }
-
+    public Guid? CityId { get; set; }
+    public Guid? AreaId { get; set; }
+    public string? ContractAddress { get; set; } // العنوان الوطني
     public Guid ApplicantCitizenId { get; set; }
 
     public int SecondPartyArbitratorsCount { get; set; }
@@ -33,7 +35,7 @@ public partial class LitigationRequest : BaseEntity<Guid>
 
     public bool? IsFinancialLitigation { get; set; }
 
-    public Guid LitigationRequestAmountId { get; set; }
+    public Guid? LitigationRequestAmountId { get; set; }
 
     public decimal Fees { get; set; }
 
@@ -47,9 +49,14 @@ public partial class LitigationRequest : BaseEntity<Guid>
 
     public DateTime? SentOn { get; set; }
 
-    public Guid ExemptionReductionCategoryId { get; set; }
+    public Guid? ExemptionReductionCategoryId { get; set; }
+
+    public int PretenderRating { get; set; }
+    public int DefendantRating { get; set; }
 
     public virtual Citizen ApplicantCitizen { get; set; } = null!;
+    public virtual LitigationCity City { get; set; } = null!;
+    public virtual LitigationArea Area { get; set; } = null!;
 
     public virtual LitigationRequestContract Contract { get; set; } = null!;
 

@@ -4,7 +4,6 @@ using Core.Security.Attributes;
 using REAC.Application.Contracts.IAppServices.System;
 using REAC.Domain.Shared.Constants;
 using REAC.EntityFrameworkCore.Entities.System;
-using REAC.Domain.Shared;
 
 namespace REAC.Api.Controllers.System;
 

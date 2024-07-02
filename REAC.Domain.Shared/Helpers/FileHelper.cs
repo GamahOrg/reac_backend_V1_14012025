@@ -10,7 +10,7 @@ namespace REAC.Domain.Shared.Helpers
 {
     public class FileHelper
     {
-        public static async Task Move(List<Guid> names,string root)
+        public static async Task Move(List<Guid> names, string root)
         {
             if (!Directory.Exists(root))
             {
@@ -38,57 +38,76 @@ namespace REAC.Domain.Shared.Helpers
                     file.MoveTo($"{root}/{file.Name}");
             }
         }
-        //public static async Task<string> SaveFileAsync(IFormFile file, string rootFolder)
-        //{
 
-        //    if (file == null || file.Length == 0)
-        //    {
-        //        throw new ExceptionResponse("No file uploaded.");
-        //    }
+        public static async Task CopyFiles(Guid name, string root)
+        {
+            if (!Directory.Exists(root))
+            {
+                Directory.CreateDirectory(root);
+            }
 
-        //    // Ensure the directory exists
-        //    if (!Directory.Exists(rootFolder))
-        //    {
-        //        Directory.CreateDirectory(rootFolder);
-        //    }
+            var files = new DirectoryInfo(SharedConstants.RootFolder).GetFiles();
+            foreach (var file in files)
+            {
+                var filename = Path.GetFileNameWithoutExtension(file.Name);
+                if (filename.Contains(Path.GetFileNameWithoutExtension(name.ToString())!))
+                {
+                    var destinationPath = Path.Combine(root, file.Name);
+                    file.CopyTo(destinationPath, true);
+                }
+            }
+            //public static async Task<string> SaveFileAsync(IFormFile file, string rootFolder)
+            //{
 
-        //    string fileName = Path.GetFileName(file.FileName);
-        //    string filePath = Path.Combine(rootFolder, fileName);
+            //    if (file == null || file.Length == 0)
+            //    {
+            //        throw new ExceptionResponse("No file uploaded.");
+            //    }
 
-        //    using (var fileStream = new FileStream(filePath, FileMode.Create, FileAccess.Write))
-        //    {
-        //        await file.CopyToAsync(fileStream);
-        //    }
-        //    return filePath;
-        //}
-        //public static async Task<List<string>> SaveFileAsync(List<IFormFile> files, string rootFolder)
-        //{
-        //    List<string> filePathList = new List<string>();
-        //    foreach (var file in files)
-        //    {
-        //        if (file == null || file.Length == 0)
-        //        {
-        //            throw new ExceptionResponse("No file uploaded.");
-        //        }
+            //    // Ensure the directory exists
+            //    if (!Directory.Exists(rootFolder))
+            //    {
+            //        Directory.CreateDirectory(rootFolder);
+            //    }
 
-        //        // Ensure the directory exists
-        //        if (!Directory.Exists(rootFolder))
-        //        {
-        //            Directory.CreateDirectory(rootFolder);
-        //        }
+            //    string fileName = Path.GetFileName(file.FileName);
+            //    string filePath = Path.Combine(rootFolder, fileName);
 
-        //        string fileName = Path.GetFileName(file.FileName);
-        //        string filePath = Path.Combine(rootFolder, fileName);
+            //    using (var fileStream = new FileStream(filePath, FileMode.Create, FileAccess.Write))
+            //    {
+            //        await file.CopyToAsync(fileStream);
+            //    }
+            //    return filePath;
+            //}
+            //public static async Task<List<string>> SaveFileAsync(List<IFormFile> files, string rootFolder)
+            //{
+            //    List<string> filePathList = new List<string>();
+            //    foreach (var file in files)
+            //    {
+            //        if (file == null || file.Length == 0)
+            //        {
+            //            throw new ExceptionResponse("No file uploaded.");
+            //        }
 
-        //        using (var fileStream = new FileStream(filePath, FileMode.Create, FileAccess.Write))
-        //        {
-        //            await file.CopyToAsync(fileStream);
-        //        }
-        //        filePathList.Add(filePath);
-        //    }
+            //        // Ensure the directory exists
+            //        if (!Directory.Exists(rootFolder))
+            //        {
+            //            Directory.CreateDirectory(rootFolder);
+            //        }
+
+            //        string fileName = Path.GetFileName(file.FileName);
+            //        string filePath = Path.Combine(rootFolder, fileName);
+
+            //        using (var fileStream = new FileStream(filePath, FileMode.Create, FileAccess.Write))
+            //        {
+            //            await file.CopyToAsync(fileStream);
+            //        }
+            //        filePathList.Add(filePath);
+            //    }
 
 
-        //    return filePathList;
-        //}
+            //    return filePathList;
+            //}
+        }
     }
 }

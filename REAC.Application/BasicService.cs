@@ -1,14 +1,12 @@
 ﻿using AutoMapper;
+using Core.GenericRepository.BaseRepository;
 using Core.GenericRepository.Common;
-using Core.GenericRepository.IBaseRepository;
 using Core.GenericRepository.Shared.BaseEntities;
 using Core.Log.Application.Contracts.IAppServices;
 using Core.Shared.Responses;
 using Microsoft.EntityFrameworkCore;
 using REAC.Application.Contracts;
 using REAC.Application.Contracts.IAppServices;
-using REAC.Domain.Shared;
-using System.Text.Json;
 
 namespace REAC.Application
 {
@@ -123,12 +121,6 @@ namespace REAC.Application
             //        IsDone = false
             //    };
             //}
-
-            var entityName = baseEntity.GetType().GetCustomAttributes(typeof(EntityNameAttribute), true)
-                               .Cast<EntityNameAttribute>().Select(x => x.Name).ToList().FirstOrDefault();
-
-
-
             var addedAuditedEntities = dbContext.ChangeTracker.Entries()
                                        .Where(p => p.State == EntityState.Added)
                                        .Select(p => p.Entity);
@@ -158,24 +150,17 @@ namespace REAC.Application
                         auditedBaseEntity.CreatedBy = userId;
                         auditedBaseEntity.CreatedOn = DateTime.Now;
                     }
-
                     if (entity is FullAuditedBaseEntity<TPrimaryKey> fullAuditedBaseEntity)
                     {
                         fullAuditedBaseEntity.CreatedBy = userId;
                         fullAuditedBaseEntity.CreatedOn = DateTime.Now;
                     }
-
                     if (entity is CreationBaseEntity<TPrimaryKey> creationBaseEntity)
                     {
                         creationBaseEntity.CreatedBy = userId;
                         creationBaseEntity.CreatedOn = DateTime.Now;
-                    }
 
-                    _loggerManager.Log(Core.Log.Domain.Shared.Enums.LoggerType.File, new Core.Log.Application.Contracts.Dto.LogDto()
-                    {
-                        Type = Core.Log.Domain.Shared.Enums.LogType.Information,
-                        Message = entityName + " Created" + "\n" + JsonSerializer.Serialize(baseEntity)
-                    });
+                    }
                 }
             }
             return new BaseResponse() { IsDone = true };

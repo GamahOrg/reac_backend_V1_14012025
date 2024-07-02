@@ -1,8 +1,10 @@
+
 using Core.Log.EntityFrameworkCore;
 using Core.Security;
 using Core.Security.Contracts;
 using Core.Security.Dtos;
 using Core.Security.Entities;
+using Core.Security.Extensions;
 using Core.Security.OptionsSetup;
 using Core.Security.Services;
 using Microsoft.AspNetCore.Identity;
@@ -41,7 +43,33 @@ builder.Services.AddGenericRepository<REACDBContext>();
 
 #endregion
 // Add services to the container.
-
+string _defaultCorsPolicyName = "localhost";
+builder.Services.AddCors(
+    options =>
+    {
+        options.AddPolicy(
+        _defaultCorsPolicyName,
+        corsbuilder => corsbuilder
+            .WithOrigins(
+                // App:CorsOrigins in appsettings.json can contain more than one address separated by comma.
+                builder.Configuration["App:CorsOrigins"]
+                    .Split(",", StringSplitOptions.RemoveEmptyEntries)
+                    .Select(o => o.RemovePostFix("/"))
+                    .ToArray()
+            )
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+        .AllowCredentials());
+        options.AddPolicy("CorsPolicy",
+         builder =>
+         {
+             builder.AllowAnyHeader()
+                    .AllowAnyMethod()
+                    .SetIsOriginAllowed((host) => true)
+                    .AllowCredentials();
+         });
+    }
+);
 #region Identity
 
 builder.Services.AddIdentity<User, Role>()
@@ -66,9 +94,12 @@ builder.Services.AddAppServices();
 builder.Services.AddControllers()
            .AddJsonOptions(options =>
            {
-               options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
+               options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
                options.JsonSerializerOptions.MaxDepth = 64; // Increase the maximum depth as needed
            });
+
+
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -90,8 +121,7 @@ builder.Services.Configure<RequestLocalizationOptions>(options =>
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
+
     app.UseSwagger();
     app.UseSwaggerUI(c =>
     {
@@ -106,14 +136,17 @@ if (app.Environment.IsDevelopment())
 
         c.DocExpansion(DocExpansion.List);
     });
-}
+if (!app.Environment.IsDevelopment())
+{
+    app.UseHttpsRedirection();
 
-app.UseHttpsRedirection();
+}
 
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseCors(_defaultCorsPolicyName);
 
-app.UseMiddleware<AuthMiddleware>();
+//app.UseMiddleware<AuthMiddleware>();
 
 
 app.MapControllers();

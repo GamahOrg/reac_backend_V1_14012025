@@ -7,6 +7,6 @@ namespace REAC.Application.Contracts.IAppServices.System
     public interface ISysLitigationRequestContractTypeService : IBasicService<SysLitigationRequestContractType, LitigationRequestContractType>
     {
         Task<BaseResponse> GetListAsync(CancellationToken cancellationToken);
-        Task<BaseResponse> GetTermsConditionsAsync(CancellationToken cancellationToken);
+        Task<BaseResponse> GetTermsConditionsAsync(string contractNumber, CancellationToken cancellationToken);
     }
 }

@@ -4,7 +4,6 @@ using Core.Security.Attributes;
 using REAC.Application.Contracts.Dtos.Wpf.Business;
 using REAC.Application.Contracts.IModuleServices;
 using REAC.Domain.Shared.Constants;
-using REAC.Domain.Shared;
 
 namespace Bpf.Api.Controllers.Business
 {

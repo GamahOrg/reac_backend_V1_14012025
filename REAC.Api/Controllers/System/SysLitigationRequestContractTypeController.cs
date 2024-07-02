@@ -1,10 +1,10 @@
 ﻿using Core.Security.Attributes;
 using Core.Security.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using REAC.Application.Contracts.Dtos.System.LitigationRequestContractTypeDtos;
 using REAC.Application.Contracts.IAppServices.Litigation;
 using REAC.Application.Contracts.IAppServices.System;
-using REAC.Domain.Shared;
 using REAC.Domain.Shared.Constants;
 using REAC.Domain.Shared.Enum;
 using REAC.EntityFrameworkCore.Entities.System;
@@ -27,6 +27,7 @@ public class SysLitigationRequestContractTypeController : BaseController<SysLiti
         _typeService = sysLitigationRequestContractTypeService;
     }
     [HttpGet("GetTypes")]
+    [AllowAnonymous]
     public async Task<IActionResult> GetTypes(CancellationToken cancellationToken = default)
     {
         if (ModelState.IsValid)
@@ -38,11 +39,11 @@ public class SysLitigationRequestContractTypeController : BaseController<SysLiti
         return BadRequest();
     }
     [HttpGet("GetTermsConditions")]
-    public async Task<IActionResult> GetTermsConditions(CancellationToken cancellationToken = default)
+    public async Task<IActionResult> GetTermsConditions(string contractNumber,CancellationToken cancellationToken = default)
     {
         if (ModelState.IsValid)
         {
-            var returnValue = await _typeService.GetTermsConditionsAsync(cancellationToken);
+            var returnValue = await _typeService.GetTermsConditionsAsync(contractNumber,cancellationToken);
             return Ok(returnValue);
         }
 

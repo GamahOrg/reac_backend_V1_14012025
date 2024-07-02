@@ -128,10 +128,10 @@ public partial class REACDBContext : DbContext
     public virtual DbSet<SysRegistrationRequest> SysRegistrationRequests { get; set; }
 
     public virtual DbSet<SysSetting> SysSettings { get; set; }
+    public virtual DbSet<LitigationArea> LitigationAreas { get; set; }
+    public virtual DbSet<LitigationCity> LitigationCitys { get; set; }
+    public virtual DbSet<OtherCategory> OtherCategories { get; set; }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Data Source=.;Initial Catalog=REACDB;Trusted_Connection=True;persist security info=True;TrustServerCertificate=True");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -1284,8 +1284,16 @@ public partial class REACDBContext : DbContext
 
             entity.Property(e => e.Id).ValueGeneratedNever();
             entity.Property(e => e.Key).HasMaxLength(100);
-            entity.Property(e => e.Value).HasMaxLength(100);
+            entity.Property(e => e.Value).HasMaxLength(225);
         });
+
+        modelBuilder.Entity<OtherCategory>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Id).HasColumnType("uniqueidentifier");
+        });
+
+
 
 
         // By abdulrahman

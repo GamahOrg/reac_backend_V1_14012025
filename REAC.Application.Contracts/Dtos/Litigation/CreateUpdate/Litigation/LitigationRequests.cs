@@ -1,7 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Buffers.Text;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -14,6 +11,5 @@ namespace REAC.Application.Contracts.Dtos.Litigation.CreateUpdate.Litigation
     {
         [MaxLength(200)]
         public string LitigationPurpose { get; set; }
-        public Guid LitigationPurposeFileId { get; set; }
     }
 }

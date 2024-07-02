@@ -3,7 +3,6 @@ using Core.Security.Attributes;
 using Core.Security.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using REAC.Application.Contracts;
-using REAC.Domain.Shared;
 
 namespace REAC.Api
 {
@@ -81,7 +80,7 @@ namespace REAC.Api
 
         [PermissionRequired(Policy.View)]
         [HttpGet(nameof(Get))]
-        public async Task<IActionResult> Get(CancellationToken cancellationToken)
+        public virtual async Task<IActionResult> Get(CancellationToken cancellationToken)
         {
             if (ModelState.IsValid)
             {
