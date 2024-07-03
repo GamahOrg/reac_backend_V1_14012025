@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using REAC.Application.Contracts.Dtos.Wpf.Business.WorkFlowLog;
 using REAC.Application.Contracts.Dtos.Wpf.Business.WorkFlowProcessingLog;
 using REAC.Application.Contracts.Dtos.Wpf.System;
+using REAC.Application.Contracts.IAppServices.Litigation;
 using REAC.Application.Contracts.IAppServices.Wpf.Business;
 using REAC.Application.Contracts.IModuleServices;
 using REAC.Domain.Shared.Enum;
@@ -21,16 +22,18 @@ namespace Bpf.Application.ModuleServices
         private readonly IEntityRepository _repository;
         private readonly IWorkFlowProcessingLogService _workFlowProcessingLogService;
         private readonly IWorkFlowLogService _workFlowLogService;
-
+        private readonly ILitigationWorkFlowService _litigationWorkFlowService;
         public BpfService(IEntityRepository repository,
                           IWorkFlowProcessingLogService workFlowProcessingLogService,
                           IMapper mapper,
-                          IWorkFlowLogService workFlowLogService)
+                          IWorkFlowLogService workFlowLogService, ILitigationWorkFlowService litigationWorkFlowService)
         {
             _mapper = mapper;
             _repository = repository;
             _workFlowProcessingLogService = workFlowProcessingLogService;
             _workFlowLogService = workFlowLogService;
+            _litigationWorkFlowService = litigationWorkFlowService;
+
         }
 
 

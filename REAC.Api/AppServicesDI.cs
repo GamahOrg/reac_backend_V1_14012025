@@ -12,6 +12,7 @@ using REAC.Application.AppServices.Reconciliation;
 using REAC.Application.AppServices.System;
 using REAC.Application.AppServices.Wpf.Business;
 using REAC.Application.AppServices.Wpf.System;
+//using REAC.Application.Contracts.Dtos.Litigation;
 using REAC.Application.Contracts.IAppServices;
 using REAC.Application.Contracts.IAppServices.Litigation;
 using REAC.Application.Contracts.IAppServices.Reconciliation;
@@ -39,6 +40,8 @@ namespace REAC.Api
             // services.AddScoped<ICitizenService, CitizenService>();
             // Register other services
             services.AddScoped<IWorkFlowProcessingLogService, WorkFlowProcessingLogService>();
+            services.AddScoped<IWorkFlowLitigationActionsService, WorkFlowLitigationActionsService>();
+
             services.AddScoped<IBpfService, BpfService>();
             services.AddScoped<IWorkFlowLogService, WorkFlowLogService>();
             services.AddScoped<IWorkFlowStepService, WorkFlowStepService>();
@@ -86,6 +89,7 @@ namespace REAC.Api
             services.AddScoped<FileLogger>();
             services.AddScoped<MailLogger>();
             services.AddScoped<IMailService, EmailService>();
+            services.AddScoped<ILitigationWorkFlowService, LitigationWorkFlowService>();
 
             services.AddScoped<IJwtReader, JwtReader>();
 

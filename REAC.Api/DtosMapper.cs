@@ -34,7 +34,8 @@ namespace REAC.Application.Contracts
     {
         public DtosMapper()
         {
-            CreateMap<SysGender, SysGenderDto>()
+            CreateMap<LitigationRequest, LitigationCreateUpdateDto>();
+;            CreateMap<SysGender, SysGenderDto>()
                                        .ForMember(des => des.Gender,
                                        opt => opt.MapFrom(src => (src.Translations.FirstOrDefault(x => x.LanguageCode == CultureInfo.CurrentUICulture.Name) == null ||
                                        string.IsNullOrEmpty(src.Translations.FirstOrDefault(x => x.LanguageCode == CultureInfo.CurrentUICulture.Name).Gender)) ?
