@@ -121,26 +121,25 @@ builder.Services.Configure<RequestLocalizationOptions>(options =>
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-
-    app.UseSwagger();
-    app.UseSwaggerUI(c =>
-    {
-        c.EnableDeepLinking();
-
-        // Build a swagger endpoint for each API version and consumer
-        c.SwaggerEndpoint($"/swagger/{APISections.System}/swagger.json", $"{APISections.System} API V1");
-        c.SwaggerEndpoint($"/swagger/{APISections.Litigation}/swagger.json", $"{APISections.Litigation} API V1");
-        c.SwaggerEndpoint($"/swagger/{APISections.Reconciliation}/swagger.json", $"{APISections.Reconciliation} API V1");
-        c.SwaggerEndpoint($"/swagger/{APISections.WpfBusiness}/swagger.json", $"{APISections.WpfBusiness} API V1");
-        c.SwaggerEndpoint($"/swagger/{APISections.WpfSystem}/swagger.json", $"{APISections.WpfSystem} API V1");
-
-        c.DocExpansion(DocExpansion.List);
-    });
-if (!app.Environment.IsDevelopment())
+//if (app.Environment.IsDevelopment())
+//{
+app.UseSwagger();
+app.UseSwaggerUI(c =>
 {
-    app.UseHttpsRedirection();
+    c.EnableDeepLinking();
 
-}
+    // Build a swagger endpoint for each API version and consumer
+    c.SwaggerEndpoint($"/swagger/{APISections.System}/swagger.json", $"{APISections.System} API V1");
+    c.SwaggerEndpoint($"/swagger/{APISections.Litigation}/swagger.json", $"{APISections.Litigation} API V1");
+    c.SwaggerEndpoint($"/swagger/{APISections.Reconciliation}/swagger.json", $"{APISections.Reconciliation} API V1");
+    c.SwaggerEndpoint($"/swagger/{APISections.WpfBusiness}/swagger.json", $"{APISections.WpfBusiness} API V1");
+    c.SwaggerEndpoint($"/swagger/{APISections.WpfSystem}/swagger.json", $"{APISections.WpfSystem} API V1");
+
+    c.DocExpansion(DocExpansion.List);
+});
+//}
+
+app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();

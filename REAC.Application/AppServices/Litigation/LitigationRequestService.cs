@@ -17,6 +17,7 @@ using REAC.Application.Contracts.Dtos.Litigation.List;
 using REAC.Application.Contracts.IAppServices;
 using REAC.Application.Contracts.IAppServices.Litigation;
 using REAC.Application.Contracts.IAppServices.System;
+using REAC.Application.Contracts.IAppServices.Wpf.Business;
 using REAC.Application.Contracts.IAppServices.Wpf.System;
 using REAC.Application.Contracts.IModuleServices;
 using REAC.Domain.Shared.Constants;
@@ -52,14 +53,14 @@ namespace REAC.Application.AppServices.Litigation
         private readonly ILitigationRequestRequestFileService _requestFileService;
         private readonly ILitigationRequestGroundService _groundService;
         private readonly ILitigationRequestGroundFileService _groundFileService;
-        private readonly IBpfService _bpfService;
-        private readonly IWorkFlowStepService _stepService;
-        
-        public LitigationRequestService(IWorkFlowStepService stepService, IBpfService bpfService, REACDBContext context, ILitigationRequestGroundFileService groundFileService, ILitigationRequestGroundService groundService, ILitigationRequestRequestFileService requestFileService, ILitigationRequestRequestService requestsService, ISysFileManagerService fileService, ISysLitigationRequestAmountService amountService, IUserProviderService contractService, IEntityRepository repository, IMapper mapper, ILoggerManager loggerManager, IJwtReader jwtReader) : base(repository, mapper, loggerManager, jwtReader)
+      
+        private readonly IWorkFlowLitigationActionsService _workFlowLitigation;
+
+
+        public LitigationRequestService(REACDBContext context, IWorkFlowLitigationActionsService workFlowLitigation,ILitigationRequestGroundFileService groundFileService, ILitigationRequestGroundService groundService, ILitigationRequestRequestFileService requestFileService, ILitigationRequestRequestService requestsService, ISysFileManagerService fileService, ISysLitigationRequestAmountService amountService, IUserProviderService contractService, IEntityRepository repository, IMapper mapper, ILoggerManager loggerManager, IJwtReader jwtReader) : base(repository, mapper, loggerManager, jwtReader)
 
         {
-            _stepService = stepService;
-            _bpfService = bpfService;
+            _workFlowLitigation = workFlowLitigation;
             _context = context;
             _jwtReader = jwtReader;
             _contractService = contractService;
@@ -70,16 +71,17 @@ namespace REAC.Application.AppServices.Litigation
             _groundService = groundService;
             _groundFileService = groundFileService;
         }
-
-
-
+        public async Task<BaseResponse> AddLitigation(LitigationCreateUpdateDto model)
+        { 
+            return await Add(model);
+        }
         public async Task<BaseResponse> Add(LitigationCreateUpdateDto model)
         {
             var litigations = await GetQueryableAsync();
             BaseResponse? addedLitigation = null;
             Guid litigationId = Guid.Empty;
 
-            if (model.IsSent)
+            if (model.IsSent && model.Id ==Guid.Empty)
             {         
                 model.ExternalStatusId = LitigationRequestStatus.New;
                 model.InternalStatusId = LitigationRequestStatus.New;
@@ -90,7 +92,7 @@ namespace REAC.Application.AppServices.Litigation
                 model.RequestCode = requestCode;
 
             }
-            else
+            else if(model.Id == Guid.Empty)
             {
                 model.ExternalStatusId = LitigationRequestStatus.SaveAsDraft;
                 model.InternalStatusId = LitigationRequestStatus.SaveAsDraft;
@@ -164,15 +166,15 @@ namespace REAC.Application.AppServices.Litigation
 
                 if (model.IsSent)
                 {
-                    await _bpfService.ExcuteWorkFlow(litigationId, Guid.Parse("15d87d0d-3cf4-4969-9c7e-933aeea0e5f5"), default);
-                  //  Guid employee = await _stepService.GetLowestEmployee();
-                    await _bpfService.Assign(new Contracts.Dtos.Wpf.Business.AssignRequestPayload
-                    {
-                        DestinationEmployeeId = Guid.Parse("3afafe63-62e5-4bc9-a8b9-7713c42e7097"),
-                        SourceEmployeeId = Guid.Parse("b9bbe3e5-0ca9-44af-95fa-d2c3a0ec2280"),
-                        RequestId = litigationId
+                    //await _bpfService.ExcuteWorkFlow(litigationId, Guid.Parse("15d87d0d-3cf4-4969-9c7e-933aeea0e5f5"), default);
+                    ////  Guid employee = await _stepService.GetLowestEmployee();
+                    //await _bpfService.Assign(new Contracts.Dtos.Wpf.Business.AssignRequestPayload
+                    //{
+                    //    DestinationEmployeeId = Guid.Parse("3afafe63-62e5-4bc9-a8b9-7713c42e7097"),
+                    //    SourceEmployeeId = Guid.Parse("b9bbe3e5-0ca9-44af-95fa-d2c3a0ec2280"),
+                    //    RequestId = litigationId
 
-                    }, default);
+                    //}, default);
                 }
 
                 return addedLitigation;
@@ -194,6 +196,38 @@ namespace REAC.Application.AppServices.Litigation
                 {
                     addedLitigation = await base.AddAsync(model, default);
                     litigationId = await GetAddedLitigation();
+                    #region Requests
+                    foreach (var item in model.Requests)
+                    {
+                        await _requestsService.AddRequests(new LitigationRequestRequestCreateUpdateDto { LitigationRequestId = litigationId, RequestContent = item.LitigationPurpose });
+                        // there is no files in requests await _requestFileService.AddRequestFiles(new LitigationRequestRequestFileCreateUpdateDto { LitigationRequestRequestId = await _requestsService.GetAddedRequestId(), FileManagerId = item.LitigationPurposeFileId });
+                    }
+                    #endregion
+
+                    #region References Attachments
+
+                    string referencerootFolder = Path.Combine(Directory.GetCurrentDirectory(), "Attachments", "Rent", model.ContractId.ToString(), "References");
+                    if (!Directory.Exists(referencerootFolder)) { Directory.CreateDirectory(referencerootFolder); }
+                    List<Guid> referencenames = new List<Guid>();
+                    foreach (var item in model.References)
+                    {
+                        foreach (var Attachment in item.ReferenceAttachments)
+                        {
+                            referencenames.Add(Attachment);
+                            await _groundService.AddReference(new LitigationRequestGroundCreateUpdateDto { LitigationRequestId = litigationId, Title = item.ReferenceTitle });
+                            await _groundFileService.AddReferenceFiles(new LitigationRequestGroundFileCreateUpdateDto { LitigationRequestGroundId = await _groundService.GetAddedReferenceId(), FileManagerId = Attachment });
+                        }
+
+                    }
+                    await FileHelper.Move(referencenames, referencerootFolder);
+
+                    #endregion
+
+                    #region  Exempt Categories 
+                    string rootFolder = Path.Combine(Directory.GetCurrentDirectory(), "Attachments", "Rent", model.ContractId.ToString(), model.ExemptionReductionCategory.Id.ToString());
+                    if (!Directory.Exists(rootFolder)) { Directory.CreateDirectory(rootFolder); }
+                    await FileHelper.Move(model.ExemptionReductionCategory.AttachmentId, rootFolder);
+                    #endregion
                 }
                 else
                 {
@@ -208,50 +242,19 @@ namespace REAC.Application.AppServices.Litigation
                 }
                 #endregion
 
-                #region Requests
-                foreach (var item in model.Requests)
-                {
-                    await _requestsService.AddRequests(new LitigationRequestRequestCreateUpdateDto { LitigationRequestId = litigationId, RequestContent = item.LitigationPurpose });
-                    // there is no files in requests await _requestFileService.AddRequestFiles(new LitigationRequestRequestFileCreateUpdateDto { LitigationRequestRequestId = await _requestsService.GetAddedRequestId(), FileManagerId = item.LitigationPurposeFileId });
-                }
-                #endregion
 
-                #region References Attachments
-
-                string referencerootFolder = Path.Combine(Directory.GetCurrentDirectory(), "Attachments", "Rent", model.ContractId.ToString(), "References");
-                if (!Directory.Exists(referencerootFolder)) { Directory.CreateDirectory(referencerootFolder); }
-                List<Guid> referencenames = new List<Guid>();
-                foreach (var item in model.References)
-                {
-                    foreach (var Attachment in item.ReferenceAttachments)
-                    {
-                        referencenames.Add(Attachment);
-                        await _groundService.AddReference(new LitigationRequestGroundCreateUpdateDto { LitigationRequestId = litigationId, Title = item.ReferenceTitle });
-                        await _groundFileService.AddReferenceFiles(new LitigationRequestGroundFileCreateUpdateDto { LitigationRequestGroundId = await _groundService.GetAddedReferenceId(), FileManagerId = Attachment });
-                    }
-
-                }
-                await FileHelper.Move(referencenames, referencerootFolder);
-
-                #endregion
-
-                #region  Exempt Categories 
-                string rootFolder = Path.Combine(Directory.GetCurrentDirectory(), "Attachments", "Rent", model.ContractId.ToString(), model.ExemptionReductionCategory.Id.ToString());
-                if (!Directory.Exists(rootFolder)) { Directory.CreateDirectory(rootFolder); }
-                await FileHelper.Move(model.ExemptionReductionCategory.AttachmentId, rootFolder);
-                #endregion
 
                 if (model.IsSent)
                 {
-                    await _bpfService.ExcuteWorkFlow(litigationId, Guid.Parse("15d87d0d-3cf4-4969-9c7e-933aeea0e5f5"), default);
-                    Guid employee = await _stepService.GetLowestEmployee();
-                    await _bpfService.Assign(new Contracts.Dtos.Wpf.Business.AssignRequestPayload
-                    {
-                        DestinationEmployeeId = employee,
-                        SourceEmployeeId = Guid.Parse("B9BBE3E5-0CA9-44AF-95FA-D2C3A0EC2280"),
-                        RequestId = litigationId
+                    //await _bpfService.ExcuteWorkFlow(litigationId, Guid.Parse("15d87d0d-3cf4-4969-9c7e-933aeea0e5f5"), default);
+                    //Guid employee = await _stepService.GetLowestEmployee();
+                    //await _bpfService.Assign(new Contracts.Dtos.Wpf.Business.AssignRequestPayload
+                    //{
+                    //    DestinationEmployeeId = employee,
+                    //    SourceEmployeeId = Guid.Parse("B9BBE3E5-0CA9-44AF-95FA-D2C3A0EC2280"),
+                    //    RequestId = litigationId
 
-                    }, default);
+                    //}, default);
                 }
 
                 return addedLitigation;

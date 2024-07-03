@@ -1,17 +1,27 @@
-﻿using Core.Shared.Responses;
+﻿using Azure;
+using Core.Shared.Responses;
 using Microsoft.EntityFrameworkCore;
+using REAC.Application.Contracts.Dtos.Litigation;
 using REAC.Application.Contracts.Dtos.Wpf.Business;
 using REAC.Application.Contracts.Dtos.Wpf.Business.WorkFlowLog;
 using REAC.Application.Contracts.Dtos.Wpf.System;
+using REAC.Application.Contracts.IAppServices.Litigation;
 using REAC.Domain.Shared.Enum.Wpf;
+using REAC.EntityFrameworkCore.Entities.Litigation;
 using REAC.EntityFrameworkCore.Entities.System;
 using REAC.EntityFrameworkCore.Entities.Wpf.Business;
 using REAC.EntityFrameworkCore.Entities.Wpf.System;
+using static Dapper.SqlMapper;
 
 namespace Bpf.Application.ModuleServices
 {
     public partial class BpfService
     {
+        //public BpfService(ILitigationWorkFlowService litigationWorkFlowService)
+        //{
+        //    _litigationWorkFlowService = litigationWorkFlowService;
+        //}
+
         public async Task<BaseResponse> ProcessWorkFlow(ProcessRequestPayload requestPayload, CancellationToken cancellationToken)
         {
             ResponseWorkFlowDto responseWorkFlowDto = new ResponseWorkFlowDto();
@@ -197,6 +207,8 @@ namespace Bpf.Application.ModuleServices
                 var repositorySaveResponse = await _repository.SaveChangesAsync(new CancellationToken());
                 if (!repositorySaveResponse.IsDone)
                     return repositorySaveResponse;
+                
+             
             }
             catch (Exception ex)
             {
@@ -207,6 +219,9 @@ namespace Bpf.Application.ModuleServices
                 };
 
             }
+
+            await _litigationWorkFlowService.UpdateLitigationStatusAsync(responseWorkFlowDto, requestPayload.RequestId);
+
             return new DataResponse<ResponseWorkFlowDto>()
             {
                 IsDone = true,
