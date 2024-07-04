@@ -17,11 +17,6 @@ namespace Bpf.Application.ModuleServices
 {
     public partial class BpfService
     {
-        //public BpfService(ILitigationWorkFlowService litigationWorkFlowService)
-        //{
-        //    _litigationWorkFlowService = litigationWorkFlowService;
-        //}
-
         public async Task<BaseResponse> ProcessWorkFlow(ProcessRequestPayload requestPayload, CancellationToken cancellationToken)
         {
             ResponseWorkFlowDto responseWorkFlowDto = new ResponseWorkFlowDto();
@@ -64,7 +59,6 @@ namespace Bpf.Application.ModuleServices
                                 Message = "Not Allowed"
                             };
                     }
-
                 }
                 #endregion
 
@@ -206,8 +200,7 @@ namespace Bpf.Application.ModuleServices
 
                 var repositorySaveResponse = await _repository.SaveChangesAsync(new CancellationToken());
                 if (!repositorySaveResponse.IsDone)
-                    return repositorySaveResponse;
-                
+                    return repositorySaveResponse;           
              
             }
             catch (Exception ex)

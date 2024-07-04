@@ -26,14 +26,12 @@ namespace Bpf.Application.ModuleServices
         public BpfService(IEntityRepository repository,
                           IWorkFlowProcessingLogService workFlowProcessingLogService,
                           IMapper mapper,
-                          IWorkFlowLogService workFlowLogService, ILitigationWorkFlowService litigationWorkFlowService)
+                          IWorkFlowLogService workFlowLogService,ILitigationWorkFlowService litigationWorkFlowServic)
         {
             _mapper = mapper;
             _repository = repository;
             _workFlowProcessingLogService = workFlowProcessingLogService;
             _workFlowLogService = workFlowLogService;
-            _litigationWorkFlowService = litigationWorkFlowService;
-
         }
 
 
