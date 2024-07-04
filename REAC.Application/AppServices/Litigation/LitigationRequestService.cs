@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json.Schema;
 using REAC.Application.AppServices.Integration;
 using REAC.Application.Contracts.Dtos.Litigation;
@@ -31,6 +32,7 @@ using System.Diagnostics.Contracts;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using static Dapper.SqlMapper;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
@@ -53,14 +55,16 @@ namespace REAC.Application.AppServices.Litigation
         private readonly ILitigationRequestRequestFileService _requestFileService;
         private readonly ILitigationRequestGroundService _groundService;
         private readonly ILitigationRequestGroundFileService _groundFileService;
-      
-        private readonly IWorkFlowLitigationActionsService _workFlowLitigation;
+       // private readonly IWorkFlowLitigationActionsService _workFlowLitigation;
+       private readonly IServiceProvider _serviceProvider;
 
-
-        public LitigationRequestService(REACDBContext context, IWorkFlowLitigationActionsService workFlowLitigation,ILitigationRequestGroundFileService groundFileService, ILitigationRequestGroundService groundService, ILitigationRequestRequestFileService requestFileService, ILitigationRequestRequestService requestsService, ISysFileManagerService fileService, ISysLitigationRequestAmountService amountService, IUserProviderService contractService, IEntityRepository repository, IMapper mapper, ILoggerManager loggerManager, IJwtReader jwtReader) : base(repository, mapper, loggerManager, jwtReader)
+        public LitigationRequestService(REACDBContext context, ILitigationRequestGroundFileService groundFileService, IServiceProvider service,
+            ILitigationRequestGroundService groundService, ILitigationRequestRequestFileService requestFileService, ILitigationRequestRequestService requestsService,
+            ISysFileManagerService fileService, ISysLitigationRequestAmountService amountService, IUserProviderService contractService, IEntityRepository repository, 
+            IMapper mapper, ILoggerManager loggerManager, IJwtReader jwtReader) : base(repository, mapper, loggerManager, jwtReader)
 
         {
-            _workFlowLitigation = workFlowLitigation;
+           // _workFlowLitigation = workFlowLitigation;
             _context = context;
             _jwtReader = jwtReader;
             _contractService = contractService;
@@ -70,6 +74,7 @@ namespace REAC.Application.AppServices.Litigation
             _requestFileService = requestFileService;
             _groundService = groundService;
             _groundFileService = groundFileService;
+            _serviceProvider = service;
         }
         public async Task<BaseResponse> AddLitigation(LitigationCreateUpdateDto model)
         { 
@@ -80,7 +85,6 @@ namespace REAC.Application.AppServices.Litigation
             var litigations = await GetQueryableAsync();
             BaseResponse? addedLitigation = null;
             Guid litigationId = Guid.Empty;
-
             if (model.IsSent && model.Id ==Guid.Empty)
             {         
                 model.ExternalStatusId = LitigationRequestStatus.New;
@@ -166,6 +170,7 @@ namespace REAC.Application.AppServices.Litigation
 
                 if (model.IsSent)
                 {
+                     //var _bpfService= _serviceProvider.GetRequiredService<IBpfService>();
                     //await _bpfService.ExcuteWorkFlow(litigationId, Guid.Parse("15d87d0d-3cf4-4969-9c7e-933aeea0e5f5"), default);
                     ////  Guid employee = await _stepService.GetLowestEmployee();
                     //await _bpfService.Assign(new Contracts.Dtos.Wpf.Business.AssignRequestPayload
@@ -235,6 +240,20 @@ namespace REAC.Application.AppServices.Litigation
                     litigationId = model.Id;
                 }
 
+                if (model.IsSent)
+                {
+                    var _bpfService = _serviceProvider.GetRequiredService<IBpfService>();
+                    var _stepService = _serviceProvider.GetRequiredService<IWorkFlowStepService>();
+                    await _bpfService.ExcuteWorkFlow(litigationId, Guid.Parse("15d87d0d-3cf4-4969-9c7e-933aeea0e5f5"), default);
+                    Guid employee = await _stepService.GetLowestEmployee();
+                    await _bpfService.Assign(new Contracts.Dtos.Wpf.Business.AssignRequestPayload
+                    {
+                        DestinationEmployeeId = employee,
+                        SourceEmployeeId = Guid.Parse("B9BBE3E5-0CA9-44AF-95FA-D2C3A0EC2280"),
+                        RequestId = litigationId
+
+                    }, default);
+                }
 
                 if (!addedLitigation.IsDone)
                 {
@@ -246,15 +265,17 @@ namespace REAC.Application.AppServices.Litigation
 
                 if (model.IsSent)
                 {
-                    //await _bpfService.ExcuteWorkFlow(litigationId, Guid.Parse("15d87d0d-3cf4-4969-9c7e-933aeea0e5f5"), default);
-                    //Guid employee = await _stepService.GetLowestEmployee();
-                    //await _bpfService.Assign(new Contracts.Dtos.Wpf.Business.AssignRequestPayload
-                    //{
-                    //    DestinationEmployeeId = employee,
-                    //    SourceEmployeeId = Guid.Parse("B9BBE3E5-0CA9-44AF-95FA-D2C3A0EC2280"),
-                    //    RequestId = litigationId
+                    var _bpfService= _serviceProvider.GetRequiredService<IBpfService>();
+                    var _stepService = _serviceProvider.GetRequiredService<IWorkFlowStepService>();
+                    await _bpfService.ExcuteWorkFlow(litigationId, Guid.Parse("15d87d0d-3cf4-4969-9c7e-933aeea0e5f5"), default);
+                    Guid employee = await _stepService.GetLowestEmployee();
+                    await _bpfService.Assign(new Contracts.Dtos.Wpf.Business.AssignRequestPayload
+                    {
+                        DestinationEmployeeId = employee,
+                        SourceEmployeeId = Guid.Parse("B9BBE3E5-0CA9-44AF-95FA-D2C3A0EC2280"),
+                        RequestId = litigationId
 
-                    //}, default);
+                    }, default);
                 }
 
                 return addedLitigation;

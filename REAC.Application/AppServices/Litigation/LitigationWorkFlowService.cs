@@ -23,15 +23,11 @@ namespace REAC.Application.AppServices.Litigation
     {
         private readonly ILitigationRequestService _litigationRequestService;
         private readonly IMapper _mapper;
-        private readonly IBpfService _bpfService;
-        private readonly IWorkFlowStepService _stepService;
 
         public LitigationWorkFlowService(IMapper mapper,ILitigationRequestService litigationRequestService)
         {
             _litigationRequestService = litigationRequestService;
-            _mapper = mapper;
-            //_bpfService = bpfService;
-            //_stepService = workFlowStepService;
+            _mapper = mapper;   
         }
         public async Task<BaseResponse> UpdateLitigationStatusAsync(ResponseWorkFlowDto model, Guid requestId)
         {
@@ -41,9 +37,6 @@ namespace REAC.Application.AppServices.Litigation
             var litiationCreateUpdateDto = _mapper.Map<LitigationCreateUpdateDto>(litigationRquest.Data);
             if(litiationCreateUpdateDto != null)
             await _litigationRequestService.AddLitigation(litiationCreateUpdateDto);
-            //((DataResponse<LitigationRequestCreateUpdateDto>)litigationRquest).Data.ExternalStatusId = (int)model.ExternalStatus;
-            //await _litigationRequestService.Add<LitigationRequestCreateUpdateDto>(((DataResponse<LitigationRequestCreateUpdateDto>)litigationRquest).Data);
-
             return litigationRquest;
         }
         public async Task ExecuteLitigationWorkFlow(Guid litigationId) //Create new interface to implement this logic to avoid cercullar injection

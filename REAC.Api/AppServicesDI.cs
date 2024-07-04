@@ -41,7 +41,6 @@ namespace REAC.Api
             // Register other services
             services.AddScoped<IWorkFlowProcessingLogService, WorkFlowProcessingLogService>();
             services.AddScoped<IWorkFlowLitigationActionsService, WorkFlowLitigationActionsService>();
-
             services.AddScoped<IBpfService, BpfService>();
             services.AddScoped<IWorkFlowLogService, WorkFlowLogService>();
             services.AddScoped<IWorkFlowStepService, WorkFlowStepService>();
