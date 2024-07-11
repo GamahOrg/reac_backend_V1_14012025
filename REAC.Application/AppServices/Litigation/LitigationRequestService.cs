@@ -89,17 +89,22 @@ namespace REAC.Application.AppServices.Litigation
             var litigations = await GetQueryableAsync();
             BaseResponse? addedLitigation = null;
             Guid litigationId = Guid.Empty;
-            if (model.ExemptionReductionCategory.IsExemptionReductionCategory == true)
+            if (model.ExemptionReductionCategory != null)
             {
-                #region  Exempt Categories 
-                string rootFolder = Path.Combine(Directory.GetCurrentDirectory(), "Attachments", "Rent", model.ExemptionReductionCategory.AttachmentId.ToString());
-                await FileHelper.Move(model.ExemptionReductionCategory.AttachmentId, rootFolder);
+                if (model.ExemptionReductionCategory.IsExemptionReductionCategory == true)
+                {
+                    #region  Exempt Categories 
+                    string rootFolder = Path.Combine(Directory.GetCurrentDirectory(), "Attachments", "Rent", model.ExemptionReductionCategory.AttachmentId.ToString());
+                    await FileHelper.Move(model.ExemptionReductionCategory.AttachmentId, rootFolder);
+                }
+                else
+                {
+                    
+                      model.ExemptionReductionCategory.Id = new Guid("d4b21df4-bd49-4e3b-b634-2a714e4ebcc3");
+                }
                 #endregion
             }
-            else
-            {
-                model.ExemptionReductionCategory.Id = new Guid("d4b21df4-bd49-4e3b-b634-2a714e4ebcc3");
-            }
+            
             if (model.IsSent && model.Id ==Guid.Empty)
             {         
                 model.ExternalStatusId = LitigationRequestStatus.New;
@@ -171,7 +176,7 @@ namespace REAC.Application.AppServices.Litigation
 
                 #endregion
 
-                if (model.ExemptionReductionCategory.IsExemptionReductionCategory == true)
+                if (model.ExemptionReductionCategory == null)
                 {
                     #region  Exempt Categories 
                     string rootFolder = Path.Combine(Directory.GetCurrentDirectory(), "Attachments", "Rent", model.ExemptionReductionCategory.AttachmentId.ToString());
@@ -376,7 +381,6 @@ namespace REAC.Application.AppServices.Litigation
 
         }
 
-
         public async Task<BaseResponse> Get(Guid litigationId)
         {
             var quarble = await GetQueryableAsync();
@@ -441,7 +445,7 @@ namespace REAC.Application.AppServices.Litigation
                 .FirstOrDefault(x => x.Id == litigationId);
             var mapped = _mapper.Map<LitigationDetailsDto>(result);
             return new DataResponse<LitigationDetailsDto> { Data = mapped, IsDone = true };
-        }
+        }   
 
     }
 }
