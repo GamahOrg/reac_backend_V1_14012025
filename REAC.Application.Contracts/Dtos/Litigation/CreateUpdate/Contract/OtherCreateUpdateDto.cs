@@ -21,7 +21,7 @@ namespace REAC.Application.Contracts.Dtos.Litigation.CreateUpdate.Contract
         public List<string> OtherCategories { get; set; }
         public LitigationRequestOwnerType FirstPartyCapacity { get; set; } // صفة المدعي
         public Guid ContractAttachmentId { get; set; }  // عقد ايجار محل الدعوة
-        public IFormFile? IdentityAttachment { get; set; } // صورة الهوية PENDING
+       // public IFormFile? IdentityAttachment { get; set; } // صورة الهوية PENDING
         public string IdentityNo { get; set; }
         public Guid FirstPartyCitizenId { get; set; }
         public string NationalAddress { get; set; }
@@ -41,9 +41,9 @@ namespace REAC.Application.Contracts.Dtos.Litigation.CreateUpdate.Contract
         [MaxLength(10)]
         public string? LawLicenseNumber { get; set; }  //رقم رخصة المحاماة
         public DateTime? LawLicenseExpirationDate { get; set; }  //تاريخ انتهاء رخصة المحاماه
-        public SysFileManagerCreateUpdateDto? AgancyAttachment { get; set; }
-        public SysFileManagerCreateUpdateDto? LawLicenseAttachment { get; set; }
-        public SysFileManagerCreateUpdateDto? EstablishmentContract { get; set; }
+        public Guid AgancyAttachmentId { get; set; }
+        public Guid LawLicenseAttachmentId { get; set; }
+        public Guid EstablishmentContractId { get; set; }
 
     }
 }

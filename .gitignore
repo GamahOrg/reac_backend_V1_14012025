@@ -363,3 +363,5 @@ MigrationBackup/
 FodyWeavers.xsd
 /Wafi.Api/appsettings.json
 /Wafi.Api/Resources/Files
+/LitigationRequestContract.txt
+/.gitignore

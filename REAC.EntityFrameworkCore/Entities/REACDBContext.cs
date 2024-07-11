@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using REAC.Domain.Shared.Enum;
+using REAC.EntityFrameworkCore.Entities.Integration;
 using REAC.EntityFrameworkCore.Entities.Litigation;
 using REAC.EntityFrameworkCore.Entities.Reconciliation;
 using REAC.EntityFrameworkCore.Entities.Wpf.Business;
@@ -131,7 +132,7 @@ public partial class REACDBContext : DbContext
     public virtual DbSet<LitigationArea> LitigationAreas { get; set; }
     public virtual DbSet<LitigationCity> LitigationCitys { get; set; }
     public virtual DbSet<OtherCategory> OtherCategories { get; set; }
-
+    public virtual DbSet<NafathTransaction> NafathTransactions { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -1292,8 +1293,6 @@ public partial class REACDBContext : DbContext
             entity.HasKey(e => e.Id);
             entity.Property(e => e.Id).HasColumnType("uniqueidentifier");
         });
-
-
 
 
         // By abdulrahman

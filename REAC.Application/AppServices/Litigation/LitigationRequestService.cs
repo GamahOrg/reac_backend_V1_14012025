@@ -11,9 +11,12 @@ using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json.Schema;
 using REAC.Application.AppServices.Integration;
+using REAC.Application.Contracts.Dtos.Integration.Properties;
+using REAC.Application.Contracts.Dtos.Integration.Rent;
 using REAC.Application.Contracts.Dtos.Litigation;
 using REAC.Application.Contracts.Dtos.Litigation.Create.Litigation;
 using REAC.Application.Contracts.Dtos.Litigation.CreateUpdate.Litigation;
+using REAC.Application.Contracts.Dtos.Litigation.Get;
 using REAC.Application.Contracts.Dtos.Litigation.List;
 using REAC.Application.Contracts.IAppServices;
 using REAC.Application.Contracts.IAppServices.Litigation;
@@ -26,6 +29,7 @@ using REAC.Domain.Shared.Enum;
 using REAC.Domain.Shared.Helpers;
 using REAC.EntityFrameworkCore.Entities.Litigation;
 using REAC.EntityFrameworkCore.Entities.System;
+using REAC.EntityFrameworkCore.Entities.Wpf.Business;
 using System;
 using System.Configuration;
 using System.Diagnostics.Contracts;
@@ -55,9 +59,8 @@ namespace REAC.Application.AppServices.Litigation
         private readonly ILitigationRequestRequestFileService _requestFileService;
         private readonly ILitigationRequestGroundService _groundService;
         private readonly ILitigationRequestGroundFileService _groundFileService;
-       // private readonly IWorkFlowLitigationActionsService _workFlowLitigation;
-       private readonly IServiceProvider _serviceProvider;
-
+        private readonly IServiceProvider _serviceProvider;
+        
         public LitigationRequestService(REACDBContext context, ILitigationRequestGroundFileService groundFileService, IServiceProvider service,
             ILitigationRequestGroundService groundService, ILitigationRequestRequestFileService requestFileService, ILitigationRequestRequestService requestsService,
             ISysFileManagerService fileService, ISysLitigationRequestAmountService amountService, IUserProviderService contractService, IEntityRepository repository, 
@@ -76,6 +79,7 @@ namespace REAC.Application.AppServices.Litigation
             _groundFileService = groundFileService;
             _serviceProvider = service;
         }
+
         public async Task<BaseResponse> AddLitigation(LitigationCreateUpdateDto model)
         { 
             return await Add(model);
@@ -85,13 +89,25 @@ namespace REAC.Application.AppServices.Litigation
             var litigations = await GetQueryableAsync();
             BaseResponse? addedLitigation = null;
             Guid litigationId = Guid.Empty;
+            if (model.ExemptionReductionCategory.IsExemptionReductionCategory == true)
+            {
+                #region  Exempt Categories 
+                string rootFolder = Path.Combine(Directory.GetCurrentDirectory(), "Attachments", "Rent", model.ExemptionReductionCategory.AttachmentId.ToString());
+                await FileHelper.Move(model.ExemptionReductionCategory.AttachmentId, rootFolder);
+                #endregion
+            }
+            else
+            {
+                model.ExemptionReductionCategory.Id = new Guid("d4b21df4-bd49-4e3b-b634-2a714e4ebcc3");
+            }
             if (model.IsSent && model.Id ==Guid.Empty)
             {         
                 model.ExternalStatusId = LitigationRequestStatus.New;
                 model.InternalStatusId = LitigationRequestStatus.New;
-           //    var countt = GetLitigationsCountByType(model.LitigationRequestContractType);
-               // var count = _contractService.GetContractCountByContractType(model.LitigationRequestContractType);
-               var count = litigations.Where(x => (int)x.Contract.LitigationRequestContractTypeId == (int)model.LitigationRequestContractType).Count();
+             
+                //    var countt = GetLitigationsCountByType(model.LitigationRequestContractType);
+                // var count = _contractService.GetContractCountByContractType(model.LitigationRequestContractType);
+                var count = litigations.Where(x => (int)x.Contract.LitigationRequestContractTypeId == (int)model.LitigationRequestContractType).Count();
                 var requestCode = RequestCode.GenerateRequestCode(model.LitigationRequestContractType, count);
                 model.RequestCode = requestCode;
 
@@ -100,6 +116,7 @@ namespace REAC.Application.AppServices.Litigation
             {
                 model.ExternalStatusId = LitigationRequestStatus.SaveAsDraft;
                 model.InternalStatusId = LitigationRequestStatus.SaveAsDraft;
+               // model.SentOn = null;
             }
         
             if (model.LitigationRequestContractType == LitigationRequestContractType.OtherServices)
@@ -170,16 +187,17 @@ namespace REAC.Application.AppServices.Litigation
 
                 if (model.IsSent)
                 {
-                     //var _bpfService= _serviceProvider.GetRequiredService<IBpfService>();
-                    //await _bpfService.ExcuteWorkFlow(litigationId, Guid.Parse("15d87d0d-3cf4-4969-9c7e-933aeea0e5f5"), default);
-                    ////  Guid employee = await _stepService.GetLowestEmployee();
-                    //await _bpfService.Assign(new Contracts.Dtos.Wpf.Business.AssignRequestPayload
-                    //{
-                    //    DestinationEmployeeId = Guid.Parse("3afafe63-62e5-4bc9-a8b9-7713c42e7097"),
-                    //    SourceEmployeeId = Guid.Parse("b9bbe3e5-0ca9-44af-95fa-d2c3a0ec2280"),
-                    //    RequestId = litigationId
+                    var _bpfService = _serviceProvider.GetRequiredService<IBpfService>();
+                    var _stepService = _serviceProvider.GetRequiredService<IWorkFlowStepService>();
+                    await _bpfService.ExcuteWorkFlow(litigationId, Guid.Parse("15d87d0d-3cf4-4969-9c7e-933aeea0e5f5"), default);
+                    Guid employee = await _stepService.GetLowestEmployee();
+                    await _bpfService.Assign(new Contracts.Dtos.Wpf.Business.AssignRequestPayload
+                    {
+                        DestinationEmployeeId = employee,
+                        SourceEmployeeId = Guid.Parse("B9BBE3E5-0CA9-44AF-95FA-D2C3A0EC2280"),
+                        RequestId = litigationId
 
-                    //}, default);
+                    }, default);
                 }
 
                 return addedLitigation;
@@ -200,6 +218,7 @@ namespace REAC.Application.AppServices.Litigation
                 if (model.Id == Guid.Empty)
                 {
                     addedLitigation = await base.AddAsync(model, default);
+
                     litigationId = await GetAddedLitigation();
                     #region Requests
                     foreach (var item in model.Requests)
@@ -233,6 +252,31 @@ namespace REAC.Application.AppServices.Litigation
                     if (!Directory.Exists(rootFolder)) { Directory.CreateDirectory(rootFolder); }
                     await FileHelper.Move(model.ExemptionReductionCategory.AttachmentId, rootFolder);
                     #endregion
+
+                    if (model.IsSent)
+                    {
+                        try
+                        {
+                            var _bpfService = _serviceProvider.GetRequiredService<IBpfService>();                          
+                            var _stepService = _serviceProvider.GetRequiredService<IWorkFlowStepService>();
+                            await _bpfService.ExcuteWorkFlow(model.Id, Guid.Parse("15d87d0d-3cf4-4969-9c7e-933aeea0e5f5"), default);
+                            Guid employee = await _stepService.GetLowestEmployee();
+                            await _bpfService.Assign(new Contracts.Dtos.Wpf.Business.AssignRequestPayload
+                            {
+                                DestinationEmployeeId = employee,
+                                SourceEmployeeId = Guid.Parse("B9BBE3E5-0CA9-44AF-95FA-D2C3A0EC2280"),
+                                RequestId = model.Id
+
+                            }, default);
+                        }
+                        catch (Exception ex)
+                        {
+                            _loggerManager.Log(Core.Log.Domain.Shared.Enums.LoggerType.File,
+                            new Core.Log.Application.Contracts.Dto.LogDto
+                            { Message = ex.Message, Id = new Guid() });                       
+                         }
+
+                    }
                 }
                 else
                 {
@@ -240,43 +284,13 @@ namespace REAC.Application.AppServices.Litigation
                     litigationId = model.Id;
                 }
 
-                if (model.IsSent)
-                {
-                    var _bpfService = _serviceProvider.GetRequiredService<IBpfService>();
-                    var _stepService = _serviceProvider.GetRequiredService<IWorkFlowStepService>();
-                    await _bpfService.ExcuteWorkFlow(litigationId, Guid.Parse("15d87d0d-3cf4-4969-9c7e-933aeea0e5f5"), default);
-                    Guid employee = await _stepService.GetLowestEmployee();
-                    await _bpfService.Assign(new Contracts.Dtos.Wpf.Business.AssignRequestPayload
-                    {
-                        DestinationEmployeeId = employee,
-                        SourceEmployeeId = Guid.Parse("B9BBE3E5-0CA9-44AF-95FA-D2C3A0EC2280"),
-                        RequestId = litigationId
-
-                    }, default);
-                }
+               
 
                 if (!addedLitigation.IsDone)
                 {
                     return addedLitigation;
                 }
                 #endregion
-
-
-
-                if (model.IsSent)
-                {
-                    var _bpfService= _serviceProvider.GetRequiredService<IBpfService>();
-                    var _stepService = _serviceProvider.GetRequiredService<IWorkFlowStepService>();
-                    await _bpfService.ExcuteWorkFlow(litigationId, Guid.Parse("15d87d0d-3cf4-4969-9c7e-933aeea0e5f5"), default);
-                    Guid employee = await _stepService.GetLowestEmployee();
-                    await _bpfService.Assign(new Contracts.Dtos.Wpf.Business.AssignRequestPayload
-                    {
-                        DestinationEmployeeId = employee,
-                        SourceEmployeeId = Guid.Parse("B9BBE3E5-0CA9-44AF-95FA-D2C3A0EC2280"),
-                        RequestId = litigationId
-
-                    }, default);
-                }
 
                 return addedLitigation;
             }
@@ -324,9 +338,7 @@ namespace REAC.Application.AppServices.Litigation
 
         public async Task<BaseResponse> AuditngList(int pageIndex, int pageSize, string? searchKey, AuditingListDto model)
         {
-            //var logdenUser = _jwtReader.GetUserId();
-            //if (logdenUser == model.Id)
-            //{ }
+            //var logdenUser = Guid.Parse("1c1b6018-69c8-43f5-b5b1-72cea64d0f9f");/*_jwtReader.GetUserId();*/
 
             var litigations = await GetQueryableAsync();
             litigations = litigations.Include(x => x.Contract);
@@ -354,7 +366,7 @@ namespace REAC.Application.AppServices.Litigation
                }
             */
             litigations = litigations.OrderByDescending(x => x.CreatedOn);
-            var list = _mapper.Map<List<AuditingListDto>>(litigations);
+            var list = _mapper.Map<List<AuditingListDto>>(litigations).Where(x => x.InternalStatusId != LitigationRequestStatus.SaveAsDraft).ToList();
             var result = await PaginatedList<AuditingListDto>.CreateAsync(list, pageIndex, pageSize);
             return new DataResponse<PaginatedList<AuditingListDto>>()
             {
@@ -369,7 +381,6 @@ namespace REAC.Application.AppServices.Litigation
         {
             var quarble = await GetQueryableAsync();
             var result = quarble.Include(x => x.Contract).Include(x => x.LitigationRequestCategory).Include(x => x.Area).Include(x => x.City).Include(x => x.ApplicantCitizen).Include(x => x.Contract.SecondPartyCitizen).Include(x => x.Contract.FirstPartyCitizen).Include(x=>x.LitigationRequestGrounds).Include(x=>x.LitigationRequestRequests).FirstOrDefault(x => x.Id == litigationId);
-            //return await base.GetByIdAsync<LitigationRequest>(litigationId);
             return new DataResponse<LitigationRequest> { Data = result, IsDone = true };
         }
         public async Task<int> GetLitigationsCountByType(LitigationRequestContractType contractType)
@@ -401,5 +412,36 @@ namespace REAC.Application.AppServices.Litigation
             }
             return count;
         }
+
+        public async Task<BaseResponse> GetLitigationPartiesDetails(Guid litigationId)
+        {
+            var quarble = await GetQueryableAsync();
+            var result = quarble.Include(x => x.Contract)
+                .Include(x => x.LitigationRequestCategory)
+                .Include(x => x.Area)
+                .Include(x => x.City)
+                .Include(x => x.ApplicantCitizen)
+                .Include(x => x.Contract.SecondPartyCitizen)
+                .Include(x => x.Contract.FirstPartyCitizen)
+                .FirstOrDefault(x => x.Id == litigationId);
+            var mapped = _mapper.Map<LitigationPartiesDetailsDto>(result);
+            return new DataResponse<LitigationPartiesDetailsDto> { Data = mapped, IsDone = true };
+        }
+
+        public async Task<BaseResponse> GetLitigationDetails(Guid litigationId)
+        {
+            var quarble = await GetQueryableAsync();
+            var result = quarble.Include(x => x.Contract)
+                .Include(x => x.LitigationRequestCategory)
+                .Include(x => x.Area)
+                .Include(x => x.City)
+                .Include(x => x.ApplicantCitizen)
+                .Include(x => x.Contract.SecondPartyCitizen)
+                .Include(x => x.Contract.FirstPartyCitizen)
+                .FirstOrDefault(x => x.Id == litigationId);
+            var mapped = _mapper.Map<LitigationDetailsDto>(result);
+            return new DataResponse<LitigationDetailsDto> { Data = mapped, IsDone = true };
+        }
+
     }
 }

@@ -18,10 +18,10 @@ namespace REAC.Application.Contracts.IAppServices.Litigation
         Task<BaseResponse> AddOtherContract(OtherCreateUpdateDto model);
         Task<BaseResponse> AddWafiContract(WafiCreateUpdateDto model);
         Task<BaseResponse> AddDefendant(DefendantCreateUpdateDto model);
-        Task<BaseResponse> RentIntegrate(LitigationRequestOwnerType FirstPartyCapacity, string contractNumber = "", string versionNumber = "");
-        Task<BaseResponse> RealStateIntegrate(LitigationRequestOwnerType FirstPartyCapacity, string contractNumber = "");
-        Task<BaseResponse> WafiIntegrate(LitigationRequestOwnerType FirstPartyCapacity, string contractKey = "");
-        Task<BaseResponse> PropertiesIntegrate(LitigationRequestOwnerType FirstPartyCapacity, string associationCode = "", string associationName = "");
+        Task<BaseResponse> RentIntegrate(LitigationRequestOwnerType FirstPartyCapacity, string contractNumber , string versionNumber );
+        Task<BaseResponse> RealStateIntegrate(LitigationRequestOwnerType FirstPartyCapacity, string contractNumber);
+        Task<BaseResponse> WafiIntegrate(LitigationRequestOwnerType FirstPartyCapacity, string WafiLicenseNo, WafiRequestOwnerType firstPartType, WafiRequestOwnerType secondPartyType);
+        Task<BaseResponse> PropertiesIntegrate(LitigationRequestOwnerType FirstPartyCapacity, string associationCode , string associationName );
         Task<BaseResponse> AddRealEstateContract(RealEstateBrokerageCreateUpdateDto model);
         Task<int> GetContractCountByContractType(LitigationRequestContractType litigationRequestContractTypeId);
 

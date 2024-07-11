@@ -30,11 +30,11 @@ namespace REAC.Application.Contracts.Dtos.Litigation.Create.Litigation
         public Guid ContractId { get; set; }// contract primary key
         public decimal? Fees { get; set; } // from system
         public LitigationRequestCategory LitigationRequestCategoryId { get; set; }
-        public ExemptionReductionCategoryDto ExemptionReductionCategory { get; set; }
+        public ExemptionReductionCategoryDto? ExemptionReductionCategory { get; set; }
         public LitigationRequestContractType LitigationRequestContractType { get; set; } // front send type here
         public LitigationRequestOwnerType LitigationRequestOwnerTypeId { get; set; }// front send type here  from integration and check identity from system 
         public bool IsSent { get; set; }
-        public DateTime SentOn { get; set; }
+        public DateTime? SentOn { get; set; }
         public Guid CityId { get; set; }
         public Guid AreaId { get; set; }
         public string ContractAddress { get; set; } // العنوان الوطني

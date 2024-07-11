@@ -494,11 +494,11 @@ namespace Core.GenericRepository.BaseRepository
                     throw new ArgumentNullException(nameof(entity));
                 }
 
-                var response = BeforeDeleteEvent.Invoke(_dbContext, entity);
-                if (!response.IsDone)
-                    return response;
+                //var response = BeforeDeleteEvent.Invoke(_dbContext, entity);
+                //if (!response.IsDone)
+                //    return response;
                 _dbContext.Set<TEntity>().Remove(entity);
-                response = AfterDeleteEvent.Invoke(_dbContext, entity);
+                var response = AfterDeleteEvent.Invoke(_dbContext, entity);
                 if (!response.IsDone)
                     return response;
                 return new BaseResponse()

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using REAC.EntityFrameworkCore.Entities.System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,6 +11,7 @@ namespace REAC.Application.Contracts.Dtos.Litigation.CreateUpdate.Litigation
     {
         public Guid Id { get; set; }
         public Guid AttachmentId { get; set; }
+        public SysFileManagerCreateUpdateDto? CategoryFile { get; set; }
         public bool IsExemptionReductionCategory { get; set; }
     }
 }

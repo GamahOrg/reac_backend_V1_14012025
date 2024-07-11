@@ -1,4 +1,5 @@
-﻿using REAC.Application.Contracts.Dtos.Integration.Rent;
+﻿using REAC.Application.Contracts.Dtos.Integration.Party;
+using REAC.Application.Contracts.Dtos.Integration.Rent;
 using REAC.Domain.Shared.Enum;
 using System;
 using System.Collections.Generic;
@@ -12,8 +13,8 @@ namespace REAC.Application.Contracts.Dtos.Integration.Properties
     {
         public string? AssociationName { get; set; } // اسم الجمعية
         public string? AssociationCode { get; set; } // كود الجمعية
-        public PropertiesFirstPartyDto FirstPartyDto { get; set; }
-        public PropertiesSecondPartyDto SecondPartyDto { get; set; }
+        public PartyDTO FirstPartyDto { get; set; }
+        public PartyDTO SecondPartyDto { get; set; }
         public LitigationRequestOwnerType FirstPartyCapacity { get; set; }
         public string ContractAddress { get; set; }
         public Guid Id { get; set; }

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using REAC.Application.Contracts.Dtos.Integration.Nafath;
 using REAC.Application.Contracts.Dtos.Litigation;
 using REAC.Application.Contracts.Dtos.System.DepartmentDtos;
 using REAC.Application.Contracts.Dtos.System.EmployeeDtos;
@@ -11,6 +12,7 @@ using REAC.Application.Contracts.Dtos.System.LitigationRequestExtendPeriodReques
 using REAC.Application.Contracts.Dtos.System.LitigationRequestMeetingDecisionDtos;
 using REAC.Application.Contracts.Dtos.System.LitigationRequestOwnerTypeDtos;
 using REAC.Application.Contracts.Dtos.System.LitigationRequestStatusDtos;
+using REAC.EntityFrameworkCore.Entities.Integration;
 using REAC.EntityFrameworkCore.Entities.Litigation;
 using REAC.EntityFrameworkCore.Entities.Reconciliation;
 using REAC.EntityFrameworkCore.Entities.System;
@@ -145,6 +147,7 @@ namespace REAC.Application.Contracts
             CreateMap<SysLitigationRequestMeetingConfiguration, SysLitigationRequestMeetingConfigurationCreateUpdateDto>().ReverseMap();
             CreateMap<SysSetting, SysSettingCreateUpdateDto>().ReverseMap();
             CreateMap<SysRegistrationRequest, SysRegistrationRequestCreateUpdateDto>().ReverseMap();
+            CreateMap<NafathTransaction, NafathTransactionDto>().ReverseMap();
         }
     }
 }

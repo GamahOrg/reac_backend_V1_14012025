@@ -1,4 +1,5 @@
-﻿using REAC.Domain.Shared.Enum;
+﻿using REAC.Application.Contracts.Dtos.Integration.Party;
+using REAC.Domain.Shared.Enum;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -10,8 +11,8 @@ namespace REAC.Application.Contracts.Dtos.Integration.Rent
 {
     public class RentIntegrateDto
     {
-        public RentFirstPartyDto FirstPartyDto { get; set; }
-        public RentSecondPartyDto SecondPartyDto { get; set; }
+        public PartyDTO FirstPartyDto { get; set; }
+        public PartyDTO SecondPartyDto { get; set; }
         public string ContractKey { get; set; }//رقم عقد الايجار
         [MaxLength(4)]
         public string VersionNumber { get; set; } = null!; // رقم النسخة
