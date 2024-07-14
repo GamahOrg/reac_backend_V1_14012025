@@ -1,4 +1,5 @@
-﻿using REAC.EntityFrameworkCore.Entities.System;
+﻿using REAC.EntityFrameworkCore.Entities.Litigation;
+using REAC.EntityFrameworkCore.Entities.System;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -33,5 +34,6 @@ namespace REAC.Application.Contracts.Dtos.Integration.Rent
         public SysFileManagerCreateUpdateDto? AgancyAttachment { get; set; }
         public SysFileManagerCreateUpdateDto? LawLicenseAttachment { get; set; }
         public SysFileManagerCreateUpdateDto? EstablishmentContract { get; set; }
+     //   public virtual LitigationRequestContract Contract { get; set; } = null!;
     }
 }

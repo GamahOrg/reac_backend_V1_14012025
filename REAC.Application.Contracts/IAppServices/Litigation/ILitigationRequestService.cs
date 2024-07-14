@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using REAC.Application.Contracts.Dtos.Litigation;
 using REAC.Application.Contracts.Dtos.Litigation.Create.Litigation;
+using REAC.Application.Contracts.Dtos.Litigation.Get;
 using REAC.Application.Contracts.Dtos.Litigation.List;
 using REAC.EntityFrameworkCore.Entities.Litigation;
 using System.Threading.Tasks;
@@ -14,6 +15,8 @@ namespace REAC.Application.Contracts.IAppServices.Litigation
         Task<BaseResponse> List(int pageIndex, int pageSize, string? searchKey, LitigationListDto model);
         Task<BaseResponse> AuditngList(int pageIndex, int pageSize, string? searchKey, AuditingListDto model);
         Task<BaseResponse> Get(Guid litigationId);
+        Task<BaseResponse> GetLitigationPartiesDetails(Guid litigationId);
+        Task<BaseResponse> GetLitigationDetails(Guid litigationId);
         Task<BaseResponse> AddLitigation(LitigationCreateUpdateDto model);
 
 

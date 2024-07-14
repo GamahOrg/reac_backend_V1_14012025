@@ -1,4 +1,5 @@
-﻿using REAC.Application.Contracts.Dtos.Integration.ReRealStatent;
+﻿using REAC.Application.Contracts.Dtos.Integration.Party;
+using REAC.Application.Contracts.Dtos.Integration.ReRealStatent;
 using REAC.Domain.Shared.Enum;
 using System;
 using System.Collections.Generic;
@@ -11,8 +12,8 @@ namespace REAC.Application.Contracts.Dtos.Integration.RealState
 {
     public class RealStateIntegrateDto
     {
-        public RealStateFirstPartyDto FirstPartyDto { get; set; }
-        public RealStateSecondPartyDto SecondPartyDto { get; set; }
+        public PartyDTO FirstPartyDto { get; set; }
+        public PartyDTO SecondPartyDto { get; set; }
         public string ContractKey { get; set; }//رقم عقد الايجار
         public LitigationRequestOwnerType FirstPartyCapacity { get; set; }
         public string ContractAddress { get; set; }

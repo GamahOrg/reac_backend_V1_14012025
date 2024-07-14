@@ -32,6 +32,7 @@ namespace Bpf.Application.ModuleServices
             _repository = repository;
             _workFlowProcessingLogService = workFlowProcessingLogService;
             _workFlowLogService = workFlowLogService;
+            _litigationWorkFlowService = litigationWorkFlowServic;
         }
 
 

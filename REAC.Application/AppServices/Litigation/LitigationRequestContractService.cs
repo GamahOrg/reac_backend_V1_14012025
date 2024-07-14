@@ -32,6 +32,7 @@ using REAC.Application.Contracts.Dtos.Integration.ReRealStatent;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Cryptography.X509Certificates;
 using System.Globalization;
+using REAC.Application.Contracts.Dtos.Integration.Party;
 
 namespace REAC.Application.AppServices.Litigation
 {
@@ -162,6 +163,9 @@ namespace REAC.Application.AppServices.Litigation
 
             string rootFolder = Path.Combine(Directory.GetCurrentDirectory(), "Attachments", "Other", model.ContractKey);
             await FileHelper.Move(model.ContractAttachmentId, rootFolder);
+            await FileHelper.Move(model.AgancyAttachmentId, rootFolder);
+            await FileHelper.Move(model.LawLicenseAttachmentId, rootFolder);
+            await FileHelper.Move(model.EstablishmentContractId, rootFolder);
             model.LeaseContractFileId = await _fileService.GetLatestFile();
             #endregion
             if (model.Id == Guid.Empty)
@@ -210,10 +214,10 @@ namespace REAC.Application.AppServices.Litigation
             {
                 ContractKey = "1234abcd",
                 VersionNumber = "7777",
-                FirstPartyDto = new RentFirstPartyDto
+                FirstPartyDto = new PartyDTO
                 {
-                    Name = "FirstPartyName",
-                    IdentityNo = "123abcdooooo",
+                    FullName = "FirstPartyName",
+                    IdentityNumber = "123abcdooooo",
                     NationalAddress = "testAddress",
                     Nationality = "Egyption",
                     FacilityNumber = null,
@@ -224,11 +228,11 @@ namespace REAC.Application.AppServices.Litigation
                     Email = "first@gmail.com",
                     BirthDate = new DateTime(1999, 1, 1)
                 },
-                SecondPartyDto = new RentSecondPartyDto
+                SecondPartyDto = new PartyDTO
                 {
                     Nationality = FirstPartyCapacity == LitigationRequestOwnerType.CompanyRepresentative ? null : "Egyption",
-                    Name = FirstPartyCapacity == LitigationRequestOwnerType.CompanyRepresentative ? null : "SecondPArtyName",
-                    IdentityNo = FirstPartyCapacity == LitigationRequestOwnerType.CompanyRepresentative ? null : "987wwwccccccc",
+                    FullName = FirstPartyCapacity == LitigationRequestOwnerType.CompanyRepresentative ? null : "SecondPArtyName",
+                    IdentityNumber = FirstPartyCapacity == LitigationRequestOwnerType.CompanyRepresentative ? null : "987wwwccccccc",
                     NationalAddress = FirstPartyCapacity == LitigationRequestOwnerType.CompanyRepresentative ? null : "testAddress",
                     FacilityNumber = FirstPartyCapacity == LitigationRequestOwnerType.CompanyRepresentative ? "123987" : null,
                     CommercialRegistrationNo = FirstPartyCapacity == LitigationRequestOwnerType.CompanyRepresentative ? "9999999" : null,
@@ -255,14 +259,14 @@ namespace REAC.Application.AppServices.Litigation
                     SecondPartyCapacity = rentIntegrateDto.SecondPartyDto.Capacity,
                     SecondPartyEmail = rentIntegrateDto.SecondPartyDto.Email,
                     LeaseContractFileId = Guid.Parse("61a90c64-69c5-4c85-a95f-ad31333abec7"),
-                    SecondPartyIdentityNumber = rentIntegrateDto.SecondPartyDto.IdentityNo,
-                    SecondPartyMobile = rentIntegrateDto.SecondPartyDto.Name,
+                    SecondPartyIdentityNumber = rentIntegrateDto.SecondPartyDto.IdentityNumber,
+                    SecondPartyMobile = rentIntegrateDto.SecondPartyDto.FullName,
                     VersionNumber = rentIntegrateDto.VersionNumber,
-                    SecondPartyName = rentIntegrateDto.SecondPartyDto.Name,
+                    SecondPartyName = rentIntegrateDto.SecondPartyDto.FullName,
 
                 };
-                var checkFirstParty = _citizen.CheckCitizenExist(rentIntegrateDto.FirstPartyDto.IdentityNo);
-                var checkSecondParty = _citizen.CheckCitizenExist(rentIntegrateDto.SecondPartyDto.IdentityNo);
+                var checkFirstParty = _citizen.CheckCitizenExist(rentIntegrateDto.FirstPartyDto.IdentityNumber);
+                var checkSecondParty = _citizen.CheckCitizenExist(rentIntegrateDto.SecondPartyDto.IdentityNumber);
                 if (checkFirstParty.Result.Item2 == true)
                 {
                     contract.FirstPartyCitizenId = checkFirstParty.Result.Item1;
@@ -281,10 +285,10 @@ namespace REAC.Application.AppServices.Litigation
                         District = "District",
                         Email = "firstparty@gmail.com",
                         Employer = "Employer",
-                        FullName = rentIntegrateDto.FirstPartyDto.Name,
+                        FullName = rentIntegrateDto.FirstPartyDto.FullName,
                         GenderId = Gender.Male,
                         IdentityExpiryDate = DateTime.Now.AddDays(5),
-                        IdentityNumber = rentIntegrateDto.FirstPartyDto.IdentityNo,
+                        IdentityNumber = rentIntegrateDto.FirstPartyDto.IdentityNumber,
                         IdentityFileId = Guid.Parse("61a90c64-69c5-4c85-a95f-ad31333abec7"),
                         IdentityTypeId = IdentityType.NationalIdentity,
                         Street = "Street",
@@ -309,10 +313,10 @@ namespace REAC.Application.AppServices.Litigation
                         District = "District",
                         Email = "firstparty@gmail.com",
                         Employer = "Employer",
-                        FullName = rentIntegrateDto.SecondPartyDto.Name,
+                        FullName = rentIntegrateDto.SecondPartyDto.FullName,
                         GenderId = Gender.Male,
                         IdentityExpiryDate = DateTime.Now.AddDays(5),
-                        IdentityNumber = rentIntegrateDto.SecondPartyDto.IdentityNo,
+                        IdentityNumber = rentIntegrateDto.SecondPartyDto.IdentityNumber,
                         IdentityFileId = Guid.Parse("61a90c64-69c5-4c85-a95f-ad31333abec7"),
                         IdentityTypeId = IdentityType.NationalIdentity,
                         Street = "Street",
@@ -322,8 +326,8 @@ namespace REAC.Application.AppServices.Litigation
                     };
                 }
                 await base.AddAsync(contract, default);
-                rentIntegrateDto.FirstPartyDto.FirstPartyCitizenId = contract.FirstPartyCitizen == null ? checkFirstParty.Result.Item1 : contract.FirstPartyCitizen.Id;
-                rentIntegrateDto.SecondPartyDto.SecondPartyCitizenId = contract.SecondPartyCitizen == null ? checkSecondParty.Result.Item1 : contract.SecondPartyCitizen.Id;
+                rentIntegrateDto.FirstPartyDto.CitizenId = contract.FirstPartyCitizen == null ? checkFirstParty.Result.Item1 : contract.FirstPartyCitizen.Id;
+                rentIntegrateDto.SecondPartyDto.CitizenId = contract.SecondPartyCitizen == null ? checkSecondParty.Result.Item1 : contract.SecondPartyCitizen.Id;
                 rentIntegrateDto.Id = contract.Id;
                 #endregion
            // }
@@ -365,9 +369,9 @@ namespace REAC.Application.AppServices.Litigation
                 switch (ownerType)
                 {
                     case LitigationRequestOwnerType.Personal:
-                        if (logdenUserIdentityNumber == rentIntegrateDto.FirstPartyDto.IdentityNo)
+                        if (logdenUserIdentityNumber == rentIntegrateDto.FirstPartyDto.IdentityNumber)
                             rentIntegrateDto.FirstPartyDto.IsPretender = true;
-                        else if (logdenUserIdentityNumber == rentIntegrateDto.SecondPartyDto.IdentityNo)
+                        else if (logdenUserIdentityNumber == rentIntegrateDto.SecondPartyDto.IdentityNumber)
                             rentIntegrateDto.SecondPartyDto.IsPretender = true;
                         break;
                     case LitigationRequestOwnerType.CompanyRepresentative:
@@ -380,18 +384,18 @@ namespace REAC.Application.AppServices.Litigation
                         break;
                     case LitigationRequestOwnerType.Lawyer:
                         var lawyerCitizenList = await _citizenLawyerAgent.GetLawyerCitizens(logdenUser);
-                        if (lawyerCitizenList.Contains(rentIntegrateDto.FirstPartyDto.IdentityNo))
+                        if (lawyerCitizenList.Contains(rentIntegrateDto.FirstPartyDto.IdentityNumber))
                             rentIntegrateDto.FirstPartyDto.IsPretender = true;
 
-                        if (lawyerCitizenList.Contains(rentIntegrateDto.SecondPartyDto.IdentityNo))
+                        if (lawyerCitizenList.Contains(rentIntegrateDto.SecondPartyDto.IdentityNumber))
                             rentIntegrateDto.SecondPartyDto.IsPretender = true;
                         break;
                     case LitigationRequestOwnerType.Agent:
                         var agentCitizenList = await _citizenLawyerAgent.GetAgentCitizens(logdenUser);
-                        if (agentCitizenList.Contains(rentIntegrateDto.FirstPartyDto.IdentityNo))
+                        if (agentCitizenList.Contains(rentIntegrateDto.FirstPartyDto.IdentityNumber))
                             rentIntegrateDto.FirstPartyDto.IsPretender = true;
 
-                        if (agentCitizenList.Contains(rentIntegrateDto.SecondPartyDto.IdentityNo))
+                        if (agentCitizenList.Contains(rentIntegrateDto.SecondPartyDto.IdentityNumber))
                             rentIntegrateDto.SecondPartyDto.IsPretender = true;
                         break;
                     default:
@@ -433,10 +437,10 @@ namespace REAC.Application.AppServices.Litigation
             var realStateIntegrateDto = new RealStateIntegrateDto
             {
                 ContractKey = "1234abcd",
-                FirstPartyDto = new RealStateFirstPartyDto
+                FirstPartyDto = new PartyDTO
                 {
-                    Name = "FirstPartyName",
-                    IdentityNo = "123abcdooooo",
+                    FullName = "FirstPartyName",
+                    IdentityNumber = "123abcdooooo",
                     NationalAddress = "testAddress",
                     Nationality = "Egyption",
                     FacilityNumber = null,
@@ -447,11 +451,11 @@ namespace REAC.Application.AppServices.Litigation
                     Email = "first@gmail.com",
                     BirthDate = new DateTime(1999, 1, 1)
                 },
-                SecondPartyDto = new RealStateSecondPartyDto
+                SecondPartyDto = new PartyDTO
                 {
                     Nationality = FirstPartyCapacity == LitigationRequestOwnerType.CompanyRepresentative ? null : "Egyption",
-                    Name = FirstPartyCapacity == LitigationRequestOwnerType.CompanyRepresentative ? null : "SecondPArtyName",
-                    IdentityNo = FirstPartyCapacity == LitigationRequestOwnerType.CompanyRepresentative ? null : "987wwwccccccc",
+                    FullName = FirstPartyCapacity == LitigationRequestOwnerType.CompanyRepresentative ? null : "SecondPArtyName",
+                    IdentityNumber = FirstPartyCapacity == LitigationRequestOwnerType.CompanyRepresentative ? null : "987wwwccccccc",
                     NationalAddress = FirstPartyCapacity == LitigationRequestOwnerType.CompanyRepresentative ? null : "testAddress",
                     FacilityNumber = FirstPartyCapacity == LitigationRequestOwnerType.CompanyRepresentative ? "123987" : null,
                     CommercialRegistrationNo = FirstPartyCapacity == LitigationRequestOwnerType.CompanyRepresentative ? "9999999" : null,
@@ -478,13 +482,13 @@ namespace REAC.Application.AppServices.Litigation
                     SecondPartyCapacity = realStateIntegrateDto.SecondPartyDto.Capacity,
                     SecondPartyEmail = realStateIntegrateDto.SecondPartyDto.Email,
                     LeaseContractFileId = Guid.Parse("61a90c64-69c5-4c85-a95f-ad31333abec7"),
-                    SecondPartyIdentityNumber = realStateIntegrateDto.SecondPartyDto.IdentityNo,
-                    SecondPartyMobile = realStateIntegrateDto.SecondPartyDto.Name,
-                    SecondPartyName = realStateIntegrateDto.SecondPartyDto.Name,
+                    SecondPartyIdentityNumber = realStateIntegrateDto.SecondPartyDto.IdentityNumber,
+                    SecondPartyMobile = realStateIntegrateDto.SecondPartyDto.FullName,
+                    SecondPartyName = realStateIntegrateDto.SecondPartyDto.FullName,
 
                 };
-                var checkFirstParty = _citizen.CheckCitizenExist(realStateIntegrateDto.FirstPartyDto.IdentityNo);
-                var checkSecondParty = _citizen.CheckCitizenExist(realStateIntegrateDto.SecondPartyDto.IdentityNo);
+                var checkFirstParty = _citizen.CheckCitizenExist(realStateIntegrateDto.FirstPartyDto.IdentityNumber);
+                var checkSecondParty = _citizen.CheckCitizenExist(realStateIntegrateDto.SecondPartyDto.IdentityNumber);
                 if (checkFirstParty.Result.Item2 == true)
                 {
                     contract.FirstPartyCitizenId = checkFirstParty.Result.Item1;
@@ -503,10 +507,10 @@ namespace REAC.Application.AppServices.Litigation
                         District = "District",
                         Email = "firstparty@gmail.com",
                         Employer = "Employer",
-                        FullName = realStateIntegrateDto.FirstPartyDto.Name,
+                        FullName = realStateIntegrateDto.FirstPartyDto.FullName,
                         GenderId = Gender.Male,
                         IdentityExpiryDate = DateTime.Now.AddDays(5),
-                        IdentityNumber = realStateIntegrateDto.FirstPartyDto.IdentityNo,
+                        IdentityNumber = realStateIntegrateDto.FirstPartyDto.IdentityNumber,
                         IdentityFileId = Guid.Parse("61a90c64-69c5-4c85-a95f-ad31333abec7"),
                         IdentityTypeId = IdentityType.NationalIdentity,
                         Street = "Street",
@@ -531,10 +535,10 @@ namespace REAC.Application.AppServices.Litigation
                         District = "District",
                         Email = "firstparty@gmail.com",
                         Employer = "Employer",
-                        FullName = realStateIntegrateDto.SecondPartyDto.Name,
+                        FullName = realStateIntegrateDto.SecondPartyDto.FullName,
                         GenderId = Gender.Male,
                         IdentityExpiryDate = DateTime.Now.AddDays(5),
-                        IdentityNumber = realStateIntegrateDto.SecondPartyDto.IdentityNo,
+                        IdentityNumber = realStateIntegrateDto.SecondPartyDto.IdentityNumber,
                         IdentityFileId = Guid.Parse("61a90c64-69c5-4c85-a95f-ad31333abec7"),
                         IdentityTypeId = IdentityType.NationalIdentity,
                         Street = "Street",
@@ -544,8 +548,8 @@ namespace REAC.Application.AppServices.Litigation
                     };
                 }
                 await base.AddAsync(contract, default);
-                realStateIntegrateDto.FirstPartyDto.FirstPartyCitizenId = contract.FirstPartyCitizen == null ? checkFirstParty.Result.Item1 : contract.FirstPartyCitizen.Id;
-                realStateIntegrateDto.SecondPartyDto.SecondPartyCitizenId = contract.SecondPartyCitizen == null ? checkSecondParty.Result.Item1 : contract.SecondPartyCitizen.Id;
+                realStateIntegrateDto.FirstPartyDto.CitizenId = contract.FirstPartyCitizen == null ? checkFirstParty.Result.Item1 : contract.FirstPartyCitizen.Id;
+                realStateIntegrateDto.SecondPartyDto.CitizenId = contract.SecondPartyCitizen == null ? checkSecondParty.Result.Item1 : contract.SecondPartyCitizen.Id;
                 realStateIntegrateDto.Id = contract.Id;
                 #endregion
         //    }
@@ -588,9 +592,9 @@ namespace REAC.Application.AppServices.Litigation
             switch (ownerType)
             {
                 case LitigationRequestOwnerType.Personal:
-                    if (logdenUserIdentityNumber == realStateIntegrateDto.FirstPartyDto.IdentityNo)
+                    if (logdenUserIdentityNumber == realStateIntegrateDto.FirstPartyDto.IdentityNumber)
                         realStateIntegrateDto.FirstPartyDto.IsPretender = true;
-                    else if (logdenUserIdentityNumber == realStateIntegrateDto.SecondPartyDto.IdentityNo)
+                    else if (logdenUserIdentityNumber == realStateIntegrateDto.SecondPartyDto.IdentityNumber)
                         realStateIntegrateDto.SecondPartyDto.IsPretender = true;
                     break;
                 case LitigationRequestOwnerType.CompanyRepresentative:
@@ -603,18 +607,18 @@ namespace REAC.Application.AppServices.Litigation
                     break;
                 case LitigationRequestOwnerType.Lawyer:
                     var lawyerCitizenList = await _citizenLawyerAgent.GetLawyerCitizens(logdenUser);
-                    if (lawyerCitizenList.Contains(realStateIntegrateDto.FirstPartyDto.IdentityNo))
+                    if (lawyerCitizenList.Contains(realStateIntegrateDto.FirstPartyDto.IdentityNumber))
                         realStateIntegrateDto.FirstPartyDto.IsPretender = true;
 
-                    if (lawyerCitizenList.Contains(realStateIntegrateDto.SecondPartyDto.IdentityNo))
+                    if (lawyerCitizenList.Contains(realStateIntegrateDto.SecondPartyDto.IdentityNumber))
                         realStateIntegrateDto.SecondPartyDto.IsPretender = true;
                     break;
                 case LitigationRequestOwnerType.Agent:
                     var agentCitizenList = await _citizenLawyerAgent.GetAgentCitizens(logdenUser);
-                    if (agentCitizenList.Contains(realStateIntegrateDto.FirstPartyDto.IdentityNo))
+                    if (agentCitizenList.Contains(realStateIntegrateDto.FirstPartyDto.IdentityNumber))
                         realStateIntegrateDto.FirstPartyDto.IsPretender = true;
 
-                    if (agentCitizenList.Contains(realStateIntegrateDto.SecondPartyDto.IdentityNo))
+                    if (agentCitizenList.Contains(realStateIntegrateDto.SecondPartyDto.IdentityNumber))
                         realStateIntegrateDto.SecondPartyDto.IsPretender = true;
                     break;
                 default:
@@ -647,55 +651,54 @@ namespace REAC.Application.AppServices.Litigation
         #endregion
 
         #region Wafi Integration Simulation
-        public async Task<BaseResponse> WafiIntegrate(LitigationRequestOwnerType FirstPartyCapacity, string contractWafiNumber = "")
+        public async Task<BaseResponse> WafiIntegrate(LitigationRequestOwnerType FirstPartyCapacity, string WafiLicenseNo,WafiRequestOwnerType firstPartType,WafiRequestOwnerType secondPartyType )
         {
             var wafiIntegrateDto = new WafiIntegrateDto
             {
-                FirstPartyDto = new WafiFirstPartyDto
+                FirstPartyDto = new PartyDTO
                 {
                     Nationality = "Egyption",
-                    Name = "SecondPArtyName",
+                    IdentityNumber = "987wwwccccccc",
+                    FullName = "SecondPartyName",
                     NationalAddress = "testAddress",
                     FacilityNumber = null,
                     CommercialRegistrationNo = null,
                     FacilityName = null,
-                    Capacity = "مالك",
+                    Capacity = "مطور عقاري",
                     Mobile = "321654987",
                     Email = "Second@gmail.com",
-                    BirthDate = "2/2/1888",
-                    RealStateDeveloperName = "RealStateDeveloperName",
-                    RealStateDeveloperIdentityNumber = "321identity"
+                    BirthDate = DateTime.Parse("5-5-1980")
                 },
-                SecondPartyDto = new WafiSecondPartyDto
+                SecondPartyDto = new PartyDTO
                 {
                     Nationality = FirstPartyCapacity == LitigationRequestOwnerType.CompanyRepresentative ? null : "Egyption",
-                    Name = FirstPartyCapacity == LitigationRequestOwnerType.CompanyRepresentative ? null : "SecondPArtyName",
+                    IdentityNumber = "987www",
+                    FullName = FirstPartyCapacity == LitigationRequestOwnerType.CompanyRepresentative ? null : "SecondPartyName",
                     NationalAddress = FirstPartyCapacity == LitigationRequestOwnerType.CompanyRepresentative ? null : "testAddress",
                     FacilityNumber = FirstPartyCapacity == LitigationRequestOwnerType.CompanyRepresentative ? "123987" : null,
                     CommercialRegistrationNo = FirstPartyCapacity == LitigationRequestOwnerType.CompanyRepresentative ? "9999999" : null,
                     FacilityName = FirstPartyCapacity == LitigationRequestOwnerType.CompanyRepresentative ? "FacilityName" : null,
-                    Capacity = FirstPartyCapacity == LitigationRequestOwnerType.CompanyRepresentative ? null : "مالك",
+                    Capacity = FirstPartyCapacity == LitigationRequestOwnerType.CompanyRepresentative ? null : "محاسب قانوني",
                     Mobile = FirstPartyCapacity == LitigationRequestOwnerType.CompanyRepresentative ? null : "321654987",
                     Email = FirstPartyCapacity == LitigationRequestOwnerType.CompanyRepresentative ? null : "Second@gmail.com",
-                    BirthDate = FirstPartyCapacity == LitigationRequestOwnerType.CompanyRepresentative ? null : "2/2/1888",
-                    AccountantName = FirstPartyCapacity == LitigationRequestOwnerType.CompanyRepresentative ? null : "AccountantName",
-                    AccountantIdentityNumber = FirstPartyCapacity == LitigationRequestOwnerType.CompanyRepresentative ? null : "987wwwccccccc"
+                    BirthDate =DateTime.Parse("2/2/1888")
                 },
-                ThirdPartyDto = new WafiThirdPartyDto
-                {
-                    Nationality = "Egyption",
-                    Name = "SecondPArtyName",
-                    NationalAddress = "testAddress",
-                    FacilityNumber = null,
-                    CommercialRegistrationNo = null,
-                    FacilityName = null,
-                    Capacity = "مالك",
-                    Mobile = "321654987",
-                    Email = "Second@gmail.com",
-                    BirthDate = "2/2/1888",
-                    EngineeringConsultantName = "EngineeringConsultantName",
-                    EngineeringConsultantIdentityNumber = "789identity"
-                },
+                //ThirdPartyDto = new PartyDTO
+                //{
+
+                //    Nationality = "Egyption",
+                //    IdentityNumber = "987wwwccccccc",
+                //    FullName = "SecondPartyName",
+                //    NationalAddress = "testAddress",
+                //    FacilityNumber = null,
+                //    CommercialRegistrationNo = null,
+                //    FacilityName = null,
+                //    Capacity = "استشاري هتدسي",
+                //    Mobile = "321654987",
+                //    Email = "Second@gmail.com",
+                //    BirthDate = DateTime.Parse("5-5-1980")
+
+                //},
                 FirstPartyCapacity = FirstPartyCapacity,
                 ContractAddress = "contractAddressTest"
             };
@@ -709,11 +712,11 @@ namespace REAC.Application.AppServices.Litigation
             switch (ownerType)
             {
                 case LitigationRequestOwnerType.Personal:
-                    if (logdenUserIdentityNumber == wafiIntegrateDto.FirstPartyDto.RealStateDeveloperIdentityNumber)
+                    if (logdenUserIdentityNumber == wafiIntegrateDto.FirstPartyDto.IdentityNumber)
                         wafiIntegrateDto.FirstPartyDto.IsPretender = true;
-                    else if (logdenUserIdentityNumber == wafiIntegrateDto.SecondPartyDto.AccountantIdentityNumber)
+                    else if (logdenUserIdentityNumber == wafiIntegrateDto.SecondPartyDto.IdentityNumber)
                         wafiIntegrateDto.SecondPartyDto.IsPretender = true;
-                    else if (logdenUserIdentityNumber == wafiIntegrateDto.ThirdPartyDto.EngineeringConsultantIdentityNumber)
+                    else if (logdenUserIdentityNumber == wafiIntegrateDto.ThirdPartyDto.IdentityNumber)
                         wafiIntegrateDto.SecondPartyDto.IsPretender = true;
                     break;
                 case LitigationRequestOwnerType.CompanyRepresentative:
@@ -726,24 +729,24 @@ namespace REAC.Application.AppServices.Litigation
                     break;
                 case LitigationRequestOwnerType.Lawyer:
                     var lawyerCitizenList = await _citizenLawyerAgent.GetLawyerCitizens(logdenUser);
-                    if (lawyerCitizenList.Contains(wafiIntegrateDto.FirstPartyDto.RealStateDeveloperIdentityNumber))
+                    if (lawyerCitizenList.Contains(wafiIntegrateDto.FirstPartyDto.IdentityNumber))
                         wafiIntegrateDto.FirstPartyDto.IsPretender = true;
 
-                    if (lawyerCitizenList.Contains(wafiIntegrateDto.SecondPartyDto.AccountantIdentityNumber))
+                    if (lawyerCitizenList.Contains(wafiIntegrateDto.SecondPartyDto.IdentityNumber))
                         wafiIntegrateDto.SecondPartyDto.IsPretender = true;
 
-                    if (lawyerCitizenList.Contains(wafiIntegrateDto.ThirdPartyDto.EngineeringConsultantIdentityNumber))
+                    if (lawyerCitizenList.Contains(wafiIntegrateDto.ThirdPartyDto.IdentityNumber))
                         wafiIntegrateDto.SecondPartyDto.IsPretender = true;
                     break;
                 case LitigationRequestOwnerType.Agent:
                     var agentCitizenList = await _citizenLawyerAgent.GetAgentCitizens(logdenUser);
-                    if (agentCitizenList.Contains(wafiIntegrateDto.FirstPartyDto.RealStateDeveloperIdentityNumber))
+                    if (agentCitizenList.Contains(wafiIntegrateDto.FirstPartyDto.IdentityNumber))
                         wafiIntegrateDto.FirstPartyDto.IsPretender = true;
 
-                    if (agentCitizenList.Contains(wafiIntegrateDto.SecondPartyDto.AccountantIdentityNumber))
+                    if (agentCitizenList.Contains(wafiIntegrateDto.SecondPartyDto.IdentityNumber))
                         wafiIntegrateDto.SecondPartyDto.IsPretender = true;
 
-                    if (agentCitizenList.Contains(wafiIntegrateDto.ThirdPartyDto.EngineeringConsultantIdentityNumber))
+                    if (agentCitizenList.Contains(wafiIntegrateDto.ThirdPartyDto.IdentityNumber))
                         wafiIntegrateDto.SecondPartyDto.IsPretender = true;
                     break;
                 default:
@@ -769,18 +772,15 @@ namespace REAC.Application.AppServices.Litigation
                 wafiIntegrateDto.SecondPartyDto.AgancyAttachment = ownerType == LitigationRequestOwnerType.Agent || ownerType == LitigationRequestOwnerType.Lawyer ? new SysFileManagerCreateUpdateDto { Id = Guid.Parse("e86953a3-c747-49f4-b817-21592334321f"), FileDescription = "FileDescription", FilePath = "reac/e86953a3-c747-49f4-b817-21592334321f.png", FileType = "Pdf" } : null;
                 wafiIntegrateDto.SecondPartyDto.LawLicenseAttachment = ownerType == LitigationRequestOwnerType.Lawyer ? new SysFileManagerCreateUpdateDto { Id = Guid.Parse("e86953a3-c747-49f4-b817-21592334321f"), FileDescription = "FileDescription", FilePath = "reac/e86953a3-c747-49f4-b817-21592334321f.png", FileType = "Pdf" } : null;
             }
-            if (wafiIntegrateDto.ThirdPartyDto.IsPretender == true)
-            {
-                wafiIntegrateDto.SecondPartyDto.AgencyNumber = ownerType == LitigationRequestOwnerType.Agent || ownerType == LitigationRequestOwnerType.Lawyer ? "123456789" : null;
-                wafiIntegrateDto.ThirdPartyDto.LawLicenseExpirationDate = ownerType == LitigationRequestOwnerType.Lawyer ? DateTime.Now.AddDays(5) : null;
-                wafiIntegrateDto.ThirdPartyDto.LawLicenseNumber = ownerType == LitigationRequestOwnerType.Lawyer ? "789456123" : null;
-                wafiIntegrateDto.ThirdPartyDto.EstablishmentContract = ownerType == LitigationRequestOwnerType.CompanyRepresentative ? new SysFileManagerCreateUpdateDto { Id = Guid.Parse("e86953a3-c747-49f4-b817-21592334321f"), FileDescription = "FileDescription", FilePath = "reac/e86953a3-c747-49f4-b817-21592334321f.png", FileType = "Pdf" } : null;
-                wafiIntegrateDto.ThirdPartyDto.AgancyAttachment = ownerType == LitigationRequestOwnerType.Agent || ownerType == LitigationRequestOwnerType.Lawyer ? new SysFileManagerCreateUpdateDto { Id = Guid.Parse("e86953a3-c747-49f4-b817-21592334321f"), FileDescription = "FileDescription", FilePath = "reac/e86953a3-c747-49f4-b817-21592334321f.png", FileType = "Pdf" } : null;
-                wafiIntegrateDto.ThirdPartyDto.LawLicenseAttachment = ownerType == LitigationRequestOwnerType.Lawyer ? new SysFileManagerCreateUpdateDto { Id = Guid.Parse("e86953a3-c747-49f4-b817-21592334321f"), FileDescription = "FileDescription", FilePath = "reac/e86953a3-c747-49f4-b817-21592334321f.png", FileType = "Pdf" } : null;
-            }
 
             return new DataResponse<WafiIntegrateDto> { IsDone = true, Message = Localizations.RetrievedSuccefully, Data = wafiIntegrateDto };
         }
+        //public async Task<BaseResponse> WafiCapacties(WafiIntegrateDto wafiIntegrateDto, WafiRequestOwnerType firstPartType, WafiRequestOwnerType secondPartyType)
+        //{
+
+        //    return new DataResponse<WafiIntegrateDto> { IsDone = true, Message = Localizations.RetrievedSuccefully, Data = wafiIntegrateDto };
+
+        //}
         #endregion
 
         public async Task<BaseResponse> AddPropertiesContract(PropertiesCreateUpdateDto model)
@@ -808,10 +808,10 @@ namespace REAC.Application.AppServices.Litigation
             {
                 AssociationCode = "1234abcd",
                 AssociationName = "7777",
-                FirstPartyDto = new PropertiesFirstPartyDto
+                FirstPartyDto = new PartyDTO
                 {
-                    Name = "FirstPartyName",
-                    IdentityNo = "123abcdooooo",
+                    FullName = "FirstPartyName",
+                    IdentityNumber = "123abcdooooo",
                     NationalAddress = "testAddress",
                     Nationality = "Egyption",
                     FacilityNumber = null,
@@ -823,10 +823,10 @@ namespace REAC.Application.AppServices.Litigation
                     BirthDate = new DateTime(1999, 1, 1)
 
                 },
-                SecondPartyDto = new PropertiesSecondPartyDto
+                SecondPartyDto = new PartyDTO
                 {
-                    Name = FirstPartyCapacity == LitigationRequestOwnerType.CompanyRepresentative ? null : "SecondPArtyName",
-                    IdentityNo = FirstPartyCapacity == LitigationRequestOwnerType.CompanyRepresentative ? null : "987wwwccccccc",
+                    FullName = FirstPartyCapacity == LitigationRequestOwnerType.CompanyRepresentative ? null : "SecondPArtyName",
+                    IdentityNumber = FirstPartyCapacity == LitigationRequestOwnerType.CompanyRepresentative ? null : "987wwwccccccc",
                     NationalAddress = FirstPartyCapacity == LitigationRequestOwnerType.CompanyRepresentative ? null : "testAddress",
                     FacilityNumber = FirstPartyCapacity == LitigationRequestOwnerType.CompanyRepresentative ? "123987" : null,
                     CommercialRegistrationNo = FirstPartyCapacity == LitigationRequestOwnerType.CompanyRepresentative ? "9999999" : null,
@@ -853,14 +853,14 @@ namespace REAC.Application.AppServices.Litigation
                     SecondPartyCapacity = PropertiesIntegrateDto.SecondPartyDto.Capacity,
                     SecondPartyEmail = PropertiesIntegrateDto.SecondPartyDto.Email,
                     LeaseContractFileId = Guid.Parse("61a90c64-69c5-4c85-a95f-ad31333abec7"),
-                    SecondPartyIdentityNumber = PropertiesIntegrateDto.SecondPartyDto.IdentityNo,
-                    SecondPartyMobile = PropertiesIntegrateDto.SecondPartyDto.Name,
+                    SecondPartyIdentityNumber = PropertiesIntegrateDto.SecondPartyDto.IdentityNumber,
+                    SecondPartyMobile = PropertiesIntegrateDto.SecondPartyDto.FullName,
                     VersionNumber = PropertiesIntegrateDto.AssociationName,
-                    SecondPartyName = PropertiesIntegrateDto.SecondPartyDto.Name,
+                    SecondPartyName = PropertiesIntegrateDto.SecondPartyDto.FullName,
 
                 };
-                var checkFirstParty = _citizen.CheckCitizenExist(PropertiesIntegrateDto.FirstPartyDto.IdentityNo);
-                var checkSecondParty = _citizen.CheckCitizenExist(PropertiesIntegrateDto.SecondPartyDto.IdentityNo);
+                var checkFirstParty = _citizen.CheckCitizenExist(PropertiesIntegrateDto.FirstPartyDto.IdentityNumber);
+                var checkSecondParty = _citizen.CheckCitizenExist(PropertiesIntegrateDto.SecondPartyDto.IdentityNumber);
                 if (checkFirstParty.Result.Item2 == true)
                 {
                     contract.FirstPartyCitizenId = checkFirstParty.Result.Item1;
@@ -879,10 +879,10 @@ namespace REAC.Application.AppServices.Litigation
                         District = "District",
                         Email = "firstparty@gmail.com",
                         Employer = "Employer",
-                        FullName = PropertiesIntegrateDto.FirstPartyDto.Name,
+                        FullName = PropertiesIntegrateDto.FirstPartyDto.FullName,
                         GenderId = Gender.Male,
                         IdentityExpiryDate = DateTime.Now.AddDays(5),
-                        IdentityNumber = PropertiesIntegrateDto.FirstPartyDto.IdentityNo,
+                        IdentityNumber = PropertiesIntegrateDto.FirstPartyDto.IdentityNumber,
                         IdentityFileId = Guid.Parse("61a90c64-69c5-4c85-a95f-ad31333abec7"),
                         IdentityTypeId = IdentityType.NationalIdentity,
                         Street = "Street",
@@ -907,10 +907,10 @@ namespace REAC.Application.AppServices.Litigation
                         District = "District",
                         Email = "firstparty@gmail.com",
                         Employer = "Employer",
-                        FullName = PropertiesIntegrateDto.SecondPartyDto.Name,
+                        FullName = PropertiesIntegrateDto.SecondPartyDto.FullName,
                         GenderId = Gender.Male,
                         IdentityExpiryDate = DateTime.Now.AddDays(5),
-                        IdentityNumber = PropertiesIntegrateDto.SecondPartyDto.IdentityNo,
+                        IdentityNumber = PropertiesIntegrateDto.SecondPartyDto.IdentityNumber,
                         IdentityFileId = Guid.Parse("61a90c64-69c5-4c85-a95f-ad31333abec7"),
                         IdentityTypeId = IdentityType.NationalIdentity,
                         Street = "Street",
@@ -920,16 +920,16 @@ namespace REAC.Application.AppServices.Litigation
                     };
                 }
                 await base.AddAsync(contract, default);
-                PropertiesIntegrateDto.FirstPartyDto.FirstPartyCitizenId = contract.FirstPartyCitizen == null ? checkFirstParty.Result.Item1 : contract.FirstPartyCitizen.Id;
-                PropertiesIntegrateDto.SecondPartyDto.SecondPartyCitizenId = contract.SecondPartyCitizen == null ? checkSecondParty.Result.Item1 : contract.SecondPartyCitizen.Id;
+                PropertiesIntegrateDto.FirstPartyDto.CitizenId = contract.FirstPartyCitizen == null ? checkFirstParty.Result.Item1 : contract.FirstPartyCitizen.Id;
+                PropertiesIntegrateDto.SecondPartyDto.CitizenId = contract.SecondPartyCitizen == null ? checkSecondParty.Result.Item1 : contract.SecondPartyCitizen.Id;
                 PropertiesIntegrateDto.Id = contract.Id;
                 #endregion
             }
             else
             {
                 PropertiesIntegrateDto.Id = contractExist.Result.Item4;
-                PropertiesIntegrateDto.FirstPartyDto.FirstPartyCitizenId = contractExist.Result.Item2;
-                PropertiesIntegrateDto.SecondPartyDto.SecondPartyCitizenId = contractExist.Result.Item3;
+                PropertiesIntegrateDto.FirstPartyDto.CitizenId = contractExist.Result.Item2;
+                PropertiesIntegrateDto.SecondPartyDto.CitizenId = contractExist.Result.Item3;
             }
             return await PropertiesIntegrationValidation(PropertiesIntegrateDto, FirstPartyCapacity, associationCode, associationName);
         }
@@ -964,9 +964,9 @@ namespace REAC.Application.AppServices.Litigation
                 switch (ownerType)
                 {
                     case LitigationRequestOwnerType.Personal:
-                        if (logdenUserIdentityNumber == PropertiesIntegrateDto.FirstPartyDto.IdentityNo)
+                        if (logdenUserIdentityNumber == PropertiesIntegrateDto.FirstPartyDto.IdentityNumber)
                             PropertiesIntegrateDto.FirstPartyDto.IsPretender = true;
-                        else if (logdenUserIdentityNumber == PropertiesIntegrateDto.SecondPartyDto.IdentityNo)
+                        else if (logdenUserIdentityNumber == PropertiesIntegrateDto.SecondPartyDto.IdentityNumber)
                             PropertiesIntegrateDto.SecondPartyDto.IsPretender = true;
                         break;
                     case LitigationRequestOwnerType.CompanyRepresentative:
@@ -979,18 +979,18 @@ namespace REAC.Application.AppServices.Litigation
                         break;
                     case LitigationRequestOwnerType.Lawyer:
                         var lawyerCitizenList = await _citizenLawyerAgent.GetLawyerCitizens(logdenUser);
-                        if (lawyerCitizenList.Contains(PropertiesIntegrateDto.FirstPartyDto.IdentityNo))
+                        if (lawyerCitizenList.Contains(PropertiesIntegrateDto.FirstPartyDto.IdentityNumber))
                             PropertiesIntegrateDto.FirstPartyDto.IsPretender = true;
 
-                        if (lawyerCitizenList.Contains(PropertiesIntegrateDto.SecondPartyDto.IdentityNo))
+                        if (lawyerCitizenList.Contains(PropertiesIntegrateDto.SecondPartyDto.IdentityNumber))
                             PropertiesIntegrateDto.SecondPartyDto.IsPretender = true;
                         break;
                     case LitigationRequestOwnerType.Agent:
                         var agentCitizenList = await _citizenLawyerAgent.GetAgentCitizens(logdenUser);
-                        if (agentCitizenList.Contains(PropertiesIntegrateDto.FirstPartyDto.IdentityNo))
+                        if (agentCitizenList.Contains(PropertiesIntegrateDto.FirstPartyDto.IdentityNumber))
                             PropertiesIntegrateDto.FirstPartyDto.IsPretender = true;
 
-                        if (agentCitizenList.Contains(PropertiesIntegrateDto.SecondPartyDto.IdentityNo))
+                        if (agentCitizenList.Contains(PropertiesIntegrateDto.SecondPartyDto.IdentityNumber))
                             PropertiesIntegrateDto.SecondPartyDto.IsPretender = true;
                         break;
                     default:

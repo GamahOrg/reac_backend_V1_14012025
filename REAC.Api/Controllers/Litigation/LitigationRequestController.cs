@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using REAC.Application.Contracts.Dtos.Litigation;
 using REAC.Application.Contracts.Dtos.Litigation.Create.Litigation;
 using REAC.Application.Contracts.Dtos.Litigation.CreateUpdate.Litigation;
+using REAC.Application.Contracts.Dtos.Litigation.Get;
 using REAC.Application.Contracts.Dtos.Litigation.List;
 using REAC.Application.Contracts.IAppServices.Litigation;
 using REAC.Domain.Shared.Constants;
@@ -74,6 +75,33 @@ public class LitigationRequestController : BaseController<LitigationRequest,
         if (ModelState.IsValid)
         {
             var returnValue = await _litigationService.Get(litigationId);
+
+            return Ok(returnValue);
+        }
+
+        return BadRequest();
+    }
+
+    [HttpGet(nameof(GetLitigationPartiesDetailsById))]
+    [AllowAnonymous]
+    public async Task<ActionResult<LitigationPartiesDetailsDto>> GetLitigationPartiesDetailsById(Guid litigationId)
+    {
+        if (ModelState.IsValid)
+        {
+            var returnValue = await _litigationService.GetLitigationPartiesDetails(litigationId);
+
+            return Ok(returnValue);
+        }
+
+        return BadRequest();
+    }
+    [HttpGet(nameof(GetLitigationDetailsById))]
+    [AllowAnonymous]
+    public async Task<ActionResult<LitigationDetailsDto>> GetLitigationDetailsById(Guid litigationId)
+    {
+        if (ModelState.IsValid)
+        {
+            var returnValue = await _litigationService.GetLitigationDetails(litigationId);
 
             return Ok(returnValue);
         }

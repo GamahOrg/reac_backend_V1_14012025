@@ -22,6 +22,32 @@ namespace REAC.EntityFrameworkCore.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Integration.NafathTransaction", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("NationalId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RandomNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("RequestExpired")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("TransactionId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("NafathTransactions");
+                });
+
             modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Litigation.CitizenLitigationRequestLawyerAgent", b =>
                 {
                     b.Property<Guid>("Id")
@@ -389,6 +415,21 @@ namespace REAC.EntityFrameworkCore.Migrations
                     b.HasIndex("LitigationRequestRequestId");
 
                     b.ToTable("LitigationRequestRequestFile", (string)null);
+                });
+
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Litigation.OtherCategory", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("CategoryName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("OtherCategories");
                 });
 
             modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Reconciliation.LitigationRequestCorrespondence", b =>

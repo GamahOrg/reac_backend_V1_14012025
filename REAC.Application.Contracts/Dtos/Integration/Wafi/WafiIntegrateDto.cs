@@ -1,4 +1,5 @@
-﻿using REAC.Domain.Shared.Enum;
+﻿using REAC.Application.Contracts.Dtos.Integration.Party;
+using REAC.Domain.Shared.Enum;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,9 +10,9 @@ namespace REAC.Application.Contracts.Dtos.Integration.Wafi
 {
     public class WafiIntegrateDto
     {
-        public WafiFirstPartyDto FirstPartyDto { get; set; }
-        public WafiSecondPartyDto SecondPartyDto { get; set; }
-        public WafiThirdPartyDto ThirdPartyDto { get; set; }
+        public PartyDTO FirstPartyDto { get; set; }
+        public PartyDTO SecondPartyDto { get; set; }
+        public PartyDTO ThirdPartyDto { get; set; }
         public LitigationRequestOwnerType FirstPartyCapacity { get; set; }
         public string ContractAddress { get; set; }
     }

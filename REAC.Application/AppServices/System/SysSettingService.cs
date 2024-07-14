@@ -43,5 +43,16 @@ namespace REAC.Application.AppServices.System
             await _repository.SaveChangesAsync();
             return new DataResponse<SysSetting> { Data = updateSetting, IsDone = true ,Message = Localizations.UpdateSuccefully};
         }
+
+        public async Task<DataResponse<List<SysSetting>>> GetByIntegrationKey(string key)
+        {
+            var SettingObj = (await _repository.GetQueryable<SysSetting, Guid>())
+                             .Where(x => x.Key.StartsWith(key))?.ToList();
+            if (SettingObj != null)
+                return new DataResponse<List<SysSetting>> { Data = SettingObj, IsDone = true };
+            else
+                return new DataResponse<List<SysSetting>> { Data = null, IsDone = false };
+
+        }
     }
 }

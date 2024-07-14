@@ -1,9 +1,12 @@
 ﻿using AutoMapper;
+using REAC.Application.Contracts.Dtos.Integration.Party;
+using REAC.Application.Contracts.Dtos.Integration.Rent;
 using REAC.Application.Contracts.Dtos.Litigation;
 using REAC.Application.Contracts.Dtos.Litigation.Create.Contract;
 using REAC.Application.Contracts.Dtos.Litigation.Create.Defendant;
 using REAC.Application.Contracts.Dtos.Litigation.Create.Litigation;
 using REAC.Application.Contracts.Dtos.Litigation.CreateUpdate.Contract;
+using REAC.Application.Contracts.Dtos.Litigation.Get;
 using REAC.Application.Contracts.Dtos.Litigation.List;
 using REAC.Application.Contracts.Dtos.Litigation.Rating;
 using REAC.Application.Contracts.Dtos.System;
@@ -21,6 +24,7 @@ using REAC.Application.Contracts.Dtos.System.LitigationRequestOwnerTypeDtos;
 using REAC.Application.Contracts.Dtos.System.LitigationRequestStatusDtos;
 using REAC.Application.Contracts.Dtos.Wpf.Business.WorkFlowLog;
 using REAC.Application.Contracts.Dtos.Wpf.Business.WorkFlowProcessingLog;
+using REAC.Application.Contracts.Dtos.Wpf.System;
 using REAC.Domain.Shared.Enum;
 using REAC.EntityFrameworkCore.Entities.Litigation;
 using REAC.EntityFrameworkCore.Entities.Reconciliation;
@@ -224,6 +228,56 @@ namespace REAC.Application.Contracts
 .ForMember(dest => dest.PretenderRating, opt => opt.MapFrom(src => src.PretenderRating))
 .ForMember(dest => dest.DefendantRating, opt => opt.MapFrom(src => src.DefendantRating))
 .ForMember(dest => dest.LitigationId, opt => opt.MapFrom(src => src.Id));
+            CreateMap<LitigationRequest, LitigationPartiesDetailsDto>()
+                .ForMember(dest => dest.LitigationId, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.VersionNumber, opt => opt.MapFrom(src => src.Contract.VersionNumber))
+                .ForMember(dest => dest.ContractKey, opt => opt.MapFrom(src => src.Contract.ContractKey))
+                .ForMember(dest => dest.ContractAddress, opt => opt.MapFrom(src => src.ContractAddress))
+                .ForMember(dest => dest.FirstPartyCapacity, opt => opt.MapFrom(src => src.Contract.FirstPartyCapacity))
+    .ForMember(dest => dest.FirstPartyDto, opt => opt.MapFrom(src => new PartyDTO
+    {
+        Capacity = src.Contract.FirstPartyCapacity,
+        IdentityNumber = src.Contract.FirstPartyCitizen.IdentityNumber,
+        NationalAddress = src.Contract.FirstPartyCitizen.NationalAddress,
+        Nationality = src.Contract.FirstPartyCitizen.Nationality,
+        FullName = src.Contract.FirstPartyCitizen.FullName,
+        Mobile = src.Contract.FirstPartyCitizen.Mobile,
+        Email = src.Contract.FirstPartyCitizen.Email,
+        BirthDate = src.Contract.FirstPartyCitizen.BirthDate
+    })) 
+                .ForMember(dest => dest.SecondPartyDto, opt => opt.MapFrom(src => new PartyDTO
+                 {
+                     Capacity = src.Contract.SecondPartyCapacity,
+                     IdentityNumber = src.Contract.SecondPartyCitizen.IdentityNumber,
+                     NationalAddress = src.Contract.SecondPartyCitizen.NationalAddress,
+                     Nationality = src.Contract.SecondPartyCitizen.Nationality,
+                     FullName = src.Contract.SecondPartyCitizen.FullName,
+                     Mobile = src.Contract.SecondPartyCitizen.Mobile,
+                     Email = src.Contract.SecondPartyCitizen.Email,
+                     BirthDate = src.Contract.SecondPartyCitizen.BirthDate
+                 }));
+            CreateMap<LitigationRequestLawyerAgent, PartyDTO>()
+            .ForMember(dest => dest.AgencyNumber, opt => opt.MapFrom(src => src.AgencyNumber))
+            .ForMember(dest => dest.LawLicenseNumber, opt => opt.MapFrom(src => src.LawLicenseNumber))
+            .ForMember(dest => dest.LawLicenseExpirationDate, opt => opt.MapFrom(src => src.LawLicenseExpirationDate))
+            .ForMember(dest => dest.CitizenId, opt => opt.MapFrom(src => src.CitizenId));
+            CreateMap<LitigationRequestLawyerAgent, PartyDTO>()
+   .ForMember(dest => dest.AgencyNumber, opt => opt.MapFrom(src => src.AgencyNumber))
+   .ForMember(dest => dest.LawLicenseNumber, opt => opt.MapFrom(src => src.LawLicenseNumber))
+   .ForMember(dest => dest.LawLicenseExpirationDate, opt => opt.MapFrom(src => src.LawLicenseExpirationDate))
+   .ForMember(dest => dest.CitizenId, opt => opt.MapFrom(src => src.CitizenId));
+            CreateMap<SysFileManager, PartyDTO>();
+            CreateMap<SysFileManager, RentSecondPartyDto>();
+            CreateMap<LitigationRequest, LitigationDetailsDto>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.RequestCode, opt => opt.MapFrom(src => src.RequestCode))
+                .ForMember(dest => dest.Fees, opt => opt.MapFrom(src => src.Fees))
+                .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
+                .ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.Title))
+                .ForMember(dest => dest.AreaId, opt => opt.MapFrom(src => src.AreaId))
+                .ForMember(dest => dest.CityId, opt => opt.MapFrom(src => src.CityId))
+                .ForMember(dest => dest.ContractAddress, opt => opt.MapFrom(src => src.ContractAddress))
+                .ForMember(dest => dest.LitigationRequestContractTypeId, opt => opt.MapFrom(src => src.Contract.LitigationRequestContractTypeId));
 
 
             #endregion
@@ -248,6 +302,17 @@ namespace REAC.Application.Contracts
             //workflow
             CreateMap<WorkFlowLogCreateUpdateDto, WorkFlowLog>();
             CreateMap<WorkFlowLog, WorkFlowLogCreateUpdateDto>();
+            CreateMap<WorkFlowProcessingLog, AuditNotesDto>()
+                .ForMember(des => des.CreatedOn, opt => opt.MapFrom(src => DateTime.Now))
+                .ForMember(des => des.Notes, opt => opt.MapFrom(src => src.Notes));
+            CreateMap<SysFileManager, AuditNotesDto>()
+                    .ForMember(dest => dest.AuditFile, opt => opt.MapFrom(src => new SysFileManagerCreateUpdateDto
+                    {
+                                 Id= src.Id,
+                                 FilePath=src.FilePath,
+                                 FileDescription=src.FileDescription,
+                                 FileType=src.FileType
+                    }));
 
             CreateMap<WorkFlowProcessingLogCreateUpdateDto, WorkFlowProcessingLog>();
             CreateMap<WorkFlowProcessingLog, WorkFlowProcessingLogCreateUpdateDto>();

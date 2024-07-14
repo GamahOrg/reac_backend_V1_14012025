@@ -7,6 +7,7 @@
         public const string Reconciliation = "Reconciliation";
         public const string WpfSystem = "Wpf-System";
         public const string WpfBusiness = "Wpf-Business";
+        public const string Integration = "Integration";
 
 
     }

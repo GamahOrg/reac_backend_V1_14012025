@@ -145,11 +145,11 @@ public class LitigationRequestContractController : BaseController<LitigationRequ
 
     [HttpPost(nameof(WafiIntegrate))]
     [AllowAnonymous]
-    public async Task<IActionResult> WafiIntegrate(LitigationRequestOwnerType FirstPartyCapacity, string contractKey = "") 
+    public async Task<IActionResult> WafiIntegrate(LitigationRequestOwnerType firstPartyCapacity, string contractKey,string licenseNo, WafiRequestOwnerType firstPartyType,WafiRequestOwnerType secondePartyType) 
     {
         if (ModelState.IsValid)
         {
-            var returnValue = await _contractService.WafiIntegrate(FirstPartyCapacity, contractKey);
+            var returnValue = await _contractService.WafiIntegrate(firstPartyCapacity,licenseNo, firstPartyType,secondePartyType);
             return Ok(returnValue);
         }
         return BadRequest();

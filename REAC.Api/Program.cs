@@ -13,6 +13,7 @@ using Microsoft.EntityFrameworkCore;
 using REAC.Api;
 using REAC.Api.Middlewares;
 using REAC.Api.OptionsSetup;
+using REAC.Application.AppServices.Integration.GEE;
 using REAC.Domain.Shared.Constants;
 using REAC.EntityFrameworkCore.Entities.System;
 using REAC.EntityFrameworkCore.Seed;
@@ -40,6 +41,9 @@ builder.Services.AddDbContext<LogDbContext>(option => option.UseSqlServer(
     , b => b.MigrationsAssembly(typeof(REACDBContext).Assembly.FullName)));
 
 builder.Services.AddGenericRepository<REACDBContext>();
+
+
+builder.Services.AddHostedService<NafathBackgroundTaskService>();
 
 #endregion
 // Add services to the container.
@@ -118,6 +122,12 @@ builder.Services.Configure<RequestLocalizationOptions>(options =>
     options.SupportedCultures = supportedCultures;
 });
 
+#region SignalR
+
+builder.Services.AddSignalR();
+
+#endregion
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -128,12 +138,13 @@ app.UseSwaggerUI(c =>
 {
     c.EnableDeepLinking();
 
-    // Build a swagger endpoint for each API version and consumer
-    c.SwaggerEndpoint($"/swagger/{APISections.System}/swagger.json", $"{APISections.System} API V1");
-    c.SwaggerEndpoint($"/swagger/{APISections.Litigation}/swagger.json", $"{APISections.Litigation} API V1");
-    c.SwaggerEndpoint($"/swagger/{APISections.Reconciliation}/swagger.json", $"{APISections.Reconciliation} API V1");
-    c.SwaggerEndpoint($"/swagger/{APISections.WpfBusiness}/swagger.json", $"{APISections.WpfBusiness} API V1");
-    c.SwaggerEndpoint($"/swagger/{APISections.WpfSystem}/swagger.json", $"{APISections.WpfSystem} API V1");
+        // Build a swagger endpoint for each API version and consumer
+        c.SwaggerEndpoint($"/swagger/{APISections.System}/swagger.json", $"{APISections.System} API V1");
+        c.SwaggerEndpoint($"/swagger/{APISections.Litigation}/swagger.json", $"{APISections.Litigation} API V1");
+        c.SwaggerEndpoint($"/swagger/{APISections.Reconciliation}/swagger.json", $"{APISections.Reconciliation} API V1");
+        c.SwaggerEndpoint($"/swagger/{APISections.WpfBusiness}/swagger.json", $"{APISections.WpfBusiness} API V1");
+        c.SwaggerEndpoint($"/swagger/{APISections.WpfSystem}/swagger.json", $"{APISections.WpfSystem} API V1");
+        c.SwaggerEndpoint($"/swagger/{APISections.Integration}/swagger.json", $"{APISections.Integration} API V1");
 
     c.DocExpansion(DocExpansion.List);
 });

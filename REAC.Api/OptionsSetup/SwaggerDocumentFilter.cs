@@ -30,6 +30,10 @@ namespace REAC.Api.OptionsSetup
             {
                 return APISections.Litigation;
             }
+            else if (path.Contains(APISections.Integration))
+            {
+                return APISections.Integration;
+            }
             else if (path.Contains(APISections.Reconciliation))
             {
                 return APISections.Reconciliation;
