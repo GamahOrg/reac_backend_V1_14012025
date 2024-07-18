@@ -6,6 +6,6 @@ namespace REAC.EntityFrameworkCore.Entities.Litigation;
 public partial class LitigationRequestGroundCreateUpdateDto : BaseEntity<Guid>
 {
     public Guid LitigationRequestId { get; set; }
-    public SysFileManagerCreateUpdateDto Reference { get; set; }
+    public List<SysFileManagerCreateUpdateDto> ReferenceFiles { get; set; } = new List<SysFileManagerCreateUpdateDto>();
     public string? Title { get; set; }
 }

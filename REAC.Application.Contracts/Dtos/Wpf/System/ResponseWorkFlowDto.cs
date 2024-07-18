@@ -4,9 +4,9 @@ namespace REAC.Application.Contracts.Dtos.Wpf.System
 {
     public class ResponseWorkFlowDto
     {
-        public LitigationRequestStatus? InternalStatus { get; set; }
+        public RequestStatus? InternalStatus { get; set; }
 
-        public LitigationRequestStatus? ExternalStatus { get; set; }
+        public RequestStatus? ExternalStatus { get; set; }
 
         public bool? IsActive { get; set; }
 

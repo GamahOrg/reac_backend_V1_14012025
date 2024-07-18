@@ -23,7 +23,7 @@ namespace REAC.Application.AppServices.Wpf.System
                .Where(x => x.StepName == "Audit" && !x.IsDeleted)
                .Select(x => x.WorkFlowProcessingLogs
                    .Where(s => !s.IsFinished)
-                   .GroupBy(s => s.EmployeeReferenceId)
+                   .GroupBy(s => s.EmployeeId)
                    .Select(g => g.Key)
                    .Min())
                .FirstOrDefault();

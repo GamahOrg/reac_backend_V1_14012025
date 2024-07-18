@@ -1,4 +1,4 @@
-﻿using REAC.EntityFrameworkCore.Entities.System;
+﻿using REAC.EntityFrameworkCore.Entities;
 
 namespace REAC.Application.Contracts.IAppServices
 {

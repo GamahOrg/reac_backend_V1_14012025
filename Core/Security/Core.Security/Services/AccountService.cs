@@ -31,8 +31,8 @@ namespace Core.Security.Services
                     if (isValidPassword)
                     {
                         var authentication = await _jwtProvider.GenerateAuthenticationTokens(user);
-                        if (!authentication.ReferenceId.HasValue)
-                            return new DataResponse<TokenModel> { IsDone = true, Data = null, Message = "ReferenceId is null" };
+                        //if (!authentication.ReferenceId.HasValue)
+                        //    return new DataResponse<TokenModel> { IsDone = true, Data = null, Message = "ReferenceId is null" };
 
                         user.RefreshToken = authentication.Token.RefreshToken;
                         user.RefreshTokenExpiryTime = authentication.RefreshTokenExpiration;
@@ -44,23 +44,23 @@ namespace Core.Security.Services
                         }
                         else
                         {
-                            return new DataResponse<TokenModel> { IsDone = true, Data = null, Message = "اسم المستخدم خطأ او الرقم السري" };
+                            return new DataResponse<TokenModel> { IsDone = false, Data = null, Message = "اسم المستخدم خطأ او الرقم السري" };
                         }
                     }
                     else
                     {
-                        return new DataResponse<TokenModel> { IsDone = true, Data = null, Message = "اسم المستخدم خطأ او الرقم السري" };
+                        return new DataResponse<TokenModel> { IsDone = false, Data = null, Message = "اسم المستخدم خطأ او الرقم السري" };
                     }
                 }
                 else
                 {
-                    return new DataResponse<TokenModel> { IsDone = true, Data = null, Message = "اسم المستخدم خطأ او الرقم السري" };
+                    return new DataResponse<TokenModel> { IsDone = false, Data = null, Message = "اسم المستخدم خطأ او الرقم السري" };
                 }
 
             }
             else
             {
-                return new DataResponse<TokenModel> { IsDone = true, Data = null, Message = "Invalid User Name Or Password!" };
+                return new DataResponse<TokenModel> { IsDone = false, Data = null, Message = "Invalid User Name Or Password!" };
             }
         }
 
@@ -83,17 +83,17 @@ namespace Core.Security.Services
                     }
                     else
                     {
-                        return new DataResponse<TokenModel> { IsDone = true, Data = null, Message = "Failed to generate new token" };
+                        return new DataResponse<TokenModel> { IsDone = false, Data = null, Message = "Failed to generate new token" };
                     }
                 }
                 else
                 {
-                    return new DataResponse<TokenModel> { IsDone = true, Data = null, Message = "Refresh Token is expired" };
+                    return new DataResponse<TokenModel> { IsDone = false, Data = null, Message = "Refresh Token is expired" };
                 }
             }
             else
             {
-                return new DataResponse<TokenModel> { IsDone = true, Data = null, Message = "Invalid Refresh Token" };
+                return new DataResponse<TokenModel> { IsDone = false, Data = null, Message = "Invalid Refresh Token" };
             }
 
 

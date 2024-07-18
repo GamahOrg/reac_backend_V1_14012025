@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using REAC.Application.Contracts.Dtos.Integration.Nafath;
 using REAC.Application.Contracts.Dtos.Litigation;
+using REAC.Application.Contracts.Dtos.System.AreaDto;
+using REAC.Application.Contracts.Dtos.System.CityDto;
 using REAC.Application.Contracts.Dtos.System.DepartmentDtos;
 using REAC.Application.Contracts.Dtos.System.EmployeeDtos;
 using REAC.Application.Contracts.Dtos.System.GenderDtos;
@@ -12,10 +14,13 @@ using REAC.Application.Contracts.Dtos.System.LitigationRequestExtendPeriodReques
 using REAC.Application.Contracts.Dtos.System.LitigationRequestMeetingDecisionDtos;
 using REAC.Application.Contracts.Dtos.System.LitigationRequestOwnerTypeDtos;
 using REAC.Application.Contracts.Dtos.System.LitigationRequestStatusDtos;
+using REAC.Application.Contracts.Dtos.Wpf.Business.WorkFlowLog;
+using REAC.EntityFrameworkCore.Entities;
 using REAC.EntityFrameworkCore.Entities.Integration;
 using REAC.EntityFrameworkCore.Entities.Litigation;
 using REAC.EntityFrameworkCore.Entities.Reconciliation;
 using REAC.EntityFrameworkCore.Entities.System;
+using REAC.EntityFrameworkCore.Entities.Wpf.Business;
 using System.Globalization;
 
 namespace REAC.Application.Contracts
@@ -24,6 +29,41 @@ namespace REAC.Application.Contracts
     {
         public DtosMapper()
         {
+            CreateMap<SysArea, SysAreaDto>()
+                                       .ForMember(des => des.AreaName,
+                                       opt => opt.MapFrom(src => (src.Translations.FirstOrDefault(x => x.LanguageCode == CultureInfo.CurrentUICulture.Name) == null ||
+                                       string.IsNullOrEmpty(src.Translations.FirstOrDefault(x => x.LanguageCode == CultureInfo.CurrentUICulture.Name).AreaName)) ?
+                                       src.AreaName : src.Translations.FirstOrDefault(x => x.LanguageCode == CultureInfo.CurrentUICulture.Name).AreaName));
+
+            CreateMap<SysCity, SysCityDto>()
+                    .ForMember(des => des.CityName,
+                    opt => opt.MapFrom(src => (src.Translations.FirstOrDefault(x => x.LanguageCode == CultureInfo.CurrentUICulture.Name) == null ||
+                    string.IsNullOrEmpty(src.Translations.FirstOrDefault(x => x.LanguageCode == CultureInfo.CurrentUICulture.Name).CityName)) ?
+                     src.CityName : src.Translations.FirstOrDefault(x => x.LanguageCode == CultureInfo.CurrentUICulture.Name).CityName));
+
+
+            CreateMap<WorkFlowLog, WorkFlowLogDto>()
+                                       .ForMember(des => des.LogMessage,
+                                       opt => opt.MapFrom(src => (src.Translations.FirstOrDefault(x => x.LanguageCode == CultureInfo.CurrentUICulture.Name) == null ||
+                                       string.IsNullOrEmpty(src.Translations.FirstOrDefault(x => x.LanguageCode == CultureInfo.CurrentUICulture.Name).LogMessage)) ?
+                                       src.LogMessage : src.Translations.FirstOrDefault(x => x.LanguageCode == CultureInfo.CurrentUICulture.Name).LogMessage));
+
+
+
+
+            CreateMap<SysCitizenRequestType, SysCitizenRequestTypeDto>()
+                                       .ForMember(des => des.CitizenRequestTypeName,
+                                       opt => opt.MapFrom(src => (src.Translations.FirstOrDefault(x => x.LanguageCode == CultureInfo.CurrentUICulture.Name) == null ||
+                                       string.IsNullOrEmpty(src.Translations.FirstOrDefault(x => x.LanguageCode == CultureInfo.CurrentUICulture.Name).CitizenRequestTypeName)) ?
+                                       src.CitizenRequestTypeName : src.Translations.FirstOrDefault(x => x.LanguageCode == CultureInfo.CurrentUICulture.Name).CitizenRequestTypeName));
+
+            CreateMap<SysArbitratorClass, SysArbitratorClassDto>()
+                                      .ForMember(des => des.ArbitratorClassName,
+                                      opt => opt.MapFrom(src => (src.Translations.FirstOrDefault(x => x.LanguageCode == CultureInfo.CurrentUICulture.Name) == null ||
+                                      string.IsNullOrEmpty(src.Translations.FirstOrDefault(x => x.LanguageCode == CultureInfo.CurrentUICulture.Name).ArbitratorClassName)) ?
+                                      src.ArbitratorClassName : src.Translations.FirstOrDefault(x => x.LanguageCode == CultureInfo.CurrentUICulture.Name).ArbitratorClassName));
+
+
             CreateMap<SysGender, SysGenderDto>()
                                        .ForMember(des => des.Gender,
                                        opt => opt.MapFrom(src => (src.Translations.FirstOrDefault(x => x.LanguageCode == CultureInfo.CurrentUICulture.Name) == null ||
@@ -127,7 +167,7 @@ namespace REAC.Application.Contracts
             CreateMap<Citizen, CitizenCreateUpdateDto>().ReverseMap();
             CreateMap<DelegationRequest, DelegationRequestCreateUpdateDto>().ReverseMap();
             CreateMap<Facility, FacilityCreateUpdateDto>().ReverseMap();
-            CreateMap<FacilityDelegator, FacilityDelegatorCreateUpdateDto>().ReverseMap();
+            CreateMap<Delegator, FacilityDelegatorCreateUpdateDto>().ReverseMap();
             CreateMap<LitigationRequest, LitigationRequestCreateUpdateDto>().ReverseMap();
             CreateMap<LitigationRequestContract, LitigationRequestContractCreateUpdateDto>().ReverseMap();
             CreateMap<LitigationRequestCorrespondence, LitigationRequestCorrespondenceCreateUpdateDto>().ReverseMap();

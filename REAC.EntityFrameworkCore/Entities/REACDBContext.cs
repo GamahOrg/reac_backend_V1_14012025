@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using REAC.Domain.Shared.Enum;
 using REAC.EntityFrameworkCore.Entities.Integration;
 using REAC.EntityFrameworkCore.Entities.Litigation;
 using REAC.EntityFrameworkCore.Entities.Reconciliation;
@@ -18,6 +17,13 @@ public partial class REACDBContext : DbContext
         : base(options)
     {
     }
+    public virtual DbSet<SysArbitratorClass> SysArbitratorClasses { get; set; }
+    public virtual DbSet<CitizenRequest> CitizenRequests { get; set; }
+    public virtual DbSet<CitizenRequestAcademicDegreeFile> CitizenRequestAcademicDegreeFiles { get; set; }
+    public virtual DbSet<CitizenRequestFreelanceWorkDocumentFile> CitizenRequestFreelanceWorkDocumentFiles { get; set; }
+    public virtual DbSet<CitizenRequestExperienceCertificate> CitizenRequestExperienceCertificates { get; set; }
+    public virtual DbSet<CitizenRequestExperienceCertificateFile> CitizenRequestExperienceCertificateFiles { get; set; }
+    public virtual DbSet<SysCitizenRequestType> SysCitizenRequestType { get; set; }
     public virtual DbSet<WorkFlowStepEventActionMode> WorkFlowStepEventActionModes { get; set; }
 
     public virtual DbSet<WorkFlowStepEventSecurityLevel> WorkFlowStepEventSecurityLevel { get; set; }
@@ -65,11 +71,9 @@ public partial class REACDBContext : DbContext
 
     public virtual DbSet<Facility> Facilities { get; set; }
 
-    public virtual DbSet<FacilityDelegator> FacilityDelegators { get; set; }
+    public virtual DbSet<Delegator> Delegators { get; set; }
 
-    public virtual DbSet<CitizenLitigationRequestLawyerAgent> CitizenLitigationRequestLawyerAgents { get; set; }
     public virtual DbSet<LitigationCompanyRepresentative> LitigationCompanyRepresentatives { get; set; }
-    public virtual DbSet<LitigationRequestLawyerAgent> LitigationRequestLawyerAgents { get; set; }
     public virtual DbSet<LitigationRequest> LitigationRequests { get; set; }
 
     public virtual DbSet<LitigationRequestContract> LitigationRequestContracts { get; set; }
@@ -106,6 +110,8 @@ public partial class REACDBContext : DbContext
 
     public virtual DbSet<SysGender> SysGenders { get; set; }
 
+    public virtual DbSet<SysDelegationRelationshipType> SysDelegationRelationshipTypes { get; set; }
+
     public virtual DbSet<SysIdentityType> SysIdentityTypes { get; set; }
 
     public virtual DbSet<SysLitigationRequestAmount> SysLitigationRequestAmounts { get; set; }
@@ -129,10 +135,11 @@ public partial class REACDBContext : DbContext
     public virtual DbSet<SysRegistrationRequest> SysRegistrationRequests { get; set; }
 
     public virtual DbSet<SysSetting> SysSettings { get; set; }
-    public virtual DbSet<LitigationArea> LitigationAreas { get; set; }
-    public virtual DbSet<LitigationCity> LitigationCitys { get; set; }
+    public virtual DbSet<SysArea> SysAreas { get; set; }
+    public virtual DbSet<SysCity> SysCities { get; set; }
     public virtual DbSet<OtherCategory> OtherCategories { get; set; }
     public virtual DbSet<NafathTransaction> NafathTransactions { get; set; }
+    public virtual DbSet<SysNationality> SysNationalities { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -218,7 +225,7 @@ public partial class REACDBContext : DbContext
                 .HasConstraintName("FKWorkFlowEv746150");
 
             entity.HasOne(d => d.Employee).WithMany(p => p.WorkFlowNotifications)
-                .HasForeignKey(d => d.EmployeeReferenceId)
+                .HasForeignKey(d => d.EmployeeId)
                 .HasConstraintName("FKWorkFlowEv659410");
 
             entity.HasOne(d => d.WorkFlowNotificationDestinationType).WithMany(p => p.WorkFlowNotifications)
@@ -379,7 +386,7 @@ public partial class REACDBContext : DbContext
             entity.Property(e => e.FinishedOn).HasColumnType("datetime");
 
             entity.HasOne(d => d.Employee).WithMany(p => p.WorkFlowProcessingLogs)
-                .HasForeignKey(d => d.EmployeeReferenceId)
+                .HasForeignKey(d => d.EmployeeId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FKWorkFlowPr231724");
 
@@ -459,7 +466,7 @@ public partial class REACDBContext : DbContext
                 .HasConstraintName("FKWorkFlowSt200163");
 
             entity.HasOne(d => d.Employee).WithMany(p => p.WorkFlowSteps)
-                .HasForeignKey(d => d.EmployeeReferenceId)
+                .HasForeignKey(d => d.EmployeeId)
                 .HasConstraintName("FKWorkFlowSt113423");
 
             entity.HasOne(d => d.Stage).WithMany(p => p.WorkFlowSteps)
@@ -577,7 +584,7 @@ public partial class REACDBContext : DbContext
                 .HasConstraintName("FKWorkFlowStepEventSecurityLevelActorDepartment200163");
 
             entity.HasOne(d => d.Employee).WithMany(p => p.WorkFlowStepEventSecurityLevelActors)
-                .HasForeignKey(d => d.EmployeeReferenceId)
+                .HasForeignKey(d => d.EmployeeId)
                 .HasConstraintName("FKWorkFlowStepEventSecurityLevelActorEmployeeReferenceSt113423");
 
             entity.HasOne(d => d.WorkFlowStepEvent).WithMany(p => p.WorkFlowStepEventSecurityLevelActors)
@@ -594,7 +601,6 @@ public partial class REACDBContext : DbContext
 
             entity.Property(e => e.Id).ValueGeneratedNever();
             entity.Property(e => e.BuildingNumber).HasMaxLength(10);
-            entity.Property(e => e.City).HasMaxLength(50);
             entity.Property(e => e.District).HasMaxLength(50);
             entity.Property(e => e.Email).HasMaxLength(250);
             entity.Property(e => e.Employer).HasMaxLength(100);
@@ -613,20 +619,44 @@ public partial class REACDBContext : DbContext
             entity.Property(e => e.UnitNumber).HasMaxLength(10);
             entity.Property(e => e.WorkTelephone).HasMaxLength(20);
 
+            entity.HasOne(d => d.City).WithMany(p => p.Citizens)
+                .HasForeignKey(d => d.CityId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FKCitizen92422");
+
+            entity.HasOne(d => d.Area).WithMany(p => p.Citizens)
+                .HasForeignKey(d => d.AreaId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FKCitizen92459");
+
+            entity.HasOne(d => d.Nationality).WithMany(p => p.Citizens)
+                .HasForeignKey(d => d.NationalityId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FKCitizen92411");
+
             entity.HasOne(d => d.Gender).WithMany(p => p.Citizens)
                 .HasForeignKey(d => d.GenderId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FKCitizen92455");
 
-            entity.HasOne(d => d.IdentityFile).WithMany(p => p.Citizens)
+            entity.HasOne(d => d.IdentityFile).WithMany(p => p.IndentityCitizens)
                 .HasForeignKey(d => d.IdentityFileId)
+                .IsRequired(false)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FKCitizen616003");
+                .HasConstraintName("FKIndentityCitizens616003");
 
             entity.HasOne(d => d.IdentityType).WithMany(p => p.Citizens)
                 .HasForeignKey(d => d.IdentityTypeId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FKCitizen807894");
+
+            entity.HasOne(d => d.LawLicenseFile).WithMany(p => p.LawLicenseCitizens)
+                .HasForeignKey(d => d.LawLicenseFileId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FKLawLicenseCitizens807894");
+
+
+
         });
 
         modelBuilder.Entity<DelegationRequest>(entity =>
@@ -682,21 +712,32 @@ public partial class REACDBContext : DbContext
                 .HasConstraintName("FKFacility36705");
         });
 
-        modelBuilder.Entity<FacilityDelegator>(entity =>
+        modelBuilder.Entity<Delegator>(entity =>
         {
-            entity.HasKey(e => new { e.Id, e.CitizenId, e.FacilityId }).HasName("PK__Facility__340286D707D66911");
+            entity.HasKey(e => e.Id).HasName("PK__Facility__340286D707D66911");
 
-            entity.ToTable("FacilityDelegator");
+            entity.ToTable("Delegator");
 
-            entity.HasOne(d => d.Citizen).WithMany(p => p.FacilityDelegators)
+            entity.HasOne(d => d.Citizen).WithMany(p => p.FromDelegators)
                 .HasForeignKey(d => d.CitizenId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FKFacilityDe118143");
+                .HasConstraintName("FKDelegatorFromDelegators8143");
 
-            entity.HasOne(d => d.Facility).WithMany(p => p.FacilityDelegators)
+            entity.HasOne(d => d.DelegatorCitizen).WithMany(p => p.ToDelegators)
+                .HasForeignKey(d => d.DelegatorCitizenId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FKDelegatorCitizenToDelegators18143");
+
+            entity.HasOne(d => d.Facility).WithMany(p => p.Delegators)
                 .HasForeignKey(d => d.FacilityId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FKFacilityDe200220");
+                .HasConstraintName("FKFacilityDelegators200220");
+
+
+            entity.HasOne(d => d.SysDelegationRelationshipType).WithMany(p => p.Delegators)
+              .HasForeignKey(d => d.DelegationRelationshipTypeId)
+              .OnDelete(DeleteBehavior.ClientSetNull)
+              .HasConstraintName("FKCDelegatorSysDelegationRelationshipTypes2455");
         });
 
         modelBuilder.Entity<LitigationRequest>(entity =>
@@ -715,10 +756,20 @@ public partial class REACDBContext : DbContext
             entity.Property(e => e.SentOn).HasColumnType("datetime");
             entity.Property(e => e.Title).HasMaxLength(250);
 
+            entity.HasOne(d => d.ReformerCitizen).WithMany(p => p.ReformerLitigationRequests)
+                .HasForeignKey(d => d.ReformerCitizenId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FKReformerCitizenLitigation638578");
+
             entity.HasOne(d => d.ApplicantCitizen).WithMany(p => p.LitigationRequests)
                 .HasForeignKey(d => d.ApplicantCitizenId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FKLitigation638578");
+
+            entity.HasOne(d => d.ExemptionReductionFile).WithMany(p => p.ExemptionReductionCategoryFiles)
+              .HasForeignKey(d => d.ExemptionReductionFileId)
+              .OnDelete(DeleteBehavior.ClientSetNull)
+              .HasConstraintName("FKExemptionReductionCategoryFilesExemptionReductionFiles01176101");
 
             entity.HasOne(d => d.Contract).WithMany(p => p.LitigationRequests)
                 .HasForeignKey(d => d.ContractId)
@@ -737,6 +788,7 @@ public partial class REACDBContext : DbContext
 
             entity.HasOne(d => d.LitigationRequestAmount).WithMany(p => p.LitigationRequests)
                 .HasForeignKey(d => d.LitigationRequestAmountId)
+
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FKLitigation464519");
 
@@ -781,8 +833,8 @@ public partial class REACDBContext : DbContext
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FKLitigation263926");
 
-            entity.HasOne(d => d.LeaseContractFile).WithMany(p => p.LitigationRequestContracts)
-                .HasForeignKey(d => d.LeaseContractFileId)
+            entity.HasOne(d => d.ContractFile).WithMany(p => p.LitigationRequestContracts)
+                .HasForeignKey(d => d.ContractFileId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FKLitigation945532");
 
@@ -790,6 +842,22 @@ public partial class REACDBContext : DbContext
                 .HasForeignKey(d => d.LitigationRequestContractTypeId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FKLitigation989644");
+
+            entity.HasOne(d => d.AssociationRegistrationCertificateFile).WithMany(p => p.AssociationRegistrationCertificateContracts)
+                .HasForeignKey(d => d.AssociationRegistrationCertificateFileId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FKAssociationRegistrationCertificateFile807894");
+            entity.HasOne(d => d.FoundingLetterFile).WithMany(p => p.FoundingLetterContracts)
+                .HasForeignKey(d => d.FoundingLetterFileId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FKFoundingLetterFile807894");
+            entity.HasOne(d => d.InternalRegulationsFile).WithMany(p => p.InternalRegulationsContracts)
+                .HasForeignKey(d => d.InternalRegulationsFileId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FKInternalRegulationsFile807894");
+
+
+
 
 
             entity.HasOne(d => d.SecondPartyRegistrationRequest).WithMany(p => p.SecondPartyLitigationRequestContracts)
@@ -1102,7 +1170,6 @@ public partial class REACDBContext : DbContext
             entity.Property(e => e.FilePath).HasMaxLength(1000);
             entity.Property(e => e.FileType).HasMaxLength(10);
         });
-
         modelBuilder.Entity<SysGender>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK__SysGende__3214EC0743341C99");
@@ -1110,6 +1177,145 @@ public partial class REACDBContext : DbContext
             entity.ToTable("SysGender");
 
             entity.Property(e => e.Gender).HasMaxLength(10);
+
+            entity.OwnsMany(d => d.Translations, ownedNavigationBuilder => { ownedNavigationBuilder.ToJson(); });
+
+        });
+        modelBuilder.Entity<SysCitizenRequestType>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__SysCitizenRequestType__3214EC0743341C99");
+
+            entity.ToTable("SysCitizenRequestType");
+
+            entity.Property(e => e.CitizenRequestTypeName).HasMaxLength(10);
+
+            entity.OwnsMany(d => d.Translations, ownedNavigationBuilder => { ownedNavigationBuilder.ToJson(); });
+
+        });
+
+
+        modelBuilder.Entity<SysDelegationRelationshipType>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK_SysDelegationRelationshipType3214EC0743341C99");
+
+            entity.ToTable("SysDelegationRelationshipType");
+
+            entity.Property(e => e.DelegationRelationshipTypeName).HasMaxLength(20);
+
+            entity.OwnsMany(d => d.Translations, ownedNavigationBuilder => { ownedNavigationBuilder.ToJson(); });
+
+        });
+        modelBuilder.Entity<CitizenRequest>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK_CitizenRequest_3214EC0743341C99");
+
+            entity.ToTable("CitizenRequest");
+
+            entity.Property(e => e.Brief).HasMaxLength(1000);
+
+            entity.HasOne(d => d.SysCitizenRequestType).WithMany(p => p.CitizenRequests)
+               .HasForeignKey(d => d.CitizenRequestTypeId)
+               .OnDelete(DeleteBehavior.ClientSetNull)
+               .HasConstraintName("FKSysCitizenRequestTypeCitizenRequest676101");
+        });
+        modelBuilder.Entity<CitizenRequestAcademicDegreeFile>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK_CitizenRequestAcademicDegreeFile3214EC0743341C99");
+
+            entity.ToTable("CitizenRequestAcademicDegreeFile");
+
+            entity.HasOne(d => d.AcademicDegreeFile).WithMany(p => p.CitizenRequestAcademicDegreeFiles)
+               .HasForeignKey(d => d.AcademicDegreeFileId)
+               .IsRequired(false)
+               .OnDelete(DeleteBehavior.ClientSetNull)
+               .HasConstraintName("CitizenRequestAcademicDegreeFiles616003");
+
+
+            entity.HasOne(d => d.CitizenRequest).WithMany(p => p.CitizenRequestAcademicDegreeFiles)
+               .HasForeignKey(d => d.CitizenRequestId)
+               .OnDelete(DeleteBehavior.ClientSetNull)
+               .HasConstraintName("FKCitizenRequestAcademicDegreeFileCitizenRequest676101");
+        });
+        modelBuilder.Entity<CitizenRequestFreelanceWorkDocumentFile>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK_CitizenRequestFreelanceWorkDocumentFile3214EC0743341C99");
+
+            entity.ToTable("CitizenRequestFreelanceWorkDocumentFile");
+
+            entity.HasOne(d => d.FreelanceWorkDocumentFile).WithMany(p => p.CitizenRequestFreelanceWorkDocumentFiles)
+              .HasForeignKey(d => d.FreelanceWorkDocumentFileId)
+              .OnDelete(DeleteBehavior.ClientSetNull)
+              .HasConstraintName("FKCitizenRequestCitizenRequestFreelanceWorkDocumentFiles01111676101");
+
+            entity.HasOne(d => d.CitizenRequest).WithMany(p => p.CitizenRequestFreelanceWorkDocumentFiles)
+               .HasForeignKey(d => d.CitizenRequestId)
+               .OnDelete(DeleteBehavior.ClientSetNull)
+               .HasConstraintName("FKCitizenRequestFreelanceWorkDocumentFileCitizenRequest676101");
+        });
+        modelBuilder.Entity<CitizenRequestExperienceCertificate>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK_CitizenRequestExperienceCertificate3214EC0743341C99");
+
+            entity.ToTable("CitizenRequestExperienceCertificate");
+
+
+
+            entity.HasOne(d => d.CitizenRequest).WithMany(p => p.CitizenRequestExperienceCertificates)
+               .HasForeignKey(d => d.CitizenRequestId)
+               .OnDelete(DeleteBehavior.ClientSetNull)
+               .HasConstraintName("FKCitizenRequestExperienceCertificateCitizenRequest676101");
+        });
+        modelBuilder.Entity<CitizenRequestExperienceCertificateFile>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK_CitizenRequestExperienceCertificateFileEC0743341C99");
+
+            entity.ToTable("CitizenRequestExperienceCertificateFile");
+            entity.HasOne(d => d.ExperienceCertificateFile).WithMany(p => p.CitizenRequestExperienceCertificateFiles)
+              .HasForeignKey(d => d.ExperienceCertificateFileId)
+              .OnDelete(DeleteBehavior.ClientSetNull)
+              .HasConstraintName("FKCitizenRequestCitizenRequestExperienceCertificateFile000676101");
+
+            entity.HasOne(d => d.CitizenRequestExperienceCertificate).WithMany(p => p.CitizenRequestExperienceCertificateFiles)
+               .HasForeignKey(d => d.CitizenRequestExperienceCertificateId)
+               .OnDelete(DeleteBehavior.ClientSetNull)
+               .HasConstraintName("FKCitizenRequestExperienceCertificateFileCitizenRequestExperienceCertificate676101");
+        });
+
+        modelBuilder.Entity<SysArea>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__SysArea_3214EC0743341C99");
+
+            entity.ToTable("SysArea");
+
+            entity.Property(e => e.AreaName).HasMaxLength(100);
+
+            entity.OwnsMany(d => d.Translations, ownedNavigationBuilder => { ownedNavigationBuilder.ToJson(); });
+
+        });
+        modelBuilder.Entity<SysArbitratorClass>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__SysArbitratorClass_3214EC0743341C99");
+
+            entity.ToTable("SysArbitratorClass");
+
+            entity.Property(e => e.ArbitratorClassName).HasMaxLength(20);
+
+            entity.OwnsMany(d => d.Translations, ownedNavigationBuilder => { ownedNavigationBuilder.ToJson(); });
+
+        });
+
+        modelBuilder.Entity<SysCity>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__SysCity_3214EC0743341C99");
+
+            entity.ToTable("SysCity");
+
+            entity.Property(e => e.CityName).HasMaxLength(100);
+
+            entity.HasOne(d => d.Area).WithMany(p => p.Cities)
+               .HasForeignKey(d => d.AreaId)
+               .OnDelete(DeleteBehavior.ClientSetNull)
+               .HasConstraintName("FKSysAreaCity676101");
 
             entity.OwnsMany(d => d.Translations, ownedNavigationBuilder => { ownedNavigationBuilder.ToJson(); });
 

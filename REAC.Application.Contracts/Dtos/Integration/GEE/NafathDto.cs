@@ -14,7 +14,8 @@ namespace REAC.Application.Contracts.Dtos.Integration.GEE
     public class NafathRequestDto
     {
         public string NationalId { get; set; }
-        public string Token { get; set; }
+        public string? Password{ get; set; }
+        public bool IsRegister { get; set; }
     }
 
     public class NafathRequestBodyDto
@@ -82,80 +83,33 @@ namespace REAC.Application.Contracts.Dtos.Integration.GEE
     #endregion
 
 
+    #region Nafath Get User Info
+
+    public class NafathUserInfoDto
+    {
+        public UserInfoDto user_info { get; set; }
+    }
+
+    
+    public class UserInfoDto
+    {
+        public string id { get; set; }
+        public string full_name_ar { get; set; }
+        public string two_names_ar { get; set; }
+        public string id_expiry_date_g { get; set; }
+        public int nationality { get; set; }
+        public string nationality_ar { get; set; }
+        public string dob_g { get; set; }
+        public string gender { get; set; }
+    }
+
+    #endregion
+
     public class NafathResponseErrorDto
     {
         public string Code { get; set; }
         public string Message { get; set; }
     }
-
-
-
-
-
-
-
-
-
-
-
-    public class NafathLoginDto
-    {
-        public string nationalId { get; set; }
-        public string service { get; set; }
-    }
-
-    public class FullNafathLoginDto
-    {
-        public string LoginURL { get; set; }
-        public string AppId { get; set; }
-        public string AppKey { get; set; }
-        public string Local { get; set; }
-        public string RequestId { get; set; }
-        public NafathLoginDto NafathLogin { get; set; }
-    }
-
-    public class NafathCallbackDto
-    {
-        public string Token { get; set; }
-        public string TransId { get; set; }
-        public string NationalId { get; set; }
-    }
-
-    
-
-
-
-
-
-    //public class FullNafathLoginResponseDto
-    //{
-    //    public int Status { get; set; }
-    //    public NafathLoginResponseDto NafathLoginData { get; set; } = new NafathLoginResponseDto();
-    //}
-
-    public class NafathErrorResponseDto
-    {
-        public string Status { get; set; }
-        public string Timestamp { get; set; }
-        public string Message { get; set; }
-        public string Code { get; set; }
-        public int Reference { get; set; }
-    }
-
-    //public class NafathLoginIntegrationDto
-    //{
-    //    [JsonPropertyName("data")]
-    //    public NafathLoginResponseDto Data { get; set; }
-    //}
-
-    public class NafathCallbackIntegrationDto
-    {
-        [JsonPropertyName("data")]
-        public NafathCallbackDto Data { get; set; }
-    }
-
-    
-
 
 
 }

@@ -51,6 +51,7 @@ namespace Ticketing.EntityFrameworkCore.SeedData
 
                     }
                 });
+            context.SaveChanges();
         }
     }
 }

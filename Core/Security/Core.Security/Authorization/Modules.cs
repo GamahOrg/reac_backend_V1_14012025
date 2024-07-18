@@ -33,6 +33,8 @@
         public const string Employee = "Employee";
         public const string FileManager = "FileManager";
         public const string Gender = "Gender";
+        public const string DelegationRelationshipType = "DelegationRelationshipType";
+
         public const string IdentityType = "IdentityType";
         public const string LitigationRequestAmount = "LitigationRequestAmount";
         public const string LitigationRequestCategory = "LitigationRequestCategory";
@@ -46,6 +48,9 @@
         public const string RegistrationRequest = "RegistrationRequest";
         public const string Setting = "Setting";
         public const string VacationRequest = "VacationRequest";
+        public const string ArbitratorClass = "ArbitratorClass";
+        public const string Area = "Area";
+        public const string City = "City";
 
 
 

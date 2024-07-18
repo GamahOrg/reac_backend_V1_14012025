@@ -16,7 +16,7 @@ namespace REAC.Api.Controllers.System;
 
 public class SysLitigationRequestStatusController : BaseController<SysLitigationRequestStatus,
        SysLitigationRequestStatusCreateUpdateDto, SysLitigationRequestStatusDto
-       , LitigationRequestStatus>
+       , RequestStatus>
 {
 
     public SysLitigationRequestStatusController(ISysLitigationRequestStatusService sysLitigationRequestStatusService) :

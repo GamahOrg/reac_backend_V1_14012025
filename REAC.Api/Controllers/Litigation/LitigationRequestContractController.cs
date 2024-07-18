@@ -1,9 +1,7 @@
 ﻿using Core.Security.Attributes;
 using Core.Security.Authorization;
-using Core.Shared.Responses;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using REAC.Application.Contracts.Dtos.Integration;
 using REAC.Application.Contracts.Dtos.Litigation;
 using REAC.Application.Contracts.Dtos.Litigation.Create.Contract;
 using REAC.Application.Contracts.Dtos.Litigation.Create.Defendant;
@@ -29,57 +27,21 @@ public class LitigationRequestContractController : BaseController<LitigationRequ
     {
         _contractService = litigationRequestContractService;
     }
-    [HttpPost(nameof(CreateRent))]
-    [AllowAnonymous]
-    public async Task<IActionResult> CreateRent([FromBody] RentCreateUpdateDto model,
-       CancellationToken cancellationToken) // عقد ايجار
+    [HttpPost(nameof(UpdateContractDocument))]
+    public async Task<IActionResult> UpdateContractDocument([FromBody] ContractDocuments contractDocuments,
+       CancellationToken cancellationToken)
     {
         if (ModelState.IsValid)
         {
-            var returnValue = await _contractService.AddRentContract(model);
+            var returnValue = await _contractService.AddContractDocuments(contractDocuments);
             return Ok(returnValue);
         }
         return BadRequest();
     }
 
-    [HttpPost(nameof(CreateProperties))]
-    [AllowAnonymous]
-    public async Task<IActionResult> CreateProperties([FromBody] PropertiesCreateUpdateDto model,
-   CancellationToken cancellationToken) // عقد ملاك
-    {
-        if (ModelState.IsValid)
-        {
-            var returnValue = await _contractService.AddPropertiesContract(model);
-            return Ok(returnValue);
-        }
-        return BadRequest();
-    }
 
-    [HttpPost(nameof(CreateRealState))]
-    [AllowAnonymous]
-    public async Task<IActionResult> CreateRealState([FromBody] RealEstateBrokerageCreateUpdateDto model,
-       CancellationToken cancellationToken) // عقد ايجار
-    {
-        if (ModelState.IsValid)
-        {
-            var returnValue = await _contractService.AddRealEstateContract(model);
-            return Ok(returnValue);
-        }
-        return BadRequest();
-    }
 
-    [HttpPost(nameof(CreateWafi))]
-    [AllowAnonymous]
-    public async Task<IActionResult> CreateWafi([FromBody] WafiCreateUpdateDto model,
-      CancellationToken cancellationToken) // عقد وافي
-    {
-        if (ModelState.IsValid)
-        {
-            var returnValue = await _contractService.AddWafiContract(model);
-            return Ok(returnValue);
-        }
-        return BadRequest();
-    }
+
 
     [HttpPost(nameof(CreateOther))]
     [AllowAnonymous]
@@ -145,11 +107,11 @@ public class LitigationRequestContractController : BaseController<LitigationRequ
 
     [HttpPost(nameof(WafiIntegrate))]
     [AllowAnonymous]
-    public async Task<IActionResult> WafiIntegrate(LitigationRequestOwnerType firstPartyCapacity, string contractKey,string licenseNo, WafiRequestOwnerType firstPartyType,WafiRequestOwnerType secondePartyType) 
+    public async Task<IActionResult> WafiIntegrate(LitigationRequestOwnerType firstPartyCapacity, string contractKey, string licenseNo, WafiRequestOwnerType firstPartyType, WafiRequestOwnerType secondePartyType)
     {
         if (ModelState.IsValid)
         {
-            var returnValue = await _contractService.WafiIntegrate(firstPartyCapacity,licenseNo, firstPartyType,secondePartyType);
+            var returnValue = await _contractService.WafiIntegrate(firstPartyCapacity, licenseNo, firstPartyType, secondePartyType);
             return Ok(returnValue);
         }
         return BadRequest();

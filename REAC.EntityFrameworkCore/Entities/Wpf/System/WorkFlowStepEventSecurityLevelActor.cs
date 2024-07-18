@@ -12,7 +12,7 @@ public partial class WorkFlowStepEventSecurityLevelActor : BaseEntity<Guid>
 
     public Guid? DepartmentId { get; set; }
 
-    public Guid? EmployeeReferenceId { get; set; }
+    public Guid? EmployeeId { get; set; }
 
     public virtual WorkFlowStepEventSecurityLevelActorType WorkFlowStepEventSecurityLevelActorType { get; set; } = null!;
 

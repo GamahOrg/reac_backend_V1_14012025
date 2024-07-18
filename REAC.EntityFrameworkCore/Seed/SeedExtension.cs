@@ -39,6 +39,11 @@ namespace REAC.EntityFrameworkCore.Seed
                 await DefaultUsersCreator.CreateAsync(userManager, roleManager, identityContext);
                 userManager.Dispose();
                 roleManager.Dispose();
+                await SysLitigationRequestAmountSeedDataCreator.SeedAsync(context);
+                await ExemptionReductionCategorySeedDataCreator.SeedAsync(context);
+
+                await FileSeedDataCreator.SeedAsync(context);
+                await DelegationRelationshipTypeSeedDataCreator.SeedAsync(context);
                 await GenderSeedDataCreator.SeedAsync(context);
                 await IdentityTypeSeedDataCreator.SeedAsync(context);
                 await LitigationRequestCategorySeedDataCreator.SeedAsync(context);
@@ -48,8 +53,18 @@ namespace REAC.EntityFrameworkCore.Seed
                 await LitigationRequestMeetingDecisionSeedDataCreator.SeedAsync(context);
                 await LitigationRequestOwnerTypeSeedDataCreator.SeedAsync(context);
                 await LitigationRequestStatusSeedDataCreator.SeedAsync(context);
+                await AreasSeedDataCreator.SeedAsync(context);
+                await CitiesSeedDataCreator.SeedAsync(context);
+
+                await NationalitySeedDataCreator.SeedAsync(context);
+                await ArbitratorClassessSeedDataCreator.SeedAsync(context);
+
                 await SettingSeedDataCreator.SeedAsync(context);
                 await EmployeeSeedDataCreator.SeedAsync(context);
+                await CitizenSeedDataCreator.SeedAsync(context);
+                await FacilitySeedDataCreator.SeedAsync(context);
+                await DelegatorSeedDataCreator.SeedAsync(context);
+
                 await DefaultWorkFlowDataCreator.CreateAsync(context);
 
                 context.SaveChanges();

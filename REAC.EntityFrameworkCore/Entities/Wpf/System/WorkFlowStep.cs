@@ -26,11 +26,11 @@ public partial class WorkFlowStep : FullAuditedBaseEntity<Guid>
 
     public Guid? DepartmentId { get; set; }
 
-    public Guid? EmployeeReferenceId { get; set; }
+    public Guid? EmployeeId { get; set; }
 
-    public LitigationRequestStatus InternalStatusId { get; set; }
+    public RequestStatus InternalStatusId { get; set; }
 
-    public LitigationRequestStatus ExternalStatusId { get; set; }
+    public RequestStatus ExternalStatusId { get; set; }
 
     public Guid? CreationNotificationPlanId { get; set; }
 

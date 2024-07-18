@@ -67,5 +67,6 @@ public partial class LitigationRequestCorrespondenceDestinationSeedDataCreator
                         }
                     }
             });
+        context.SaveChanges();
     }
 }

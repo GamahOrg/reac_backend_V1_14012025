@@ -15,9 +15,11 @@ public partial class Citizen : BaseEntity<Guid>
     public string IdentityNumber { get; set; } = null!;
 
     public string FullName { get; set; } = null!;
-    public string Nationality { get; set; } = null!;
+
+    public Guid NationalityId { get; set; }
+
     public DateTime BirthDate { get; set; }
-    public string NationalAddress { get; set; }
+    public string? NationalAddress { get; set; }
 
     public string ShortName { get; set; } = null!;
 
@@ -29,7 +31,7 @@ public partial class Citizen : BaseEntity<Guid>
 
     public DateTime IdentityExpiryDate { get; set; }
 
-    public Guid IdentityFileId { get; set; }
+    public Guid? IdentityFileId { get; set; }
 
     public string Employer { get; set; } = null!;
 
@@ -43,7 +45,9 @@ public partial class Citizen : BaseEntity<Guid>
 
     public string Email { get; set; } = null!;
 
-    public string City { get; set; } = null!;
+    public Guid AreaId { get; set; }
+
+    public Guid CityId { get; set; }
 
     public string District { get; set; } = null!;
 
@@ -57,13 +61,35 @@ public partial class Citizen : BaseEntity<Guid>
 
     public string UnitNumber { get; set; } = null!;
 
-    public virtual ICollection<Facility> Facilities { get; set; } = new List<Facility>();
+    public bool IsLawyer { get; set; } = false;
 
-    public virtual ICollection<FacilityDelegator> FacilityDelegators { get; set; } = new List<FacilityDelegator>();
+    public bool IsReformer { get; set; } = false;
+
+    public bool IsArbitrator { get; set; } = false;
+
+    public string? LawerLicenseNumber { get; set; }
+
+    public DateTime? LawerLicenseExpirationDate { get; set; }
+
+    public Guid? LawLicenseFileId { get; set; }
+
+    public virtual ICollection<Facility> Facilities { get; set; } = new List<Facility>();
+    public virtual ICollection<Delegator> FromDelegators { get; set; } = new List<Delegator>();
+
+    public virtual ICollection<Delegator> ToDelegators { get; set; } = new List<Delegator>();
 
     public virtual SysGender Gender { get; set; } = null!;
 
+    public virtual SysCity City { get; set; } = null!;
+
+    public virtual SysArea Area { get; set; } = null!;
+
+    public virtual SysNationality Nationality { get; set; } = null!;
+
     public virtual SysFileManager IdentityFile { get; set; } = null!;
+
+    public virtual SysFileManager? LawLicenseFile { get; set; }
+    public virtual ICollection<LitigationRequest> ReformerLitigationRequests { get; set; } = new List<LitigationRequest>();
 
     public virtual SysIdentityType IdentityType { get; set; } = null!;
 

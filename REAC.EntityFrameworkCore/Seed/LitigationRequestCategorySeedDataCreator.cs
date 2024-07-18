@@ -19,6 +19,7 @@ public partial class LitigationRequestCategorySeedDataCreator
                     {
                         Id = Domain.Shared.Enum.LitigationRequestCategory.Reconciliation,
                         CategoryName = "صلح",
+                        BpfId = Guid.Parse("15d87d0d-3cf4-4969-9c7e-933aeea0e5f5"),
                         Translations=new List<SysLitigationRequestCategoryTranslation>
                         {
                             new SysLitigationRequestCategoryTranslation
@@ -37,6 +38,7 @@ public partial class LitigationRequestCategorySeedDataCreator
                     {
                         Id =  Domain.Shared.Enum.LitigationRequestCategory.Arbitration,
                         CategoryName = "تحكيم",
+                        BpfId = Guid.Parse("e8a449f5-b1a0-49e8-bbf2-73ac94ef55f5"),
                         Translations=new List<SysLitigationRequestCategoryTranslation>
                         {
                             new SysLitigationRequestCategoryTranslation
@@ -55,6 +57,7 @@ public partial class LitigationRequestCategorySeedDataCreator
                     {
                         Id = Domain.Shared.Enum.LitigationRequestCategory.ReconciliationAndArbitration,
                         CategoryName = "صلح وتحكيم",
+                        BpfId = Guid.Parse("832e07ba-354a-4d6e-8329-9adf2b28966a"),
                         Translations=new List<SysLitigationRequestCategoryTranslation>
                         {
                             new SysLitigationRequestCategoryTranslation
@@ -70,5 +73,6 @@ public partial class LitigationRequestCategorySeedDataCreator
                         }
                     },
             });
+        context.SaveChanges();
     }
 }

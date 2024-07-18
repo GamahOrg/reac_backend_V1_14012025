@@ -49,5 +49,6 @@ public partial class LitigationRequestExtendPeriodRequestStatusSeedDataCreator
                         }
                     }
             });
+        context.SaveChanges();
     }
 }

@@ -8,7 +8,7 @@ public partial class WorkFlowProcessingLog : BaseEntity<Guid>
 {
     public DateTime CreatedOn { get; set; }
 
-    public Guid? EmployeeReferenceId { get; set; }
+    public Guid? EmployeeId { get; set; }
 
     public Guid RequestId { get; set; }
 

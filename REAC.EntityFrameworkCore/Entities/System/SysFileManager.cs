@@ -12,7 +12,17 @@ public partial class SysFileManager : CreationBaseEntity<Guid>
 
     public string FileType { get; set; } = null!;
 
-    public virtual ICollection<Citizen> Citizens { get; set; } = new List<Citizen>();
+    public virtual ICollection<Citizen> IndentityCitizens { get; set; } = new List<Citizen>();
+    public virtual ICollection<Citizen> LawLicenseCitizens { get; set; } = new List<Citizen>();
+    public virtual ICollection<CitizenRequestExperienceCertificateFile> CitizenRequestExperienceCertificateFiles { get; set; } = new List<CitizenRequestExperienceCertificateFile>();
+    public virtual ICollection<CitizenRequestFreelanceWorkDocumentFile> CitizenRequestFreelanceWorkDocumentFiles { get; set; } = new List<CitizenRequestFreelanceWorkDocumentFile>();
+    public virtual ICollection<LitigationRequest> ExemptionReductionCategoryFiles { get; set; } = new List<LitigationRequest>();
+
+
+    public virtual ICollection<LitigationRequestContract> AssociationRegistrationCertificateContracts { get; set; } = new List<LitigationRequestContract>();
+    public virtual ICollection<LitigationRequestContract> FoundingLetterContracts { get; set; } = new List<LitigationRequestContract>();
+    public virtual ICollection<LitigationRequestContract> InternalRegulationsContracts { get; set; } = new List<LitigationRequestContract>();
+    public virtual ICollection<CitizenRequestAcademicDegreeFile> CitizenRequestAcademicDegreeFiles { get; set; } = new List<CitizenRequestAcademicDegreeFile>();
 
     public virtual ICollection<DelegationRequest> DelegationRequests { get; set; } = new List<DelegationRequest>();
 

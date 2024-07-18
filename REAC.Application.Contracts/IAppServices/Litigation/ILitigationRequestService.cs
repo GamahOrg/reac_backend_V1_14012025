@@ -1,11 +1,8 @@
 ﻿using Core.Shared.Responses;
-using Microsoft.EntityFrameworkCore;
-using REAC.Application.Contracts.Dtos.Litigation;
 using REAC.Application.Contracts.Dtos.Litigation.Create.Litigation;
-using REAC.Application.Contracts.Dtos.Litigation.Get;
+using REAC.Application.Contracts.Dtos.Litigation.CreateUpdate.Litigation;
 using REAC.Application.Contracts.Dtos.Litigation.List;
 using REAC.EntityFrameworkCore.Entities.Litigation;
-using System.Threading.Tasks;
 
 namespace REAC.Application.Contracts.IAppServices.Litigation
 {
@@ -18,6 +15,7 @@ namespace REAC.Application.Contracts.IAppServices.Litigation
         Task<BaseResponse> GetLitigationPartiesDetails(Guid litigationId);
         Task<BaseResponse> GetLitigationDetails(Guid litigationId);
         Task<BaseResponse> AddLitigation(LitigationCreateUpdateDto model);
+        Task<BaseResponse> CreateLitigationRequest(LitigationRequestDto litigationRequestDto);
 
 
         #region pagination
@@ -39,7 +37,7 @@ namespace REAC.Application.Contracts.IAppServices.Litigation
 
             public static async Task<PaginatedList<T>> CreateAsync(IList<T> source, int pageIndex, int pageSize)
             {
-                var count =  source.Count();
+                var count = source.Count();
                 var items = source.Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
                 return new PaginatedList<T>(items, count, pageIndex, pageSize);
             }

@@ -25,8 +25,8 @@ namespace REAC.Application.Contracts.Dtos.Litigation.Create.Litigation
         public Guid LitigationRequestAmountId { get; set; }// مبلغ المنازعه
         public List<LitigationRequests> Requests { get; set; }
         public List<LitigationReferences> References { get; set; }
-        public LitigationRequestStatus? InternalStatusId { get; set; }
-        public LitigationRequestStatus? ExternalStatusId { get; set; }
+        public RequestStatus? InternalStatusId { get; set; }
+        public RequestStatus? ExternalStatusId { get; set; }
         public Guid ContractId { get; set; }// contract primary key
         public decimal? Fees { get; set; } // from system
         public LitigationRequestCategory LitigationRequestCategoryId { get; set; }

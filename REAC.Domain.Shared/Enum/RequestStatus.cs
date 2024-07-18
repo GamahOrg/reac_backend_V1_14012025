@@ -1,19 +1,35 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace REAC.Domain.Shared.Enum
+﻿namespace REAC.Domain.Shared.Enum;
+public enum RequestStatus
 {
-    public enum RequestStatus
-    {
-        RequestHasBeenCreated = 1,
-        RequestHasBeenCreatedAndIsBeingStudied = 2,
-        RequestIsUnderStudy = 3,
-        RequestHasBeenAccepted = 4,
-        RequestHasBeenRejected = 5,
-        FeedbackHasBeenSentToTheClient = 6,
-        FeedbackHasBeenProcessedAndTheRequestHasBeenSent = 7
-    }
+    ///<summary>جديدة</summary>
+    New = 1,
+    ///<summary>مُستلمة</summary>
+    Received = 2,
+    ///<summary>تم تحديد ميعاد جلسة</summary>
+    AsessionTimeHasBeenSet = 3,
+    ///<summary>تمت الجلسة</summary>
+    TheSessionWasCompleted = 4,
+    ///<summary>تم كتابة محضر الجلسة</summary>
+    TheMinutesOfTheMeetingWereWritten = 5,
+    ///<summary>تنازل عن الحق</summary>
+    WaiverOfRight = 6,
+    ///<summary>تنازل عن الدعوى</summary>
+    WaiverOfTheLawsuit = 7,
+    ///<summary>عدم الصُلح</summary>
+    LackOfReconciliation = 8,
+    ///<summary>حفظ وإغلاق</summary>
+    SaveAndClose = 9,
+    ///<summary> حفظ كمسودة</summary>
+    SaveAsDraft = 10,
+    ///<summary>مرفوضة</summary>
+    Rejected = 11,
+    ///<summary>معاده للتعديل</summary>
+    SentBackForEdit = 12,
+    ///<summary>تم التعديل</summary>
+    Edited = 13,
+    ///<summary>قيد المشارطة</summary>
+    CharterRequestSent = 14
+
+
 }
+

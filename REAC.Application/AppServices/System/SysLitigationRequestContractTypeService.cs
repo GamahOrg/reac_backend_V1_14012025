@@ -8,6 +8,7 @@ using REAC.Application.Contracts.IAppServices;
 using REAC.Application.Contracts.IAppServices.Litigation;
 using REAC.Application.Contracts.IAppServices.System;
 using REAC.Domain.Shared.Enum;
+using REAC.EntityFrameworkCore.Entities.Litigation;
 using REAC.EntityFrameworkCore.Entities.System;
 
 namespace REAC.Application.AppServices.System
@@ -25,17 +26,37 @@ namespace REAC.Application.AppServices.System
         }
         public async Task<BaseResponse> GetTermsConditionsAsync(string contractNumber, CancellationToken cancellationToken)
         {
-            var contract = await _contractservice.GetContract(contractNumber);
-            var quarble = await GetQueryableAsync();
-            var result = quarble.SingleOrDefault(x => x.Id == contract.LitigationRequestContractTypeId);
+            var litigationRequest = (await _repository.GetQueryable<LitigationRequest, Guid>())
+                .Include(x => x.Contract)
+                          .Include(x => x.Contract.LitigationRequestContractType).Include(x => x.ApplicantCitizen).AsNoTracking()
+                          .Where(x => x.Contract.ContractKey == contractNumber).ToList().FirstOrDefault();
 
-            result.AcknowledgmentContent = $"{result.AcknowledgmentContent.Replace("{اسم المدعي}", contract.FirstPartyCitizen.FullName).Replace("{رقم هوية المدعي}", contract.FirstPartyCitizen.IdentityNumber).Replace("{مصدر الهوية}", contract.FirstPartyCitizen.District).Replace("{تاريخ الميلادي لليوم}", DateTime.Now.ToString())}";
-            return new DataResponse<SysLitigationRequestContractTypeDto> { Data = new SysLitigationRequestContractTypeDto
+            if (litigationRequest != null)
             {
-                AcknowledgmentContent= result.AcknowledgmentContent,
-                TypeName = result.CodingPrefixSymbol,
-                TermsAndConditions = result.TermsAndConditions
-            }, IsDone = true };
+                return new DataResponse<SysLitigationRequestContractTypeDto>
+                {
+                    Data = new SysLitigationRequestContractTypeDto
+                    {
+                        AcknowledgmentContent = (litigationRequest.Contract.LitigationRequestContractType.AcknowledgmentContent == null) ? null :
+                        $"{litigationRequest.Contract.LitigationRequestContractType.AcknowledgmentContent.Replace("{اسم المدعي}",
+                        litigationRequest.Contract.LitigationRequests.FirstOrDefault().ApplicantCitizen.FullName).Replace("{رقم هوية المدعي}",
+                        litigationRequest.Contract.LitigationRequests.FirstOrDefault().ApplicantCitizen.IdentityNumber).Replace("{مصدر الهوية}",
+                        litigationRequest.Contract.LitigationRequests.FirstOrDefault().ApplicantCitizen.District).Replace("{تاريخ الميلادي لليوم}",
+                        DateTime.Now.ToString())}",
+                        TypeName = litigationRequest.Contract.LitigationRequestContractType.CodingPrefixSymbol,
+                        TermsAndConditions = litigationRequest.Contract.LitigationRequestContractType.TermsAndConditions
+                    },
+                    IsDone = true
+                };
+
+            }
+
+            return new BaseResponse
+            {
+                IsDone = false
+            };
+
+
         }
     }
 }

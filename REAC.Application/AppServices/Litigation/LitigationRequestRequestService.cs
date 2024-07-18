@@ -5,7 +5,6 @@ using Core.Shared.Responses;
 using REAC.Application.Contracts.IAppServices;
 using REAC.Application.Contracts.IAppServices.Litigation;
 using REAC.EntityFrameworkCore.Entities.Litigation;
-using REAC.EntityFrameworkCore.Entities.System;
 
 
 
@@ -24,7 +23,7 @@ namespace REAC.Application.AppServices.Litigation
         public async Task<Guid> GetAddedRequestId()
         {
             var quarable = await GetQueryableAsync();
-            var latestAdded = quarable.OrderByDescending(x => x.Id).First();
+            var latestAdded = quarable.OrderByDescending(x => x.Id).FirstOrDefault();
             return latestAdded.Id;
         }
     }

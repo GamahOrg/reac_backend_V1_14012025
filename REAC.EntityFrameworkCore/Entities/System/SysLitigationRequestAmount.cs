@@ -3,7 +3,7 @@ using REAC.EntityFrameworkCore.Entities.Litigation;
 
 namespace REAC.EntityFrameworkCore.Entities.System;
 
-public partial class SysLitigationRequestAmount : FullAuditedBaseEntity<Guid>
+public partial class SysLitigationRequestAmount : BaseEntity<Guid>
 {
     public string LitigationAmount { get; set; } = null!;
 

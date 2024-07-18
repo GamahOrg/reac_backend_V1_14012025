@@ -1,13 +1,8 @@
 ﻿using Core.GenericRepository.Shared.BaseEntities;
-using REAC.Application.Contracts.Dtos.Litigation.CreateUpdate.Litigation;
-using REAC.Application.Contracts.IAppServices.System;
+using REAC.Application.Contracts.Dtos.System.LitigationRequestCategoryDtos;
 using REAC.Domain.Shared.Enum;
 using REAC.EntityFrameworkCore.Entities.Litigation;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using REAC.EntityFrameworkCore.Entities.System;
 
 namespace REAC.Application.Contracts.Dtos.Litigation.Get
 {
@@ -27,9 +22,13 @@ namespace REAC.Application.Contracts.Dtos.Litigation.Get
         public LitigationRequestContractType LitigationRequestContractTypeId { get; set; }
         public LitigationRequestCategory LitigationRequestCategoryId { get; set; }
         public LitigationRequestOwnerType LitigationRequestOwnerTypeId { get; set; }
-        public List<LitigationRequestGroundCreateUpdateDto> References { get; set; } 
-        public List<LitigationRequestRequestCreateUpdateDto> Requests { get; set; }
-        public List<ExemptionReductionCategoryDto> ExemptionReductionCategory { get; set; }
+
+        public virtual SysFileManagerCreateUpdateDto? ExemptionReductionFile { get; set; }
+
+        public List<LitigationRequestGroundCreateUpdateDto> References { get; set; } = new List<LitigationRequestGroundCreateUpdateDto>();
+        public SysExemptionReductionCategoryCreateUpdateDto? ExemptionReductionCategory { get; set; } = new SysExemptionReductionCategoryCreateUpdateDto();
+
+        public List<LitigationRequestRequestCreateUpdateDto> Requests { get; set; } = new List<LitigationRequestRequestCreateUpdateDto>();
 
     }
 }

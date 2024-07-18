@@ -1,6 +1,6 @@
-﻿using Core.Security.Authorization;
+﻿using Core.Security.Attributes;
+using Core.Security.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Core.Security.Attributes;
 using REAC.Application.Contracts.Dtos.Wpf.Business;
 using REAC.Application.Contracts.IModuleServices;
 using REAC.Domain.Shared.Constants;
@@ -22,11 +22,11 @@ namespace Bpf.Api.Controllers.Business
         }
 
         [HttpPost(nameof(ExcuteWorkFlow))]
-        public virtual async Task<IActionResult> ExcuteWorkFlow(Guid requestId, Guid workflowId, CancellationToken cancellationToken)
+        public virtual async Task<IActionResult> ExcuteWorkFlow(Guid requestId, CancellationToken cancellationToken)
         {
             if (ModelState.IsValid)
             {
-                var returnValue = await _bpfService.ExcuteWorkFlow(requestId, workflowId, cancellationToken);
+                var returnValue = await _bpfService.ExcuteWorkFlow(requestId, cancellationToken);
                 return Ok(returnValue);
             }
             return BadRequest();
@@ -55,12 +55,12 @@ namespace Bpf.Api.Controllers.Business
             return BadRequest();
         }
 
-        [HttpGet(nameof(GetWorkflowStepEventsForEmployee) + "/requestId/employeeId")]
-        public virtual async Task<IActionResult> GetWorkflowStepEventsForEmployee(Guid requestId, Guid employeeId, CancellationToken cancellationToken)
+        [HttpGet(nameof(GetWorkflowStepEventsForEmployee) + "/requestId")]
+        public virtual async Task<IActionResult> GetWorkflowStepEventsForEmployee(Guid requestId, CancellationToken cancellationToken)
         {
             if (ModelState.IsValid)
             {
-                var returnValue = await _bpfService.GetWorkflowStepEventsForEmployee(requestId, employeeId, cancellationToken);
+                var returnValue = await _bpfService.GetWorkflowStepEventsForEmployee(requestId, cancellationToken);
                 return Ok(returnValue);
             }
 

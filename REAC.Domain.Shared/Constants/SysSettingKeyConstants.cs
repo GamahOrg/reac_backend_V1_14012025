@@ -43,6 +43,12 @@
 
         #endregion
 
+        #region Get User Info
+
+        public const string NafathGetUserInfo_URL = "NafathGetUserInfo_URL";
+
+        #endregion
+
         #region Nafath Response Status keys
 
         public const string NafathStatus_COMPLETED = "COMPLETED";

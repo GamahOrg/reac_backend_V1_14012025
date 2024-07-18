@@ -18,7 +18,7 @@ namespace REAC.Application.Contracts.Dtos.Litigation.List
         public string? FirstPartyName { get; set; }
         public string? SecondPartyName { get; set; }
         public int?  AuditngRemaningDays{ get; set; }
-        public LitigationRequestStatus? InternalStatusId { get; set; }
+        public RequestStatus? InternalStatusId { get; set; }
         public LitigationRequestContractType? LitigationRequestContractTypeId { get; set; }
         public string? LitigationRequestContractType { get; set; }
     }

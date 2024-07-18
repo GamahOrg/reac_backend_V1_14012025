@@ -11,7 +11,7 @@ namespace REAC.Application.Contracts.IModuleServices
         /// <param name="requestId"></param>
         /// <param name="workflowId"></param>
         /// <returns>Return BaseResponse include process status in isDone Flage and responsed data</returns>
-        public Task<BaseResponse> ExcuteWorkFlow(Guid requestId, Guid workflowId, CancellationToken cancellationToken);
+        public Task<BaseResponse> ExcuteWorkFlow(Guid requestId, CancellationToken cancellationToken);
 
         /// <summary>
         /// Get Workflow Step Events For Employee
@@ -19,7 +19,7 @@ namespace REAC.Application.Contracts.IModuleServices
         /// <param name="requestId"></param>
         /// <param name="employeeId"></param>
         /// <returns>Return BaseResponse include process status in isDone Flage and responsed data</returns>
-        public Task<BaseResponse> GetWorkflowStepEventsForEmployee(Guid requestId, Guid employeeId, CancellationToken cancellationToken);
+        public Task<BaseResponse> GetWorkflowStepEventsForEmployee(Guid requestId, CancellationToken cancellationToken);
 
         /// <summary>
         /// Assign Request To Employee

@@ -15,7 +15,7 @@ public partial class LitigationRequestStatusSeedDataCreator : FullAuditedBaseEnt
             {
                     new SysLitigationRequestStatus
                     {
-                        Id =  Domain.Shared.Enum.LitigationRequestStatus.New,
+                        Id =  Domain.Shared.Enum.RequestStatus.New,
                         RequestStatus = "جديدة",
                         CreatedOn = DateTime.Now,
                         Translations=new List<SysLitigationRequestStatusTranslation>
@@ -34,7 +34,7 @@ public partial class LitigationRequestStatusSeedDataCreator : FullAuditedBaseEnt
                     },
                     new SysLitigationRequestStatus
                     {
-                        Id =  Domain.Shared.Enum.LitigationRequestStatus.Received,
+                        Id =  Domain.Shared.Enum.RequestStatus.Received,
                         RequestStatus = "مُستلمة",
                         CreatedOn = DateTime.Now,
                         Translations=new List<SysLitigationRequestStatusTranslation>
@@ -53,7 +53,7 @@ public partial class LitigationRequestStatusSeedDataCreator : FullAuditedBaseEnt
                     },
                     new SysLitigationRequestStatus
                     {
-                        Id = Domain.Shared.Enum.LitigationRequestStatus.AsessionTimeHasBeenSet,
+                        Id = Domain.Shared.Enum.RequestStatus.AsessionTimeHasBeenSet,
                         RequestStatus = "تم تحديد ميعاد جلسة",
                         CreatedOn = DateTime.Now,
                         Translations=new List<SysLitigationRequestStatusTranslation>
@@ -72,7 +72,7 @@ public partial class LitigationRequestStatusSeedDataCreator : FullAuditedBaseEnt
                     },
                     new SysLitigationRequestStatus
                     {
-                        Id = Domain.Shared.Enum.LitigationRequestStatus.TheSessionWasCompleted,
+                        Id = Domain.Shared.Enum.RequestStatus.TheSessionWasCompleted,
                         RequestStatus = "تمت الجلسة",
                         CreatedOn = DateTime.Now,
                         Translations=new List<SysLitigationRequestStatusTranslation>
@@ -91,7 +91,7 @@ public partial class LitigationRequestStatusSeedDataCreator : FullAuditedBaseEnt
                     },
                     new SysLitigationRequestStatus
                     {
-                        Id =  Domain.Shared.Enum.LitigationRequestStatus.TheMinutesOfTheMeetingWereWritten,
+                        Id =  Domain.Shared.Enum.RequestStatus.TheMinutesOfTheMeetingWereWritten,
                         RequestStatus = "تم كتابة محضر الجلسة",
                         CreatedOn = DateTime.Now,
                         Translations=new List<SysLitigationRequestStatusTranslation>
@@ -110,7 +110,7 @@ public partial class LitigationRequestStatusSeedDataCreator : FullAuditedBaseEnt
                     },
                     new SysLitigationRequestStatus
                     {
-                        Id = Domain.Shared.Enum.LitigationRequestStatus.WaiverOfRight,
+                        Id = Domain.Shared.Enum.RequestStatus.WaiverOfRight,
                         RequestStatus = "تنازل عن الحق",
                         CreatedOn = DateTime.Now,
                         Translations=new List<SysLitigationRequestStatusTranslation>
@@ -129,7 +129,7 @@ public partial class LitigationRequestStatusSeedDataCreator : FullAuditedBaseEnt
                     },
                     new SysLitigationRequestStatus
                     {
-                        Id =  Domain.Shared.Enum.LitigationRequestStatus.WaiverOfTheLawsuit,
+                        Id =  Domain.Shared.Enum.RequestStatus.WaiverOfTheLawsuit,
                         RequestStatus = "تنازل عن الدعوى",
                         CreatedOn = DateTime.Now,
                         Translations=new List<SysLitigationRequestStatusTranslation>
@@ -148,7 +148,7 @@ public partial class LitigationRequestStatusSeedDataCreator : FullAuditedBaseEnt
                     },
                     new SysLitigationRequestStatus
                     {
-                        Id = Domain.Shared.Enum.LitigationRequestStatus.LackOfReconciliation,
+                        Id = Domain.Shared.Enum.RequestStatus.LackOfReconciliation,
                         RequestStatus = "عدم الصُلح",
                         CreatedOn = DateTime.Now,
                         Translations=new List<SysLitigationRequestStatusTranslation>
@@ -167,7 +167,7 @@ public partial class LitigationRequestStatusSeedDataCreator : FullAuditedBaseEnt
                     },
                     new SysLitigationRequestStatus
                     {
-                        Id = Domain.Shared.Enum.LitigationRequestStatus.SaveAndClose,
+                        Id = Domain.Shared.Enum.RequestStatus.SaveAndClose,
                         RequestStatus = "حفظ وإغلاق",
                         CreatedOn = DateTime.Now,
                         Translations=new List<SysLitigationRequestStatusTranslation>
@@ -186,7 +186,7 @@ public partial class LitigationRequestStatusSeedDataCreator : FullAuditedBaseEnt
                     },
                     new SysLitigationRequestStatus
                     {
-                        Id = Domain.Shared.Enum.LitigationRequestStatus.SaveAsDraft,
+                        Id = Domain.Shared.Enum.RequestStatus.SaveAsDraft,
                         RequestStatus = "حفظ كمسودة",
                         CreatedOn = DateTime.Now,
                         Translations=new List<SysLitigationRequestStatusTranslation>
@@ -205,7 +205,7 @@ public partial class LitigationRequestStatusSeedDataCreator : FullAuditedBaseEnt
                     },
                     new SysLitigationRequestStatus
                     {
-                        Id = Domain.Shared.Enum.LitigationRequestStatus.Rejected,
+                        Id = Domain.Shared.Enum.RequestStatus.Rejected,
                         RequestStatus = "مرفوضة",
                         CreatedOn = DateTime.Now,
                         Translations=new List<SysLitigationRequestStatusTranslation>
@@ -224,7 +224,7 @@ public partial class LitigationRequestStatusSeedDataCreator : FullAuditedBaseEnt
                     },
                     new SysLitigationRequestStatus
                     {
-                        Id = Domain.Shared.Enum.LitigationRequestStatus.SentBackForEdit,
+                        Id = Domain.Shared.Enum.RequestStatus.SentBackForEdit,
                         RequestStatus = "معادة للتعديل",
                         CreatedOn = DateTime.Now,
                         Translations=new List<SysLitigationRequestStatusTranslation>
@@ -243,7 +243,7 @@ public partial class LitigationRequestStatusSeedDataCreator : FullAuditedBaseEnt
                     },
                     new SysLitigationRequestStatus
                     {
-                        Id = Domain.Shared.Enum.LitigationRequestStatus.Edited,
+                        Id = Domain.Shared.Enum.RequestStatus.Edited,
                         RequestStatus = "تم التعديل",
                         CreatedOn = DateTime.Now,
                         Translations=new List<SysLitigationRequestStatusTranslation>
@@ -262,7 +262,7 @@ public partial class LitigationRequestStatusSeedDataCreator : FullAuditedBaseEnt
                     },
                     new SysLitigationRequestStatus
                     {
-                        Id = Domain.Shared.Enum.LitigationRequestStatus.CharterRequestSent,
+                        Id = Domain.Shared.Enum.RequestStatus.CharterRequestSent,
                         RequestStatus = "قيد المشارطة",
                         CreatedOn = DateTime.Now,
                         Translations=new List<SysLitigationRequestStatusTranslation>
@@ -280,5 +280,6 @@ public partial class LitigationRequestStatusSeedDataCreator : FullAuditedBaseEnt
                         }
                     },
             });
+        context.SaveChanges();
     }
 }

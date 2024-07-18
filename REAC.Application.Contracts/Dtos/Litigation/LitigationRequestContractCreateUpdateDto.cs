@@ -6,11 +6,11 @@ public partial class LitigationRequestContractCreateUpdateDto : BaseEntity<Guid>
 {
     public int LitigationRequestContractTypeId { get; set; }  // نوع الدعوي
 
-    public string ContractKey { get; set; } = null!;
+    public string Key { get; set; } = null!;
 
-    public string VersionNumber { get; set; } = null!; // رقم النسخة
+    public string SubKey { get; set; } = null!; // رقم النسخة
 
-    public Guid LeaseContractFileId { get; set; }//رقم عقد الايجار
+    public Guid? ContractFileId { get; set; }//رقم عقد الايجار
 
     public Guid FirstPartyAccountId { get; set; }
 

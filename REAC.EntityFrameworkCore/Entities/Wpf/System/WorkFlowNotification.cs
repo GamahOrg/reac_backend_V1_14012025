@@ -11,7 +11,7 @@ public partial class WorkFlowNotification : AuditedBaseEntity<Guid>
 
     public Guid WorkFlowNotificationTypeId { get; set; }
 
-    public Guid? EmployeeReferenceId { get; set; }
+    public Guid? EmployeeId { get; set; }
 
     public Guid? DepartmentId { get; set; }
 

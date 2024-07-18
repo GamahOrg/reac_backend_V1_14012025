@@ -4,7 +4,7 @@ using REAC.EntityFrameworkCore.Entities.Litigation;
 
 namespace REAC.EntityFrameworkCore.Entities.System;
 
-public partial class SysLitigationRequestStatus : FullAuditedBaseEntity<LitigationRequestStatus>
+public partial class SysLitigationRequestStatus : FullAuditedBaseEntity<RequestStatus>
 {
     public string RequestStatus { get; set; } = null!;
 

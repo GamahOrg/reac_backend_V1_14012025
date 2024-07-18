@@ -12,9 +12,17 @@ public partial class LitigationRequestContract : BaseEntity<Guid>
 
     public string? VersionNumber { get; set; }
 
-    public Guid LeaseContractFileId { get; set; } // contract file Id 
+    public string? AssociationName { get; set; }
 
-    public Guid FirstPartyCitizenId { get; set; }
+    public Guid? ContractFileId { get; set; }
+
+    public Guid? AssociationRegistrationCertificateFileId { get; set; }
+
+    public Guid? FoundingLetterFileId { get; set; }
+
+    public Guid? InternalRegulationsFileId { get; set; }
+
+    public Guid? FirstPartyCitizenId { get; set; }
 
     public Guid? FirstPartyFacilityId { get; set; }
 
@@ -37,11 +45,17 @@ public partial class LitigationRequestContract : BaseEntity<Guid>
 
     public Guid? SecondPartyRegistrationRequestId { get; set; }
 
-    public virtual Citizen FirstPartyCitizen { get; set; } = null!;
+    public virtual Citizen? FirstPartyCitizen { get; set; }
 
-    public virtual Facility FirstPartyFacility { get; set; } = null!;
+    public virtual Facility? FirstPartyFacility { get; set; }
 
-    public virtual SysFileManager LeaseContractFile { get; set; } = null!;
+    public virtual SysFileManager? ContractFile { get; set; }
+
+    public virtual SysFileManager? AssociationRegistrationCertificateFile { get; set; }
+
+    public virtual SysFileManager? FoundingLetterFile { get; set; }
+
+    public virtual SysFileManager? InternalRegulationsFile { get; set; }
 
     public virtual SysLitigationRequestContractType LitigationRequestContractType { get; set; } = null!;
 

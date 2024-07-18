@@ -3,7 +3,7 @@ using REAC.EntityFrameworkCore.Entities.Litigation;
 
 namespace REAC.EntityFrameworkCore.Entities.System;
 
-public partial class SysExemptionReductionCategory : FullAuditedBaseEntity<Guid>
+public partial class SysExemptionReductionCategory : BaseEntity<Guid>
 {
     public string ExemptionReductionCategoryName { get; set; } = null!;
 

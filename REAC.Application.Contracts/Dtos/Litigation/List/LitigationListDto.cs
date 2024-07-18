@@ -16,8 +16,8 @@ namespace REAC.Application.Contracts.Dtos.Litigation.List
         [MaxLength(100)]
         public DateTime? CreatedOn { get; set; }
         public string? SecondPartyName { get; set; }
-        public LitigationRequestStatus? InternalStatusId { get; set; }
-        public LitigationRequestStatus? ExternalStatusId { get; set; }
+        public RequestStatus? InternalStatusId { get; set; }
+        public RequestStatus? ExternalStatusId { get; set; }
         public LitigationRequestContractType? LitigationRequestContractTypeId { get; set; }
         public string? LitigationRequestContractType { get; set; }
 

@@ -28,8 +28,8 @@ namespace REAC.Api.Controllers.Integration
         }
 
         [HttpPost(nameof(Nafath))]
-        public async Task<IActionResult> Nafath(NafathRequestDto nafathRequestDto)
-          => Ok(await _nafathService.Nafath(nafathRequestDto));
+        public async Task<IActionResult> Nafath(NafathRequestDto nafathRequestDto, CancellationToken cancellationToken)
+          => Ok(await _nafathService.Nafath(nafathRequestDto, cancellationToken));
 
 
         [HttpPost(nameof(NafathCheckStatus))]

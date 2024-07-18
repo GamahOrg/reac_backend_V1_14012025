@@ -21,7 +21,7 @@ namespace Core.Log.Application.Instance
             try
             {
                 var To = new List<string>() { options.To };
-                await _mailService.SendMail(To, logDto.Type.ToString() + " Wafi System", logDto.Format());
+                await _mailService.SendMail(To, logDto.Type.ToString() + " REAC System", logDto.Format());
             }
             catch (Exception exc)
             {

@@ -22,7 +22,7 @@ namespace REAC.Application.AppServices.Litigation
         public async Task<Guid> GetAddedReferenceId()
         {
             var quarable = await GetQueryableAsync();
-            var latestAdded = quarable.OrderByDescending(x => x.Id).First();
+            var latestAdded = quarable.OrderByDescending(x => x.Id).FirstOrDefault();
             return latestAdded.Id;
         }
     }

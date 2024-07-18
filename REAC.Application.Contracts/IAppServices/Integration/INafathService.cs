@@ -10,7 +10,7 @@ namespace REAC.Application.Contracts.IAppServices.Integration
 {
     public interface INafathService
     {
-        Task<DataResponse<NafathResponseDto>> Nafath(NafathRequestDto nafathRequestDto);
-        Task<DataResponse<NafathCheckResponseDto>> CheckNafathStatus();
+        Task<DataResponse<NafathResponseDto>> Nafath(NafathRequestDto nafathRequestDto, CancellationToken cancellationToken);
+        Task<DataResponse<NafathUserInfoDto>> CheckNafathStatus();
     }
 }

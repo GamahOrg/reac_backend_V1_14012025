@@ -10,16 +10,19 @@ using Core.Security.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Localization;
 using REAC.Api;
-using REAC.Api.Middlewares;
 using REAC.Api.OptionsSetup;
+using REAC.Application.AppServices.Common;
 using REAC.Application.AppServices.Integration.GEE;
+using REAC.Application.Contracts.IAppServices.Common;
 using REAC.Domain.Shared.Constants;
 using REAC.EntityFrameworkCore.Entities.System;
 using REAC.EntityFrameworkCore.Seed;
 using Swashbuckle.AspNetCore.SwaggerUI;
 using System.Globalization;
 using System.Text.Json.Serialization;
+using Wafi.Application.Common.Localization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -92,6 +95,30 @@ builder.Services.ConfigureOptions<AuthenticationOptionsSetup>();
 
 #endregion
 
+#region String Localization
+builder.Services.AddScoped<IJsonStringLocalizer, JsonStringLocalizer>();
+
+builder.Services.AddLocalization();
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSingleton<IStringLocalizerFactory, JsonStringLocalizerFactory>();
+builder.Services.AddMvc()
+    .AddDataAnnotationsLocalization(options =>
+    {
+        options.DataAnnotationLocalizerProvider = (type, factory) =>
+            factory.Create(typeof(JsonStringLocalizerFactory));
+    });
+builder.Services.Configure<RequestLocalizationOptions>(options =>
+{
+    var supportedCultures = new[]
+    {
+        new CultureInfo("en-US"),
+        new CultureInfo("ar-SA"),
+    };
+    options.DefaultRequestCulture = new RequestCulture(culture: supportedCultures[0]);
+    options.SupportedCultures = supportedCultures;
+});
+#endregion
+
 builder.Services.AddAppServices();
 
 //builder.Services.AddControllers();
@@ -110,17 +137,17 @@ builder.Services.AddSwaggerGen();
 builder.Services.ConfigureOptions<REACSwaggerGenOptions>();
 
 
-builder.Services.Configure<RequestLocalizationOptions>(options =>
-{
-    var supportedCultures = new[]
-    {
-        new CultureInfo("en-US"),
-        new CultureInfo("ar-SA"),
-    };
+//builder.Services.Configure<RequestLocalizationOptions>(options =>
+//{
+//    var supportedCultures = new[]
+//    {
+//        new CultureInfo("en-US"),
+//        new CultureInfo("ar-SA"),
+//    };
 
-    options.DefaultRequestCulture = new RequestCulture(culture: supportedCultures[0]);
-    options.SupportedCultures = supportedCultures;
-});
+//    options.DefaultRequestCulture = new RequestCulture(culture: supportedCultures[0]);
+//    options.SupportedCultures = supportedCultures;
+//});
 
 #region SignalR
 
@@ -138,17 +165,19 @@ app.UseSwaggerUI(c =>
 {
     c.EnableDeepLinking();
 
-        // Build a swagger endpoint for each API version and consumer
-        c.SwaggerEndpoint($"/swagger/{APISections.System}/swagger.json", $"{APISections.System} API V1");
-        c.SwaggerEndpoint($"/swagger/{APISections.Litigation}/swagger.json", $"{APISections.Litigation} API V1");
-        c.SwaggerEndpoint($"/swagger/{APISections.Reconciliation}/swagger.json", $"{APISections.Reconciliation} API V1");
-        c.SwaggerEndpoint($"/swagger/{APISections.WpfBusiness}/swagger.json", $"{APISections.WpfBusiness} API V1");
-        c.SwaggerEndpoint($"/swagger/{APISections.WpfSystem}/swagger.json", $"{APISections.WpfSystem} API V1");
-        c.SwaggerEndpoint($"/swagger/{APISections.Integration}/swagger.json", $"{APISections.Integration} API V1");
+    // Build a swagger endpoint for each API version and consumer
+    c.SwaggerEndpoint($"/swagger/{APISections.System}/swagger.json", $"{APISections.System} API V1");
+    c.SwaggerEndpoint($"/swagger/{APISections.Litigation}/swagger.json", $"{APISections.Litigation} API V1");
+    c.SwaggerEndpoint($"/swagger/{APISections.Reconciliation}/swagger.json", $"{APISections.Reconciliation} API V1");
+    c.SwaggerEndpoint($"/swagger/{APISections.WpfBusiness}/swagger.json", $"{APISections.WpfBusiness} API V1");
+    c.SwaggerEndpoint($"/swagger/{APISections.WpfSystem}/swagger.json", $"{APISections.WpfSystem} API V1");
+    c.SwaggerEndpoint($"/swagger/{APISections.Integration}/swagger.json", $"{APISections.Integration} API V1");
 
     c.DocExpansion(DocExpansion.List);
 });
 //}
+
+
 
 app.UseHttpsRedirection();
 

@@ -24,7 +24,7 @@ public partial class WorkFlowStepDto : BaseEntity<Guid>
 
     public Guid? DepartmentId { get; set; }
 
-    public Guid? EmployeeReferenceId { get; set; }
+    public Guid? EmployeeId { get; set; }
 
     public RequestStatus InternalStatusId { get; set; }
 

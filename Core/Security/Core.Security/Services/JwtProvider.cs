@@ -39,7 +39,6 @@ namespace Core.Security.Services
         public async Task<AuthDto> GenerateAuthenticationTokens(User user)
         {
             AuthDto authDto = new AuthDto();
-            authDto.ReferenceId = user.ReferenceId;
             // Get user Roles and role's claims
             var UserRoles = await _userManager.GetRolesAsync(user);
             var rolesAndClaims = new List<Claim>();
@@ -59,7 +58,6 @@ namespace Core.Security.Services
                 new Claim(JwtRegisteredClaimNames.Sub,user.Id.ToString()),
                 new Claim(JwtRegisteredClaimNames.Name,user.UserName.ToString()),
                 new Claim("ReferenceId",user.ReferenceId.ToString()),
-
             };
 
             var claims = claimsValues.Union(rolesAndClaims).ToList();

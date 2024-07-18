@@ -8,7 +8,7 @@ using REAC.EntityFrameworkCore.Entities.System;
 
 namespace REAC.Application.AppServices.System
 {
-    public class SysLitigationRequestStatusService : BasicService<SysLitigationRequestStatus, LitigationRequestStatus>, ISysLitigationRequestStatusService
+    public class SysLitigationRequestStatusService : BasicService<SysLitigationRequestStatus, RequestStatus>, ISysLitigationRequestStatusService
     {
         public SysLitigationRequestStatusService(IEntityRepository repository, IMapper mapper, ILoggerManager loggerManager, IJwtReader jwtReader) : base(repository, mapper, loggerManager, jwtReader)
         {

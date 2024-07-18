@@ -24,7 +24,7 @@ public partial class CitizenCreateUpdateDto
 
     public DateTime IdentityExpiryDate { get; set; }
 
-    public Guid IdentityFileId { get; set; }
+    public Guid? IdentityFileId { get; set; }
 
     public string Employer { get; set; } = null!;
 
@@ -38,7 +38,11 @@ public partial class CitizenCreateUpdateDto
 
     public string Email { get; set; } = null!;
 
-    public string City { get; set; } = null!;
+    public Guid AreaId { get; set; }
+
+    public Guid CityId { get; set; }
+
+    public Guid NationalityId { get; set; }
 
     public string District { get; set; } = null!;
 
@@ -52,4 +56,5 @@ public partial class CitizenCreateUpdateDto
 
     public string UnitNumber { get; set; } = null!;
 
+    public DateTime BirthDate { get; set; }
 }

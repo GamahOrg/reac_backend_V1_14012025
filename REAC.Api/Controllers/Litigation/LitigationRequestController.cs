@@ -1,8 +1,5 @@
-﻿using Core.Security.Attributes;
-using Core.Security.Authorization;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using REAC.Application.Contracts.Dtos.Litigation;
 using REAC.Application.Contracts.Dtos.Litigation.Create.Litigation;
 using REAC.Application.Contracts.Dtos.Litigation.CreateUpdate.Litigation;
 using REAC.Application.Contracts.Dtos.Litigation.Get;
@@ -48,7 +45,7 @@ public class LitigationRequestController : BaseController<LitigationRequest,
     {
         if (ModelState.IsValid)
         {
-            var returnValue = await _litigationService.List(pageIndex, pageSize,searchKey, model);
+            var returnValue = await _litigationService.List(pageIndex, pageSize, searchKey, model);
             return Ok(returnValue);
         }
 
@@ -103,6 +100,18 @@ public class LitigationRequestController : BaseController<LitigationRequest,
         {
             var returnValue = await _litigationService.GetLitigationDetails(litigationId);
 
+            return Ok(returnValue);
+        }
+
+        return BadRequest();
+    }
+    [HttpPost(nameof(CreateLitigationRequest))]
+
+    public async Task<ActionResult<LitigationDetailsDto>> CreateLitigationRequest(LitigationRequestDto litigationRequestDto)
+    {
+        if (ModelState.IsValid)
+        {
+            var returnValue = await _litigationService.CreateLitigationRequest(litigationRequestDto);
             return Ok(returnValue);
         }
 

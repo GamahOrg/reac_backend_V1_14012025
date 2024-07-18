@@ -1,16 +1,20 @@
-﻿using REAC.EntityFrameworkCore.Entities.Litigation;
+﻿using Core.GenericRepository.Shared.BaseEntities;
+using REAC.EntityFrameworkCore.Entities.Litigation;
+using REAC.EntityFrameworkCore.Entities.System;
 
-namespace REAC.EntityFrameworkCore.Entities.System;
+namespace REAC.EntityFrameworkCore.Entities;
 
-public partial class Facility
+public partial class Facility : BaseEntity<Guid>
 {
-    public Guid Id { get; set; }
-
-    public string Code { get; set; }
+    public string? Code { get; set; }
 
     public Guid CitizenId { get; set; }
 
     public string Facility700Number { get; set; } = null!;
+
+    public string ArabicFacilityName { get; set; } = null!;
+
+    public string EnglishFacilityName { get; set; } = null!;
 
     public string? CommercialRegisterNumber { get; set; }
 
@@ -34,7 +38,7 @@ public partial class Facility
 
     public virtual Citizen Citizen { get; set; } = null!;
 
-    public virtual ICollection<FacilityDelegator> FacilityDelegators { get; set; } = new List<FacilityDelegator>();
+    public virtual ICollection<Delegator> Delegators { get; set; } = new List<Delegator>();
 
     public virtual ICollection<LitigationRequestContract> LitigationRequestContractFirstPartyFacilities { get; set; } = new List<LitigationRequestContract>();
 

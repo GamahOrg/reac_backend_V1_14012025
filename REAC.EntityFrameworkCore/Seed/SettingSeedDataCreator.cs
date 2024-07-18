@@ -1,6 +1,4 @@
-﻿using Core.Security;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using REAC.EntityFrameworkCore.Entities.System;
 
 namespace Ticketing.EntityFrameworkCore.SeedData
@@ -99,8 +97,21 @@ namespace Ticketing.EntityFrameworkCore.SeedData
                     
                     #endregion
 
+                    #region Nafath Get User Info
+
+                    new SysSetting
+                    {
+                        Id = Guid.NewGuid(),
+                        Key = "NafathGetUserInfo_URL",
+                        Value = "https://api-test.rega.gov.sa/v1/iam/identityServices/userInfo",
+                    },
+                    
+                    
+                    #endregion
+
 
                 });
+            context.SaveChanges();
         }
     }
 }

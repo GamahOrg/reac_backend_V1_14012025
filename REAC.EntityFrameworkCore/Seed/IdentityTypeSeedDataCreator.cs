@@ -69,6 +69,7 @@ public partial class IdentityTypeSeedDataCreator
                         }
                     },
             });
+        context.SaveChanges();
     }
 
 }

@@ -13,23 +13,23 @@ namespace Core.Log.Application.Instance
         private readonly FileLoggerOptions options;
         public FileLogger(IOptions<FileLoggerOptions> options)
         {
-            this.options = options.Value;
-            settingPath = Path.Combine(Directory.GetCurrentDirectory()) + this.options.Path;
-            Intilaization();
+            //this.options = options.Value;
+            //settingPath = Path.Combine(Directory.GetCurrentDirectory()) + this.options.Path;
+            //Intilaization();
         }
 
         #region Intilaization Functions
         private void Intilaization()
         {
-            GetCurrentFile();
-            CreateLogDirectory();
-            CreateLogFile();
+            //GetCurrentFile();
+            //CreateLogDirectory();
+            //CreateLogFile();
         }
         private ILogger CreateLogFile()
         {
             if (string.IsNullOrEmpty(CurrentFileName))
             {
-                CreateNewFile();
+                //CreateNewFile();
             }
             return this;
         }
@@ -37,20 +37,20 @@ namespace Core.Log.Application.Instance
         {
             if (!Directory.Exists(settingPath))
             {
-                Directory.CreateDirectory(settingPath);
+                //Directory.CreateDirectory(settingPath);
             }
         }
         private void CheckFileSize()
         {
             try
             {
-                var fullFilePath = settingPath + "\\" + CurrentFileName;
-                var length = new FileInfo(fullFilePath).Length / 1024 / 1024;
-                int MaxSize = options.MaxSize;
-                if (length > MaxSize)
-                {
-                    CreateNewFile();     
-                }
+                //var fullFilePath = settingPath + "\\" + CurrentFileName;
+                //var length = new FileInfo(fullFilePath).Length / 1024 / 1024;
+                //int MaxSize = options.MaxSize;
+                //if (length > MaxSize)
+                //{
+                //    // CreateNewFile();     
+                //}
 
             }
             catch (Exception)
@@ -66,11 +66,11 @@ namespace Core.Log.Application.Instance
             try
             {
 
-                CurrentFileName = DateTimeOffset.UtcNow.ToString("yyyy-MM-dd-HH-mm-ss") + ".log";
-                var fullFilePath = settingPath + CurrentFileName;
-                var MyFile = File.Create(fullFilePath);
-                MyFile.Dispose();
-                MyFile.Close();
+                //CurrentFileName = DateTimeOffset.UtcNow.ToString("yyyy-MM-dd-HH-mm-ss") + ".log";
+                //var fullFilePath = settingPath + CurrentFileName;
+                //var MyFile = File.Create(fullFilePath);
+                //MyFile.Dispose();
+                //MyFile.Close();
             }
             catch (Exception)
             {
@@ -81,31 +81,32 @@ namespace Core.Log.Application.Instance
         }
         public void GetCurrentFile()
         {
-            CreateLogDirectory();
-            if (Directory.GetFiles(settingPath, "*.log", SearchOption.AllDirectories).Count() != 0)
-            {
-                string[] fileArray = Directory.GetFiles(settingPath, "*.log", SearchOption.AllDirectories);
-                var Files = new List<string>();
-                foreach (var item in fileArray)
-                {
-                    Files.Add(Path.GetFileName(item));
-                }
-                Files = Files.OrderByDescending(filename => filename).ToList();
-                CurrentFileName = Files.FirstOrDefault();
-            }
+            //CreateLogDirectory();
+            //if (Directory.GetFiles(settingPath, "*.log", SearchOption.AllDirectories).Count() != 0)
+            //{
+            //    string[] fileArray = Directory.GetFiles(settingPath, "*.log", SearchOption.AllDirectories);
+            //    var Files = new List<string>();
+            //    foreach (var item in fileArray)
+            //    {
+            //        Files.Add(Path.GetFileName(item));
+            //    }
+            //    Files = Files.OrderByDescending(filename => filename).ToList();
+            //    CurrentFileName = Files.FirstOrDefault();
+            //}
 
         }
         private string GetCurrentFilePath()
         {
-            try
-            {
-                return settingPath + CurrentFileName;
-            }
-            catch (Exception)
-            {
+            return null;
+            //try
+            //{
+            //    return settingPath + CurrentFileName;
+            //}
+            //catch (Exception)
+            //{
 
-                throw;
-            }
+            //    throw;
+            //}
         }
         #endregion
 
@@ -113,24 +114,24 @@ namespace Core.Log.Application.Instance
 
         public async Task<BaseResponse> Log(LogDto logDto)
         {
-            try
-            {
+            //try
+            //{
 
-                CheckFileSize();
-                using (var streamWriter = new StreamWriter(GetCurrentFilePath(), true))
-                {
-                    streamWriter.WriteLine(logDto.Format());
-                }
-            }
-            catch (Exception exc)
-            {
-                return new ExceptionResponse()
-                {
-                    IsDone = true,
-                    Exception = exc.ToString(),
-                    Message = exc.Message
-                };
-            }
+            //    CheckFileSize();
+            //    using (var streamWriter = new StreamWriter(GetCurrentFilePath(), true))
+            //    {
+            //        streamWriter.WriteLine(logDto.Format());
+            //    }
+            //}
+            //catch (Exception exc)
+            //{
+            //    return new ExceptionResponse()
+            //    {
+            //        IsDone = true,
+            //        Exception = exc.ToString(),
+            //        Message = exc.Message
+            //    };
+            //}
             return new BaseResponse()
             {
                 IsDone = true
