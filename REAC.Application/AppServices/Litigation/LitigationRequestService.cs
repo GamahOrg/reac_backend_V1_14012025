@@ -85,13 +85,20 @@ namespace REAC.Application.AppServices.Litigation
                 litigationRequest.Title = model.Title;
                 litigationRequest.Description = model.Description;
                 litigationRequest.IsFinancialLitigation = model.IsFinancialLitigation;
-                litigationRequest.LitigationRequestAmountId = model.LitigationRequestAmountId;
+
+                if (model.LitigationRequestAmountId != Guid.Empty)
+                    litigationRequest.LitigationRequestAmountId = model.LitigationRequestAmountId;
                 litigationRequest.AreaId = model.AreaId;
                 litigationRequest.CityId = model.CityId;
 
                 litigationRequest.IsExemptionReduction = model.ExemptionReductionCategory.IsExemptionReductionCategory;
-                litigationRequest.ExemptionReductionFileId = model.ExemptionReductionCategory.AttachmentId;
-                litigationRequest.ExemptionReductionCategoryId = model.ExemptionReductionCategory.Id;
+
+                if (model.ExemptionReductionCategory.AttachmentId != Guid.Empty)
+                    litigationRequest.ExemptionReductionFileId = model.ExemptionReductionCategory.AttachmentId;
+
+
+                if (model.ExemptionReductionCategory.Id != Guid.Empty)
+                    litigationRequest.ExemptionReductionCategoryId = model.ExemptionReductionCategory.Id;
 
                 litigationRequest.LitigationRequestCategoryId = model.LitigationRequestCategoryId;
 

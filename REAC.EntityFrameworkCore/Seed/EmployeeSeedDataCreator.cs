@@ -71,7 +71,7 @@ namespace Ticketing.EntityFrameworkCore.SeedData
                                  IsActive = true,
                                  IsLocked = false,
                                  IsDeleted = false,
-                                 IsAdmin = true,
+                                 IsAdmin = false,
                                  Mobile = "0558800225",
                                  UserId = new Guid("17840ab6-b134-4c5f-9273-5c97345010a3"),
                                  Translations = new List<SysEmployeeTranslation>()
