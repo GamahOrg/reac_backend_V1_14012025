@@ -1,7 +1,11 @@
 ﻿using AutoMapper;
+using REAC.Application.Contracts.Dtos.Citizen;
+using REAC.Application.Contracts.Dtos.CitizenRequests;
+using REAC.Application.Contracts.Dtos.Delegator;
 using REAC.Application.Contracts.Dtos.Integration.Nafath;
 using REAC.Application.Contracts.Dtos.Litigation;
 using REAC.Application.Contracts.Dtos.System.AreaDto;
+using REAC.Application.Contracts.Dtos.System.CitizenRequestStatusDtos;
 using REAC.Application.Contracts.Dtos.System.CityDto;
 using REAC.Application.Contracts.Dtos.System.DepartmentDtos;
 using REAC.Application.Contracts.Dtos.System.EmployeeDtos;
@@ -155,6 +159,11 @@ namespace REAC.Application.Contracts
                                      string.IsNullOrEmpty(src.Translations.FirstOrDefault(x => x.LanguageCode == CultureInfo.CurrentUICulture.Name).RequestStatus)) ?
                                      src.RequestStatus : src.Translations.FirstOrDefault(x => x.LanguageCode == CultureInfo.CurrentUICulture.Name).RequestStatus));
 
+            CreateMap<SysCitizenRequestStatus, SysCitizenRequestStatusDto>()
+                                     .ForMember(des => des.RequestStatus,
+                                     opt => opt.MapFrom(src => (src.Translations.FirstOrDefault(x => x.LanguageCode == CultureInfo.CurrentUICulture.Name) == null ||
+                                     string.IsNullOrEmpty(src.Translations.FirstOrDefault(x => x.LanguageCode == CultureInfo.CurrentUICulture.Name).RequestStatus)) ?
+                                     src.RequestStatus : src.Translations.FirstOrDefault(x => x.LanguageCode == CultureInfo.CurrentUICulture.Name).RequestStatus));
 
 
             CreateMap<SysDepartment, SysDepartmentDto>()
@@ -163,10 +172,61 @@ namespace REAC.Application.Contracts
                            string.IsNullOrEmpty(src.Translations.FirstOrDefault(x => x.LanguageCode == CultureInfo.CurrentUICulture.Name).DepartmentName)) ?
                            src.DepartmentName : src.Translations.FirstOrDefault(x => x.LanguageCode == CultureInfo.CurrentUICulture.Name).DepartmentName));
 
+            CreateMap<Citizen, CitizenBasicDataProfileDto>()
+                                .ForMember(dest => dest.GenderName, opt => opt.MapFrom(src => src.Gender.Gender))
+                                .ForMember(dest => dest.NationalityName, opt => opt.MapFrom(src => src.Nationality.NationalityName))
+                                .ReverseMap();
+
+
+
+            CreateMap<Citizen, CitizenShortDto>().ReverseMap();
 
             CreateMap<Citizen, CitizenCreateUpdateDto>().ReverseMap();
+
+            CreateMap<CitizenRequestFreelanceWorkDocumentFile, CitizenRequestFreelanceWorkDocumentFileCreateUpdateDto>().ReverseMap();
+
+            CreateMap<CitizenRequestAcademicDegreeFile, CitizenRequestAcademicDegreeFileCreateUpdateDto>().ReverseMap();
+
+            CreateMap<CitizenRequestExperienceCertificate, CitizenRequestExperienceCertificateCreateUpdateDto>().ReverseMap();
+
+
+            CreateMap<CitizenRequestFreelanceWorkDocumentFile, CitizenRequestFreelanceWorkDocumentFileFullDataDto>().ReverseMap();
+
+            CreateMap<CitizenRequestAcademicDegreeFile, CitizenRequestAcademicDegreeFileFullDataDto>().ReverseMap();
+
+            CreateMap<CitizenRequestExperienceCertificate, CitizenRequestExperienceCertificateFullDataDto>().ReverseMap();
+            CreateMap<CitizenRequestExperienceCertificateFile, CitizenRequestExperienceCertificateFileFullDataDto>().ReverseMap();
+            CreateMap<CitizenRequestExperienceCertificateFile, CitizenRequestExperienceCertificateFileCreateUpdateDto>().ReverseMap();
+
+            CreateMap<CitizenRequestNote, CitizenRequestNoteCreateUpdateDto>().ReverseMap();
+
+            CreateMap<CitizenRequest, CitizenRequestFullDataDto>().ReverseMap();
+
+            CreateMap<CitizenRequest, CitizenRequestCreateUpdateDto>().ReverseMap();
+
             CreateMap<DelegationRequest, DelegationRequestCreateUpdateDto>().ReverseMap();
             CreateMap<Facility, FacilityCreateUpdateDto>().ReverseMap();
+            CreateMap<Facility, FacilityShortDto>().ReverseMap();
+
+
+            CreateMap<Delegator, DelegatorFullDataDto>().ReverseMap();
+            CreateMap<Delegator, DelegatorShortDataDto>()
+                      .ForMember(dest => dest.DelegatorName, opt => opt.MapFrom(src => src.DelegatorCitizen.FullName))
+                    .ForMember(dest => dest.FacilityName, opt => opt.MapFrom(src => src.Facility.ArabicFacilityName))
+                    .ForMember(dest => dest.DelegationRelationshipTypeName, opt => opt.MapFrom(src => src.SysDelegationRelationshipType.DelegationRelationshipTypeName))
+
+                    .ReverseMap();
+
+            CreateMap<CitizenRequest, CitizenRequestShortDataDto>()
+                      .ForMember(dest => dest.AreaName, opt => opt.MapFrom(src => src.SysArea.AreaName))
+                    .ForMember(dest => dest.StatusName, opt => opt.MapFrom(src => src.Status.RequestStatus))
+                    .ForMember(dest => dest.ArbitratorClassName, opt => opt.MapFrom(src => src.SysArbitratorClass.ArbitratorClassName))
+                    .ForMember(dest => dest.CitizenRequestType, opt => opt.MapFrom(src => src.SysCitizenRequestType.CitizenRequestTypeName))
+                    .ReverseMap();
+            CreateMap<SysCitizenRequestType, SysCitizenRequestTypeCreateUpdateDto>().ReverseMap();
+            CreateMap<SysCitizenRequestTypeTranslation, SysCitizenRequestTypeTranslationCreateUpdateDto>().ReverseMap();
+
+
             CreateMap<Delegator, FacilityDelegatorCreateUpdateDto>().ReverseMap();
             CreateMap<LitigationRequest, LitigationRequestCreateUpdateDto>().ReverseMap();
             CreateMap<LitigationRequestContract, LitigationRequestContractCreateUpdateDto>().ReverseMap();

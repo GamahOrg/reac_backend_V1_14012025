@@ -6,6 +6,7 @@
 
         #region Integration Keys
 
+        public const string MC_Key = "MC";
         public const string MOJ_Key = "MOJ";
         public const string GEE_Key = "GEE";
         public const string Nafath_Key = "Nafath";
@@ -25,6 +26,13 @@
         #region MOJ Integration keys
 
         public const string MOJ_URL = "MOJ_URL";
+
+        #endregion
+        
+        #region MC Integration keys
+
+        public const string MC_GetCRInformationByCRNumber_URL = "MC_GetCRInformationByCRNumber_URL";
+        public const string MC_GetCRInformationByCROwners_URL = "MC_GetCRInformationByCROwners_URL";
 
         #endregion
 

@@ -5,6 +5,10 @@
         /// <summary>
         /// الدور الاساسي
         /// </summary>
+
+        public const string Delegator = "Delegator";
+        public const string Citizen = "Citizen";
+
         public const string Basic = "Basic";
         public const string Account = "Account";
         public const string WorkFlow = "WorkFlow";
@@ -45,6 +49,8 @@
         public const string LitigationRequestMeetingDecision = "LitigationRequestMeetingDecision";
         public const string LitigationRequestOwnerType = "LitigationRequestOwnerType";
         public const string LitigationRequestStatus = "LitigationRequestStatus";
+        public const string CitizenRequestStatus = "CitizenRequestStatus";
+
         public const string RegistrationRequest = "RegistrationRequest";
         public const string Setting = "Setting";
         public const string VacationRequest = "VacationRequest";

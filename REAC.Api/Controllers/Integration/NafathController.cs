@@ -27,9 +27,9 @@ namespace REAC.Api.Controllers.Integration
             _identityHub = identityHub;
         }
 
-        [HttpPost(nameof(Nafath))]
-        public async Task<IActionResult> Nafath(NafathRequestDto nafathRequestDto, CancellationToken cancellationToken)
-          => Ok(await _nafathService.Nafath(nafathRequestDto, cancellationToken));
+        //[HttpPost(nameof(Nafath))]
+        //public async Task<IActionResult> Nafath(NafathRequestDto nafathRequestDto, CancellationToken cancellationToken)
+        //  => Ok(await _nafathService.Nafath(nafathRequestDto, cancellationToken));
 
 
         [HttpPost(nameof(NafathCheckStatus))]

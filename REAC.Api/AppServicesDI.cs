@@ -42,13 +42,12 @@ namespace REAC.Api
             services.AddScoped<IHttpService, HttpService>();
             services.AddScoped<ILitigationWorkFlowService, LitigationWorkFlowService>();
 
-            //services.AddScoped < IFacilityService, FacilityService>();
-            // services.AddScoped<ICitizenService, CitizenService>();
-            // Register other services
+            services.AddScoped<ICitizenRequestService, CitizenRequestService>();
             services.AddScoped<IWorkFlowProcessingLogService, WorkFlowProcessingLogService>();
             services.AddScoped<IBpfService, BpfService>();
             services.AddScoped<IWorkFlowLogService, WorkFlowLogService>();
             services.AddScoped<IWorkFlowStepService, WorkFlowStepService>();
+
             //services.AddScoped < IDelegationRequestService, DelegationRequestService>();
             //services.AddScoped < IFacilityService, FacilityService>();
             //services.AddScoped < IFacilityDelegatorService, FacilityDelegatorService>();
@@ -56,6 +55,7 @@ namespace REAC.Api
             services.AddScoped<ICitizenService, CitizenService>();
             services.AddScoped<ISysAreaService, SysAreaService>();
             services.AddScoped<ISysCityService, SysCityService>();
+            services.AddScoped<IDelegatorService, DelegatorService>();
             services.AddScoped<ISysExemptionReductionCategoryService, SysExemptionReductionCategoryService>();
             services.AddScoped<ILitigationRequestService, LitigationRequestService>();
             services.AddScoped<IUserProviderService, LitigationRequestContractService>();
@@ -98,6 +98,8 @@ namespace REAC.Api
             services.AddScoped<INafathService, NafathService>();
             services.AddScoped<IUserRegisterService, UserRegisterService>();
             services.AddScoped<IAccountService, AccountService>();
+            services.AddScoped<IMCService, MCService>();
+            services.AddSingleton<INafathTransactionService, NafathTransactionService>();
 
             services.AddScoped<IJwtReader, JwtReader>();
 

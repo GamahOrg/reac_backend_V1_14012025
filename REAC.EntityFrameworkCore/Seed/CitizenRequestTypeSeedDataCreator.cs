@@ -7,14 +7,12 @@ namespace REAC.EntityFrameworkCore.Seed
 {
     public class CitizenRequestTypeSeedDataCreator
     {
-        public static class GenderSeedDataCreator
+        public static async Task SeedAsync(REACDBContext context)
         {
-            public static async Task SeedAsync(REACDBContext context)
-            {
-                if (await context.SysCitizenRequestType.AnyAsync()) return;
-                await context.SysCitizenRequestType.AddRangeAsync(
-                    new List<SysCitizenRequestType>
-                    {
+            if (await context.SysCitizenRequestType.AnyAsync()) return;
+            await context.SysCitizenRequestType.AddRangeAsync(
+                new List<SysCitizenRequestType>
+                {
                     new SysCitizenRequestType
                     {
                         Id = CitizenRequestType.Reformer,
@@ -55,9 +53,8 @@ namespace REAC.EntityFrameworkCore.Seed
                         }
 
                     }
-                    });
-                context.SaveChanges();
-            }
+                });
+            context.SaveChanges();
         }
     }
 }

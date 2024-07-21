@@ -1,4 +1,4 @@
-﻿namespace REAC.EntityFrameworkCore.Entities.System;
+﻿namespace REAC.Application.Contracts.Dtos.Citizen;
 
 public partial class CitizenCreateUpdateDto
 {

@@ -314,7 +314,6 @@ namespace REAC.Application.AppServices.Litigation
 
         }
 
-
         public async Task<BaseResponse> Get(Guid litigationId)
         {
             var quarble = await GetQueryableAsync();
@@ -419,8 +418,8 @@ namespace REAC.Application.AppServices.Litigation
             if (result.Contract.FirstPartyFacilityId.HasValue)
             {
                 litigationPartiesDetailsDto.FirstPartyDto.IsPretender = true;
-                litigationPartiesDetailsDto.FirstPartyDto.LawLicenseExpirationDate = result.ApplicantCitizen.LawerLicenseExpirationDate;
-                litigationPartiesDetailsDto.FirstPartyDto.LawLicenseNumber = result.ApplicantCitizen.LawerLicenseNumber;
+                litigationPartiesDetailsDto.FirstPartyDto.LawLicenseExpirationDate = result.ApplicantCitizen.LawyerLicenseExpirationDate;
+                litigationPartiesDetailsDto.FirstPartyDto.LawLicenseNumber = result.ApplicantCitizen.LawyerLicenseNumber;
                 litigationPartiesDetailsDto.FirstPartyDto.Capacity = result.Contract.FirstPartyCapacity;
                 litigationPartiesDetailsDto.FirstPartyDto.FacilityName = result.Contract.FirstPartyFacility.ArabicFacilityName;
                 litigationPartiesDetailsDto.FirstPartyDto.FacilityNumber = result.Contract.FirstPartyFacility.Facility700Number;
@@ -454,8 +453,8 @@ namespace REAC.Application.AppServices.Litigation
             if (result.Contract.SecondPartyFacilityId.HasValue)
             {
                 litigationPartiesDetailsDto.FirstPartyDto.IsPretender = false;
-                litigationPartiesDetailsDto.SecondPartyDto.LawLicenseExpirationDate = result.ApplicantCitizen.LawerLicenseExpirationDate;
-                litigationPartiesDetailsDto.SecondPartyDto.LawLicenseNumber = result.ApplicantCitizen.LawerLicenseNumber;
+                litigationPartiesDetailsDto.SecondPartyDto.LawLicenseExpirationDate = result.ApplicantCitizen.LawyerLicenseExpirationDate;
+                litigationPartiesDetailsDto.SecondPartyDto.LawLicenseNumber = result.ApplicantCitizen.LawyerLicenseNumber;
                 litigationPartiesDetailsDto.SecondPartyDto.Capacity = result.Contract.SecondPartyCapacity;
                 litigationPartiesDetailsDto.SecondPartyDto.FacilityName = result.Contract.SecondPartyFacility.ArabicFacilityName;
                 litigationPartiesDetailsDto.SecondPartyDto.FacilityNumber = result.Contract.SecondPartyFacility.Facility700Number;
@@ -721,8 +720,8 @@ namespace REAC.Application.AppServices.Litigation
                     BirthDate = (litigationRequest.Contract.FirstPartyCitizen != null) ? litigationRequest.Contract.FirstPartyCitizen.BirthDate : null,
                     Capacity = litigationRequest.Contract.FirstPartyCapacity,
                     IsPretender = true,
-                    LawLicenseNumber = litigationRequest.ApplicantCitizen.LawerLicenseNumber,
-                    LawLicenseExpirationDate = litigationRequest.ApplicantCitizen.LawerLicenseExpirationDate,
+                    LawLicenseNumber = litigationRequest.ApplicantCitizen.LawyerLicenseNumber,
+                    LawLicenseExpirationDate = litigationRequest.ApplicantCitizen.LawyerLicenseExpirationDate,
                     AgencyNumber = "1234567890", // (litigationRequest.LitigationRequestOwnerTypeId == LitigationRequestOwnerType.Lawyer) || (litigationRequest.LitigationRequestOwnerTypeId == LitigationRequestOwnerType.Agent ) ? litigationRequest.Contract. : null,
                     AgancyAttachment = litigationRequest.LitigationRequestOwnerTypeId == LitigationRequestOwnerType.Lawyer ? new SysFileManagerCreateUpdateDto { Id = Guid.Parse("e86953a3-c747-49f4-b817-21592334321f"), FileDescription = "FileDescription", FilePath = "reac/e86953a3-c747-49f4-b817-21592334321f.png", FileType = "Pdf" } : null,
                     LawLicenseAttachment = litigationRequest.LitigationRequestOwnerTypeId == LitigationRequestOwnerType.Lawyer ? ((litigationRequest.ApplicantCitizen.LawLicenseFile != null) ? new SysFileManagerCreateUpdateDto { Id = litigationRequest.ApplicantCitizen.LawLicenseFile.Id, FileDescription = litigationRequest.ApplicantCitizen.LawLicenseFile.FileDescription, FilePath = litigationRequest.ApplicantCitizen.LawLicenseFile.FilePath, FileType = litigationRequest.ApplicantCitizen.LawLicenseFile.FileType } : null) : null,
@@ -744,8 +743,8 @@ namespace REAC.Application.AppServices.Litigation
                     BirthDate = (litigationRequest.Contract.SecondPartyCitizen != null) ? litigationRequest.Contract.SecondPartyCitizen.BirthDate : null,
                     Capacity = litigationRequest.Contract.SecondPartyCapacity,
                     IsPretender = true,
-                    LawLicenseNumber = litigationRequest.ApplicantCitizen.LawerLicenseNumber,
-                    LawLicenseExpirationDate = litigationRequest.ApplicantCitizen.LawerLicenseExpirationDate,
+                    LawLicenseNumber = litigationRequest.ApplicantCitizen.LawyerLicenseNumber,
+                    LawLicenseExpirationDate = litigationRequest.ApplicantCitizen.LawyerLicenseExpirationDate,
                     AgencyNumber = "1234567890", // (litigationRequest.LitigationRequestOwnerTypeId == LitigationRequestOwnerType.Lawyer) || (litigationRequest.LitigationRequestOwnerTypeId == LitigationRequestOwnerType.Agent ) ? litigationRequest.Contract. : null,
                     AgancyAttachment = litigationRequest.LitigationRequestOwnerTypeId == LitigationRequestOwnerType.Lawyer ? new SysFileManagerCreateUpdateDto { Id = Guid.Parse("e86953a3-c747-49f4-b817-21592334321f"), FileDescription = "FileDescription", FilePath = "reac/e86953a3-c747-49f4-b817-21592334321f.png", FileType = "Pdf" } : null,
                     LawLicenseAttachment = litigationRequest.LitigationRequestOwnerTypeId == LitigationRequestOwnerType.Lawyer ? ((litigationRequest.ApplicantCitizen.LawLicenseFile != null) ? new SysFileManagerCreateUpdateDto { Id = litigationRequest.ApplicantCitizen.LawLicenseFile.Id, FileDescription = litigationRequest.ApplicantCitizen.LawLicenseFile.FileDescription, FilePath = litigationRequest.ApplicantCitizen.LawLicenseFile.FilePath, FileType = litigationRequest.ApplicantCitizen.LawLicenseFile.FileType } : null) : null,

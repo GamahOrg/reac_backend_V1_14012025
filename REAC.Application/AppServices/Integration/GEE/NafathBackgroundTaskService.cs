@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -24,14 +25,15 @@ namespace REAC.Application.AppServices.Integration.GEE
         {
             while (!stoppingToken.IsCancellationRequested)
             {
-                lock (_lock)
-                {
+                //lock (_lock)
+                //{
                     using (var scope = _scopeFactory.CreateScope())
                     {
-                        var dependencyOne = scope.ServiceProvider.GetRequiredService<INafathService>();
-                        dependencyOne.CheckNafathStatus();
+                        var nafathService = scope.ServiceProvider.GetRequiredService<INafathService>();
+                        if(nafathService is not null)
+                            await nafathService.CheckNafathStatus();
                     }
-                }
+                //}
                 await Task.Delay(TimeSpan.FromSeconds(30), stoppingToken);
             }
         }

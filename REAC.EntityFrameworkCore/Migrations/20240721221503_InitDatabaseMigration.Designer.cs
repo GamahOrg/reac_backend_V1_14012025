@@ -12,8 +12,8 @@ using REAC.EntityFrameworkCore.Entities.System;
 namespace REAC.EntityFrameworkCore.Migrations
 {
     [DbContext(typeof(REACDBContext))]
-    [Migration("20240717152159_InitDatabaseMigration1")]
-    partial class InitDatabaseMigration1
+    [Migration("20240721221503_InitDatabaseMigration")]
+    partial class InitDatabaseMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -103,32 +103,6 @@ namespace REAC.EntityFrameworkCore.Migrations
                         .IsUnique();
 
                     b.ToTable("Facility", (string)null);
-                });
-
-            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Integration.NafathTransaction", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("NationalId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("RandomNumber")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("RequestExpired")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("TransactionId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("NafathTransactions");
                 });
 
             modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Litigation.CitizenRequestAcademicDegreeFile", b =>
@@ -223,6 +197,33 @@ namespace REAC.EntityFrameworkCore.Migrations
                     b.HasIndex("FreelanceWorkDocumentFileId");
 
                     b.ToTable("CitizenRequestFreelanceWorkDocumentFile", (string)null);
+                });
+
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Litigation.CitizenRequestNote", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("CitizenRequestId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("NoteDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Notes")
+                        .IsRequired()
+                        .HasMaxLength(2147483647)
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id")
+                        .HasName("PK__CitizenRequestNote_3214EC07F533D1CD");
+
+                    b.HasIndex("CitizenRequestId");
+
+                    b.HasIndex(new[] { "Id" }, "CitizenRequestNote_Id")
+                        .IsUnique();
+
+                    b.ToTable("CitizenRequestNote", (string)null);
                 });
 
             modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Litigation.LitigationCompanyRepresentative", b =>
@@ -894,18 +895,17 @@ namespace REAC.EntityFrameworkCore.Migrations
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("AreaId")
+                    b.Property<Guid?>("AreaId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("BirthDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("BuildingNumber")
-                        .IsRequired()
                         .HasMaxLength(10)
                         .HasColumnType("nvarchar(10)");
 
-                    b.Property<Guid>("CityId")
+                    b.Property<Guid?>("CityId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Code")
@@ -913,17 +913,14 @@ namespace REAC.EntityFrameworkCore.Migrations
                         .HasColumnType("nvarchar(20)");
 
                     b.Property<string>("District")
-                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("Email")
-                        .IsRequired()
                         .HasMaxLength(250)
                         .HasColumnType("nvarchar(250)");
 
                     b.Property<string>("Employer")
-                        .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
@@ -954,32 +951,31 @@ namespace REAC.EntityFrameworkCore.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<int>("IdentityTypeId")
+                    b.Property<int?>("IdentityTypeId")
                         .HasColumnType("int");
 
-                    b.Property<bool>("IsArbitrator")
+                    b.Property<bool?>("IsArbitrator")
                         .HasColumnType("bit");
 
-                    b.Property<bool>("IsLawyer")
+                    b.Property<bool?>("IsLawyer")
                         .HasColumnType("bit");
 
-                    b.Property<bool>("IsReformer")
+                    b.Property<bool?>("IsReformer")
                         .HasColumnType("bit");
 
                     b.Property<Guid?>("LawLicenseFileId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime?>("LawerLicenseExpirationDate")
+                    b.Property<DateTime?>("LawyerLicenseExpirationDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("LawerLicenseNumber")
+                    b.Property<string>("LawyerLicenseNumber")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid?>("LitigationCompanyRepresentativeId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Mobile")
-                        .IsRequired()
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
@@ -993,7 +989,7 @@ namespace REAC.EntityFrameworkCore.Migrations
                         .HasMaxLength(10)
                         .HasColumnType("nvarchar(10)");
 
-                    b.Property<Guid>("PassCitizenId")
+                    b.Property<Guid?>("PassCitizenId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("PostalCode")
@@ -1006,7 +1002,6 @@ namespace REAC.EntityFrameworkCore.Migrations
                         .HasColumnType("nvarchar(20)");
 
                     b.Property<string>("Street")
-                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
@@ -1015,7 +1010,6 @@ namespace REAC.EntityFrameworkCore.Migrations
                         .HasColumnType("nvarchar(20)");
 
                     b.Property<string>("UnitNumber")
-                        .IsRequired()
                         .HasMaxLength(10)
                         .HasColumnType("nvarchar(10)");
 
@@ -1061,7 +1055,7 @@ namespace REAC.EntityFrameworkCore.Migrations
                     b.Property<Guid?>("ArbitratorClassId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("AreaId")
+                    b.Property<Guid?>("AreaId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Brief")
@@ -1074,31 +1068,27 @@ namespace REAC.EntityFrameworkCore.Migrations
                     b.Property<int>("CitizenRequestTypeId")
                         .HasColumnType("int");
 
-                    b.Property<int>("ExperienceYears")
+                    b.Property<int?>("ExperienceYears")
                         .HasColumnType("int");
 
-                    b.Property<bool?>("IsApproved")
+                    b.Property<bool>("IsVolunteerApproval")
                         .HasColumnType("bit");
 
-                    b.Property<bool>("IsVolunteerRepairmanEndorsement")
-                        .HasColumnType("bit");
-
-                    b.Property<Guid?>("SysArbitratorClassId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("SysAreaId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<int>("StatusId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id")
                         .HasName("PK_CitizenRequest_3214EC0743341C99");
+
+                    b.HasIndex("ArbitratorClassId");
+
+                    b.HasIndex("AreaId");
 
                     b.HasIndex("CitizenId");
 
                     b.HasIndex("CitizenRequestTypeId");
 
-                    b.HasIndex("SysArbitratorClassId");
-
-                    b.HasIndex("SysAreaId");
+                    b.HasIndex("StatusId");
 
                     b.ToTable("CitizenRequest", (string)null);
                 });
@@ -1243,10 +1233,29 @@ namespace REAC.EntityFrameworkCore.Migrations
                     b.ToTable("SysArea", (string)null);
                 });
 
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.System.SysCitizenRequestStatus", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("int");
+
+                    b.Property<string>("RequestStatus")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("Id")
+                        .HasName("PK__SysCitizenRequestStatus__3214EC0715A02324");
+
+                    b.ToTable("SysCitizenRequestStatus", (string)null);
+                });
+
             modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.System.SysCitizenRequestType", b =>
                 {
                     b.Property<int>("Id")
                         .HasColumnType("int");
+
+                    b.Property<Guid>("BpfId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("CitizenRequestTypeName")
                         .IsRequired()
@@ -2608,6 +2617,7 @@ namespace REAC.EntityFrameworkCore.Migrations
                     b.HasOne("REAC.EntityFrameworkCore.Entities.System.CitizenRequest", "CitizenRequest")
                         .WithMany("CitizenRequestAcademicDegreeFiles")
                         .HasForeignKey("CitizenRequestId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("FKCitizenRequestAcademicDegreeFileCitizenRequest676101");
 
@@ -2621,6 +2631,7 @@ namespace REAC.EntityFrameworkCore.Migrations
                     b.HasOne("REAC.EntityFrameworkCore.Entities.System.CitizenRequest", "CitizenRequest")
                         .WithMany("CitizenRequestExperienceCertificates")
                         .HasForeignKey("CitizenRequestId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("FKCitizenRequestExperienceCertificateCitizenRequest676101");
 
@@ -2632,6 +2643,7 @@ namespace REAC.EntityFrameworkCore.Migrations
                     b.HasOne("REAC.EntityFrameworkCore.Entities.Litigation.CitizenRequestExperienceCertificate", "CitizenRequestExperienceCertificate")
                         .WithMany("CitizenRequestExperienceCertificateFiles")
                         .HasForeignKey("CitizenRequestExperienceCertificateId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("FKCitizenRequestExperienceCertificateFileCitizenRequestExperienceCertificate676101");
 
@@ -2651,6 +2663,7 @@ namespace REAC.EntityFrameworkCore.Migrations
                     b.HasOne("REAC.EntityFrameworkCore.Entities.System.CitizenRequest", "CitizenRequest")
                         .WithMany("CitizenRequestFreelanceWorkDocumentFiles")
                         .HasForeignKey("CitizenRequestId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("FKCitizenRequestFreelanceWorkDocumentFileCitizenRequest676101");
 
@@ -2663,6 +2676,17 @@ namespace REAC.EntityFrameworkCore.Migrations
                     b.Navigation("CitizenRequest");
 
                     b.Navigation("FreelanceWorkDocumentFile");
+                });
+
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Litigation.CitizenRequestNote", b =>
+                {
+                    b.HasOne("REAC.EntityFrameworkCore.Entities.System.CitizenRequest", "CitizenRequest")
+                        .WithMany("CitizenRequestNotes")
+                        .HasForeignKey("CitizenRequestId")
+                        .IsRequired()
+                        .HasConstraintName("FKCitizenRequestCitizenRequestNotes231388");
+
+                    b.Navigation("CitizenRequest");
                 });
 
             modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Litigation.LitigationRequest", b =>
@@ -3045,13 +3069,11 @@ namespace REAC.EntityFrameworkCore.Migrations
                     b.HasOne("REAC.EntityFrameworkCore.Entities.System.SysArea", "Area")
                         .WithMany("Citizens")
                         .HasForeignKey("AreaId")
-                        .IsRequired()
                         .HasConstraintName("FKCitizen92459");
 
                     b.HasOne("REAC.EntityFrameworkCore.Entities.System.SysCity", "City")
                         .WithMany("Citizens")
                         .HasForeignKey("CityId")
-                        .IsRequired()
                         .HasConstraintName("FKCitizen92422");
 
                     b.HasOne("REAC.EntityFrameworkCore.Entities.System.SysGender", "Gender")
@@ -3068,7 +3090,6 @@ namespace REAC.EntityFrameworkCore.Migrations
                     b.HasOne("REAC.EntityFrameworkCore.Entities.System.SysIdentityType", "IdentityType")
                         .WithMany("Citizens")
                         .HasForeignKey("IdentityTypeId")
-                        .IsRequired()
                         .HasConstraintName("FKCitizen807894");
 
                     b.HasOne("REAC.EntityFrameworkCore.Entities.System.SysFileManager", "LawLicenseFile")
@@ -3105,6 +3126,16 @@ namespace REAC.EntityFrameworkCore.Migrations
 
             modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.System.CitizenRequest", b =>
                 {
+                    b.HasOne("REAC.EntityFrameworkCore.Entities.System.SysArbitratorClass", "SysArbitratorClass")
+                        .WithMany("CitizenRequests")
+                        .HasForeignKey("ArbitratorClassId")
+                        .HasConstraintName("FKSysArbitratorClassCitizenRequest676101");
+
+                    b.HasOne("REAC.EntityFrameworkCore.Entities.System.SysArea", "SysArea")
+                        .WithMany("CitizenRequests")
+                        .HasForeignKey("AreaId")
+                        .HasConstraintName("FKSysSysAreaCitizenRequest676101");
+
                     b.HasOne("REAC.EntityFrameworkCore.Entities.System.Citizen", "Citizen")
                         .WithMany()
                         .HasForeignKey("CitizenId")
@@ -3117,17 +3148,15 @@ namespace REAC.EntityFrameworkCore.Migrations
                         .IsRequired()
                         .HasConstraintName("FKSysCitizenRequestTypeCitizenRequest676101");
 
-                    b.HasOne("REAC.EntityFrameworkCore.Entities.System.SysArbitratorClass", "SysArbitratorClass")
+                    b.HasOne("REAC.EntityFrameworkCore.Entities.System.SysCitizenRequestStatus", "Status")
                         .WithMany("CitizenRequests")
-                        .HasForeignKey("SysArbitratorClassId");
-
-                    b.HasOne("REAC.EntityFrameworkCore.Entities.System.SysArea", "SysArea")
-                        .WithMany()
-                        .HasForeignKey("SysAreaId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("StatusId")
+                        .IsRequired()
+                        .HasConstraintName("FKCitizenRequestStatuses676880");
 
                     b.Navigation("Citizen");
+
+                    b.Navigation("Status");
 
                     b.Navigation("SysArbitratorClass");
 
@@ -3255,6 +3284,38 @@ namespace REAC.EntityFrameworkCore.Migrations
 
                             b1.WithOwner()
                                 .HasForeignKey("SysAreaId");
+                        });
+
+                    b.Navigation("Translations");
+                });
+
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.System.SysCitizenRequestStatus", b =>
+                {
+                    b.OwnsMany("REAC.EntityFrameworkCore.Entities.System.SysCitizenRequestStatusTranslation", "Translations", b1 =>
+                        {
+                            b1.Property<int>("SysCitizenRequestStatusId")
+                                .HasColumnType("int");
+
+                            b1.Property<int>("Id")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("int");
+
+                            b1.Property<string>("LanguageCode")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.Property<string>("RequestStatus")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.HasKey("SysCitizenRequestStatusId", "Id");
+
+                            b1.ToTable("SysCitizenRequestStatus");
+
+                            b1.ToJson("Translations");
+
+                            b1.WithOwner()
+                                .HasForeignKey("SysCitizenRequestStatusId");
                         });
 
                     b.Navigation("Translations");
@@ -4568,6 +4629,8 @@ namespace REAC.EntityFrameworkCore.Migrations
                     b.Navigation("CitizenRequestExperienceCertificates");
 
                     b.Navigation("CitizenRequestFreelanceWorkDocumentFiles");
+
+                    b.Navigation("CitizenRequestNotes");
                 });
 
             modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.System.SysArbitratorClass", b =>
@@ -4579,9 +4642,16 @@ namespace REAC.EntityFrameworkCore.Migrations
                 {
                     b.Navigation("Cities");
 
+                    b.Navigation("CitizenRequests");
+
                     b.Navigation("Citizens");
 
                     b.Navigation("LitigationRequests");
+                });
+
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.System.SysCitizenRequestStatus", b =>
+                {
+                    b.Navigation("CitizenRequests");
                 });
 
             modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.System.SysCitizenRequestType", b =>

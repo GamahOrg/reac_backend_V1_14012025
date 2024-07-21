@@ -9,7 +9,11 @@ public partial class CitizenRequestExperienceCertificateFile : BaseEntity<Guid>
 
     public Guid ExperienceCertificateFileId { get; set; }
 
-    public virtual SysFileManager ExperienceCertificateFile { get; set; } = null!;
+    public virtual SysFileManager? ExperienceCertificateFile { get; set; }
 
-    public virtual CitizenRequestExperienceCertificate CitizenRequestExperienceCertificate { get; set; } = null!;
+    public virtual CitizenRequestExperienceCertificate? CitizenRequestExperienceCertificate { get; set; }
 }
+
+
+
+

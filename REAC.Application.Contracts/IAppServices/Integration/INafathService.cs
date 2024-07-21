@@ -11,6 +11,6 @@ namespace REAC.Application.Contracts.IAppServices.Integration
     public interface INafathService
     {
         Task<DataResponse<NafathResponseDto>> Nafath(NafathRequestDto nafathRequestDto, CancellationToken cancellationToken);
-        Task<DataResponse<NafathUserInfoDto>> CheckNafathStatus();
+        Task<DataResponse<UserInfoUpdatedDto>> CheckNafathStatus();
     }
 }

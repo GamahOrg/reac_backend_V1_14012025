@@ -1,4 +1,5 @@
-﻿using REAC.Domain.Shared.Enum;
+﻿using REAC.Application.Contracts.Dtos.Citizen;
+using REAC.Domain.Shared.Enum;
 
 namespace REAC.EntityFrameworkCore.Entities.System;
 

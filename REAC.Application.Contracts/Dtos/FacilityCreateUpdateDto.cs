@@ -1,4 +1,5 @@
-﻿using REAC.Application.Contracts.Dtos.Litigation;
+﻿using REAC.Application.Contracts.Dtos.Citizen;
+using REAC.Application.Contracts.Dtos.Litigation;
 
 namespace REAC.EntityFrameworkCore.Entities.System;
 

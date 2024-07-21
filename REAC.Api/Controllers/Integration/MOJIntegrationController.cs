@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using REAC.Application.Contracts.Dtos.Integration.GEE;
 using REAC.Application.Contracts.IAppServices.Integration;
 using REAC.Domain.Shared.Constants;
 
@@ -21,8 +20,8 @@ namespace REAC.Api.Controllers.Integration
         }
 
         [HttpGet(nameof(ExternalAttorneyInquiry))]
-        public async Task<IActionResult> ExternalAttorneyInquiry(string token, int attorneyCode, int identityNumber)
-          =>  Ok(await _mOJService.ExternalAttorneyInquiry(token, attorneyCode, identityNumber));
+        public async Task<IActionResult> ExternalAttorneyInquiry(int attorneyCode, string identityNumber)
+          =>  Ok(await _mOJService.ExternalAttorneyInquiry(attorneyCode, identityNumber));
 
     }
 }

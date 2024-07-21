@@ -15,6 +15,7 @@ using REAC.Api;
 using REAC.Api.OptionsSetup;
 using REAC.Application.AppServices.Common;
 using REAC.Application.AppServices.Integration.GEE;
+using REAC.Application.AppServices.Integration.Hubs;
 using REAC.Application.Contracts.IAppServices.Common;
 using REAC.Domain.Shared.Constants;
 using REAC.EntityFrameworkCore.Entities.System;
@@ -166,12 +167,14 @@ app.UseSwaggerUI(c =>
     c.EnableDeepLinking();
 
     // Build a swagger endpoint for each API version and consumer
+    c.SwaggerEndpoint($"/swagger/{APISections.Security}/swagger.json", $"{APISections.Security} API V1");
     c.SwaggerEndpoint($"/swagger/{APISections.System}/swagger.json", $"{APISections.System} API V1");
     c.SwaggerEndpoint($"/swagger/{APISections.Litigation}/swagger.json", $"{APISections.Litigation} API V1");
     c.SwaggerEndpoint($"/swagger/{APISections.Reconciliation}/swagger.json", $"{APISections.Reconciliation} API V1");
     c.SwaggerEndpoint($"/swagger/{APISections.WpfBusiness}/swagger.json", $"{APISections.WpfBusiness} API V1");
     c.SwaggerEndpoint($"/swagger/{APISections.WpfSystem}/swagger.json", $"{APISections.WpfSystem} API V1");
     c.SwaggerEndpoint($"/swagger/{APISections.Integration}/swagger.json", $"{APISections.Integration} API V1");
+    c.SwaggerEndpoint($"/swagger/{APISections.Public}/swagger.json", $"{APISections.Public} API V1");
 
     c.DocExpansion(DocExpansion.List);
 });
@@ -205,5 +208,5 @@ app.Use(async (context, next) =>
 
 // Seed Data
 await app.Services.Seed();
-
+app.MapHub<IdentityHub>("/identity-hub");
 app.Run();

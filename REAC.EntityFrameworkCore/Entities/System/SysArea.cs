@@ -9,6 +9,8 @@ namespace REAC.EntityFrameworkCore.Entities.System
         public List<SysCity>? Cities { get; set; }
         public ICollection<LitigationRequest>? LitigationRequests { get; set; }
         public ICollection<Citizen>? Citizens { get; set; }
+        public virtual ICollection<CitizenRequest> CitizenRequests { get; set; } = new List<CitizenRequest>();
+
         public virtual ICollection<SysAreaTranslation> Translations { get; set; } = new List<SysAreaTranslation>();
     }
 }

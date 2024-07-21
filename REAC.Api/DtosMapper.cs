@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using REAC.Application.Contracts.Dtos.Citizen;
+using REAC.Application.Contracts.Dtos.Delegator;
 using REAC.Application.Contracts.Dtos.Integration.Party;
 using REAC.Application.Contracts.Dtos.Integration.Rent;
 using REAC.Application.Contracts.Dtos.Litigation;
@@ -161,7 +163,7 @@ namespace REAC.Application.Contracts
 
 
 
-
+            CreateMap<Delegator, DelegatorDto>().ReverseMap();
             CreateMap<Citizen, CitizenCreateUpdateDto>().ReverseMap();
             CreateMap<DelegationRequest, DelegationRequestCreateUpdateDto>().ReverseMap();
             CreateMap<Facility, FacilityCreateUpdateDto>().ReverseMap();

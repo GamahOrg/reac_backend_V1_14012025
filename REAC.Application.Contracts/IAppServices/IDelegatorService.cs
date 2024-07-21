@@ -1,11 +1,13 @@
 ﻿using Core.Shared.Responses;
-using REAC.EntityFrameworkCore.Entities.System;
+using REAC.Application.Contracts.Dtos.Delegator;
 
 namespace REAC.Application.Contracts.IAppServices
 {
     public interface IDelegatorService
     {
-        Task<BaseResponse> SaveFacilityDelegator(FacilityDelegatorCreateUpdateDto facilityDelegatorCreateUpdateDto);
-        Task<BaseResponse> SaveCitizenDelegator(CitizenDelegatorCreateUpdateDto citizenDelegatorCreateUpdateDto);
+        Task<BaseResponse> GetDelegators();
+        Task<BaseResponse> GetDelegatorById(Guid delegatorId);
+
+        Task<BaseResponse> SaveDelegator(DelegatorDto citizenDelegatorCreateUpdateDto);
     }
 }

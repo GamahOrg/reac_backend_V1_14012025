@@ -9,7 +9,8 @@ public partial class CitizenRequestFreelanceWorkDocumentFile : BaseEntity<Guid>
 
     public Guid FreelanceWorkDocumentFileId { get; set; }
 
-    public virtual SysFileManager FreelanceWorkDocumentFile { get; set; } = null!;
+    public virtual SysFileManager? FreelanceWorkDocumentFile { get; set; }
 
-    public virtual CitizenRequest CitizenRequest { get; set; } = null!;
+    public virtual CitizenRequest? CitizenRequest { get; set; }
 }
+

@@ -26,7 +26,7 @@ namespace Ticketing.EntityFrameworkCore.SeedData
                             },
                              new SysDelegationRelationshipTypeTranslation
                             {
-                                DelegationRelationshipTypeName="Lawer",
+                                DelegationRelationshipTypeName="Lawyer",
                                 LanguageCode=Constants.ArabicLanguage
                             }
                         }

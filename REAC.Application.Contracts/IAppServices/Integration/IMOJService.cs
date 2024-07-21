@@ -10,6 +10,6 @@ namespace REAC.Application.Contracts.IAppServices.Integration
 {
     public interface IMOJService
     {
-        Task<DataResponse<MOJResponseDto>> ExternalAttorneyInquiry(string token, int attorneyCode, int identityNumber);
+        Task<DataResponse<MOJResponseDto>> ExternalAttorneyInquiry(int attorneyCode, string identityNumber);
     }
 }

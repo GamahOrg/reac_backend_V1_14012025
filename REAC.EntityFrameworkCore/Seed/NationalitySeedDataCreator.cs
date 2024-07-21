@@ -104,7 +104,7 @@ namespace REAC.EntityFrameworkCore.Seed
                 {
                     Id = new Guid("93b339c3-498f-40bd-aba1-a0805efd2cd5"),
                     NationalityName = "عراقي",
-                    NationalityCode = 207,
+                    NationalityCode = 105,
                     CreatedBy = Guid.NewGuid(),
                     CreatedOn = DateTime.Now,
                     IsDeleted = false,
@@ -208,6 +208,399 @@ namespace REAC.EntityFrameworkCore.Seed
                     CreatedOn = DateTime.Now,
                     IsDeleted = false,
                 }
+
+
+                ,
+                new SysNationality
+                {
+                    Id = Guid.NewGuid(),
+                    NationalityName = "أفغانستان",
+                    NationalityCode = 301,
+                    CreatedBy = Guid.NewGuid(),
+                    CreatedOn = DateTime.Now,
+                    IsDeleted = false,
+                }
+                ,
+                new SysNationality
+                {
+                    Id = Guid.NewGuid(),
+                    NationalityName = "أندونيسيا",
+                    NationalityCode = 302,
+                    CreatedBy = Guid.NewGuid(),
+                    CreatedOn = DateTime.Now,
+                    IsDeleted = false,
+                }
+                ,
+                new SysNationality
+                {
+                    Id = Guid.NewGuid(),
+                    NationalityName = "ايران",
+                    NationalityCode = 303,
+                    CreatedBy = Guid.NewGuid(),
+                    CreatedOn = DateTime.Now,
+                    IsDeleted = false,
+                }
+                ,
+                new SysNationality
+                {
+                    Id = Guid.NewGuid(),
+                    NationalityName = "باكستان",
+                    NationalityCode = 304,
+                    CreatedBy = Guid.NewGuid(),
+                    CreatedOn = DateTime.Now,
+                    IsDeleted = false,
+                }
+                ,
+                new SysNationality
+                {
+                    Id = Guid.NewGuid(),
+                    NationalityName = "بنجلاديش",
+                    NationalityCode = 305,
+                    CreatedBy = Guid.NewGuid(),
+                    CreatedOn = DateTime.Now,
+                    IsDeleted = false,
+                }
+                ,
+                new SysNationality
+                {
+                    Id = Guid.NewGuid(),
+                    NationalityName = "بروني",
+                    NationalityCode = 306,
+                    CreatedBy = Guid.NewGuid(),
+                    CreatedOn = DateTime.Now,
+                    IsDeleted = false,
+                }
+                ,
+                new SysNationality
+                {
+                    Id = Guid.NewGuid(),
+                    NationalityName = "جمهورية ميانمار",
+                    NationalityCode = 307,
+                    CreatedBy = Guid.NewGuid(),
+                    CreatedOn = DateTime.Now,
+                    IsDeleted = false,
+                }
+                ,
+                new SysNationality
+                {
+                    Id = Guid.NewGuid(),
+                    NationalityName = "تايلند",
+                    NationalityCode = 308,
+                    CreatedBy = Guid.NewGuid(),
+                    CreatedOn = DateTime.Now,
+                    IsDeleted = false,
+                }
+                ,
+                new SysNationality
+                {
+                    Id = Guid.NewGuid(),
+                    NationalityName = "تركيا",
+                    NationalityCode = 309,
+                    CreatedBy = Guid.NewGuid(),
+                    CreatedOn = DateTime.Now,
+                    IsDeleted = false,
+                }
+                ,
+                new SysNationality
+                {
+                    Id = Guid.NewGuid(),
+                    NationalityName = "جزر مالديف",
+                    NationalityCode = 310,
+                    CreatedBy = Guid.NewGuid(),
+                    CreatedOn = DateTime.Now,
+                    IsDeleted = false,
+                }
+                ,
+                new SysNationality
+                {
+                    Id = Guid.NewGuid(),
+                    NationalityName = "روسيا الاتحادية",
+                    NationalityCode = 311,
+                    CreatedBy = Guid.NewGuid(),
+                    CreatedOn = DateTime.Now,
+                    IsDeleted = false,
+                }
+                ,
+                new SysNationality
+                {
+                    Id = Guid.NewGuid(),
+                    NationalityName = "سنغافورة",
+                    NationalityCode = 312,
+                    CreatedBy = Guid.NewGuid(),
+                    CreatedOn = DateTime.Now,
+                    IsDeleted = false,
+                }
+                ,
+                new SysNationality
+                {
+                    Id = Guid.NewGuid(),
+                    NationalityName = "سري لنكا",
+                    NationalityCode = 313,
+                    CreatedBy = Guid.NewGuid(),
+                    CreatedOn = DateTime.Now,
+                    IsDeleted = false,
+                }
+                ,
+                new SysNationality
+                {
+                    Id = Guid.NewGuid(),
+                    NationalityName = "الفلبين",
+                    NationalityCode = 315,
+                    CreatedBy = Guid.NewGuid(),
+                    CreatedOn = DateTime.Now,
+                    IsDeleted = false,
+                }
+                ,
+                new SysNationality
+                {
+                    Id = Guid.NewGuid(),
+                    NationalityName = "فيتنام",
+                    NationalityCode = 316,
+                    CreatedBy = Guid.NewGuid(),
+                    CreatedOn = DateTime.Now,
+                    IsDeleted = false,
+                }
+                ,
+                new SysNationality
+                {
+                    Id = Guid.NewGuid(),
+                    NationalityName = "كمبوديا",
+                    NationalityCode = 317,
+                    CreatedBy = Guid.NewGuid(),
+                    CreatedOn = DateTime.Now,
+                    IsDeleted = false,
+                }
+                ,
+                new SysNationality
+                {
+                    Id = Guid.NewGuid(),
+                    NationalityName = "كوريا الجنوبية",
+                    NationalityCode = 318,
+                    CreatedBy = Guid.NewGuid(),
+                    CreatedOn = DateTime.Now,
+                    IsDeleted = false,
+                }
+                ,
+                new SysNationality
+                {
+                    Id = Guid.NewGuid(),
+                    NationalityName = "ماليزيا",
+                    NationalityCode = 319,
+                    CreatedBy = Guid.NewGuid(),
+                    CreatedOn = DateTime.Now,
+                    IsDeleted = false,
+                }
+                ,
+                new SysNationality
+                {
+                    Id = Guid.NewGuid(),
+                    NationalityName = "نيبال",
+                    NationalityCode = 320,
+                    CreatedBy = Guid.NewGuid(),
+                    CreatedOn = DateTime.Now,
+                    IsDeleted = false,
+                }
+                ,
+                new SysNationality
+                {
+                    Id = Guid.NewGuid(),
+                    NationalityName = "الهند",
+                    NationalityCode = 321,
+                    CreatedBy = Guid.NewGuid(),
+                    CreatedOn = DateTime.Now,
+                    IsDeleted = false,
+                }
+                ,
+                new SysNationality
+                {
+                    Id = Guid.NewGuid(),
+                    NationalityName = "هونج كونج",
+                    NationalityCode = 322,
+                    CreatedBy = Guid.NewGuid(),
+                    CreatedOn = DateTime.Now,
+                    IsDeleted = false,
+                }
+                ,
+                new SysNationality
+                {
+                    Id = Guid.NewGuid(),
+                    NationalityName = "اليابان",
+                    NationalityCode = 323,
+                    CreatedBy = Guid.NewGuid(),
+                    CreatedOn = DateTime.Now,
+                    IsDeleted = false,
+                }
+                ,
+                new SysNationality
+                {
+                    Id = Guid.NewGuid(),
+                    NationalityName = "بهوتان",
+                    NationalityCode = 324,
+                    CreatedBy = Guid.NewGuid(),
+                    CreatedOn = DateTime.Now,
+                    IsDeleted = false,
+                }
+                ,
+                new SysNationality
+                {
+                    Id = Guid.NewGuid(),
+                    NationalityName = "الصين الشعبية",
+                    NationalityCode = 325,
+                    CreatedBy = Guid.NewGuid(),
+                    CreatedOn = DateTime.Now,
+                    IsDeleted = false,
+                }
+                ,
+                new SysNationality
+                {
+                    Id = Guid.NewGuid(),
+                    NationalityName = "قبرص",
+                    NationalityCode = 326,
+                    CreatedBy = Guid.NewGuid(),
+                    CreatedOn = DateTime.Now,
+                    IsDeleted = false,
+                }
+                ,
+                new SysNationality
+                {
+                    Id = Guid.NewGuid(),
+                    NationalityName = "كوريا الشمالية",
+                    NationalityCode = 328,
+                    CreatedBy = Guid.NewGuid(),
+                    CreatedOn = DateTime.Now,
+                    IsDeleted = false,
+                }
+                ,
+                new SysNationality
+                {
+                    Id = Guid.NewGuid(),
+                    NationalityName = "لاوس",
+                    NationalityCode = 329,
+                    CreatedBy = Guid.NewGuid(),
+                    CreatedOn = DateTime.Now,
+                    IsDeleted = false,
+                }
+                ,
+                new SysNationality
+                {
+                    Id = Guid.NewGuid(),
+                    NationalityName = "منغوليا",
+                    NationalityCode = 330,
+                    CreatedBy = Guid.NewGuid(),
+                    CreatedOn = DateTime.Now,
+                    IsDeleted = false,
+                }
+                ,
+                new SysNationality
+                {
+                    Id = Guid.NewGuid(),
+                    NationalityName = "ماكاو",
+                    NationalityCode = 331,
+                    CreatedBy = Guid.NewGuid(),
+                    CreatedOn = DateTime.Now,
+                    IsDeleted = false,
+                }
+                ,
+                new SysNationality
+                {
+                    Id = Guid.NewGuid(),
+                    NationalityName = "تركستان",
+                    NationalityCode = 332,
+                    CreatedBy = Guid.NewGuid(),
+                    CreatedOn = DateTime.Now,
+                    IsDeleted = false,
+                }
+                ,
+                new SysNationality
+                {
+                    Id = Guid.NewGuid(),
+                    NationalityName = "كازاخستان",
+                    NationalityCode = 336,
+                    CreatedBy = Guid.NewGuid(),
+                    CreatedOn = DateTime.Now,
+                    IsDeleted = false,
+                }
+                ,
+                new SysNationality
+                {
+                    Id = Guid.NewGuid(),
+                    NationalityName = "أثيوبيا",
+                    NationalityCode = 401,
+                    CreatedBy = Guid.NewGuid(),
+                    CreatedOn = DateTime.Now,
+                    IsDeleted = false,
+                }
+                ,
+                new SysNationality
+                {
+                    Id = Guid.NewGuid(),
+                    NationalityName = "أوغندا",
+                    NationalityCode = 402,
+                    CreatedBy = Guid.NewGuid(),
+                    CreatedOn = DateTime.Now,
+                    IsDeleted = false,
+                }
+                ,
+                new SysNationality
+                {
+                    Id = Guid.NewGuid(),
+                    NationalityName = "تشاد",
+                    NationalityCode = 405,
+                    CreatedBy = Guid.NewGuid(),
+                    CreatedOn = DateTime.Now,
+                    IsDeleted = false,
+                }
+                ,
+                new SysNationality
+                {
+                    Id = Guid.NewGuid(),
+                    NationalityName = "تنزانيا",
+                    NationalityCode = 406,
+                    CreatedBy = Guid.NewGuid(),
+                    CreatedOn = DateTime.Now,
+                    IsDeleted = false,
+                }
+                ,
+                new SysNationality
+                {
+                    Id = Guid.NewGuid(),
+                    NationalityName = "توجو",
+                    NationalityCode = 407,
+                    CreatedBy = Guid.NewGuid(),
+                    CreatedOn = DateTime.Now,
+                    IsDeleted = false,
+                }
+                ,
+                new SysNationality
+                {
+                    Id = Guid.NewGuid(),
+                    NationalityName = "جابون",
+                    NationalityCode = 408,
+                    CreatedBy = Guid.NewGuid(),
+                    CreatedOn = DateTime.Now,
+                    IsDeleted = false,
+                }
+                ,
+                new SysNationality
+                {
+                    Id = Guid.NewGuid(),
+                    NationalityName = "جنوب افريقيا",
+                    NationalityCode = 411,
+                    CreatedBy = Guid.NewGuid(),
+                    CreatedOn = DateTime.Now,
+                    IsDeleted = false,
+                }
+                ,
+                new SysNationality
+                {
+                    Id = Guid.NewGuid(),
+                    NationalityName = "السنغال",
+                    NationalityCode = 419,
+                    CreatedBy = Guid.NewGuid(),
+                    CreatedOn = DateTime.Now,
+                    IsDeleted = false,
+                }
+
             }
             );
             context.SaveChanges();

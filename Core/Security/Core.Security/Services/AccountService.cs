@@ -18,7 +18,7 @@ namespace Core.Security.Services
             _jwtProvider = jwtProvider;
         }
 
-        public async Task<BaseResponse> LoginAsync(UserLoginDto userLogin, CancellationToken cancellationToken)
+        public async Task<DataResponse<TokenModel>> LoginAsync(UserLoginDto userLogin, CancellationToken cancellationToken)
         {
             if (!string.IsNullOrWhiteSpace(userLogin.UserName))
             {

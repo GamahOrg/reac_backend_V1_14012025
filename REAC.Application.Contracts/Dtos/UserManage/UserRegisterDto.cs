@@ -1,9 +1,4 @@
 ﻿using REAC.Application.Contracts.Dtos.Integration.GEE;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace REAC.Application.Contracts.Dtos.UserManage
 {
@@ -18,6 +13,6 @@ namespace REAC.Application.Contracts.Dtos.UserManage
         public string UnitNumber { get; set; }
         public string MobileNumber { get; set; }
         public string Email { get; set; }
-        public UserInfoDto UserInfo { get; set; }
+        public UserInfoUpdatedDto UserInfo { get; set; }
     }
 }

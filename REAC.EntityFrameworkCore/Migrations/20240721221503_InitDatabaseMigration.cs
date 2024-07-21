@@ -23,21 +23,6 @@ namespace REAC.EntityFrameworkCore.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "NafathTransactions",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    NationalId = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    TransactionId = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    RandomNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    RequestExpired = table.Column<DateTime>(type: "datetime2", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_NafathTransactions", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "OtherCategories",
                 columns: table => new
                 {
@@ -78,11 +63,25 @@ namespace REAC.EntityFrameworkCore.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "SysCitizenRequestStatus",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false),
+                    RequestStatus = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    Translations = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK__SysCitizenRequestStatus__3214EC0715A02324", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "SysCitizenRequestType",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false),
                     CitizenRequestTypeName = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
+                    BpfId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Translations = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
@@ -612,39 +611,39 @@ namespace REAC.EntityFrameworkCore.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Code = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: true),
-                    IdentityTypeId = table.Column<int>(type: "int", nullable: false),
-                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     IdentityNumber = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     FullName = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: false),
                     NationalityId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    BirthDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    NationalAddress = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ShortName = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
-                    PassCitizenId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Otp = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: true),
+                    BirthDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     GenderId = table.Column<int>(type: "int", nullable: false),
                     IdentityExpiryDate = table.Column<DateTime>(type: "date", nullable: false),
+                    Code = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: true),
+                    IdentityTypeId = table.Column<int>(type: "int", nullable: true),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    NationalAddress = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PassCitizenId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    Otp = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: true),
                     IdentityFileId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    Employer = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Mobile = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
+                    Employer = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    Mobile = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: true),
                     HomeTelephone = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: true),
                     WorkTelephone = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: true),
                     Fax = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: true),
-                    Email = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: false),
-                    AreaId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CityId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    District = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    Street = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: true),
+                    AreaId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    CityId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    District = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    Street = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
                     PostalCode = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: true),
                     SubNumber = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: true),
-                    BuildingNumber = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
-                    UnitNumber = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
-                    IsLawyer = table.Column<bool>(type: "bit", nullable: false),
-                    IsReformer = table.Column<bool>(type: "bit", nullable: false),
-                    IsArbitrator = table.Column<bool>(type: "bit", nullable: false),
-                    LawerLicenseNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    LawerLicenseExpirationDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    BuildingNumber = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: true),
+                    UnitNumber = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: true),
+                    IsLawyer = table.Column<bool>(type: "bit", nullable: true),
+                    IsReformer = table.Column<bool>(type: "bit", nullable: true),
+                    IsArbitrator = table.Column<bool>(type: "bit", nullable: true),
+                    LawyerLicenseNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LawyerLicenseExpirationDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     LawLicenseFileId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     LitigationCompanyRepresentativeId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
@@ -842,39 +841,41 @@ namespace REAC.EntityFrameworkCore.Migrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CitizenRequestTypeId = table.Column<int>(type: "int", nullable: false),
                     CitizenId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    AreaId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    IsVolunteerRepairmanEndorsement = table.Column<bool>(type: "bit", nullable: false),
                     AcademicDegreeName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ExperienceYears = table.Column<int>(type: "int", nullable: false),
-                    IsApproved = table.Column<bool>(type: "bit", nullable: true),
+                    IsVolunteerApproval = table.Column<bool>(type: "bit", nullable: false),
+                    AreaId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    ExperienceYears = table.Column<int>(type: "int", nullable: true),
                     ArbitratorClassId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     Brief = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
-                    SysArbitratorClassId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    SysAreaId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    StatusId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_CitizenRequest_3214EC0743341C99", x => x.Id);
+                    table.ForeignKey(
+                        name: "FKCitizenRequestStatuses676880",
+                        column: x => x.StatusId,
+                        principalTable: "SysCitizenRequestStatus",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FKSysArbitratorClassCitizenRequest676101",
+                        column: x => x.ArbitratorClassId,
+                        principalTable: "SysArbitratorClass",
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FKSysCitizenRequestTypeCitizenRequest676101",
                         column: x => x.CitizenRequestTypeId,
                         principalTable: "SysCitizenRequestType",
                         principalColumn: "Id");
                     table.ForeignKey(
+                        name: "FKSysSysAreaCitizenRequest676101",
+                        column: x => x.AreaId,
+                        principalTable: "SysArea",
+                        principalColumn: "Id");
+                    table.ForeignKey(
                         name: "FK_CitizenRequest_Citizen_CitizenId",
                         column: x => x.CitizenId,
                         principalTable: "Citizen",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_CitizenRequest_SysArbitratorClass_SysArbitratorClassId",
-                        column: x => x.SysArbitratorClassId,
-                        principalTable: "SysArbitratorClass",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_CitizenRequest_SysArea_SysAreaId",
-                        column: x => x.SysAreaId,
-                        principalTable: "SysArea",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -1042,7 +1043,8 @@ namespace REAC.EntityFrameworkCore.Migrations
                         name: "FKCitizenRequestAcademicDegreeFileCitizenRequest676101",
                         column: x => x.CitizenRequestId,
                         principalTable: "CitizenRequest",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -1062,7 +1064,8 @@ namespace REAC.EntityFrameworkCore.Migrations
                         name: "FKCitizenRequestExperienceCertificateCitizenRequest676101",
                         column: x => x.CitizenRequestId,
                         principalTable: "CitizenRequest",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -1083,6 +1086,26 @@ namespace REAC.EntityFrameworkCore.Migrations
                         principalColumn: "Id");
                     table.ForeignKey(
                         name: "FKCitizenRequestFreelanceWorkDocumentFileCitizenRequest676101",
+                        column: x => x.CitizenRequestId,
+                        principalTable: "CitizenRequest",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "CitizenRequestNote",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CitizenRequestId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Notes = table.Column<string>(type: "nvarchar(max)", maxLength: 2147483647, nullable: false),
+                    NoteDateTime = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK__CitizenRequestNote_3214EC07F533D1CD", x => x.Id);
+                    table.ForeignKey(
+                        name: "FKCitizenRequestCitizenRequestNotes231388",
                         column: x => x.CitizenRequestId,
                         principalTable: "CitizenRequest",
                         principalColumn: "Id");
@@ -1309,7 +1332,8 @@ namespace REAC.EntityFrameworkCore.Migrations
                         name: "FKCitizenRequestExperienceCertificateFileCitizenRequestExperienceCertificate676101",
                         column: x => x.CitizenRequestExperienceCertificateId,
                         principalTable: "CitizenRequestExperienceCertificate",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -1344,7 +1368,9 @@ namespace REAC.EntityFrameworkCore.Migrations
                     SentOn = table.Column<DateTime>(type: "datetime", nullable: true),
                     IsActive = table.Column<bool>(type: "bit", nullable: true),
                     IsFinished = table.Column<bool>(type: "bit", nullable: true),
+                    IsExemptionReduction = table.Column<bool>(type: "bit", nullable: true),
                     ExemptionReductionCategoryId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    ExemptionReductionFileId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     PretenderRating = table.Column<int>(type: "int", nullable: true),
                     DefendantRating = table.Column<int>(type: "int", nullable: true)
                 },
@@ -1355,6 +1381,11 @@ namespace REAC.EntityFrameworkCore.Migrations
                         name: "FKExemptionReductionCategory580725",
                         column: x => x.ExemptionReductionCategoryId,
                         principalTable: "SysExemptionReductionCategory",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FKExemptionReductionCategoryFilesExemptionReductionFiles01176101",
+                        column: x => x.ExemptionReductionFileId,
+                        principalTable: "SysFileManager",
                         principalColumn: "Id");
                     table.ForeignKey(
                         name: "FKLitigation216575",
@@ -1783,6 +1814,16 @@ namespace REAC.EntityFrameworkCore.Migrations
                 column: "NationalityId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_CitizenRequest_ArbitratorClassId",
+                table: "CitizenRequest",
+                column: "ArbitratorClassId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CitizenRequest_AreaId",
+                table: "CitizenRequest",
+                column: "AreaId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_CitizenRequest_CitizenId",
                 table: "CitizenRequest",
                 column: "CitizenId");
@@ -1793,14 +1834,9 @@ namespace REAC.EntityFrameworkCore.Migrations
                 column: "CitizenRequestTypeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CitizenRequest_SysArbitratorClassId",
+                name: "IX_CitizenRequest_StatusId",
                 table: "CitizenRequest",
-                column: "SysArbitratorClassId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_CitizenRequest_SysAreaId",
-                table: "CitizenRequest",
-                column: "SysAreaId");
+                column: "StatusId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_CitizenRequestAcademicDegreeFile_AcademicDegreeFileId",
@@ -1836,6 +1872,17 @@ namespace REAC.EntityFrameworkCore.Migrations
                 name: "IX_CitizenRequestFreelanceWorkDocumentFile_FreelanceWorkDocumentFileId",
                 table: "CitizenRequestFreelanceWorkDocumentFile",
                 column: "FreelanceWorkDocumentFileId");
+
+            migrationBuilder.CreateIndex(
+                name: "CitizenRequestNote_Id",
+                table: "CitizenRequestNote",
+                column: "Id",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CitizenRequestNote_CitizenRequestId",
+                table: "CitizenRequestNote",
+                column: "CitizenRequestId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_DelegationRequest_DelegationFileId",
@@ -1907,6 +1954,11 @@ namespace REAC.EntityFrameworkCore.Migrations
                 name: "IX_LitigationRequest_ExemptionReductionCategoryId",
                 table: "LitigationRequest",
                 column: "ExemptionReductionCategoryId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_LitigationRequest_ExemptionReductionFileId",
+                table: "LitigationRequest",
+                column: "ExemptionReductionFileId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_LitigationRequest_ExternalStatusId",
@@ -2487,6 +2539,9 @@ namespace REAC.EntityFrameworkCore.Migrations
                 name: "CitizenRequestFreelanceWorkDocumentFile");
 
             migrationBuilder.DropTable(
+                name: "CitizenRequestNote");
+
+            migrationBuilder.DropTable(
                 name: "DelegationRequest");
 
             migrationBuilder.DropTable(
@@ -2509,9 +2564,6 @@ namespace REAC.EntityFrameworkCore.Migrations
 
             migrationBuilder.DropTable(
                 name: "LitigationRequestRequestFile");
-
-            migrationBuilder.DropTable(
-                name: "NafathTransactions");
 
             migrationBuilder.DropTable(
                 name: "OtherCategories");
@@ -2592,10 +2644,13 @@ namespace REAC.EntityFrameworkCore.Migrations
                 name: "WorkFlowStepEvent");
 
             migrationBuilder.DropTable(
-                name: "SysCitizenRequestType");
+                name: "SysCitizenRequestStatus");
 
             migrationBuilder.DropTable(
                 name: "SysArbitratorClass");
+
+            migrationBuilder.DropTable(
+                name: "SysCitizenRequestType");
 
             migrationBuilder.DropTable(
                 name: "SysExemptionReductionCategory");

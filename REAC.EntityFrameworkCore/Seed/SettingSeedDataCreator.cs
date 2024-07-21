@@ -105,10 +105,25 @@ namespace Ticketing.EntityFrameworkCore.SeedData
                         Key = "NafathGetUserInfo_URL",
                         Value = "https://api-test.rega.gov.sa/v1/iam/identityServices/userInfo",
                     },
-                    
-                    
+
                     #endregion
 
+                    #region MC
+
+                    new SysSetting
+                    {
+                        Id = Guid.NewGuid(),
+                        Key = "MC_GetCRInformationByCROwners_URL",
+                        Value = "https://api-dev.rega.gov.sa/v1/mc/cr-owners",
+                    },
+                    new SysSetting
+                    {
+                        Id = Guid.NewGuid(),
+                        Key = "MC_GetCRInformationByCRNumber_URL",
+                        Value = "https://api-dev.rega.gov.sa/v1/mc/cr-information",
+                    },
+
+                    #endregion
 
                 });
             context.SaveChanges();

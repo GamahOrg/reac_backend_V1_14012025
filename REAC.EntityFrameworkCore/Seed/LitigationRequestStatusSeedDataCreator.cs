@@ -1,11 +1,10 @@
-﻿using Core.GenericRepository.Shared.BaseEntities;
-using Core.Shared.Constants;
+﻿using Core.Shared.Constants;
 using Microsoft.EntityFrameworkCore;
 using REAC.EntityFrameworkCore.Entities.System;
 
 namespace REAC.EntityFrameworkCore.Seed;
 
-public partial class LitigationRequestStatusSeedDataCreator : FullAuditedBaseEntity<int>
+public partial class LitigationRequestStatusSeedDataCreator
 {
     public static async Task SeedAsync(REACDBContext context)
     {

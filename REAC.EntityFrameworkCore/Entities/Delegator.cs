@@ -1,11 +1,10 @@
-﻿using REAC.Domain.Shared.Enum;
+﻿using Core.GenericRepository.Shared.BaseEntities;
+using REAC.Domain.Shared.Enum;
 
 namespace REAC.EntityFrameworkCore.Entities.System;
 
-public partial class Delegator
+public partial class Delegator : BaseEntity<Guid>
 {
-    public Guid Id { get; set; }
-
     public string? DelegateNumber { get; set; }
 
     public DelegationRelationshipType DelegationRelationshipTypeId { get; set; }

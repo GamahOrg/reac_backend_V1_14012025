@@ -12,16 +12,22 @@ namespace REAC.Application.AppServices.Integration.GEE
     public class MOJService : IMOJService
     {
         private readonly ISysSettingService _sysSetting;
+        private readonly IGEELoginService _gEELoginService;
 
-        public MOJService(ISysSettingService sysSetting)
+        public MOJService(ISysSettingService sysSetting, IGEELoginService gEELoginService)
         {
             _sysSetting = sysSetting;
+            _gEELoginService = gEELoginService;
         }
 
-        public async Task<DataResponse<MOJResponseDto>> ExternalAttorneyInquiry(string token, int attorneyCode, int identityNumber)
+        public async Task<DataResponse<MOJResponseDto>> ExternalAttorneyInquiry(int attorneyCode, string identityNumber)
         {
             try
             {
+                var token = (await _gEELoginService.Login()).Data?.Access_token;
+                if (token is null)
+                    return new DataResponse<MOJResponseDto> { IsDone = false, Message = "" };
+
                 var settings = await _sysSetting.GetByIntegrationKey(SysSettingKeyConstants.MOJ_Key);
                 if (!settings.IsDone || settings.Data is null)
                     return new DataResponse<MOJResponseDto>() { IsDone = false, Message = "" };

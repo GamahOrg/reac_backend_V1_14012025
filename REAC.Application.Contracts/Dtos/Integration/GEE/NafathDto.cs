@@ -1,4 +1,5 @@
 ﻿using REAC.Application.Contracts.Dtos.Integration.Nafath;
+using REAC.Domain.Shared.Enum;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -95,12 +96,24 @@ namespace REAC.Application.Contracts.Dtos.Integration.GEE
     {
         public string id { get; set; }
         public string full_name_ar { get; set; }
-        public string two_names_ar { get; set; }
+        public string first_name_ar { get; set; }
         public string id_expiry_date_g { get; set; }
         public int nationality { get; set; }
         public string nationality_ar { get; set; }
         public string dob_g { get; set; }
         public string gender { get; set; }
+    }
+
+    public class UserInfoUpdatedDto
+    {
+        public string NationalId { get; set; }
+        public string FullName { get; set; }
+        public string FirstName { get; set; }
+        public DateTime NationalIdExpiryDate { get; set; }
+        public Guid NationalityId { get; set; }
+        public string Nationality { get; set; }
+        public DateTime DateOfBirth { get; set; }
+        public Gender Gender { get; set; }
     }
 
     #endregion

@@ -8,6 +8,8 @@
         public const string WpfSystem = "Wpf-System";
         public const string WpfBusiness = "Wpf-Business";
         public const string Integration = "Integration";
+        public const string Public = "Public";
+        public const string Security = "Security";
 
 
     }

@@ -10,30 +10,34 @@ public partial class CitizenRequest : BaseEntity<Guid>
     public CitizenRequestType CitizenRequestTypeId { get; set; }
 
     public Guid CitizenId { get; set; }
-    public Guid AreaId { get; set; }
-    public bool IsVolunteerRepairmanEndorsement { get; set; }
-    public string AcademicDegreeName { get; set; } = null!;
-    public int ExperienceYears { get; set; }
-    public bool? IsApproved { get; set; }
-    public Guid? ArbitratorClassId { get; set; }
-    public RequestStatus InternalStatusId { get; set; }
 
-    public RequestStatus ExternalStatusId { get; set; }
+
+    // Shared
+    public string AcademicDegreeName { get; set; } = null!;
+    public bool IsVolunteerApproval { get; set; }
+
+
+
+    // محكم
+    public Guid? AreaId { get; set; }
+    public int? ExperienceYears { get; set; }
+    public Guid? ArbitratorClassId { get; set; }
     public string? Brief { get; set; }
+
+
+
+    public CitizenRequestStatus StatusId { get; set; }
+    public SysCitizenRequestStatus Status { get; set; } = null!;
+
     public virtual SysCitizenRequestType SysCitizenRequestType { get; set; } = null!;
     public virtual SysArbitratorClass? SysArbitratorClass { get; set; }
 
     public virtual Citizen Citizen { get; set; } = null!;
-    public virtual SysArea SysArea { get; set; } = null!;
+    public virtual SysArea? SysArea { get; set; }
+
     public virtual ICollection<CitizenRequestAcademicDegreeFile> CitizenRequestAcademicDegreeFiles { get; set; } = new List<CitizenRequestAcademicDegreeFile>();
     public virtual ICollection<CitizenRequestFreelanceWorkDocumentFile> CitizenRequestFreelanceWorkDocumentFiles { get; set; } = new List<CitizenRequestFreelanceWorkDocumentFile>();
     public virtual ICollection<CitizenRequestExperienceCertificate> CitizenRequestExperienceCertificates { get; set; } = new List<CitizenRequestExperienceCertificate>();
-
-
-
-
-
+    public virtual ICollection<CitizenRequestNote> CitizenRequestNotes { get; set; } = new List<CitizenRequestNote>();
 }
-
-
 

@@ -41,7 +41,7 @@ namespace REAC.EntityFrameworkCore.Seed
                 roleManager.Dispose();
                 await SysLitigationRequestAmountSeedDataCreator.SeedAsync(context);
                 await ExemptionReductionCategorySeedDataCreator.SeedAsync(context);
-
+                await CitizenRequestStatusSeedDataCreator.SeedAsync(context);
                 await FileSeedDataCreator.SeedAsync(context);
                 await DelegationRelationshipTypeSeedDataCreator.SeedAsync(context);
                 await GenderSeedDataCreator.SeedAsync(context);
@@ -58,6 +58,8 @@ namespace REAC.EntityFrameworkCore.Seed
 
                 await NationalitySeedDataCreator.SeedAsync(context);
                 await ArbitratorClassessSeedDataCreator.SeedAsync(context);
+                await CitizenRequestTypeSeedDataCreator.SeedAsync(context);
+
 
                 await SettingSeedDataCreator.SeedAsync(context);
                 await EmployeeSeedDataCreator.SeedAsync(context);

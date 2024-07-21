@@ -9,7 +9,9 @@ public partial class CitizenRequestAcademicDegreeFile : BaseEntity<Guid>
 
     public Guid AcademicDegreeFileId { get; set; }
 
-    public virtual SysFileManager AcademicDegreeFile { get; set; } = null!;
+    public virtual SysFileManager? AcademicDegreeFile { get; set; }
 
-    public virtual CitizenRequest CitizenRequest { get; set; } = null!;
+    public virtual CitizenRequest? CitizenRequest { get; set; }
 }
+
+

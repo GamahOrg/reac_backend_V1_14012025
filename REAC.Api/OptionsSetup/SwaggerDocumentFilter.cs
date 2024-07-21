@@ -46,6 +46,14 @@ namespace REAC.Api.OptionsSetup
             {
                 return APISections.System;
             }
+            else if (path.Contains(APISections.Public))
+            {
+                return APISections.Public;
+            }
+            else if (path.Contains(APISections.Security))
+            {
+                return APISections.Security;
+            }
             else if (path.Contains("v1"))
             {
                 return "v1";
