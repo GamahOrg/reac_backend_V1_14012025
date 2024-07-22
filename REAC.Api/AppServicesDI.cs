@@ -88,6 +88,7 @@ namespace REAC.Api
             services.AddScoped<ISysLitigationRequestStatusService, SysLitigationRequestStatusService>();
             services.AddScoped<ISysRegistrationRequestService, SysRegistrationRequestService>();
             services.AddScoped<ISysSettingService, SysSettingService>();
+
             services.AddScoped<ILoggerManager, LoggerManager>();
             services.AddScoped<DbLogger>();
             services.AddScoped<FileLogger>();

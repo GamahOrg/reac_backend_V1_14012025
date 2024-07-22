@@ -1,11 +1,5 @@
 ﻿using REAC.Application.Contracts.Dtos.Integration.Nafath;
 using REAC.Domain.Shared.Enum;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 
 namespace REAC.Application.Contracts.Dtos.Integration.GEE
 {
@@ -15,7 +9,6 @@ namespace REAC.Application.Contracts.Dtos.Integration.GEE
     public class NafathRequestDto
     {
         public string NationalId { get; set; }
-        public string? Password{ get; set; }
         public bool IsRegister { get; set; }
     }
 
@@ -91,7 +84,7 @@ namespace REAC.Application.Contracts.Dtos.Integration.GEE
         public UserInfoDto user_info { get; set; }
     }
 
-    
+
     public class UserInfoDto
     {
         public string id { get; set; }

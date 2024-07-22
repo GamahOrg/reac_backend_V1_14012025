@@ -56,7 +56,7 @@ namespace REAC.Application.AppServices.Integration.GEE
                 if (!nafathRequestDto.IsRegister)
                 {
                     UserLoginDto UserLogin = new UserLoginDto()
-                    { UserName = nafathRequestDto.NationalId, Password = nafathRequestDto.Password };
+                    { UserName = nafathRequestDto.NationalId, Password = "123456" };
                     var login = await _accountService.LoginAsync(UserLogin, cancellationToken);
                     if (!login.IsDone || login == null || login.Data == null)
                         return new DataResponse<NafathResponseDto> { IsDone = false, Message = login?.Message ?? string.Empty };

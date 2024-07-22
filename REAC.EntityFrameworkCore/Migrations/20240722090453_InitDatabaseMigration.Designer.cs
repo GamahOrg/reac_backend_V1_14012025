@@ -12,7 +12,7 @@ using REAC.EntityFrameworkCore.Entities.System;
 namespace REAC.EntityFrameworkCore.Migrations
 {
     [DbContext(typeof(REACDBContext))]
-    [Migration("20240721221503_InitDatabaseMigration")]
+    [Migration("20240722090453_InitDatabaseMigration")]
     partial class InitDatabaseMigration
     {
         /// <inheritdoc />
@@ -35,7 +35,6 @@ namespace REAC.EntityFrameworkCore.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("BuildingNumber")
-                        .IsRequired()
                         .HasMaxLength(10)
                         .HasColumnType("nvarchar(10)");
 
@@ -43,7 +42,6 @@ namespace REAC.EntityFrameworkCore.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("City")
-                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
@@ -56,7 +54,6 @@ namespace REAC.EntityFrameworkCore.Migrations
                         .HasColumnType("nvarchar(20)");
 
                     b.Property<string>("District")
-                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
@@ -65,7 +62,6 @@ namespace REAC.EntityFrameworkCore.Migrations
                         .HasColumnType("nvarchar(250)");
 
                     b.Property<string>("EnglishFacilityName")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Facility700Number")
@@ -81,7 +77,6 @@ namespace REAC.EntityFrameworkCore.Migrations
                         .HasColumnType("nvarchar(20)");
 
                     b.Property<string>("Street")
-                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
@@ -90,7 +85,6 @@ namespace REAC.EntityFrameworkCore.Migrations
                         .HasColumnType("nvarchar(20)");
 
                     b.Property<string>("UnitNumber")
-                        .IsRequired()
                         .HasMaxLength(10)
                         .HasColumnType("nvarchar(10)");
 

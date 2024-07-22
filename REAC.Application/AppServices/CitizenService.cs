@@ -62,7 +62,9 @@ namespace REAC.Application.AppServices
                     .AsNoTracking().Where(x => x.Id == referenceId)
                               .ToList();
 
+
             if (citizen.ToList().Count == 0) return new BaseResponse() { IsDone = false, Message = "Not Found" };
+
 
             var citizendto = _mapper.Map<CitizenBasicDataProfileDto>(citizen.FirstOrDefault());
             return new DataResponse<CitizenBasicDataProfileDto>()

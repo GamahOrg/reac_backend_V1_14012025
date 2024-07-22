@@ -887,19 +887,19 @@ namespace REAC.EntityFrameworkCore.Migrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Code = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: true),
                     CitizenId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CommercialRegisterNumber = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: true),
                     Facility700Number = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
                     ArabicFacilityName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    EnglishFacilityName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CommercialRegisterNumber = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: true),
+                    EnglishFacilityName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Fax = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Email = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: true),
-                    City = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    District = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    Street = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    City = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    District = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    Street = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
                     PostalCode = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: true),
                     SubNumber = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: true),
-                    BuildingNumber = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
-                    UnitNumber = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false)
+                    BuildingNumber = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: true),
+                    UnitNumber = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: true)
                 },
                 constraints: table =>
                 {

@@ -13,25 +13,25 @@ public partial class FacilityCreateUpdateDto
 
     public string Facility700Number { get; set; } = null!;
 
-    public string? CommercialRegisterNumber { get; set; }
+    public string CommercialRegisterNumber { get; set; }
 
     public string? Fax { get; set; }
 
     public string? Email { get; set; }
 
-    public string City { get; set; } = null!;
+    public string? City { get; set; } = null!;
 
-    public string District { get; set; } = null!;
+    public string? District { get; set; } = null!;
 
-    public string Street { get; set; } = null!;
+    public string? Street { get; set; } = null!;
 
     public string? PostalCode { get; set; }
 
     public string? SubNumber { get; set; }
 
-    public string BuildingNumber { get; set; } = null!;
+    public string? BuildingNumber { get; set; } = null!;
 
-    public string UnitNumber { get; set; } = null!;
+    public string? UnitNumber { get; set; } = null!;
 
     public virtual CitizenCreateUpdateDto Account { get; set; } = null!;
 
