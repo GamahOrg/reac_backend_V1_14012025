@@ -50,7 +50,6 @@ namespace REAC.EntityFrameworkCore.Seed
                 await LitigationRequestContractTypeSeedDataCreator.SeedAsync(context);
                 await LitigationRequestCorrespondenceDestinationSeedDataCreator.SeedAsync(context);
                 await LitigationRequestExtendPeriodRequestStatusSeedDataCreator.SeedAsync(context);
-                await LitigationRequestMeetingDecisionSeedDataCreator.SeedAsync(context);
                 await LitigationRequestOwnerTypeSeedDataCreator.SeedAsync(context);
                 await LitigationRequestStatusSeedDataCreator.SeedAsync(context);
                 await AreasSeedDataCreator.SeedAsync(context);

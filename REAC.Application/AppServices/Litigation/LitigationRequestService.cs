@@ -78,7 +78,6 @@ namespace REAC.Application.AppServices.Litigation
                           .Include(x => x.LitigationRequestRequests)
                           .Include(x => x.LitigationRequestGrounds)
                           .ThenInclude(x => x.LitigationRequestGroundFiles)
-
                           .Where(x => x.Contract.Id == model.ContractId).ToList().FirstOrDefault();
 
 
@@ -88,6 +87,7 @@ namespace REAC.Application.AppServices.Litigation
 
                 if (model.LitigationRequestAmountId != Guid.Empty)
                     litigationRequest.LitigationRequestAmountId = model.LitigationRequestAmountId;
+
                 litigationRequest.AreaId = model.AreaId;
                 litigationRequest.CityId = model.CityId;
 
@@ -533,6 +533,8 @@ namespace REAC.Application.AppServices.Litigation
                 var quarble = await GetQueryableAsync();
                 var result = quarble.Include(x => x.Contract)
                     .Include(x => x.LitigationRequestCategory)
+                    .Include(x => x.LitigationRequestSessions)
+
                     .Include(x => x.Area)
                     .Include(x => x.City)
                     .Include(x => x.ExemptionReductionFile)

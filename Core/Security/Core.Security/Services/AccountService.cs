@@ -44,17 +44,17 @@ namespace Core.Security.Services
                         }
                         else
                         {
-                            return new DataResponse<TokenModel> { IsDone = false, Data = null, Message = "اسم المستخدم خطأ او الرقم السري" };
+                            return new DataResponse<TokenModel> { IsDone = false, Data = null, Message = "خطأ فى رقم الهوية" };
                         }
                     }
                     else
                     {
-                        return new DataResponse<TokenModel> { IsDone = false, Data = null, Message = "اسم المستخدم خطأ او الرقم السري" };
+                        return new DataResponse<TokenModel> { IsDone = false, Data = null, Message = "خطأ فى رقم الهوية" };
                     }
                 }
                 else
                 {
-                    return new DataResponse<TokenModel> { IsDone = false, Data = null, Message = "اسم المستخدم خطأ او الرقم السري" };
+                    return new DataResponse<TokenModel> { IsDone = false, Data = null, Message = "خطأ فى رقم الهوية" };
                 }
 
             }

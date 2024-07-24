@@ -114,7 +114,16 @@ namespace Bpf.Api.Controllers.Business
 
             return BadRequest();
         }
-
+        [HttpGet(nameof(GetWorkflowStepEventsForReformer) + "/requestId")]
+        public virtual async Task<IActionResult> GetWorkflowStepEventsForReformer(Guid requestId, CancellationToken cancellationToken)
+        {
+            if (ModelState.IsValid)
+            {
+                var returnValue = await _bpfService.GetWorkflowStepEventsForReformer(requestId, cancellationToken);
+                return Ok(returnValue);
+            }
+            return BadRequest();
+        }
         [HttpGet(nameof(GetRequestProcessingLogForApplicant) + "/requestId")]
         public virtual async Task<IActionResult> GetRequestProcessingLogForApplicant(Guid requestId, CancellationToken cancellationToken)
         {

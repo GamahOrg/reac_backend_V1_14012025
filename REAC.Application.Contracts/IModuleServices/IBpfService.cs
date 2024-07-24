@@ -70,6 +70,14 @@ namespace REAC.Application.Contracts.IModuleServices
         public Task<BaseResponse> GetRequestProcessingLogForEmployee(Guid requestId, CancellationToken cancellationToken);
 
         /// <summary>
+        /// Get Request Processing Log For Reformer
+        /// </summary>
+        /// <param name="requestId"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns>Return BaseResponse include process status in isDone Flage and responsed data</returns>
+        public Task<BaseResponse> GetWorkflowStepEventsForReformer(Guid requestId, CancellationToken cancellationToken);
+
+        /// <summary>
         /// Get Request Processing Log For Applicant
         /// </summary>
         /// <param name="requestId"></param>

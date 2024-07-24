@@ -8,7 +8,7 @@ namespace REAC.EntityFrameworkCore.Entities.Wpf.System;
 public partial class WorkFlowStepEvent : FullAuditedBaseEntity<Guid>
 {
     public Guid WorkFlowStepsId { get; set; }
-
+    public CustomActionType? CustomActionType { get; set; }
     public string EventName { get; set; } = null!;
 
     #region User Config

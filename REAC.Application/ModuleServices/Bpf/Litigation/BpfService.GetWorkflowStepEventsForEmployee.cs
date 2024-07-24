@@ -80,7 +80,8 @@ namespace Bpf.Application.ModuleServices
                                                         x => x.LanguageCode == CultureInfo.CurrentUICulture.Name).EventName,
                                                         AllowFileUpload = y.AllowFileUpload,
                                                         AllowNotes = y.AllowNotes,
-                                                        ProcessingLogId = x.Id
+                                                        ProcessingLogId = x.Id,
+                                                        CustomActionType = y.CustomActionType
                                                     });
                                                     mainBreak = true;
                                                     break;
@@ -101,7 +102,8 @@ namespace Bpf.Application.ModuleServices
                                                         x => x.LanguageCode == CultureInfo.CurrentUICulture.Name).EventName,
                                                         AllowFileUpload = y.AllowFileUpload,
                                                         AllowNotes = y.AllowNotes,
-                                                        ProcessingLogId = x.Id
+                                                        ProcessingLogId = x.Id,
+                                                        CustomActionType = y.CustomActionType
                                                     });
                                                     mainBreak = true;
                                                     break;
@@ -122,7 +124,8 @@ namespace Bpf.Application.ModuleServices
                                                         x => x.LanguageCode == CultureInfo.CurrentUICulture.Name).EventName,
                                                         AllowFileUpload = y.AllowFileUpload,
                                                         AllowNotes = y.AllowNotes,
-                                                        ProcessingLogId = x.Id
+                                                        ProcessingLogId = x.Id,
+                                                        CustomActionType = y.CustomActionType
                                                     });
                                                     mainBreak = true;
                                                     break;
@@ -145,7 +148,8 @@ namespace Bpf.Application.ModuleServices
                                         x => x.LanguageCode == CultureInfo.CurrentUICulture.Name).EventName,
                                         AllowFileUpload = y.AllowFileUpload,
                                         AllowNotes = y.AllowNotes,
-                                        ProcessingLogId = x.Id
+                                        ProcessingLogId = x.Id,
+                                        CustomActionType = y.CustomActionType
                                     });
                                 }
                                 else
@@ -163,7 +167,8 @@ namespace Bpf.Application.ModuleServices
                                                 x => x.LanguageCode == CultureInfo.CurrentUICulture.Name).EventName,
                                                 AllowFileUpload = y.AllowFileUpload,
                                                 AllowNotes = y.AllowNotes,
-                                                ProcessingLogId = x.Id
+                                                ProcessingLogId = x.Id,
+                                                CustomActionType = y.CustomActionType
                                             });
                                         }
                                     }

@@ -28,10 +28,6 @@ public partial class Citizen : BaseEntity<Guid>
 
     public Guid? PassCitizenId { get; set; }
 
-    public string? Otp { get; set; }
-
-
-
     public Guid? IdentityFileId { get; set; }
 
     public string? Employer { get; set; } = null!;
@@ -78,6 +74,7 @@ public partial class Citizen : BaseEntity<Guid>
     public virtual ICollection<Delegator> FromDelegators { get; set; } = new List<Delegator>();
 
     public virtual ICollection<Delegator> ToDelegators { get; set; } = new List<Delegator>();
+    public virtual ICollection<LitigationRequestNote> LitigationRequestNotes { get; set; } = new List<LitigationRequestNote>();
 
     public virtual SysGender Gender { get; set; } = null!;
 

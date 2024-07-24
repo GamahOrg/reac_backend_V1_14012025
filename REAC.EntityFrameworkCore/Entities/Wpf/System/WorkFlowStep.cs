@@ -17,6 +17,7 @@ public partial class WorkFlowStep : FullAuditedBaseEntity<Guid>
     public bool ShowForApplicant { get; set; }
 
     public int Order { get; set; }
+    public ProcessActorType ProcessActorType { get; set; }
 
     public StepActorType ActorTypeId { get; set; }
 
@@ -28,9 +29,9 @@ public partial class WorkFlowStep : FullAuditedBaseEntity<Guid>
 
     public Guid? EmployeeId { get; set; }
 
-    public RequestStatus InternalStatusId { get; set; }
+    public RequestStatus? InternalStatusId { get; set; }
 
-    public RequestStatus ExternalStatusId { get; set; }
+    public RequestStatus? ExternalStatusId { get; set; }
 
     public Guid? CreationNotificationPlanId { get; set; }
 

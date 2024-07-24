@@ -24,6 +24,8 @@ namespace REAC.Application.Contracts.Dtos.Litigation.Get
         public LitigationRequestOwnerType LitigationRequestOwnerTypeId { get; set; }
 
         public virtual SysFileManagerCreateUpdateDto? ExemptionReductionFile { get; set; }
+        public List<LitigationRequestSessionCreateUpdateDto> LitigationRequestSessions { get; set; } = new List<LitigationRequestSessionCreateUpdateDto>();
+
 
         public List<LitigationRequestGroundCreateUpdateDto> References { get; set; } = new List<LitigationRequestGroundCreateUpdateDto>();
         public SysExemptionReductionCategoryCreateUpdateDto? ExemptionReductionCategory { get; set; } = new SysExemptionReductionCategoryCreateUpdateDto();

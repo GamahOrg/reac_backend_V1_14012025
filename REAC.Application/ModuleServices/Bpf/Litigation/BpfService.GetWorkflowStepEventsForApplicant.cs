@@ -32,7 +32,8 @@ namespace Bpf.Application.ModuleServices
                             EventName = y.EventName,
                             AllowFileUpload = y.AllowFileUpload,
                             AllowNotes = y.AllowNotes,
-                            ProcessingLogId = x.Id
+                            ProcessingLogId = x.Id,
+                            CustomActionType = y.CustomActionType
                         });
                     });
                 });

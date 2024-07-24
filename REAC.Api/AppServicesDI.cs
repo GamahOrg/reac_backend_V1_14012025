@@ -25,8 +25,6 @@ using REAC.Application.Contracts.IAppServices.UserManage;
 using REAC.Application.Contracts.IAppServices.Wpf.Business;
 using REAC.Application.Contracts.IAppServices.Wpf.System;
 using REAC.Application.Contracts.IModuleServices;
-using REAC.Application.Services.Reconciliation;
-using REAC.IAppServices.System;
 using CitizenService = REAC.Application.AppServices.CitizenService;
 namespace REAC.Api
 {
@@ -66,7 +64,7 @@ namespace REAC.Api
             services.AddScoped<ILitigationRequestGroundService, Application.AppServices.Litigation.CitizenService>();
             services.AddScoped<ILitigationRequestGroundFileService, LitigationRequestGroundFileService>();
             //services.AddScoped < ILitigationRequestMeetingService, LitigationRequestMeetingService>();
-            services.AddScoped<ILitigationRequestMeetingReconciliationItemService, LitigationRequestMeetingReconciliationItemService>();
+            services.AddScoped<ILitigationRequestReconciliationReportItemService, LitigationRequestReconciliationReportItemService>();
             services.AddScoped<ILitigationRequestNoteService, LitigationRequestNoteService>();
             services.AddScoped<ILitigationRequestNoteFileService, LitigationRequestNoteFileService>();
             services.AddScoped<ILitigationRequestRequestService, LitigationRequestRequestService>();
@@ -82,12 +80,12 @@ namespace REAC.Api
             services.AddScoped<ISysLitigationRequestContractTypeService, SysLitigationRequestContractTypeService>();
             services.AddScoped<ISysLitigationRequestCorrespondenceDestinationService, SysLitigationRequestCorrespondenceDestinationService>();
             services.AddScoped<ISysLitigationRequestExtendPeriodRequestStatusService, SysLitigationRequestExtendPeriodRequestStatusService>();
-            services.AddScoped<ISysLitigationRequestMeetingConfigurationService, SysLitigationRequestMeetingConfigurationService>();
-            services.AddScoped<ISysLitigationRequestMeetingDecisionService, SysLitigationRequestMeetingDecisionService>();
             services.AddScoped<ISysLitigationRequestOwnerTypeService, SysLitigationRequestOwnerTypeService>();
             services.AddScoped<ISysLitigationRequestStatusService, SysLitigationRequestStatusService>();
             services.AddScoped<ISysRegistrationRequestService, SysRegistrationRequestService>();
             services.AddScoped<ISysSettingService, SysSettingService>();
+            services.AddScoped<ISysDelegationRelationshipTypeService, SysDelegationRelationshipTypeService>();
+
 
             services.AddScoped<ILoggerManager, LoggerManager>();
             services.AddScoped<DbLogger>();

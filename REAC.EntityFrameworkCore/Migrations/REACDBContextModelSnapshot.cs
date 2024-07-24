@@ -308,6 +308,18 @@ namespace REAC.EntityFrameworkCore.Migrations
                     b.Property<int>("LitigationRequestOwnerTypeId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("MintuesOfMeetingApprovalDefendantStatus")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("MintuesOfMeetingApprovalDefendantStatusOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("MintuesOfMeetingApprovalPlaintiffStatus")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("MintuesOfMeetingApprovalPlaintiffStatusOn")
+                        .HasColumnType("datetime2");
+
                     b.Property<DateTime?>("PaidOn")
                         .HasColumnType("datetime");
 
@@ -462,6 +474,79 @@ namespace REAC.EntityFrameworkCore.Migrations
                     b.ToTable("LitigationRequestContract", (string)null);
                 });
 
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Litigation.LitigationRequestCorrespondence", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime");
+
+                    b.Property<int>("LitigationRequestCorrespondenceDestinationId")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("LitigationRequestId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Message")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Subject")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("UpdatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id")
+                        .HasName("PK__Litigati__3214EC07868BEDDE");
+
+                    b.HasIndex("LitigationRequestCorrespondenceDestinationId");
+
+                    b.HasIndex("LitigationRequestId");
+
+                    b.ToTable("LitigationRequestCorrespondence", (string)null);
+                });
+
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Litigation.LitigationRequestCorrespondenceFile", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("FileManagerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("LitigationRequestCorrespondenceId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("UpdatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id")
+                        .HasName("PK__Litigati__3214EC07B506B090");
+
+                    b.HasIndex("FileManagerId");
+
+                    b.HasIndex("LitigationRequestCorrespondenceId");
+
+                    b.ToTable("LitigationRequestCorrespondenceFile", (string)null);
+                });
+
             modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Litigation.LitigationRequestGround", b =>
                 {
                     b.Property<Guid>("Id")
@@ -501,6 +586,80 @@ namespace REAC.EntityFrameworkCore.Migrations
                     b.HasIndex("LitigationRequestGroundId");
 
                     b.ToTable("LitigationRequestGroundFile", (string)null);
+                });
+
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Litigation.LitigationRequestNote", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("CitizenId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("LitigationRequestId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Notes")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Title")
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("UpdatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id")
+                        .HasName("PK__Litigati__3214EC07C1F98E04");
+
+                    b.HasIndex("CitizenId");
+
+                    b.HasIndex("LitigationRequestId");
+
+                    b.ToTable("LitigationRequestNote", (string)null);
+                });
+
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Litigation.LitigationRequestNoteFile", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("FileManagerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("NoteId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("UpdatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id")
+                        .HasName("PK__Litigati__3214EC070E49794B");
+
+                    b.HasIndex("FileManagerId");
+
+                    b.HasIndex("NoteId");
+
+                    b.ToTable("LitigationRequestNoteFile", (string)null);
                 });
 
             modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Litigation.LitigationRequestRequest", b =>
@@ -545,6 +704,29 @@ namespace REAC.EntityFrameworkCore.Migrations
                     b.ToTable("LitigationRequestRequestFile", (string)null);
                 });
 
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Litigation.LitigationRequestSession", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("LitigationRequestId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("SessionDatetime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("SessionUrl")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.HasKey("Id")
+                        .HasName("PK__LitigationRequestSessionC1F98E04");
+
+                    b.HasIndex("LitigationRequestId");
+
+                    b.ToTable("LitigationRequestSession", (string)null);
+                });
+
             modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Litigation.OtherCategory", b =>
                 {
                     b.Property<Guid>("Id")
@@ -560,98 +742,13 @@ namespace REAC.EntityFrameworkCore.Migrations
                     b.ToTable("OtherCategories");
                 });
 
-            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Reconciliation.LitigationRequestCorrespondence", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("CreatedBy")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("datetime");
-
-                    b.Property<int>("LitigationRequestCorrespondenceDestinationId")
-                        .HasColumnType("int");
-
-                    b.Property<Guid>("LitigationRequestId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Message")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Subject")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<Guid?>("UpdatedBy")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("UpdatedOn")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id")
-                        .HasName("PK__Litigati__3214EC07868BEDDE");
-
-                    b.HasIndex("LitigationRequestCorrespondenceDestinationId");
-
-                    b.HasIndex("LitigationRequestId");
-
-                    b.ToTable("LitigationRequestCorrespondence", (string)null);
-                });
-
-            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Reconciliation.LitigationRequestCorrespondenceFile", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("CreatedBy")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("FileManagerId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("LitigationRequestCorrespondenceId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("UpdatedBy")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("UpdatedOn")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id")
-                        .HasName("PK__Litigati__3214EC07B506B090");
-
-                    b.HasIndex("FileManagerId");
-
-                    b.HasIndex("LitigationRequestCorrespondenceId");
-
-                    b.ToTable("LitigationRequestCorrespondenceFile", (string)null);
-                });
-
             modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Reconciliation.LitigationRequestExtendPeriodRequest", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("CreatedBy")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("FinishStatusReason")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid?>("FinishedBy")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("FinishedOn")
-                        .HasColumnType("datetime");
 
                     b.Property<int>("LitigationRequestExtendPeriodRequestStatusId")
                         .HasColumnType("int");
@@ -661,28 +758,23 @@ namespace REAC.EntityFrameworkCore.Migrations
 
                     b.Property<string>("Reason")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("RequestedBy")
-                        .HasColumnType("uniqueidentifier");
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
 
                     b.Property<int>("RequiredDays")
                         .HasColumnType("int");
 
-                    b.Property<Guid?>("UpdatedBy")
+                    b.Property<Guid?>("SysEmployeeId")
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("UpdatedOn")
-                        .HasColumnType("datetime2");
 
                     b.HasKey("Id")
                         .HasName("PK__Litigati__3214EC07276A4089");
 
-                    b.HasIndex("FinishedBy");
-
                     b.HasIndex("LitigationRequestExtendPeriodRequestStatusId");
 
                     b.HasIndex("LitigationRequestId");
+
+                    b.HasIndex("SysEmployeeId");
 
                     b.ToTable("LitigationRequestExtendPeriodRequest", (string)null);
                 });
@@ -692,23 +784,11 @@ namespace REAC.EntityFrameworkCore.Migrations
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("CreatedBy")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("datetime2");
-
                     b.Property<Guid>("FileManagerId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("LitigationRequestExtendPeriodRequestId")
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("UpdatedBy")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("UpdatedOn")
-                        .HasColumnType("datetime2");
 
                     b.HasKey("Id")
                         .HasName("PK__Litigati__3214EC076F56C6AF");
@@ -720,165 +800,53 @@ namespace REAC.EntityFrameworkCore.Migrations
                     b.ToTable("LitigationRequestExtendPeriodRequestFile", (string)null);
                 });
 
-            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Reconciliation.LitigationRequestMeetingReconciliationItem", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("CreatedBy")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("LitigationRequestMeetingId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("ReconciliationItem")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid?>("UpdatedBy")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("UpdatedOn")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id")
-                        .HasName("PK__Litigati__3214EC07A8D6A249");
-
-                    b.HasIndex("LitigationRequestMeetingId");
-
-                    b.ToTable("LitigationRequestMeetingReconciliationItem", (string)null);
-                });
-
-            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Reconciliation.LitigationRequestNote", b =>
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Reconciliation.LitigationRequestReconciliationReport", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("CreatedBy")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("datetime2");
 
                     b.Property<Guid>("LitigationRequestId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("Notes")
+                    b.Property<string>("ModificationRequest")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<string>("ReconciliationSessionDetails")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
 
-                    b.Property<string>("Title")
-                        .HasMaxLength(250)
-                        .HasColumnType("nvarchar(250)");
-
-                    b.Property<Guid?>("UpdatedBy")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("UpdatedOn")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id")
-                        .HasName("PK__Litigati__3214EC07C1F98E04");
-
-                    b.HasIndex("LitigationRequestId");
-
-                    b.ToTable("LitigationRequestNote", (string)null);
-                });
-
-            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Reconciliation.LitigationRequestNoteFile", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("CreatedBy")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("FileManagerId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("NoteId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("UpdatedBy")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("UpdatedOn")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id")
-                        .HasName("PK__Litigati__3214EC070E49794B");
-
-                    b.HasIndex("FileManagerId");
-
-                    b.HasIndex("NoteId");
-
-                    b.ToTable("LitigationRequestNoteFile", (string)null);
-                });
-
-            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Reconciliation.LitigationRequestReconciliationMeeting", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("CreatedBy")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("FirstPartyApprovedOn")
+                    b.Property<DateTime>("ReportDate")
                         .HasColumnType("datetime");
-
-                    b.Property<bool?>("IsFirstPartyApprove")
-                        .HasColumnType("bit");
-
-                    b.Property<bool?>("IsSecondPartyApprove")
-                        .HasColumnType("bit");
-
-                    b.Property<Guid>("LitigationRequestId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("LitigationRequestMeetingConfigurationId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int?>("LitigationRequestMeetingDecisionId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("LitigationRequestMeetingStatusId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("MeetingDate")
-                        .HasColumnType("datetime");
-
-                    b.Property<string>("ReconciliationMinutes")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("SecondPartyApprovedOn")
-                        .HasColumnType("datetime");
-
-                    b.Property<Guid?>("UpdatedBy")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("UpdatedOn")
-                        .HasColumnType("datetime2");
 
                     b.HasKey("Id")
                         .HasName("PK__Litigati__3214EC07F3A8E5CA");
 
                     b.HasIndex("LitigationRequestId");
 
-                    b.HasIndex("LitigationRequestMeetingConfigurationId");
+                    b.ToTable("LitigationRequestReconciliationReport", (string)null);
+                });
 
-                    b.HasIndex("LitigationRequestMeetingDecisionId");
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Reconciliation.LitigationRequestReconciliationReportItem", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
 
-                    b.ToTable("LitigationRequestReconciliationMeeting", (string)null);
+                    b.Property<Guid>("LitigationRequestReconciliationReportId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ReconciliationItem")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id")
+                        .HasName("PK__Litigati__3214EC07A8D6A249");
+
+                    b.HasIndex("LitigationRequestReconciliationReportId");
+
+                    b.ToTable("LitigationRequestMeetingReconciliationItem", (string)null);
                 });
 
             modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.System.Citizen", b =>
@@ -975,10 +943,6 @@ namespace REAC.EntityFrameworkCore.Migrations
 
                     b.Property<Guid>("NationalityId")
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Otp")
-                        .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)");
 
                     b.Property<Guid?>("PassCitizenId")
                         .HasColumnType("uniqueidentifier");
@@ -1612,60 +1576,6 @@ namespace REAC.EntityFrameworkCore.Migrations
                     b.ToTable("SysLitigationRequestExtendPeriodRequestStatus", (string)null);
                 });
 
-            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.System.SysLitigationRequestMeetingConfiguration", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("CreatedBy")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid?>("DeletedBy")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("DeletedOn")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("From")
-                        .HasColumnType("datetime");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime>("To")
-                        .HasColumnType("datetime");
-
-                    b.Property<Guid?>("UpdatedBy")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("UpdatedOn")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id")
-                        .HasName("PK__SysLitig__3214EC076879FC7E");
-
-                    b.ToTable("SysLitigationRequestMeetingConfiguration", (string)null);
-                });
-
-            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.System.SysLitigationRequestMeetingDecision", b =>
-                {
-                    b.Property<int>("Id")
-                        .HasColumnType("int");
-
-                    b.Property<string>("MeetingDecision")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.HasKey("Id")
-                        .HasName("PK__SysLitig__3214EC07318BAEC8");
-
-                    b.ToTable("SysLitigationRequestMeetingDecision", (string)null);
-                });
-
             modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.System.SysLitigationRequestOwnerType", b =>
                 {
                     b.Property<int>("Id")
@@ -1718,6 +1628,29 @@ namespace REAC.EntityFrameworkCore.Migrations
                         .HasName("PK__SysLitig__3214EC0715A02324");
 
                     b.ToTable("SysLitigationRequestStatus", (string)null);
+                });
+
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.System.SysMobileOTP", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
+                    b.Property<DateTime>("ExpiryDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Mobile")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("SysMobileOTP");
                 });
 
             modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.System.SysNationality", b =>
@@ -2213,16 +2146,19 @@ namespace REAC.EntityFrameworkCore.Migrations
                     b.Property<Guid?>("EmployeeId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("ExternalStatusId")
+                    b.Property<int?>("ExternalStatusId")
                         .HasColumnType("int");
 
-                    b.Property<int>("InternalStatusId")
+                    b.Property<int?>("InternalStatusId")
                         .HasColumnType("int");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
                     b.Property<int>("Order")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ProcessActorType")
                         .HasColumnType("int");
 
                     b.Property<bool>("ShowForApplicant")
@@ -2311,6 +2247,9 @@ namespace REAC.EntityFrameworkCore.Migrations
 
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
+
+                    b.Property<int?>("CustomActionType")
+                        .HasColumnType("int");
 
                     b.Property<Guid?>("DeletedBy")
                         .HasColumnType("uniqueidentifier");
@@ -2844,6 +2783,44 @@ namespace REAC.EntityFrameworkCore.Migrations
                     b.Navigation("SecondPartyRegistrationRequest");
                 });
 
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Litigation.LitigationRequestCorrespondence", b =>
+                {
+                    b.HasOne("REAC.EntityFrameworkCore.Entities.System.SysLitigationRequestCorrespondenceDestination", "LitigationRequestCorrespondenceDestination")
+                        .WithMany("LitigationRequestCorrespondences")
+                        .HasForeignKey("LitigationRequestCorrespondenceDestinationId")
+                        .IsRequired()
+                        .HasConstraintName("FKLitigation401380");
+
+                    b.HasOne("REAC.EntityFrameworkCore.Entities.Litigation.LitigationRequest", "LitigationRequest")
+                        .WithMany("LitigationRequestCorrespondences")
+                        .HasForeignKey("LitigationRequestId")
+                        .IsRequired()
+                        .HasConstraintName("FKLitigation887015");
+
+                    b.Navigation("LitigationRequest");
+
+                    b.Navigation("LitigationRequestCorrespondenceDestination");
+                });
+
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Litigation.LitigationRequestCorrespondenceFile", b =>
+                {
+                    b.HasOne("REAC.EntityFrameworkCore.Entities.System.SysFileManager", "FileManager")
+                        .WithMany("LitigationRequestCorrespondenceFiles")
+                        .HasForeignKey("FileManagerId")
+                        .IsRequired()
+                        .HasConstraintName("FKLitigation81269");
+
+                    b.HasOne("REAC.EntityFrameworkCore.Entities.Litigation.LitigationRequestCorrespondence", "LitigationRequestCorrespondence")
+                        .WithMany("LitigationRequestCorrespondenceFiles")
+                        .HasForeignKey("LitigationRequestCorrespondenceId")
+                        .IsRequired()
+                        .HasConstraintName("FKLitigation804409");
+
+                    b.Navigation("FileManager");
+
+                    b.Navigation("LitigationRequestCorrespondence");
+                });
+
             modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Litigation.LitigationRequestGround", b =>
                 {
                     b.HasOne("REAC.EntityFrameworkCore.Entities.Litigation.LitigationRequest", "LitigationRequest")
@@ -2872,6 +2849,40 @@ namespace REAC.EntityFrameworkCore.Migrations
                     b.Navigation("FileManager");
 
                     b.Navigation("LitigationRequestGround");
+                });
+
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Litigation.LitigationRequestNote", b =>
+                {
+                    b.HasOne("REAC.EntityFrameworkCore.Entities.System.Citizen", null)
+                        .WithMany("LitigationRequestNotes")
+                        .HasForeignKey("CitizenId");
+
+                    b.HasOne("REAC.EntityFrameworkCore.Entities.Litigation.LitigationRequest", "LitigationRequest")
+                        .WithMany("LitigationRequestNotes")
+                        .HasForeignKey("LitigationRequestId")
+                        .IsRequired()
+                        .HasConstraintName("FKLitigation535233");
+
+                    b.Navigation("LitigationRequest");
+                });
+
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Litigation.LitigationRequestNoteFile", b =>
+                {
+                    b.HasOne("REAC.EntityFrameworkCore.Entities.System.SysFileManager", "FileManager")
+                        .WithMany("LitigationRequestNoteFiles")
+                        .HasForeignKey("FileManagerId")
+                        .IsRequired()
+                        .HasConstraintName("FKLitigation910435");
+
+                    b.HasOne("REAC.EntityFrameworkCore.Entities.Litigation.LitigationRequestNote", "Note")
+                        .WithMany("LitigationRequestNoteFiles")
+                        .HasForeignKey("NoteId")
+                        .IsRequired()
+                        .HasConstraintName("FKLitigation888272");
+
+                    b.Navigation("FileManager");
+
+                    b.Navigation("Note");
                 });
 
             modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Litigation.LitigationRequestRequest", b =>
@@ -2904,51 +2915,19 @@ namespace REAC.EntityFrameworkCore.Migrations
                     b.Navigation("LitigationRequestRequest");
                 });
 
-            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Reconciliation.LitigationRequestCorrespondence", b =>
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Litigation.LitigationRequestSession", b =>
                 {
-                    b.HasOne("REAC.EntityFrameworkCore.Entities.System.SysLitigationRequestCorrespondenceDestination", "LitigationRequestCorrespondenceDestination")
-                        .WithMany("LitigationRequestCorrespondences")
-                        .HasForeignKey("LitigationRequestCorrespondenceDestinationId")
-                        .IsRequired()
-                        .HasConstraintName("FKLitigation401380");
-
                     b.HasOne("REAC.EntityFrameworkCore.Entities.Litigation.LitigationRequest", "LitigationRequest")
-                        .WithMany("LitigationRequestCorrespondences")
+                        .WithMany("LitigationRequestSessions")
                         .HasForeignKey("LitigationRequestId")
                         .IsRequired()
-                        .HasConstraintName("FKLitigation887015");
+                        .HasConstraintName("FKLitigationLitigationRequestSessions535233");
 
                     b.Navigation("LitigationRequest");
-
-                    b.Navigation("LitigationRequestCorrespondenceDestination");
-                });
-
-            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Reconciliation.LitigationRequestCorrespondenceFile", b =>
-                {
-                    b.HasOne("REAC.EntityFrameworkCore.Entities.System.SysFileManager", "FileManager")
-                        .WithMany("LitigationRequestCorrespondenceFiles")
-                        .HasForeignKey("FileManagerId")
-                        .IsRequired()
-                        .HasConstraintName("FKLitigation81269");
-
-                    b.HasOne("REAC.EntityFrameworkCore.Entities.Reconciliation.LitigationRequestCorrespondence", "LitigationRequestCorrespondence")
-                        .WithMany("LitigationRequestCorrespondenceFiles")
-                        .HasForeignKey("LitigationRequestCorrespondenceId")
-                        .IsRequired()
-                        .HasConstraintName("FKLitigation804409");
-
-                    b.Navigation("FileManager");
-
-                    b.Navigation("LitigationRequestCorrespondence");
                 });
 
             modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Reconciliation.LitigationRequestExtendPeriodRequest", b =>
                 {
-                    b.HasOne("REAC.EntityFrameworkCore.Entities.System.SysEmployee", "FinishedByNavigation")
-                        .WithMany("LitigationRequestExtendPeriodRequests")
-                        .HasForeignKey("FinishedBy")
-                        .HasConstraintName("FKLitigation219495");
-
                     b.HasOne("REAC.EntityFrameworkCore.Entities.System.SysLitigationRequestExtendPeriodRequestStatus", "LitigationRequestExtendPeriodRequestStatus")
                         .WithMany("LitigationRequestExtendPeriodRequests")
                         .HasForeignKey("LitigationRequestExtendPeriodRequestStatusId")
@@ -2962,7 +2941,9 @@ namespace REAC.EntityFrameworkCore.Migrations
                         .IsRequired()
                         .HasConstraintName("FKLitigation809723");
 
-                    b.Navigation("FinishedByNavigation");
+                    b.HasOne("REAC.EntityFrameworkCore.Entities.System.SysEmployee", null)
+                        .WithMany("LitigationRequestExtendPeriodRequests")
+                        .HasForeignKey("SysEmployeeId");
 
                     b.Navigation("LitigationRequest");
 
@@ -2988,71 +2969,26 @@ namespace REAC.EntityFrameworkCore.Migrations
                     b.Navigation("LitigationRequestExtendPeriodRequest");
                 });
 
-            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Reconciliation.LitigationRequestMeetingReconciliationItem", b =>
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Reconciliation.LitigationRequestReconciliationReport", b =>
                 {
-                    b.HasOne("REAC.EntityFrameworkCore.Entities.Reconciliation.LitigationRequestReconciliationMeeting", "LitigationRequestMeeting")
+                    b.HasOne("REAC.EntityFrameworkCore.Entities.Litigation.LitigationRequest", "LitigationRequest")
+                        .WithMany("LitigationRequestReconciliationReports")
+                        .HasForeignKey("LitigationRequestId")
+                        .IsRequired()
+                        .HasConstraintName("FKLitigationLitigationRequestReconciliationReport334620");
+
+                    b.Navigation("LitigationRequest");
+                });
+
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Reconciliation.LitigationRequestReconciliationReportItem", b =>
+                {
+                    b.HasOne("REAC.EntityFrameworkCore.Entities.Reconciliation.LitigationRequestReconciliationReport", "LitigationRequestReconciliationReport")
                         .WithMany("LitigationRequestMeetingReconciliationItems")
-                        .HasForeignKey("LitigationRequestMeetingId")
+                        .HasForeignKey("LitigationRequestReconciliationReportId")
                         .IsRequired()
                         .HasConstraintName("FKLitigation688593");
 
-                    b.Navigation("LitigationRequestMeeting");
-                });
-
-            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Reconciliation.LitigationRequestNote", b =>
-                {
-                    b.HasOne("REAC.EntityFrameworkCore.Entities.Litigation.LitigationRequest", "LitigationRequest")
-                        .WithMany("LitigationRequestNotes")
-                        .HasForeignKey("LitigationRequestId")
-                        .IsRequired()
-                        .HasConstraintName("FKLitigation535233");
-
-                    b.Navigation("LitigationRequest");
-                });
-
-            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Reconciliation.LitigationRequestNoteFile", b =>
-                {
-                    b.HasOne("REAC.EntityFrameworkCore.Entities.System.SysFileManager", "FileManager")
-                        .WithMany("LitigationRequestNoteFiles")
-                        .HasForeignKey("FileManagerId")
-                        .IsRequired()
-                        .HasConstraintName("FKLitigation910435");
-
-                    b.HasOne("REAC.EntityFrameworkCore.Entities.Reconciliation.LitigationRequestNote", "Note")
-                        .WithMany("LitigationRequestNoteFiles")
-                        .HasForeignKey("NoteId")
-                        .IsRequired()
-                        .HasConstraintName("FKLitigation888272");
-
-                    b.Navigation("FileManager");
-
-                    b.Navigation("Note");
-                });
-
-            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Reconciliation.LitigationRequestReconciliationMeeting", b =>
-                {
-                    b.HasOne("REAC.EntityFrameworkCore.Entities.Litigation.LitigationRequest", "LitigationRequest")
-                        .WithMany("LitigationRequestReconciliationMeetings")
-                        .HasForeignKey("LitigationRequestId")
-                        .IsRequired()
-                        .HasConstraintName("FKLitigation334620");
-
-                    b.HasOne("REAC.EntityFrameworkCore.Entities.System.SysLitigationRequestMeetingConfiguration", "LitigationRequestMeetingConfiguration")
-                        .WithMany("LitigationRequestMeetings")
-                        .HasForeignKey("LitigationRequestMeetingConfigurationId")
-                        .IsRequired()
-                        .HasConstraintName("FKLitigation600098");
-
-                    b.HasOne("REAC.EntityFrameworkCore.Entities.System.SysLitigationRequestMeetingDecision", "LitigationRequestMeetingDecision")
-                        .WithMany("LitigationRequestMeetings")
-                        .HasForeignKey("LitigationRequestMeetingDecisionId")
-                        .HasConstraintName("FKLitigation358393");
-
-                    b.Navigation("LitigationRequest");
-
-                    b.Navigation("LitigationRequestMeetingConfiguration");
-
-                    b.Navigation("LitigationRequestMeetingDecision");
+                    b.Navigation("LitigationRequestReconciliationReport");
                 });
 
             modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.System.Citizen", b =>
@@ -3719,38 +3655,6 @@ namespace REAC.EntityFrameworkCore.Migrations
 
                             b1.WithOwner()
                                 .HasForeignKey("SysLitigationRequestExtendPeriodRequestStatusId");
-                        });
-
-                    b.Navigation("Translations");
-                });
-
-            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.System.SysLitigationRequestMeetingDecision", b =>
-                {
-                    b.OwnsMany("REAC.EntityFrameworkCore.Entities.System.SysLitigationRequestMeetingDecisionTranslation", "Translations", b1 =>
-                        {
-                            b1.Property<int>("SysLitigationRequestMeetingDecisionId")
-                                .HasColumnType("int");
-
-                            b1.Property<int>("Id")
-                                .ValueGeneratedOnAdd()
-                                .HasColumnType("int");
-
-                            b1.Property<string>("LanguageCode")
-                                .IsRequired()
-                                .HasColumnType("nvarchar(max)");
-
-                            b1.Property<string>("MeetingDecision")
-                                .IsRequired()
-                                .HasColumnType("nvarchar(max)");
-
-                            b1.HasKey("SysLitigationRequestMeetingDecisionId", "Id");
-
-                            b1.ToTable("SysLitigationRequestMeetingDecision");
-
-                            b1.ToJson("Translations");
-
-                            b1.WithOwner()
-                                .HasForeignKey("SysLitigationRequestMeetingDecisionId");
                         });
 
                     b.Navigation("Translations");
@@ -4552,9 +4456,11 @@ namespace REAC.EntityFrameworkCore.Migrations
 
                     b.Navigation("LitigationRequestNotes");
 
-                    b.Navigation("LitigationRequestReconciliationMeetings");
+                    b.Navigation("LitigationRequestReconciliationReports");
 
                     b.Navigation("LitigationRequestRequests");
+
+                    b.Navigation("LitigationRequestSessions");
                 });
 
             modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Litigation.LitigationRequestContract", b =>
@@ -4562,9 +4468,19 @@ namespace REAC.EntityFrameworkCore.Migrations
                     b.Navigation("LitigationRequests");
                 });
 
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Litigation.LitigationRequestCorrespondence", b =>
+                {
+                    b.Navigation("LitigationRequestCorrespondenceFiles");
+                });
+
             modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Litigation.LitigationRequestGround", b =>
                 {
                     b.Navigation("LitigationRequestGroundFiles");
+                });
+
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Litigation.LitigationRequestNote", b =>
+                {
+                    b.Navigation("LitigationRequestNoteFiles");
                 });
 
             modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Litigation.LitigationRequestRequest", b =>
@@ -4572,22 +4488,12 @@ namespace REAC.EntityFrameworkCore.Migrations
                     b.Navigation("LitigationRequestRequestFiles");
                 });
 
-            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Reconciliation.LitigationRequestCorrespondence", b =>
-                {
-                    b.Navigation("LitigationRequestCorrespondenceFiles");
-                });
-
             modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Reconciliation.LitigationRequestExtendPeriodRequest", b =>
                 {
                     b.Navigation("LitigationRequestExtendPeriodRequestFiles");
                 });
 
-            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Reconciliation.LitigationRequestNote", b =>
-                {
-                    b.Navigation("LitigationRequestNoteFiles");
-                });
-
-            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Reconciliation.LitigationRequestReconciliationMeeting", b =>
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Reconciliation.LitigationRequestReconciliationReport", b =>
                 {
                     b.Navigation("LitigationRequestMeetingReconciliationItems");
                 });
@@ -4601,6 +4507,8 @@ namespace REAC.EntityFrameworkCore.Migrations
                     b.Navigation("LitigationRequestContractFirstPartyCitizens");
 
                     b.Navigation("LitigationRequestContractSecondPartyCitizens");
+
+                    b.Navigation("LitigationRequestNotes");
 
                     b.Navigation("LitigationRequests");
 
@@ -4767,16 +4675,6 @@ namespace REAC.EntityFrameworkCore.Migrations
             modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.System.SysLitigationRequestExtendPeriodRequestStatus", b =>
                 {
                     b.Navigation("LitigationRequestExtendPeriodRequests");
-                });
-
-            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.System.SysLitigationRequestMeetingConfiguration", b =>
-                {
-                    b.Navigation("LitigationRequestMeetings");
-                });
-
-            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.System.SysLitigationRequestMeetingDecision", b =>
-                {
-                    b.Navigation("LitigationRequestMeetings");
                 });
 
             modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.System.SysLitigationRequestOwnerType", b =>

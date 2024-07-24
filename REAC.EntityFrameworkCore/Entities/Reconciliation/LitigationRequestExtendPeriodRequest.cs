@@ -5,7 +5,7 @@ using REAC.EntityFrameworkCore.Entities.System;
 
 namespace REAC.EntityFrameworkCore.Entities.Reconciliation;
 
-public partial class LitigationRequestExtendPeriodRequest : AuditedBaseEntity<Guid>
+public partial class LitigationRequestExtendPeriodRequest : BaseEntity<Guid>
 {
     public Guid LitigationRequestId { get; set; }
 
@@ -13,17 +13,10 @@ public partial class LitigationRequestExtendPeriodRequest : AuditedBaseEntity<Gu
 
     public string Reason { get; set; } = null!;
 
-    public Guid RequestedBy { get; set; }
-
     public LitigationRequestExtendPeriodRequestStatus LitigationRequestExtendPeriodRequestStatusId { get; set; }
 
-    public DateTime? FinishedOn { get; set; }
-
-    public Guid? FinishedBy { get; set; }
 
     public string? FinishStatusReason { get; set; }
-
-    public virtual SysEmployee? FinishedByNavigation { get; set; }
 
     public virtual LitigationRequest LitigationRequest { get; set; } = null!;
 

@@ -26,6 +26,11 @@ public partial class LitigationRequest : BaseEntity<Guid>
 
     public LitigationRequestOwnerType LitigationRequestOwnerTypeId { get; set; }
 
+    public MintuesOfMeetingApprovalStatus? MintuesOfMeetingApprovalPlaintiffStatus { get; set; }
+
+    public MintuesOfMeetingApprovalStatus? MintuesOfMeetingApprovalDefendantStatus { get; set; }
+    public DateTime? MintuesOfMeetingApprovalPlaintiffStatusOn { get; set; }
+    public DateTime? MintuesOfMeetingApprovalDefendantStatusOn { get; set; }
     public RequestStatus InternalStatusId { get; set; }
 
     public RequestStatus ExternalStatusId { get; set; }
@@ -81,6 +86,8 @@ public partial class LitigationRequest : BaseEntity<Guid>
     public virtual SysLitigationRequestCategory? LitigationRequestCategory { get; set; }
 
     public virtual SysExemptionReductionCategory? SysExemptionReductionCategory { get; set; }
+    public virtual ICollection<LitigationRequestSession> LitigationRequestSessions { get; set; } = new List<LitigationRequestSession>();
+
 
     public virtual ICollection<LitigationRequestCorrespondence> LitigationRequestCorrespondences { get; set; } = new List<LitigationRequestCorrespondence>();
 
@@ -88,7 +95,7 @@ public partial class LitigationRequest : BaseEntity<Guid>
 
     public virtual ICollection<LitigationRequestGround> LitigationRequestGrounds { get; set; } = new List<LitigationRequestGround>();
 
-    public virtual ICollection<LitigationRequestReconciliationMeeting> LitigationRequestReconciliationMeetings { get; set; } = new List<LitigationRequestReconciliationMeeting>();
+    public virtual ICollection<LitigationRequestReconciliationReport> LitigationRequestReconciliationReports { get; set; } = new List<LitigationRequestReconciliationReport>();
 
     public virtual ICollection<LitigationRequestNote> LitigationRequestNotes { get; set; } = new List<LitigationRequestNote>();
 

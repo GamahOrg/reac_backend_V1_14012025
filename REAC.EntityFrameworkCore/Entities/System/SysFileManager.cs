@@ -18,7 +18,6 @@ public partial class SysFileManager : CreationBaseEntity<Guid>
     public virtual ICollection<CitizenRequestFreelanceWorkDocumentFile> CitizenRequestFreelanceWorkDocumentFiles { get; set; } = new List<CitizenRequestFreelanceWorkDocumentFile>();
     public virtual ICollection<LitigationRequest> ExemptionReductionCategoryFiles { get; set; } = new List<LitigationRequest>();
 
-
     public virtual ICollection<LitigationRequestContract> AssociationRegistrationCertificateContracts { get; set; } = new List<LitigationRequestContract>();
     public virtual ICollection<LitigationRequestContract> FoundingLetterContracts { get; set; } = new List<LitigationRequestContract>();
     public virtual ICollection<LitigationRequestContract> InternalRegulationsContracts { get; set; } = new List<LitigationRequestContract>();

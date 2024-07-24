@@ -44,8 +44,12 @@ public partial class REACDBContext : DbContext
     public virtual DbSet<WorkFlowNotificationPlan> WorkFlowNotificationPlans { get; set; }
 
     public virtual DbSet<WorkFlowNotificationType> WorkFlowNotificationTypes { get; set; }
+    public virtual DbSet<SysMobileOTP> SysMobileOTP { get; set; }
 
     public virtual DbSet<WorkFlowLog> WorkFlowLogs { get; set; }
+
+
+    public virtual DbSet<LitigationRequestSession> LitigationRequestSessions { get; set; }
 
     public virtual DbSet<WorkFlowProcessingLog> WorkFlowProcessingLogs { get; set; }
 
@@ -91,9 +95,9 @@ public partial class REACDBContext : DbContext
 
     public virtual DbSet<LitigationRequestGroundFile> LitigationRequestGroundFiles { get; set; }
 
-    public virtual DbSet<LitigationRequestReconciliationMeeting> LitigationRequestMeetings { get; set; }
+    public virtual DbSet<LitigationRequestReconciliationReport> LitigationRequestReconciliationReports { get; set; }
 
-    public virtual DbSet<LitigationRequestMeetingReconciliationItem> LitigationRequestMeetingReconciliationItems { get; set; }
+    public virtual DbSet<LitigationRequestReconciliationReportItem> LitigationRequestMeetingReconciliationItems { get; set; }
 
     public virtual DbSet<LitigationRequestNote> LitigationRequestNotes { get; set; }
 
@@ -124,10 +128,6 @@ public partial class REACDBContext : DbContext
     public virtual DbSet<SysLitigationRequestCorrespondenceDestination> SysLitigationRequestCorrespondenceDestinations { get; set; }
 
     public virtual DbSet<SysLitigationRequestExtendPeriodRequestStatus> SysLitigationRequestExtendPeriodRequestStatuses { get; set; }
-
-    public virtual DbSet<SysLitigationRequestMeetingConfiguration> SysLitigationRequestMeetingConfigurations { get; set; }
-
-    public virtual DbSet<SysLitigationRequestMeetingDecision> SysLitigationRequestMeetingDecisions { get; set; }
 
     public virtual DbSet<SysLitigationRequestOwnerType> SysLitigationRequestOwnerTypes { get; set; }
 
@@ -627,7 +627,6 @@ public partial class REACDBContext : DbContext
             entity.Property(e => e.Code).HasMaxLength(20);
             entity.Property(e => e.IdentityNumber).HasMaxLength(100);
             entity.Property(e => e.Mobile).HasMaxLength(20);
-            entity.Property(e => e.Otp).HasMaxLength(10);
             entity.Property(e => e.PostalCode).HasMaxLength(20);
             entity.Property(e => e.ShortName).HasMaxLength(20);
             entity.Property(e => e.Street).HasMaxLength(50);
@@ -959,12 +958,8 @@ public partial class REACDBContext : DbContext
             entity.ToTable("LitigationRequestExtendPeriodRequest");
 
             entity.Property(e => e.Id).ValueGeneratedNever();
-            entity.Property(e => e.FinishedOn).HasColumnType("datetime");
             entity.Property(e => e.LitigationRequestId);
-
-            entity.HasOne(d => d.FinishedByNavigation).WithMany(p => p.LitigationRequestExtendPeriodRequests)
-                .HasForeignKey(d => d.FinishedBy)
-                .HasConstraintName("FKLitigation219495");
+            entity.Property(e => e.Reason).HasMaxLength(300);
 
             entity.HasOne(d => d.LitigationRequestExtendPeriodRequestStatus).WithMany(p => p.LitigationRequestExtendPeriodRequests)
                 .HasForeignKey(d => d.LitigationRequestExtendPeriodRequestStatusId)
@@ -975,7 +970,10 @@ public partial class REACDBContext : DbContext
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FKLitigation809723");
         });
-
+        modelBuilder.Entity<SysMobileOTP>(entity =>
+        {
+            entity.Property(e => e.Code).HasMaxLength(10);
+        });
         modelBuilder.Entity<LitigationRequestExtendPeriodRequestFile>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK__Litigati__3214EC076F56C6AF");
@@ -1030,43 +1028,50 @@ public partial class REACDBContext : DbContext
                 .HasConstraintName("FKLitigation488105");
         });
 
-        modelBuilder.Entity<LitigationRequestReconciliationMeeting>(entity =>
+        modelBuilder.Entity<LitigationRequestReconciliationReport>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK__Litigati__3214EC07F3A8E5CA");
 
-            entity.ToTable("LitigationRequestReconciliationMeeting");
+            entity.ToTable("LitigationRequestReconciliationReport");
+            entity.Property(e => e.ReconciliationSessionDetails).HasMaxLength(2000);
+            entity.Property(e => e.ModificationRequest).HasMaxLength(1000);
 
             entity.Property(e => e.Id).ValueGeneratedNever();
-            entity.Property(e => e.FirstPartyApprovedOn).HasColumnType("datetime");
             entity.Property(e => e.LitigationRequestId);
-            entity.Property(e => e.MeetingDate).HasColumnType("datetime");
-            entity.Property(e => e.SecondPartyApprovedOn).HasColumnType("datetime");
+            entity.Property(e => e.ReportDate).HasColumnType("datetime");
 
-            entity.HasOne(d => d.LitigationRequest).WithMany(p => p.LitigationRequestReconciliationMeetings)
+            entity.HasOne(d => d.LitigationRequest).WithMany(p => p.LitigationRequestReconciliationReports)
                 .HasForeignKey(d => d.LitigationRequestId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FKLitigation334620");
+                .HasConstraintName("FKLitigationLitigationRequestReconciliationReport334620");
 
-            entity.HasOne(d => d.LitigationRequestMeetingConfiguration).WithMany(p => p.LitigationRequestMeetings)
-                .HasForeignKey(d => d.LitigationRequestMeetingConfigurationId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FKLitigation600098");
-
-            entity.HasOne(d => d.LitigationRequestMeetingDecision).WithMany(p => p.LitigationRequestMeetings)
-                .HasForeignKey(d => d.LitigationRequestMeetingDecisionId)
-                .HasConstraintName("FKLitigation358393");
         });
 
-        modelBuilder.Entity<LitigationRequestMeetingReconciliationItem>(entity =>
+        modelBuilder.Entity<LitigationRequestReconciliationReportItem>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK__Litigati__3214EC07A8D6A249");
 
             entity.ToTable("LitigationRequestMeetingReconciliationItem");
 
-            entity.HasOne(d => d.LitigationRequestMeeting).WithMany(p => p.LitigationRequestMeetingReconciliationItems)
-                .HasForeignKey(d => d.LitigationRequestMeetingId)
+            entity.HasOne(d => d.LitigationRequestReconciliationReport).WithMany(p => p.LitigationRequestMeetingReconciliationItems)
+                .HasForeignKey(d => d.LitigationRequestReconciliationReportId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FKLitigation688593");
+        });
+        modelBuilder.Entity<LitigationRequestSession>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__LitigationRequestSessionC1F98E04");
+
+            entity.ToTable("LitigationRequestSession");
+
+            entity.Property(e => e.Id).ValueGeneratedNever();
+            entity.Property(e => e.LitigationRequestId);
+            entity.Property(e => e.SessionUrl).HasMaxLength(1000);
+
+            entity.HasOne(d => d.LitigationRequest).WithMany(p => p.LitigationRequestSessions)
+                .HasForeignKey(d => d.LitigationRequestId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FKLitigationLitigationRequestSessions535233");
         });
 
         modelBuilder.Entity<LitigationRequestNote>(entity =>
@@ -1434,29 +1439,6 @@ public partial class REACDBContext : DbContext
             entity.Property(e => e.Id).ValueGeneratedNever();
 
             entity.Property(e => e.StatusName).HasMaxLength(50);
-
-            entity.OwnsMany(d => d.Translations, ownedNavigationBuilder => { ownedNavigationBuilder.ToJson(); });
-
-        });
-
-        modelBuilder.Entity<SysLitigationRequestMeetingConfiguration>(entity =>
-        {
-            entity.HasKey(e => e.Id).HasName("PK__SysLitig__3214EC076879FC7E");
-
-            entity.ToTable("SysLitigationRequestMeetingConfiguration");
-
-            entity.Property(e => e.Id).ValueGeneratedNever();
-            entity.Property(e => e.From).HasColumnType("datetime");
-            entity.Property(e => e.To).HasColumnType("datetime");
-        });
-
-        modelBuilder.Entity<SysLitigationRequestMeetingDecision>(entity =>
-        {
-            entity.HasKey(e => e.Id).HasName("PK__SysLitig__3214EC07318BAEC8");
-
-            entity.ToTable("SysLitigationRequestMeetingDecision");
-
-            entity.Property(e => e.MeetingDecision).HasMaxLength(20);
 
             entity.OwnsMany(d => d.Translations, ownedNavigationBuilder => { ownedNavigationBuilder.ToJson(); });
 

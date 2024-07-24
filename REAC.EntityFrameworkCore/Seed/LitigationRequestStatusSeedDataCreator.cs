@@ -128,7 +128,7 @@ public partial class LitigationRequestStatusSeedDataCreator
                     },
                     new SysLitigationRequestStatus
                     {
-                        Id =  Domain.Shared.Enum.RequestStatus.WaiverOfTheLawsuit,
+                        Id =  Domain.Shared.Enum.RequestStatus.WaiverOfTheLitigation,
                         RequestStatus = "تنازل عن الدعوى",
                         CreatedOn = DateTime.Now,
                         Translations=new List<SysLitigationRequestStatusTranslation>
@@ -147,7 +147,7 @@ public partial class LitigationRequestStatusSeedDataCreator
                     },
                     new SysLitigationRequestStatus
                     {
-                        Id = Domain.Shared.Enum.RequestStatus.LackOfReconciliation,
+                        Id = Domain.Shared.Enum.RequestStatus.ReconciliationWasNotMade,
                         RequestStatus = "عدم الصُلح",
                         CreatedOn = DateTime.Now,
                         Translations=new List<SysLitigationRequestStatusTranslation>
@@ -274,6 +274,25 @@ public partial class LitigationRequestStatusSeedDataCreator
                             new SysLitigationRequestStatusTranslation
                             {
                                 RequestStatus =  "قيد المشارطة",
+                                LanguageCode = Constants.ArabicLanguage
+                            }
+                        }
+                    },
+                    new SysLitigationRequestStatus
+                    {
+                        Id = Domain.Shared.Enum.RequestStatus.AsessionTimeHasBeenReset,
+                        RequestStatus = "تم إعادة تحديد ميعاد جلسة",
+                        CreatedOn = DateTime.Now,
+                        Translations=new List<SysLitigationRequestStatusTranslation>
+                        {
+                            new SysLitigationRequestStatusTranslation
+                            {
+                                RequestStatus = "Asession Time Has Been Reset ",
+                                LanguageCode = Constants.EnglishLanguage
+                            },
+                            new SysLitigationRequestStatusTranslation
+                            {
+                                RequestStatus = "تم إعادة تحديد ميعاد جلسة",
                                 LanguageCode = Constants.ArabicLanguage
                             }
                         }

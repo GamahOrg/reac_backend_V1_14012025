@@ -7,29 +7,36 @@ public enum RequestStatus
     Received = 2,
     ///<summary>تم تحديد ميعاد جلسة</summary>
     AsessionTimeHasBeenSet = 3,
+    ///<summary>تم إعادة تحديد ميعاد جلسة</summary>
+    AsessionTimeHasBeenReset = 4,
     ///<summary>تمت الجلسة</summary>
-    TheSessionWasCompleted = 4,
+    TheSessionWasCompleted = 5,
     ///<summary>تم كتابة محضر الجلسة</summary>
-    TheMinutesOfTheMeetingWereWritten = 5,
+    TheMinutesOfTheMeetingWereWritten = 6,
     ///<summary>تنازل عن الحق</summary>
-    WaiverOfRight = 6,
+    WaiverOfRight = 7,
     ///<summary>تنازل عن الدعوى</summary>
-    WaiverOfTheLawsuit = 7,
+    WaiverOfTheLitigation = 8,
     ///<summary>عدم الصُلح</summary>
-    LackOfReconciliation = 8,
+    ReconciliationWasNotMade = 9,
     ///<summary>حفظ وإغلاق</summary>
-    SaveAndClose = 9,
+    SaveAndClose = 10,
     ///<summary> حفظ كمسودة</summary>
-    SaveAsDraft = 10,
+    SaveAsDraft = 11,
     ///<summary>مرفوضة</summary>
-    Rejected = 11,
+    Rejected = 12,
     ///<summary>معاده للتعديل</summary>
-    SentBackForEdit = 12,
+    SentBackForEdit = 13,
     ///<summary>تم التعديل</summary>
-    Edited = 13,
+    Edited = 14,
     ///<summary>قيد المشارطة</summary>
-    CharterRequestSent = 14
-
+    CharterRequestSent = 15,
+    ///<summary>تم قبول محضر الصلح</summary>
+    AcceptanceOfTheReconciliationReport = 16,
+    ///<summary>تم رفض محضر الصلح</summary>
+    RejectionOfTheReconciliationReport = 17,
+    ///<summary>تم الصلح</summary>
+    ReconciliationWasMade = 17
 
 }
 

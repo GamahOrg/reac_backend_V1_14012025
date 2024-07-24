@@ -103,6 +103,7 @@ namespace Bpf.Application.ModuleServices
             #endregion
 
             #region Set Employee Id
+
             #region Same Employee
             if (sameEmployee.HasValue)
             {
@@ -121,33 +122,36 @@ namespace Bpf.Application.ModuleServices
             #region Set Other Employee Id
             if (!workFlowProcessingLog.EmployeeId.HasValue)
             {
-                switch (step.ActorTypeId)
+                if (step.ProcessActorType == ProcessActorType.Employee)
                 {
-                    case StepActorType.Department:
-                        switch (step.Department?.DistributionMode)
-                        {
-                            case DepartmentDistributionMode.AutoDistribution:
-                                // Get Employee id by min requests
-                                workFlowProcessingLog.EmployeeId = step.Department.SysEmployees.Where(x => x.IsAdmin == false).FirstOrDefault()?.Id;
-                                break;
-                            case DepartmentDistributionMode.ManualDistribution:
-                                //no employee
-                                break;
-                            case DepartmentDistributionMode.NoneDistribution:
-                                //no employee
-                                break;
-                        }
-                        break;
-                    case StepActorType.Official:
-                        workFlowProcessingLog.EmployeeId = step.EmployeeId;
-                        break;
-                    case StepActorType.Employee:
-                        workFlowProcessingLog.EmployeeId = step.EmployeeId;
-                        break;
-                    case StepActorType.Admin:
-                        // Get Department Admin Id
-                        workFlowProcessingLog.EmployeeId = step.Department?.SysEmployees.Where(x => x.IsAdmin).FirstOrDefault()?.Id;
-                        break;
+                    switch (step.ActorTypeId)
+                    {
+                        case StepActorType.Department:
+                            switch (step.Department?.DistributionMode)
+                            {
+                                case DepartmentDistributionMode.AutoDistribution:
+                                    // Get Employee id by min requests
+                                    workFlowProcessingLog.EmployeeId = step.Department.SysEmployees.Where(x => x.IsAdmin == false).FirstOrDefault()?.Id;
+                                    break;
+                                case DepartmentDistributionMode.ManualDistribution:
+                                    //no employee
+                                    break;
+                                case DepartmentDistributionMode.NoneDistribution:
+                                    //no employee
+                                    break;
+                            }
+                            break;
+                        case StepActorType.Official:
+                            workFlowProcessingLog.EmployeeId = step.EmployeeId;
+                            break;
+                        case StepActorType.Employee:
+                            workFlowProcessingLog.EmployeeId = step.EmployeeId;
+                            break;
+                        case StepActorType.Admin:
+                            // Get Department Admin Id
+                            workFlowProcessingLog.EmployeeId = step.Department?.SysEmployees.Where(x => x.IsAdmin).FirstOrDefault()?.Id;
+                            break;
+                    }
                 }
             }
             #endregion
@@ -163,25 +167,29 @@ namespace Bpf.Application.ModuleServices
             #endregion
 
             #region Create Creation Log
-            WorkFlowLogCreateUpdateDto workFlowLog = new WorkFlowLogCreateUpdateDto()
+            if (step.CreationLogMessage != null)
             {
-                CreatedOn = DateTime.UtcNow,
-                ShowForApplicant = step.ShowForApplicant,
-                LogMessage = step.CreationLogMessage,
-                RequestId = requestId
-
-            };
-            step.Translations?.ToList().ForEach(x =>
-            {
-                workFlowLog.Translations.Add(new WorkFlowLogTranslation()
+                WorkFlowLogCreateUpdateDto workFlowLog = new WorkFlowLogCreateUpdateDto()
                 {
-                    LanguageCode = x.LanguageCode,
-                    LogMessage = x.CreationLogMessage
+                    CreatedOn = DateTime.UtcNow,
+                    ShowForApplicant = step.ShowForApplicant,
+                    LogMessage = step.CreationLogMessage,
+                    RequestId = requestId
+
+                };
+
+                step.Translations?.ToList().ForEach(x =>
+                {
+                    workFlowLog.Translations.Add(new WorkFlowLogTranslation()
+                    {
+                        LanguageCode = x.LanguageCode,
+                        LogMessage = x.CreationLogMessage
+                    });
                 });
-            });
-            var workFlowLogResponse = await _workFlowLogService.AddAsync(workFlowLog);
-            if (!workFlowLogResponse.IsDone)
-                return workFlowLogResponse;
+                var workFlowLogResponse = await _workFlowLogService.AddAsync(workFlowLog);
+                if (!workFlowLogResponse.IsDone)
+                    return workFlowLogResponse;
+            }
             #endregion
 
             var response = await _workFlowProcessingLogService.AddAsync(workFlowProcessingLog, cancellationToken);

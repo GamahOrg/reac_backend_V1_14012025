@@ -1,4 +1,5 @@
 ﻿using Core.GenericRepository.Shared.BaseEntities;
+using REAC.Domain.Shared.Enum.Wpf;
 
 namespace REAC.Application.Contracts.Dtos.Wpf.System.WorkFlowStepEvent;
 
@@ -12,6 +13,8 @@ public class WorkFlowStepEventForActorShortDto : BaseEntity<Guid>
 }
 public class WorkFlowStepEventShortDto : BaseEntity<Guid>
 {
+    public CustomActionType? CustomActionType { get; set; }
+
     public string EventName { get; set; } = null!;
 
     public bool AllowFileUpload { get; set; }

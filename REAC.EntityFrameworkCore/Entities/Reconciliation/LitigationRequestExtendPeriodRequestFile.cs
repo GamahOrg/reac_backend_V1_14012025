@@ -3,7 +3,7 @@ using REAC.EntityFrameworkCore.Entities.System;
 
 namespace REAC.EntityFrameworkCore.Entities.Reconciliation;
 
-public partial class LitigationRequestExtendPeriodRequestFile : AuditedBaseEntity<Guid>
+public partial class LitigationRequestExtendPeriodRequestFile : BaseEntity<Guid>
 {
     public Guid LitigationRequestExtendPeriodRequestId { get; set; }
 

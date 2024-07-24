@@ -22,7 +22,6 @@ using REAC.Application.Contracts.Dtos.System.LitigationRequestCategoryDtos;
 using REAC.Application.Contracts.Dtos.System.LitigationRequestContractTypeDtos;
 using REAC.Application.Contracts.Dtos.System.LitigationRequestCorrespondenceDestinationDtos;
 using REAC.Application.Contracts.Dtos.System.LitigationRequestExtendPeriodRequestStatusDtos;
-using REAC.Application.Contracts.Dtos.System.LitigationRequestMeetingDecisionDtos;
 using REAC.Application.Contracts.Dtos.System.LitigationRequestOwnerTypeDtos;
 using REAC.Application.Contracts.Dtos.System.LitigationRequestStatusDtos;
 using REAC.Application.Contracts.Dtos.Wpf.Business.WorkFlowLog;
@@ -134,11 +133,6 @@ namespace REAC.Application.Contracts
                                      string.IsNullOrEmpty(src.Translations.FirstOrDefault(x => x.LanguageCode == CultureInfo.CurrentUICulture.Name).StatusName)) ?
                                      src.StatusName : src.Translations.FirstOrDefault(x => x.LanguageCode == CultureInfo.CurrentUICulture.Name).StatusName)).ReverseMap();
 
-            CreateMap<SysLitigationRequestMeetingDecision, SysLitigationRequestMeetingDecisionDto>()
-                                     .ForMember(des => des.MeetingDecision,
-                                     opt => opt.MapFrom(src => (src.Translations.FirstOrDefault(x => x.LanguageCode == CultureInfo.CurrentUICulture.Name) == null ||
-                                     string.IsNullOrEmpty(src.Translations.FirstOrDefault(x => x.LanguageCode == CultureInfo.CurrentUICulture.Name).MeetingDecision)) ?
-                                     src.MeetingDecision : src.Translations.FirstOrDefault(x => x.LanguageCode == CultureInfo.CurrentUICulture.Name).MeetingDecision)).ReverseMap();
 
             CreateMap<SysLitigationRequestOwnerType, SysLitigationRequestOwnerTypeDto>()
                                      .ForMember(des => des.LitigationRequestOwnerType,
@@ -176,15 +170,14 @@ namespace REAC.Application.Contracts
             CreateMap<LitigationRequestExtendPeriodRequestFile, LitigationRequestExtendPeriodRequestFileCreateUpdateDto>().ReverseMap();
             CreateMap<LitigationRequestGround, LitigationRequestGroundCreateUpdateDto>().ReverseMap();
             CreateMap<LitigationRequestGroundFile, LitigationRequestGroundFileCreateUpdateDto>().ReverseMap();
-            CreateMap<LitigationRequestMeetingReconciliationItem, LitigationRequestMeetingReconciliationItemCreateUpdateDto>().ReverseMap();
+            CreateMap<LitigationRequestReconciliationReportItem, LitigationRequestReconciliationReportItemCreateUpdateDto>().ReverseMap();
             CreateMap<LitigationRequestNote, LitigationRequestNoteCreateUpdateDto>().ReverseMap();
             CreateMap<LitigationRequestNoteFile, LitigationRequestNoteFileCreateUpdateDto>().ReverseMap();
-            CreateMap<LitigationRequestReconciliationMeeting, LitigationRequestReconciliationMeetingCreateUpdateDto>().ReverseMap();
+            CreateMap<LitigationRequestReconciliationReport, LitigationRequestReconciliationReportCreateUpdateDto>().ReverseMap();
             CreateMap<LitigationRequestRequest, LitigationRequestRequestCreateUpdateDto>().ReverseMap();
             CreateMap<LitigationRequestRequestFile, LitigationRequestRequestFileCreateUpdateDto>().ReverseMap();
             CreateMap<SysFileManager, SysFileManagerCreateUpdateDto>().ReverseMap();
             CreateMap<SysLitigationRequestAmount, SysLitigationRequestAmountCreateUpdateDto>().ReverseMap();
-            CreateMap<SysLitigationRequestMeetingConfiguration, SysLitigationRequestMeetingConfigurationCreateUpdateDto>().ReverseMap();
             CreateMap<SysSetting, SysSettingCreateUpdateDto>().ReverseMap();
             CreateMap<SysRegistrationRequest, SysRegistrationRequestCreateUpdateDto>().ReverseMap();
 

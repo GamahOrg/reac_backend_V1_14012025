@@ -131,24 +131,28 @@ namespace Bpf.Application.ModuleServices
                 #endregion
 
                 #region Create Log
-                WorkFlowLogCreateUpdateDto workFlowLog = new WorkFlowLogCreateUpdateDto()
+                if (processingLog.WorkFlowStep.WorkFlowStepEvents.Single().LogMessage != null)
                 {
-                    CreatedOn = DateTime.UtcNow,
-                    ShowForApplicant = processingLog.WorkFlowStep.WorkFlowStepEvents.Single().ShowLogForApplicant,
-                    LogMessage = processingLog.WorkFlowStep.WorkFlowStepEvents.Single().LogMessage,
-                    RequestId = requestPayload.RequestId
-                };
-                processingLog.WorkFlowStep.WorkFlowStepEvents.Single().Translations?.ToList().ForEach(x =>
-                {
-                    workFlowLog.Translations.Add(new WorkFlowLogTranslation()
+                    WorkFlowLogCreateUpdateDto workFlowLog = new WorkFlowLogCreateUpdateDto()
                     {
-                        LanguageCode = x.LanguageCode,
-                        LogMessage = x.LogMessage
+                        CreatedOn = DateTime.UtcNow,
+                        ShowForApplicant = processingLog.WorkFlowStep.WorkFlowStepEvents.Single().ShowLogForApplicant,
+                        LogMessage = processingLog.WorkFlowStep.WorkFlowStepEvents.Single().LogMessage,
+                        RequestId = requestPayload.RequestId
+                    };
+                    processingLog.WorkFlowStep.WorkFlowStepEvents.Single().Translations?.ToList().ForEach(x =>
+                    {
+                        workFlowLog.Translations.Add(new WorkFlowLogTranslation()
+                        {
+                            LanguageCode = x.LanguageCode,
+                            LogMessage = x.LogMessage
+                        });
                     });
-                });
-                var workFlowLogResponse = await _workFlowLogService.AddAsync(workFlowLog);
-                if (!workFlowLogResponse.IsDone)
-                    return workFlowLogResponse;
+
+                    var workFlowLogResponse = await _workFlowLogService.AddAsync(workFlowLog);
+                    if (!workFlowLogResponse.IsDone)
+                        return workFlowLogResponse;
+                }
                 #endregion
 
                 #region EventActionMode

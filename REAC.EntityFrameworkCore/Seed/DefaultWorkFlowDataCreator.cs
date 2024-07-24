@@ -7,7 +7,7 @@ namespace REAC.EntityFrameworkCore.Seed
 {
     public class DefaultWorkFlowDataCreator
     {
-        public static REACDBContext _context;
+        public static REACDBContext? _context;
         public static async Task CreateAsync(REACDBContext context)
         {
             _context = context;
@@ -482,6 +482,7 @@ namespace REAC.EntityFrameworkCore.Seed
                         new WorkFlowStep()
                         {
                             StepName = "معالجة الملاحظات",
+                            ProcessActorType = ProcessActorType.Plaintiff,
                             WorkModeId = StepWorkMode.None,
                             Id = Guid.Parse("2a15b0d6-1f45-44f2-ba26-01c700b39203"),
                             Order = 0,
@@ -492,8 +493,6 @@ namespace REAC.EntityFrameworkCore.Seed
                             IsDeleted = false,
                             //CreationNotificationPlanId = Guid.Parse("f7c76133-2b18-4238-9081-d1fefbefb7cb"),
                             StageId = _context.WorkFlowStepStages.ToList().FirstOrDefault().Id,
-                            InternalStatusId = RequestStatus.SentBackForEdit,
-                            ExternalStatusId = RequestStatus.SentBackForEdit,
                             ShowForApplicant = true,
                             WorkFlowStepEvents = new List<WorkFlowStepEvent>()
                             {
@@ -557,11 +556,12 @@ namespace REAC.EntityFrameworkCore.Seed
                                     CreationLogMessage = "Feedback is being processed"
                                 }
                             }
-                        },
-                        new WorkFlowStep()
+                        }, // تعديل الدعوى الدعوى
+                        new WorkFlowStep()   //تدقيق الدعوى
                         {
                             StepName = "تدقيق الدعوى",
 
+                            ProcessActorType = ProcessActorType.Employee,
                             WorkModeId = StepWorkMode.None,
                             Id = Guid.Parse("15154695-a36b-4fda-8572-4874f661000e"),
                             Order = 1,
@@ -573,8 +573,6 @@ namespace REAC.EntityFrameworkCore.Seed
                             //CreationNotificationPlanId = Guid.Parse("f7c76133-2b18-4238-9081-d1fefbefb7cb"),
                             DepartmentId = Guid.Parse("657004f4-57e1-4715-addc-0e5ff0b00938"),
                             StageId = _context.WorkFlowStepStages.ToList().FirstOrDefault().Id,
-                            InternalStatusId = RequestStatus.New,
-                            ExternalStatusId = RequestStatus.New,
                             ShowForApplicant = true,
                             WorkFlowStepEvents = new List<WorkFlowStepEvent>()
                             {
@@ -588,7 +586,8 @@ namespace REAC.EntityFrameworkCore.Seed
                                     ExternalStatusId = RequestStatus.Received,
 
                                     AllowFileUpload = false,
-
+                                    ActionModeId = EventActionMode.SpecificStep,
+                                    NextWorkFlowStepDestinationId = Guid.Parse("92d1235b-b8b3-42e4-aeda-a9828d7c6fee"),
                                     IsActiveValue = false,
                                     AllowChangeIsFinished = false,
                                     EventSecurityLevelId = EventSecurityLevel.UnSpecified,
@@ -702,22 +701,22 @@ namespace REAC.EntityFrameworkCore.Seed
                                 {
                                     LanguageCode = "en-US",
                                     StepName = "Request Studing",
-                                    CreationLogMessage = "Request has been created and is being Studied"
+                                    CreationLogMessage = "Litigation has been created and is being reviewed"
                                 },
                                 new WorkFlowStepTranslation()
                                 {
                                     LanguageCode = "ar-SA",
                                     StepName = "دراسة الدعوى",
-                                    CreationLogMessage = "تم إنشاء الدعوى وجارى دراستها"
+                                    CreationLogMessage = "تم إنشاء الدعوى وجارى تدقيقها",
                                 }
                             }
-                        },
+                        }, // تدقيق الدعوى
                         new WorkFlowStep()
                         {
-                            StepName = "مرحلة الطلح",
-
+                            StepName = "تحديد جلسة الصلح",
+                            ProcessActorType = ProcessActorType.Reformer,
                             WorkModeId = StepWorkMode.None,
-                            Id = Guid.Parse("a3e5a0ee-fe81-4935-9201-866ba5402560"),
+                            Id = Guid.Parse("92d1235b-b8b3-42e4-aeda-a9828d7c6fee"),
                             Order = 2,
                             ActorTypeId = StepActorType.Department,
                             CreationLogMessage = "تم تدقيق الدعوى وجارى مرحلة الصلح",
@@ -725,10 +724,87 @@ namespace REAC.EntityFrameworkCore.Seed
                             CreatedBy = Guid.NewGuid(),
                             IsDeleted = false,
                             //CreationNotificationPlanId = Guid.Parse("f7c76133-2b18-4238-9081-d1fefbefb7cb"),
-                            DepartmentId = Guid.Parse("fa69b94c-53f2-49ca-8384-072ea272fa08"),
                             StageId = _context.WorkFlowStepStages.ToList().FirstOrDefault().Id,
-                            InternalStatusId = RequestStatus.New,
-                            ExternalStatusId = RequestStatus.New,
+                            ShowForApplicant = true,
+                            Translations = new List<WorkFlowStepTranslation>()
+                            {
+                                new WorkFlowStepTranslation()
+                                {
+                                    LanguageCode = "en-US",
+                                    StepName = "Add reconciliation session",
+                                    CreationLogMessage = "Request has been created and is being Audited"
+                                },
+                                new WorkFlowStepTranslation()
+                                {
+                                    LanguageCode = "ar-SA",
+                                    StepName = "تحديد جلسة الصلح",
+                                    CreationLogMessage = "تم تدقيق الدعوى وجارى مرحلة الصلح",
+                                }
+                            },
+                            WorkFlowStepEvents = new List<WorkFlowStepEvent>()
+                            {
+                                new WorkFlowStepEvent()
+                                {
+                                    Id = Guid.Parse("4d94b2fc-2dc8-4d2b-91c0-c80d687255b4"),
+                                    EventName = "تحديد موعد جلسة الصلح",
+                                    CustomActionType = CustomActionType.AddReconciliationSession,
+                                    AllowChangeInternalStatus = true,
+                                    InternalStatusId = RequestStatus.AsessionTimeHasBeenSet,
+                                    AllowChangeExternalStatus = true,
+                                    ExternalStatusId = RequestStatus.AsessionTimeHasBeenSet,
+                                    AllowCompletionNotificationPlan = false,
+                                    //CompletionNotificationPlanId = Guid.Parse("f7c76133-2b18-4238-9081-d1fefbefb7cb"),
+                                    AllowFileUpload = false,
+                                    AllowChangeIsActive = false,
+                                    IsActiveValue = false,
+                                    AllowNotes = false,
+                                    IsAdminApprovalRequired = false,
+                                    SameEmployee = false,
+                                    AllowChangeIsFinished = false,
+                                    IsFinishedValue = false,
+                                    AllowChangeIsAllowEdit = false,
+                                    IsAllowEditValue = false,
+                                    EventSecurityLevelId = EventSecurityLevel.UnSpecified,
+                                    LogMessage = "تم تحديد موعد جلسة الصلح",
+                                    ActionModeId = EventActionMode.GoNextStep,
+                                    CreatedOn = DateTime.Now,
+                                    CreatedBy = Guid.NewGuid(),
+                                    IsDeleted = false,
+                                    ShowLogForApplicant = true,
+                                    ShowProcessingLogForApplicant = false,
+                                    Translations  = new List<WorkFlowStepEventTranslation>()
+                                    {
+                                        new WorkFlowStepEventTranslation()
+                                        {
+                                            LanguageCode = "ar-SA",
+                                            EventName = "تحديد موعد جلسة الصلح",
+                                            LogMessage = "تم تحديد موعد جلسة الصلح",
+                                        },
+                                        new WorkFlowStepEventTranslation()
+                                        {
+                                            LanguageCode = "en-US",
+                                            EventName = "Add reconciliation session",
+                                            LogMessage = "A reconciliation session has been scheduled",
+                                        }
+                                    }
+                                }
+                            }
+
+                        }, // تحديد جلسة الصلح
+                        new WorkFlowStep()
+                        {
+                            StepName = "مرحلة الصلح",
+                            ProcessActorType = ProcessActorType.Reformer,
+                            WorkModeId = StepWorkMode.None,
+                            Id = Guid.Parse("6e1dce17-2c6f-4769-ae9f-13e192f6165e"),
+                            Order = 3,
+                            ActorTypeId = StepActorType.Department,
+                            CreationLogMessage = "جارى تنفيذ جلسة الصلح",
+                            CreatedOn = DateTime.Now,
+                            CreatedBy = Guid.NewGuid(),
+                            IsDeleted = false,
+                            //CreationNotificationPlanId = Guid.Parse("f7c76133-2b18-4238-9081-d1fefbefb7cb"),
+                            StageId = _context.WorkFlowStepStages.ToList().FirstOrDefault().Id,
                             ShowForApplicant = true,
                             Translations = new List<WorkFlowStepTranslation>()
                             {
@@ -736,16 +812,486 @@ namespace REAC.EntityFrameworkCore.Seed
                                 {
                                     LanguageCode = "en-US",
                                     StepName = "Request Studing",
-                                    CreationLogMessage = "Request has been created and is being Studied"
+                                    CreationLogMessage = "Conciliation session is being carried out"
                                 },
                                 new WorkFlowStepTranslation()
                                 {
                                     LanguageCode = "ar-SA",
                                     StepName = "مرحلة الطلح",
-                                    CreationLogMessage = "تم تدقيق الدعوى وجارى مرحلة الصلح",
+                                    CreationLogMessage = "جارى تنفيذ جلسة الصلح",
+                                }
+                            },
+                            WorkFlowStepEvents = new List<WorkFlowStepEvent>()
+                            {
+                                new WorkFlowStepEvent()
+                                {
+                                    Id = Guid.Parse("3c922f3c-316b-4552-b229-503e76beb7a5"),
+                                    EventName = "تغير موعد جلسة الصلح",
+                                    CustomActionType = CustomActionType.RescheduleReconciliationSession,
+                                    AllowChangeInternalStatus = true,
+                                    InternalStatusId = RequestStatus.AsessionTimeHasBeenReset,
+                                    AllowChangeExternalStatus = true,
+                                    ExternalStatusId = RequestStatus.AsessionTimeHasBeenReset,
+                                    AllowCompletionNotificationPlan = false,
+                                    //CompletionNotificationPlanId = Guid.Parse("f7c76133-2b18-4238-9081-d1fefbefb7cb"),
+                                    AllowFileUpload = false,
+                                    AllowChangeIsActive = false,
+                                    IsActiveValue = false,
+                                    AllowNotes = false,
+                                    IsAdminApprovalRequired = false,
+                                    SameEmployee = false,
+                                    AllowChangeIsFinished = false,
+                                    IsFinishedValue = false,
+                                    AllowChangeIsAllowEdit = false,
+                                    IsAllowEditValue = false,
+                                    EventSecurityLevelId = EventSecurityLevel.UnSpecified,
+                                    LogMessage = "تم تغيير موعد جلسة الصلح",
+                                    ActionModeId = EventActionMode.GoNextStep,
+                                    CreatedOn = DateTime.Now,
+                                    CreatedBy = Guid.NewGuid(),
+                                    IsDeleted = false,
+                                    ShowLogForApplicant = true,
+                                    ShowProcessingLogForApplicant = false,
+                                    Translations  = new List<WorkFlowStepEventTranslation>()
+                                    {
+                                        new WorkFlowStepEventTranslation()
+                                        {
+                                            LanguageCode = "ar-SA",
+                                            EventName = "تغيير موعد جلسة الصلح",
+                                            LogMessage = "تم تغيير موعد جلسة الصلح",
+                                        },
+                                        new WorkFlowStepEventTranslation()
+                                        {
+                                            LanguageCode = "en-US",
+                                            EventName = "Reschedule the reconciliation session",
+                                            LogMessage = "A reconciliation session has been Rescheduled",
+                                        }
+                                    }
+                                },
+                                new WorkFlowStepEvent()
+                                {
+                                    Id = Guid.Parse("a8f392ba-6700-44c0-823c-801d07ca5527"),
+                                    EventName = "كتابة محضر الجلسة",
+                                    CustomActionType = CustomActionType.WritingMinutesOfTheMeeting,
+                                    AllowChangeInternalStatus = true,
+                                    InternalStatusId = RequestStatus.TheMinutesOfTheMeetingWereWritten,
+                                    AllowChangeExternalStatus = true,
+                                    ExternalStatusId = RequestStatus.TheMinutesOfTheMeetingWereWritten,
+                                    AllowCompletionNotificationPlan = false,
+                                    //CompletionNotificationPlanId = Guid.Parse("f7c76133-2b18-4238-9081-d1fefbefb7cb"),
+                                    AllowFileUpload = false,
+                                    AllowChangeIsActive = false,
+                                    IsActiveValue = false,
+                                    AllowNotes = false,
+                                    IsAdminApprovalRequired = false,
+                                    SameEmployee = false,
+                                    AllowChangeIsFinished = false,
+                                    IsFinishedValue = false,
+                                    AllowChangeIsAllowEdit = false,
+                                    IsAllowEditValue = false,
+                                    EventSecurityLevelId = EventSecurityLevel.UnSpecified,
+                                    LogMessage = "تم كتابة محضر الجلسة",
+                                    ActionModeId = EventActionMode.GoNextStep,
+                                    CreatedOn = DateTime.Now,
+                                    CreatedBy = Guid.NewGuid(),
+                                    IsDeleted = false,
+                                    ShowLogForApplicant = true,
+                                    ShowProcessingLogForApplicant = false,
+                                    Translations  = new List<WorkFlowStepEventTranslation>()
+                                    {
+                                        new WorkFlowStepEventTranslation()
+                                        {
+                                            LanguageCode = "ar-SA",
+                                            EventName = "كتابة محضر الجلسة",
+                                            LogMessage = "تم كتابة محضر الجلسة",
+                                        },
+                                        new WorkFlowStepEventTranslation()
+                                        {
+                                            LanguageCode = "en-US",
+                                            EventName = "Reschedule the reconciliation session",
+                                            LogMessage = "A reconciliation session has been Rescheduled",
+                                        }
+                                    }
+                                },
+                                new WorkFlowStepEvent()
+                                {
+                                    Id = Guid.Parse("7a64f581-d44a-4fb3-a760-5dfe8d164950"),
+                                    EventName = "مدة فترة الصلح",
+                                    CustomActionType = CustomActionType.ExtendingReconciliationPeriod,
+                                    AllowChangeInternalStatus = false,
+                                    AllowChangeExternalStatus = false,
+                                    AllowCompletionNotificationPlan = false,
+                                    //CompletionNotificationPlanId = Guid.Parse("f7c76133-2b18-4238-9081-d1fefbefb7cb"),
+                                    AllowFileUpload = false,
+                                    AllowChangeIsActive = false,
+                                    IsActiveValue = false,
+                                    AllowNotes = false,
+                                    IsAdminApprovalRequired = false,
+                                    SameEmployee = false,
+                                    AllowChangeIsFinished = false,
+                                    IsFinishedValue = false,
+                                    AllowChangeIsAllowEdit = false,
+                                    IsAllowEditValue = false,
+                                    EventSecurityLevelId = EventSecurityLevel.UnSpecified,
+                                    LogMessage = "تم طلب تمديد فترة الصلح ",
+                                    ActionModeId = EventActionMode.GoNextStep,
+                                    CreatedOn = DateTime.Now,
+                                    CreatedBy = Guid.NewGuid(),
+                                    IsDeleted = false,
+                                    ShowLogForApplicant = true,
+                                    ShowProcessingLogForApplicant = false,
+                                    Translations  = new List<WorkFlowStepEventTranslation>()
+                                    {
+                                        new WorkFlowStepEventTranslation()
+                                        {
+                                            LanguageCode = "ar-SA",
+                                            EventName = "مدة فترة الصلح",
+                                            LogMessage = "تم طلب تمديد فترة الصلح ",
+                                        },
+                                        new WorkFlowStepEventTranslation()
+                                        {
+                                            LanguageCode = "en-US",
+                                            EventName = "Extend reconciliation period",
+                                            LogMessage = "An extension of the reconciliation period was requested",
+                                        }
+                                    }
                                 }
                             }
-                        }
+                        }, // تنفيذ جلسة الصلح
+                        new WorkFlowStep()
+                        {
+                            StepName = "مرحلة إتخاذ القرار من طرفى الدعوى",
+                            ProcessActorType = ProcessActorType.PlaintiffAndDefendant,
+                            WorkModeId = StepWorkMode.None,
+                            Id = Guid.Parse("1290fdc7-d44f-436e-9828-27906963bebb"),
+                            Order = 4,
+                            ActorTypeId = StepActorType.Client,
+                            CreationLogMessage = "جارى إتخاذ القرار من طرفى الدعوى",
+                            CreatedOn = DateTime.Now,
+                            CreatedBy = Guid.NewGuid(),
+                            IsDeleted = false,
+                            //CreationNotificationPlanId = Guid.Parse("f7c76133-2b18-4238-9081-d1fefbefb7cb"),
+                            StageId = _context.WorkFlowStepStages.ToList().FirstOrDefault().Id,
+                            ShowForApplicant = true,
+                            Translations = new List<WorkFlowStepTranslation>()
+                            {
+                                new WorkFlowStepTranslation()
+                                {
+                                    LanguageCode = "en-US",
+                                    StepName = "Request Studing",
+                                    CreationLogMessage = "The decision-making stage by both parties to the litigation"
+                                },
+                                new WorkFlowStepTranslation()
+                                {
+                                    LanguageCode = "ar-SA",
+                                    StepName = "مرحلة إتخاذ القرار من طرفى الدعوى",
+                                    CreationLogMessage = "جارى إتخاذ القرار من طرفى الدعوى",
+                                }
+                            },
+                            WorkFlowStepEvents = new List<WorkFlowStepEvent>()
+                            {
+                                new WorkFlowStepEvent()
+                                {
+                                    Id = Guid.Parse("df97cc45-1e98-441f-b1c1-329182807c30"),
+                                    EventName = "قبول",
+                                    CustomActionType = CustomActionType.ApproveMinutesOfTheMeeting,
+                                    AllowChangeInternalStatus = true,
+                                    AllowChangeExternalStatus = false,
+                                    ExternalStatusId = RequestStatus.AcceptanceOfTheReconciliationReport,
+                                    AllowCompletionNotificationPlan = false,
+                                    //CompletionNotificationPlanId = Guid.Parse("f7c76133-2b18-4238-9081-d1fefbefb7cb"),
+                                    AllowFileUpload = false,
+                                    AllowChangeIsActive = false,
+                                    IsActiveValue = false,
+                                    AllowNotes = false,
+                                    IsAdminApprovalRequired = false,
+                                    SameEmployee = false,
+                                    AllowChangeIsFinished = false,
+                                    IsFinishedValue = false,
+                                    AllowChangeIsAllowEdit = false,
+                                    IsAllowEditValue = false,
+                                    EventSecurityLevelId = EventSecurityLevel.UnSpecified,
+                                    ActionModeId = EventActionMode.GoNextStep,
+                                    CreatedOn = DateTime.Now,
+                                    CreatedBy = Guid.NewGuid(),
+                                    IsDeleted = false,
+                                    ShowLogForApplicant = true,
+                                    ShowProcessingLogForApplicant = false,
+                                    Translations  = new List<WorkFlowStepEventTranslation>()
+                                    {
+                                        new WorkFlowStepEventTranslation()
+                                        {
+                                            LanguageCode = "ar-SA",
+                                            EventName = "تغيير موعد جلسة الصلح",
+                                            LogMessage = "تم تغيير موعد جلسة الصلح",
+                                        },
+                                        new WorkFlowStepEventTranslation()
+                                        {
+                                            LanguageCode = "en-US",
+                                            EventName = "Reschedule the reconciliation session",
+                                            LogMessage = "A reconciliation session has been Rescheduled",
+                                        }
+                                    }
+                                },
+                                new WorkFlowStepEvent()
+                                {
+                                    Id = Guid.Parse("95d3d64e-dcda-4e2e-8f1a-2c74a159540a"),
+                                    EventName = "رفض",
+                                    CustomActionType = CustomActionType.RejectMinutesOfTheMeeting,
+                                    AllowChangeInternalStatus = true,
+                                    AllowChangeExternalStatus = false,
+                                    ExternalStatusId = RequestStatus.RejectionOfTheReconciliationReport,
+                                    AllowCompletionNotificationPlan = false,
+                                    //CompletionNotificationPlanId = Guid.Parse("f7c76133-2b18-4238-9081-d1fefbefb7cb"),
+                                    AllowFileUpload = false,
+                                    AllowChangeIsActive = false,
+                                    IsActiveValue = false,
+                                    AllowNotes = false,
+                                    IsAdminApprovalRequired = false,
+                                    SameEmployee = false,
+                                    AllowChangeIsFinished = false,
+                                    IsFinishedValue = false,
+                                    AllowChangeIsAllowEdit = false,
+                                    IsAllowEditValue = false,
+                                    EventSecurityLevelId = EventSecurityLevel.UnSpecified,
+                                    ActionModeId = EventActionMode.GoNextStep,
+                                    CreatedOn = DateTime.Now,
+                                    CreatedBy = Guid.NewGuid(),
+                                    IsDeleted = false,
+                                    ShowLogForApplicant = true,
+                                    ShowProcessingLogForApplicant = false,
+                                    Translations  = new List<WorkFlowStepEventTranslation>()
+                                    {
+                                        new WorkFlowStepEventTranslation()
+                                        {
+                                            LanguageCode = "ar-SA",
+                                            EventName = "تغيير موعد جلسة الصلح",
+                                            LogMessage = "تم تغيير موعد جلسة الصلح",
+                                        },
+                                        new WorkFlowStepEventTranslation()
+                                        {
+                                            LanguageCode = "en-US",
+                                            EventName = "Reschedule the reconciliation session",
+                                            LogMessage = "A reconciliation session has been Rescheduled",
+                                        }
+                                    }
+                                },
+                            }
+                        }, // مرحلة أتخاذ القرار من أطراف الدعوي
+                        new WorkFlowStep()
+                        {
+                            StepName = "مرحلة إتخاذ القرار من المصلح",
+                            ProcessActorType = ProcessActorType.Reformer,
+                            WorkModeId = StepWorkMode.None,
+                            Id = Guid.Parse("cbc28bea-e1d5-48d3-b40b-b2774cb28007"),
+                            Order = 5,
+                            ActorTypeId = StepActorType.Client,
+                            CreationLogMessage = "جارى إتخاذ القرار من المصلح",
+                            CreatedOn = DateTime.Now,
+                            CreatedBy = Guid.NewGuid(),
+                            IsDeleted = false,
+                            //CreationNotificationPlanId = Guid.Parse("f7c76133-2b18-4238-9081-d1fefbefb7cb"),
+                            StageId = _context.WorkFlowStepStages.ToList().FirstOrDefault().Id,
+                            ShowForApplicant = true,
+                            Translations = new List<WorkFlowStepTranslation>()
+                            {
+                                new WorkFlowStepTranslation()
+                                {
+                                    LanguageCode = "en-US",
+                                    StepName = "Decision making stage from the reformer",
+                                    CreationLogMessage = "The decision is being made by the reformer"
+                                },
+                                new WorkFlowStepTranslation()
+                                {
+                                    LanguageCode = "ar-SA",
+                                    StepName = "مرحلة إتخاذ القرار من المصلح",
+                                    CreationLogMessage = "جارى إتخاذ القرار من المصلح",
+                                }
+                            },
+                            WorkFlowStepEvents = new List<WorkFlowStepEvent>()
+                            {
+                                new WorkFlowStepEvent()
+                                {
+                                    Id = Guid.Parse("7bed8d46-078d-4efd-a499-ed327c859efb"),
+                                    EventName = "تنازل عن الحق",
+                                    AllowChangeInternalStatus = true,
+                                    AllowChangeExternalStatus = true,
+                                    ExternalStatusId = RequestStatus.WaiverOfRight,
+                                    InternalStatusId = RequestStatus.WaiverOfRight,
+                                    LogMessage = "تم التنازل عن الحق",
+
+                                    AllowCompletionNotificationPlan = false,
+                                    //CompletionNotificationPlanId = Guid.Parse("f7c76133-2b18-4238-9081-d1fefbefb7cb"),
+                                    AllowFileUpload = false,
+                                    AllowChangeIsActive = true,
+                                    IsActiveValue = false,
+                                    AllowNotes = false,
+                                    IsAdminApprovalRequired = false,
+                                    SameEmployee = false,
+                                    AllowChangeIsFinished = true,
+                                    IsFinishedValue = true,
+                                    AllowChangeIsAllowEdit = false,
+                                    IsAllowEditValue = false,
+                                    EventSecurityLevelId = EventSecurityLevel.UnSpecified,
+                                    CreatedOn = DateTime.Now,
+                                    CreatedBy = Guid.NewGuid(),
+                                    IsDeleted = false,
+                                    ShowLogForApplicant = true,
+                                    ShowProcessingLogForApplicant = false,
+                                    Translations  = new List<WorkFlowStepEventTranslation>()
+                                    {
+                                        new WorkFlowStepEventTranslation()
+                                        {
+                                            LanguageCode = "ar-SA",
+                                            EventName = "تنازل عن الحق",
+                                            LogMessage = "تم التنازل عن الحق",
+                                        },
+                                        new WorkFlowStepEventTranslation()
+                                        {
+                                            LanguageCode = "en-US",
+                                            EventName = "Reschedule the reconciliation session",
+                                            LogMessage = "A reconciliation session has been Rescheduled",
+                                        }
+                                    }
+                                }, //تنازل عن الحق
+                                new WorkFlowStepEvent()
+                                {
+                                    Id = Guid.Parse("6e2c2fc8-1dc0-4c7b-8b27-d1562d409ef5"),
+                                    AllowChangeInternalStatus = true,
+                                    AllowChangeExternalStatus = true,
+                                    ExternalStatusId = RequestStatus.WaiverOfTheLitigation,
+                                    InternalStatusId = RequestStatus.WaiverOfTheLitigation,
+                                    LogMessage = "تم التنازل عن الدعوى",
+                                    EventName = "تنازل عن الدعوى",
+
+                                    AllowCompletionNotificationPlan = false,
+                                    //CompletionNotificationPlanId = Guid.Parse("f7c76133-2b18-4238-9081-d1fefbefb7cb"),
+                                    AllowFileUpload = false,
+                                    AllowChangeIsActive = true,
+                                    IsActiveValue = false,
+                                    AllowNotes = false,
+                                    IsAdminApprovalRequired = false,
+                                    SameEmployee = false,
+                                    AllowChangeIsFinished = true,
+                                    IsFinishedValue = true,
+                                    AllowChangeIsAllowEdit = false,
+                                    IsAllowEditValue = false,
+                                    EventSecurityLevelId = EventSecurityLevel.UnSpecified,
+                                    CreatedOn = DateTime.Now,
+                                    CreatedBy = Guid.NewGuid(),
+                                    IsDeleted = false,
+                                    ShowLogForApplicant = true,
+                                    ShowProcessingLogForApplicant = false,
+                                    Translations  = new List<WorkFlowStepEventTranslation>()
+                                    {
+                                        new WorkFlowStepEventTranslation()
+                                        {
+                                            LanguageCode = "ar-SA",
+                                            EventName = "تنازل عن الدعوى",
+                                            LogMessage = "تم التنازل عن الدعوى",
+                                        },
+                                        new WorkFlowStepEventTranslation()
+                                        {
+                                            LanguageCode = "en-US",
+                                            EventName = "Waiver Of The Litigation",
+                                            LogMessage = "Waiver Of The Litigation Done",
+                                        }
+                                    }
+                                }, //تنازل عن الدعوى
+                                new WorkFlowStepEvent()
+                                {
+                                    Id = Guid.Parse("79b03b34-f4c3-463e-9de2-4a229ab395d2"),
+                                    AllowChangeInternalStatus = true,
+                                    AllowChangeExternalStatus = true,
+                                    ExternalStatusId = RequestStatus.ReconciliationWasNotMade,
+                                    InternalStatusId = RequestStatus.ReconciliationWasNotMade,
+                                    LogMessage = "عدم الصلح",
+                                    EventName = "عدم الصلح",
+
+                                    AllowCompletionNotificationPlan = false,
+                                    //CompletionNotificationPlanId = Guid.Parse("f7c76133-2b18-4238-9081-d1fefbefb7cb"),
+                                    AllowFileUpload = false,
+                                    AllowChangeIsActive = true,
+                                    IsActiveValue = false,
+                                    AllowNotes = false,
+                                    IsAdminApprovalRequired = false,
+                                    SameEmployee = false,
+                                    AllowChangeIsFinished = true,
+                                    IsFinishedValue = true,
+                                    AllowChangeIsAllowEdit = false,
+                                    IsAllowEditValue = false,
+                                    EventSecurityLevelId = EventSecurityLevel.UnSpecified,
+                                    CreatedOn = DateTime.Now,
+                                    CreatedBy = Guid.NewGuid(),
+                                    IsDeleted = false,
+                                    ShowLogForApplicant = true,
+                                    ShowProcessingLogForApplicant = false,
+                                    Translations  = new List<WorkFlowStepEventTranslation>()
+                                    {
+                                        new WorkFlowStepEventTranslation()
+                                        {
+                                            LanguageCode = "ar-SA",
+                                            LogMessage = "عدم الصلح",
+                                            EventName = "عدم الصلح"
+
+                                        },
+                                        new WorkFlowStepEventTranslation()
+                                        {
+                                            LanguageCode = "en-US",
+                                            EventName = "Reconciliation Was Not Made",
+                                            LogMessage = "Reconciliation Was Not Made"
+                                        }
+                                    }
+                                }, //عدم الصلح
+                                new WorkFlowStepEvent()
+                                {
+                                    Id = Guid.Parse("ed60a593-dacc-42a3-b88c-f5e91d6260b5"),
+                                    AllowChangeInternalStatus = true,
+                                    AllowChangeExternalStatus = true,
+                                    ExternalStatusId = RequestStatus.ReconciliationWasMade,
+                                    InternalStatusId = RequestStatus.ReconciliationWasMade,
+                                    LogMessage = "تم الصلح",
+                                    EventName = "تم الصلح",
+
+                                    AllowCompletionNotificationPlan = false,
+                                    //CompletionNotificationPlanId = Guid.Parse("f7c76133-2b18-4238-9081-d1fefbefb7cb"),
+                                    AllowFileUpload = false,
+                                    AllowChangeIsActive = true,
+                                    IsActiveValue = false,
+                                    AllowNotes = false,
+                                    IsAdminApprovalRequired = false,
+                                    SameEmployee = false,
+                                    AllowChangeIsFinished = true,
+                                    IsFinishedValue = true,
+                                    AllowChangeIsAllowEdit = false,
+                                    IsAllowEditValue = false,
+                                    EventSecurityLevelId = EventSecurityLevel.UnSpecified,
+                                    CreatedOn = DateTime.Now,
+                                    CreatedBy = Guid.NewGuid(),
+                                    IsDeleted = false,
+                                    ShowLogForApplicant = true,
+                                    ShowProcessingLogForApplicant = false,
+                                    Translations  = new List<WorkFlowStepEventTranslation>()
+                                    {
+                                        new WorkFlowStepEventTranslation()
+                                        {
+                                            LanguageCode = "ar-SA",
+                                            LogMessage = "تم الصلح",
+                                            EventName = "تم الصلح",
+
+
+                                        },
+                                        new WorkFlowStepEventTranslation()
+                                        {
+                                            LanguageCode = "en-US",
+                                            EventName = "Reconciliation Was Made",
+                                            LogMessage = "Reconciliation Was Made"
+                                        }
+                                    }
+                                }, //تم الصلح
+
+                            }
+                        }  // مرحلة أتخاذ القرار من المصلح
                     }
                 },
                 // تحكيم
@@ -773,6 +1319,7 @@ namespace REAC.EntityFrameworkCore.Seed
                     {
                         new WorkFlowStep()
                         {
+                            ProcessActorType = ProcessActorType.Plaintiff,
                             StepName = "معالجة الملاحظات",
                             WorkModeId = StepWorkMode.None,
                             Id = Guid.Parse("8ee69cf2-185b-4a31-b85a-f552d311a426"),
@@ -853,6 +1400,7 @@ namespace REAC.EntityFrameworkCore.Seed
                         new WorkFlowStep()
                         {
                             StepName = "تدقيق الدعوى",
+                            ProcessActorType = ProcessActorType.Employee,
 
                             WorkModeId = StepWorkMode.None,
                             Id = Guid.Parse("25270ef5-fc30-4460-919d-d9977bed328f"),
@@ -1007,6 +1555,7 @@ namespace REAC.EntityFrameworkCore.Seed
                         new WorkFlowStep()
                         {
                             StepName = "مرحلة التحكيم",
+                            ProcessActorType = ProcessActorType.Arbitrator,
 
                             WorkModeId = StepWorkMode.None,
                             Id = Guid.Parse("8a10f0be-9b7f-4c1d-a652-ae68286ccab4"),
@@ -1066,6 +1615,7 @@ namespace REAC.EntityFrameworkCore.Seed
                         new WorkFlowStep()
                         {
                             StepName = "معالجة الملاحظات",
+                            ProcessActorType = ProcessActorType.Plaintiff,
                             WorkModeId = StepWorkMode.None,
                             Id = Guid.Parse("42c0f621-ab89-444a-9970-a82933974b3d"),
                             Order = 0,
@@ -1145,6 +1695,7 @@ namespace REAC.EntityFrameworkCore.Seed
                         new WorkFlowStep()
                         {
                             StepName = "تدقيق الدعوى",
+                            ProcessActorType = ProcessActorType.Employee,
 
                             WorkModeId = StepWorkMode.None,
                             Id = Guid.Parse("f262881a-86b9-41eb-b679-ade1de303cb9"),
@@ -1300,6 +1851,7 @@ namespace REAC.EntityFrameworkCore.Seed
                         {
                             StepName = "مرحلة الطلح",
 
+                            ProcessActorType = ProcessActorType.Reformer,
                             WorkModeId = StepWorkMode.None,
                             Id = Guid.Parse("ea2122a7-59bb-4a19-84ee-e7e9d177ad21"),
                             Order = 2,
@@ -1333,6 +1885,7 @@ namespace REAC.EntityFrameworkCore.Seed
                         new WorkFlowStep()
                         {
                             StepName = "مرحلة التحكيم",
+                            ProcessActorType = ProcessActorType.Arbitrator,
                             WorkModeId = StepWorkMode.None,
                             Id = Guid.Parse("e6509bb4-4382-4796-b298-70e704e9d981"),
                             Order = 3,
@@ -1393,6 +1946,7 @@ namespace REAC.EntityFrameworkCore.Seed
                         {
                             StepName = "معالجة الملاحظات",
                             WorkModeId = StepWorkMode.None,
+                            ProcessActorType = ProcessActorType.Plaintiff,
                             Id = Guid.Parse("5783c080-c18c-4351-a20c-b07801a2de57"),
                             Order = 0,
                             ActorTypeId = StepActorType.Client,
@@ -1402,8 +1956,6 @@ namespace REAC.EntityFrameworkCore.Seed
                             IsDeleted = false,
                             //CreationNotificationPlanId = Guid.Parse("f7c76133-2b18-4238-9081-d1fefbefb7cb"),
                             StageId = Guid.Parse("5406436a-9d9e-4996-81c6-87cc5e13a653"),
-                            InternalStatusId = RequestStatus.SentBackForEdit,
-                            ExternalStatusId = RequestStatus.SentBackForEdit,
                             ShowForApplicant = true,
                             WorkFlowStepEvents = new List<WorkFlowStepEvent>()
                             {
@@ -1471,6 +2023,7 @@ namespace REAC.EntityFrameworkCore.Seed
                         new WorkFlowStep()
                         {
                             StepName = "مراجعة الطلب",
+                            ProcessActorType = ProcessActorType.Employee,
 
                             WorkModeId = StepWorkMode.None,
                             Id = Guid.Parse("c2af541d-83df-4a34-a7d4-831b6e32e3e1"),
@@ -1650,6 +2203,7 @@ namespace REAC.EntityFrameworkCore.Seed
                         new WorkFlowStep()
                         {
                             StepName = "معالجة الملاحظات",
+                            ProcessActorType = ProcessActorType.Plaintiff,
                             WorkModeId = StepWorkMode.None,
                             Id = Guid.Parse("7696624b-a7de-477a-b08e-8345b779732e"),
                             Order = 0,
@@ -1729,7 +2283,7 @@ namespace REAC.EntityFrameworkCore.Seed
                         new WorkFlowStep()
                         {
                             StepName = "مراجعة الطلب",
-
+                            ProcessActorType = ProcessActorType.Employee,
                             WorkModeId = StepWorkMode.None,
                             Id = Guid.Parse("fad68da1-8c59-4556-8c72-577cd2306e4e"),
                             Order = 1,
