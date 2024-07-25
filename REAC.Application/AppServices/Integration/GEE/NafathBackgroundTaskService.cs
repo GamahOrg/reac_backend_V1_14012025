@@ -25,15 +25,15 @@ namespace REAC.Application.AppServices.Integration.GEE
         {
             while (!stoppingToken.IsCancellationRequested)
             {
-                //lock (_lock)
-                //{
+                lock (_lock)
+                {
                     using (var scope = _scopeFactory.CreateScope())
                     {
                         var nafathService = scope.ServiceProvider.GetRequiredService<INafathService>();
                         if(nafathService is not null)
-                            await nafathService.CheckNafathStatus();
+                            nafathService.CheckNafathStatus();
                     }
-                //}
+                }
                 await Task.Delay(TimeSpan.FromSeconds(30), stoppingToken);
             }
         }

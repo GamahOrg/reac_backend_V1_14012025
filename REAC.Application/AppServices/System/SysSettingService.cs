@@ -4,6 +4,7 @@ using Core.Localizations;
 using Core.Log.Application.Contracts.IAppServices;
 using Core.Shared.Responses;
 using REAC.Application.Contracts.IAppServices;
+using REAC.Application.Contracts.IAppServices.Common;
 using REAC.Application.Contracts.IAppServices.System;
 using REAC.EntityFrameworkCore.Entities.System;
 
@@ -13,10 +14,14 @@ namespace REAC.Application.AppServices.System
 {
     public class SysSettingService : BasicService<SysSetting, Guid>, ISysSettingService
     {
-        public SysSettingService(IEntityRepository repository, IMapper mapper, ILoggerManager loggerManager, IJwtReader jwtReader) : base(repository, mapper, loggerManager, jwtReader)
+        private readonly IJsonStringLocalizer _localization;
+
+        public SysSettingService(IEntityRepository repository, IMapper mapper, ILoggerManager loggerManager, IJwtReader jwtReader, IJsonStringLocalizer localization) : base(repository, mapper, loggerManager, jwtReader)
         {
             _repository = repository;
+            _localization = localization;
         }
+
         public async Task<DataResponse<SysSetting>> GetBySettingKey(string SettingKey)
         {
             var SettingObj = (_repository.GetQueryable<SysSetting, Guid>())
@@ -53,6 +58,17 @@ namespace REAC.Application.AppServices.System
             else
                 return new DataResponse<List<SysSetting>> { Data = null, IsDone = false };
 
+        }
+
+        public async Task<DataResponse<bool>> CheckIntegrationDisabledAsync(string sysSettingKeyConstants)
+        {
+            var disableIntegrationsResult = await GetBySettingKey(sysSettingKeyConstants);
+            if (disableIntegrationsResult.IsDone)
+            {
+                var disableIntegrations = bool.Parse((disableIntegrationsResult as DataResponse<SysSetting>).Data.Value);
+                return new DataResponse<bool> { IsDone = true, Data = disableIntegrations };
+            }
+            return new DataResponse<bool> { IsDone = false, Message = _localization["CannotConnectWithIntegrationsApi"] };
         }
     }
 }

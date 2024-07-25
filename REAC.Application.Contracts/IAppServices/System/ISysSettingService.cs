@@ -9,5 +9,6 @@ namespace REAC.Application.Contracts.IAppServices.System
         Task<DataResponse<List<SysSetting>>> GetByAllSetting();
         Task<DataResponse<SysSetting>> UpdateBySettingKey(SysSetting updateSetting);
         Task<DataResponse<List<SysSetting>>> GetByIntegrationKey(string key);
+        Task<DataResponse<bool>> CheckIntegrationDisabledAsync(string sysSettingKeyConstants); 
     }
 }

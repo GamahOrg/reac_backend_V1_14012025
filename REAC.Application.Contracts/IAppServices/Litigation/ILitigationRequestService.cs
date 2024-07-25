@@ -10,6 +10,8 @@ namespace REAC.Application.Contracts.IAppServices.Litigation
     {
         Task<BaseResponse> Add(LitigationCreateUpdateDto model);
         Task<BaseResponse> List(int pageIndex, int pageSize, string? searchKey, LitigationListDto model);
+        Task<BaseResponse> ReformerList(int pageIndex, int pageSize, string? searchKey, LitigationListDto model);
+
         Task<BaseResponse> AuditngList(int pageIndex, int pageSize, string? searchKey, AuditingListDto model);
         Task<BaseResponse> Get(Guid litigationId);
         Task<BaseResponse> GetLitigationPartiesDetails(Guid litigationId);

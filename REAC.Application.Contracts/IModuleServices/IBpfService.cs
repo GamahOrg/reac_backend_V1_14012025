@@ -46,6 +46,41 @@ namespace REAC.Application.Contracts.IModuleServices
         public Task<BaseResponse> ProcessWorkFlow(ProcessRequestPayload requestPayload, CancellationToken cancellationToken);
 
         /// <summary>
+        /// Process Workflow
+        /// </summary>
+        /// <param name="RequestId">Request Id</param>
+        /// <param name="WorkflowStepId">Workflow Step Id</param>
+        /// <param name="workflowStepEventId">workflow Step Event Id</param>
+        /// <returns>Return BaseResponse include process status in isDone Flage and responsed data</returns>
+        public Task<BaseResponse> AddReconciliationSession(ScheduleSessionProcessRequestPayload requestPayload, CancellationToken cancellationToken);
+        /// <summary>
+        /// Process Workflow
+        /// </summary>
+        /// <param name="RequestId">Request Id</param>
+        /// <param name="WorkflowStepId">Workflow Step Id</param>
+        /// <param name="workflowStepEventId">workflow Step Event Id</param>
+        /// <returns>Return BaseResponse include process status in isDone Flage and responsed data</returns>
+        public Task<BaseResponse> WritingMinutesOfTheMeeting(WritingMinutesOfTheMeetingRequestPayload requestPayload, CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Process Workflow
+        /// </summary>
+        /// <param name="RequestId">Request Id</param>
+        /// <param name="WorkflowStepId">Workflow Step Id</param>
+        /// <param name="workflowStepEventId">workflow Step Event Id</param>
+        /// <returns>Return BaseResponse include process status in isDone Flage and responsed data</returns>
+        public Task<BaseResponse> ExtendingReconciliationPeriod(ExtendingReconciliationPeriodRequestPayload requestPayload, CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Process Workflow
+        /// </summary>
+        /// <param name="RequestId">Request Id</param>
+        /// <param name="WorkflowStepId">Workflow Step Id</param>
+        /// <param name="workflowStepEventId">workflow Step Event Id</param>
+        /// <returns>Return BaseResponse include process status in isDone Flage and responsed data</returns>
+        public Task<BaseResponse> RescheduleReconciliationSession(ReScheduleSessionProcessRequestPayload requestPayload, CancellationToken cancellationToken);
+
+        /// <summary>
         /// Get Request Log For Employee
         /// </summary>
         /// <param name="requestId"></param>

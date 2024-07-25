@@ -43,6 +43,50 @@ namespace Bpf.Api.Controllers.Business
             return BadRequest();
         }
 
+        [HttpPost(nameof(AddReconciliationSession))]
+        public virtual async Task<IActionResult> AddReconciliationSession([FromBody] ScheduleSessionProcessRequestPayload requestPayload, CancellationToken cancellationToken)
+        {
+            if (ModelState.IsValid)
+            {
+                var returnValue = await _bpfService.AddReconciliationSession(requestPayload, cancellationToken);
+                return Ok(returnValue);
+            }
+            return BadRequest();
+        }
+
+        [HttpPost(nameof(RescheduleReconciliationSession))]
+        public virtual async Task<IActionResult> RescheduleReconciliationSession([FromBody] ReScheduleSessionProcessRequestPayload requestPayload, CancellationToken cancellationToken)
+        {
+            if (ModelState.IsValid)
+            {
+                var returnValue = await _bpfService.RescheduleReconciliationSession(requestPayload, cancellationToken);
+                return Ok(returnValue);
+            }
+            return BadRequest();
+        }
+
+        [HttpPost(nameof(WritingMinutesOfTheMeeting))]
+        public virtual async Task<IActionResult> WritingMinutesOfTheMeeting([FromBody] WritingMinutesOfTheMeetingRequestPayload requestPayload, CancellationToken cancellationToken)
+        {
+            if (ModelState.IsValid)
+            {
+                var returnValue = await _bpfService.WritingMinutesOfTheMeeting(requestPayload, cancellationToken);
+                return Ok(returnValue);
+            }
+            return BadRequest();
+        }
+
+        [HttpPost(nameof(ExtendingReconciliationPeriod))]
+        public virtual async Task<IActionResult> ExtendingReconciliationPeriod([FromBody] ExtendingReconciliationPeriodRequestPayload requestPayload, CancellationToken cancellationToken)
+        {
+            if (ModelState.IsValid)
+            {
+                var returnValue = await _bpfService.ExtendingReconciliationPeriod(requestPayload, cancellationToken);
+                return Ok(returnValue);
+            }
+            return BadRequest();
+        }
+
         [HttpGet(nameof(GetWorkflowStepEventsForApplicant) + "/requestId")]
         public virtual async Task<IActionResult> GetWorkflowStepEventsForApplicant(Guid requestId, CancellationToken cancellationToken)
         {
@@ -135,6 +179,7 @@ namespace Bpf.Api.Controllers.Business
 
             return BadRequest();
         }
+
 
     }
 }

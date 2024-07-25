@@ -36,6 +36,14 @@
 
         #endregion
 
+        #region SMS Integration keys
+
+        public const string Disable_SMS_Integration = "Disable_SMS_Integration";
+        public const string SMS_URL = "SMS_URL";
+        public const string SMS_Notification_Type = "SMS_Notification_Type";
+
+        #endregion
+
         #region Nafath Integration keys
 
         public const string Nafath_URL = "Nafath_URL";

@@ -138,34 +138,28 @@ namespace REAC.Application.AppServices.Litigation
                     var litigationRequestList = (await _repository.GetQueryable<LitigationRequest, Guid>())
                      .Where(x => x.RequestCode != null).ToList();
 
-                    string requestCode = "REQ_00000001";
+                    if (litigationRequest.RequestCode == null)
+                    {
+                        string requestCode = "REQ_00000001";
 
-                    if (litigationRequestList == null)
-                    {
-                        requestCode = "REQ_00000001";
-                    }
-                    else
-                    {
-                        requestCode = "REQ_" + (litigationRequestList.Count() + 1).ToString("D8");
-                    }
-                    litigationRequest.IsSent = model.IsSent;
-                    litigationRequest.SentOn = DateTime.Now;
-                    litigationRequest.RequestCode = requestCode;
-                    if (litigationRequest.InternalStatusId == RequestStatus.SaveAsDraft)
-                    {
+                        if (litigationRequestList == null)
+                        {
+                            requestCode = "REQ_00000001";
+                        }
+                        else
+                        {
+                            requestCode = "REQ_" + (litigationRequestList.Count() + 1).ToString("D8");
+                        }
+                        litigationRequest.IsSent = model.IsSent;
+                        litigationRequest.SentOn = DateTime.Now;
+                        litigationRequest.RequestCode = requestCode;
                         litigationRequest.ExternalStatusId = RequestStatus.New;
                         litigationRequest.InternalStatusId = RequestStatus.New;
                     }
                 }
-
-
-
                 var saveResponse = _repository.SaveChangesAsync().Result;
                 if (!saveResponse.IsDone)
                     return saveResponse;
-
-
-
                 if (model.IsSent)
                 {
                     var _bpfService = _serviceProvider.GetRequiredService<IBpfService>();
@@ -175,17 +169,17 @@ namespace REAC.Application.AppServices.Litigation
                         .Include(t => t.WorkFlowStep)
                          .Include(t => t.WorkFlowStep.WorkFlowStepEvents)
                     .AsNoTracking()
-                          .Where(x => x.Id == litigationRequest.Id).ToList();
+                          .Where(x => x.RequestId == litigationRequest.Id).ToList();
 
                     if (processingLog.Count > 0)
                     {
-                        var currentProcessingLog = processingLog.Where(t => t.IsFinished == false).ToList();
-                        if (processingLog.Count == 1)
+                        var currentProcessingLog = processingLog.Where(t => t.IsFinished == false).OrderBy(t => t.CreatedOn).ToList();
+                        if (processingLog.Count > 0)
                         {
                             ProcessRequestPayload processRequestPayload = new ProcessRequestPayload();
                             processRequestPayload.RequestId = litigationRequest.Id;
-                            processRequestPayload.ProcessingLogId = currentProcessingLog.FirstOrDefault().Id;
-                            processRequestPayload.WorkflowStepEventId = currentProcessingLog.FirstOrDefault().WorkFlowStep.WorkFlowStepEvents.FirstOrDefault().Id;
+                            processRequestPayload.ProcessingLogId = currentProcessingLog.LastOrDefault().Id;
+                            processRequestPayload.WorkflowStepEventId = currentProcessingLog.LastOrDefault().WorkFlowStep.WorkFlowStepEvents.FirstOrDefault().Id;
                             processRequestPayload.Notes = "";
                             processRequestPayload.UploadedFilesIds = new List<Guid>();
                             await _bpfService.ProcessWorkFlow(processRequestPayload, default);
@@ -271,6 +265,34 @@ namespace REAC.Application.AppServices.Litigation
                 IsDone = true
             };
         }
+        public async Task<BaseResponse> ReformerList(int pageIndex, int pageSize, string? searchKey, LitigationListDto model)
+        {
+
+            var litigations = await GetQueryableAsync();
+            litigations = litigations.Include(x => x.Contract);
+            litigations = litigations.Include(x => x.Contract.LitigationRequestContractType);
+            litigations = litigations.Include(x => x.Contract.FirstPartyCitizen);
+            litigations = litigations.Include(x => x.Contract.SecondPartyCitizen);
+            litigations = litigations.Include(x => x.Contract.FirstPartyFacility);
+            litigations = litigations.Include(x => x.Contract.SecondPartyFacility);
+
+            Guid citizenId = Guid.Empty;
+            _jwtReader.GetReferenceId(ref citizenId);
+            litigations = litigations.Where(x => x.ReformerCitizenId == citizenId);
+
+            litigations = litigations.OrderByDescending(x => x.CreatedOn);
+            var list = _mapper.Map<List<LitigationListDto>>(litigations);
+
+
+
+            var result = await PaginatedList<LitigationListDto>.CreateAsync(list, pageIndex, pageSize);
+            return new DataResponse<PaginatedList<LitigationListDto>>()
+            {
+                Data = result,
+                IsDone = true
+            };
+        }
+
 
         public async Task<BaseResponse> AuditngList(int pageIndex, int pageSize, string? searchKey, AuditingListDto model)
         {
@@ -540,11 +562,11 @@ namespace REAC.Application.AppServices.Litigation
                     .Include(x => x.ExemptionReductionFile)
                     .Include(x => x.ApplicantCitizen)
                     .Include(x => x.Contract.SecondPartyCitizen)
-                                        .Include(x => x.SysExemptionReductionCategory)
+                    .Include(x => x.SysExemptionReductionCategory)
 
                     .Include(x => x.ExemptionReductionFile)
                     .Include(x => x.Contract.FirstPartyCitizen).Include(x => x.LitigationRequestRequests)
-                    .Include(x => x.LitigationRequestGrounds).ThenInclude(x => x.LitigationRequestGroundFiles)
+                    .Include(x => x.LitigationRequestGrounds).ThenInclude(x => x.LitigationRequestGroundFiles).ThenInclude(x => x.FileManager)
                     .FirstOrDefault(x => x.Id == litigationId);
 
                 var mapped = _mapper.Map<LitigationDetailsDto>(result);

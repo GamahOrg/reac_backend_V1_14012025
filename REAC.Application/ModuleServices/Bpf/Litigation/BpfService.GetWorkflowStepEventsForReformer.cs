@@ -2,7 +2,6 @@
 using Microsoft.EntityFrameworkCore;
 using REAC.Application.Contracts.Dtos.Wpf.System.WorkFlowStepEvent;
 using REAC.Domain.Shared.Enum.Wpf;
-using REAC.EntityFrameworkCore.Entities.System;
 using REAC.EntityFrameworkCore.Entities.Wpf.Business;
 using System.Globalization;
 
@@ -16,18 +15,6 @@ namespace Bpf.Application.ModuleServices
             {
                 Guid referenceId = Guid.Empty;
                 _jwtReader.GetReferenceId(ref referenceId);
-
-                var employee = (await _repository.GetQueryable<SysEmployee, Guid>())?
-                    .Where(x => x.Id == referenceId).Single();
-
-                if (employee == null)
-                {
-                    return new BaseResponse()
-                    {
-                        IsDone = false,
-                        Message = "Employee Not Found"
-                    };
-                }
 
                 var processinglog = (await _repository.GetQueryable<WorkFlowProcessingLog, Guid>())?
                     .Where(x => x.RequestId == requestId &

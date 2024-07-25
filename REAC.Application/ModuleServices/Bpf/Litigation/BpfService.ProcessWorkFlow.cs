@@ -5,7 +5,6 @@ using REAC.Application.Contracts.Dtos.Wpf.Business.WorkFlowLog;
 using REAC.Application.Contracts.Dtos.Wpf.System;
 using REAC.Domain.Shared.Enum.Wpf;
 using REAC.EntityFrameworkCore.Entities.Litigation;
-using REAC.EntityFrameworkCore.Entities.System;
 using REAC.EntityFrameworkCore.Entities.Wpf.Business;
 using REAC.EntityFrameworkCore.Entities.Wpf.System;
 
@@ -20,6 +19,7 @@ namespace Bpf.Application.ModuleServices
             {
                 Guid employeeId = Guid.Empty;
                 _jwtReader.GetReferenceId(ref employeeId);
+
                 var processingLog = (await _repository.GetQueryable<WorkFlowProcessingLog, Guid>())?
                         .Where(x => x.Id == requestPayload.ProcessingLogId)
                         .Include(x => x.Employee)
@@ -35,32 +35,32 @@ namespace Bpf.Application.ModuleServices
 
                 #region Validate Employee
 
-                var employee = (await _repository.GetQueryable<SysEmployee, Guid>())?
-                    .Where(x => x.Id == employeeId).Single();
+                //var employee = (await _repository.GetQueryable<SysEmployee, Guid>())?
+                //    .Where(x => x.Id == employeeId).Single();
 
-                if (employee == null)
-                    return new BaseResponse()
-                    {
-                        IsDone = false,
-                        Message = "Employee Not Found"
-                    };
+                //if (employee == null)
+                //    return new BaseResponse()
+                //    {
+                //        IsDone = false,
+                //        Message = "Employee Not Found"
+                //    };
 
-                if (employeeId != processingLog?.Employee?.Id)
-                {
-                    if (!employee.IsAdmin)
-                        return new BaseResponse()
-                        {
-                            IsDone = false,
-                            Message = "Not Allowed"
-                        };
+                //if (employeeId != processingLog?.Employee?.Id)
+                //{
+                //    if (!employee.IsAdmin)
+                //        return new BaseResponse()
+                //        {
+                //            IsDone = false,
+                //            Message = "Not Allowed"
+                //        };
 
-                    if (!employee.WorkAsEmployee)
-                        return new BaseResponse()
-                        {
-                            IsDone = false,
-                            Message = "Not Allowed"
-                        };
-                }
+                //    if (!employee.WorkAsEmployee)
+                //        return new BaseResponse()
+                //        {
+                //            IsDone = false,
+                //            Message = "Not Allowed"
+                //        };
+                //}
 
                 #endregion
 
@@ -127,7 +127,10 @@ namespace Bpf.Application.ModuleServices
 
                 #region AllowCompletionNotificationPlan 
                 if (processingLog.WorkFlowStep.WorkFlowStepEvents.Single().AllowCompletionNotificationPlan)
-                    await ExecuteNotificationPlan(processingLog.WorkFlowStep.WorkFlowStepEvents.Single().CompletionNotificationPlanId.Value);
+                {
+                    if (processingLog.WorkFlowStep.WorkFlowStepEvents.Single().CompletionNotificationPlanId.HasValue)
+                        await ExecuteNotificationPlan(processingLog.WorkFlowStep.WorkFlowStepEvents.Single().CompletionNotificationPlanId.Value);
+                }
                 #endregion
 
                 #region Create Log
@@ -211,9 +214,9 @@ namespace Bpf.Application.ModuleServices
                 //if (!response.IsDone)
                 //    return response;
 
-                //response = _repository.Update<LitigationRequest, Guid>(litigationRequest);
-                //if (!response.IsDone)
-                //    return response;
+                var response = _repository.Update<LitigationRequest, Guid>(litigationRequest);
+                if (!response.IsDone)
+                    return response;
 
                 var repositorySaveResponse = await _repository.SaveChangesAsync(new CancellationToken());
                 if (!repositorySaveResponse.IsDone)
@@ -222,7 +225,7 @@ namespace Bpf.Application.ModuleServices
             }
             catch (Exception ex)
             {
-                new ExceptionResponse()
+                return new ExceptionResponse()
                 {
                     IsDone = false,
                     Exception = ex.Message + "\n" + ex.ToString()

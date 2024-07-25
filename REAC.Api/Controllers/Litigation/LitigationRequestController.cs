@@ -51,7 +51,18 @@ public class LitigationRequestController : BaseController<LitigationRequest,
 
         return BadRequest();
     }
+    [HttpGet(nameof(ReformerList))]
+    [AllowAnonymous]
+    public async Task<ActionResult<IEnumerable<LitigationListDto>>> ReformerList([FromQuery] int pageIndex, [FromQuery] int pageSize, [FromQuery] string? searchKey, [FromQuery] LitigationListDto model)
+    {
+        if (ModelState.IsValid)
+        {
+            var returnValue = await _litigationService.ReformerList(pageIndex, pageSize, searchKey, model);
+            return Ok(returnValue);
+        }
 
+        return BadRequest();
+    }
     [HttpGet(nameof(AuditngList))]
     [AllowAnonymous]
     public async Task<ActionResult<IEnumerable<AuditingListDto>>> AuditngList([FromQuery] int pageIndex, [FromQuery] int pageSize, [FromQuery] string? searchKey, [FromQuery] AuditingListDto model)

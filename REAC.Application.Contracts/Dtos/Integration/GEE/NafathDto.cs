@@ -99,13 +99,20 @@ namespace REAC.Application.Contracts.Dtos.Integration.GEE
 
     public class UserInfoUpdatedDto
     {
+        //رقم الهوية
         public string NationalId { get; set; }
+        //الاسم بالكامل
         public string FullName { get; set; }
+        // الاسم الأول
         public string FirstName { get; set; }
+        // تاريخ انتهاء الهوية الوطنية
         public DateTime NationalIdExpiryDate { get; set; }
         public Guid NationalityId { get; set; }
+        //الجنسية
         public string Nationality { get; set; }
+        //تاريخ الميلاد
         public DateTime DateOfBirth { get; set; }
+        //الجنس
         public Gender Gender { get; set; }
     }
 

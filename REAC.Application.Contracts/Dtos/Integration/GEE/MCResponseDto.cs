@@ -53,12 +53,19 @@ namespace REAC.Application.Contracts.Dtos.Integration.GEE
 
     public class CRInformationByCRNumberDto
     {
+        //رقم 700 الخاص بالمنشأة
         public string CRNationalNumber { get; set; }
+        //رقم السجل التجاري
         public string CRNumber { get; set; }
+        //تاريخ بداية ترخيص المنشأة
         public DateTime CRIssueHijriDate { get; set; }
+        //تاريخ انتهاء ترخيص المنشأة
         public DateTime CRExpiryHijriDate { get; set; }
+        //اسم المنشأة
         public string CRName { get; set; }
+        //حالة ترخيص المنشأة
         public string CRStatus { get; set; }
+        // عنوان المنشأة
         public string CRAddress { get; set; }
     }
 
@@ -116,6 +123,7 @@ namespace REAC.Application.Contracts.Dtos.Integration.GEE
 
     public class CRInformationByCROwnersUpdatedDto
     {
+        //أرقام هوية مُلاك السجل التجاري
         public List<string>? Data { get; set; } = new List<string> ();
         public GeneralGEEErrorDto? Error { get; set; }
         public UnauthorizedErrorDto? UnauthorizedError { get; set; }

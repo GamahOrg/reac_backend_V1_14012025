@@ -71,6 +71,25 @@ public partial class LitigationRequestStatusSeedDataCreator
                     },
                     new SysLitigationRequestStatus
                     {
+                        Id = Domain.Shared.Enum.RequestStatus.AsessionTimeHasBeenReset,
+                        RequestStatus = "تم إعادة تحديد ميعاد جلسة",
+                        CreatedOn = DateTime.Now,
+                        Translations=new List<SysLitigationRequestStatusTranslation>
+                        {
+                            new SysLitigationRequestStatusTranslation
+                            {
+                                RequestStatus = "Asession Time Has Been Reset ",
+                                LanguageCode = Constants.EnglishLanguage
+                            },
+                            new SysLitigationRequestStatusTranslation
+                            {
+                                RequestStatus = "تم إعادة تحديد ميعاد جلسة",
+                                LanguageCode = Constants.ArabicLanguage
+                            }
+                        }
+                    },
+                    new SysLitigationRequestStatus
+                    {
                         Id = Domain.Shared.Enum.RequestStatus.TheSessionWasCompleted,
                         RequestStatus = "تمت الجلسة",
                         CreatedOn = DateTime.Now,
@@ -230,7 +249,7 @@ public partial class LitigationRequestStatusSeedDataCreator
                         {
                             new SysLitigationRequestStatusTranslation
                             {
-                                RequestStatus = "SendBackForEdit",
+                                RequestStatus = "Send Back For Edit",
                                 LanguageCode = Constants.EnglishLanguage
                             },
                             new SysLitigationRequestStatusTranslation
@@ -268,7 +287,7 @@ public partial class LitigationRequestStatusSeedDataCreator
                         {
                             new SysLitigationRequestStatusTranslation
                             {
-                                RequestStatus = "CharterRequestSent ",
+                                RequestStatus = "Charter RequestSent ",
                                 LanguageCode = Constants.EnglishLanguage
                             },
                             new SysLitigationRequestStatusTranslation
@@ -280,23 +299,62 @@ public partial class LitigationRequestStatusSeedDataCreator
                     },
                     new SysLitigationRequestStatus
                     {
-                        Id = Domain.Shared.Enum.RequestStatus.AsessionTimeHasBeenReset,
-                        RequestStatus = "تم إعادة تحديد ميعاد جلسة",
+                        Id = Domain.Shared.Enum.RequestStatus.AcceptanceOfTheReconciliationReport,
+                        RequestStatus = "تم قبول محضر الصلح",
                         CreatedOn = DateTime.Now,
                         Translations=new List<SysLitigationRequestStatusTranslation>
                         {
                             new SysLitigationRequestStatusTranslation
                             {
-                                RequestStatus = "Asession Time Has Been Reset ",
+                                RequestStatus = "Acceptance Of The Reconciliation Report ",
                                 LanguageCode = Constants.EnglishLanguage
                             },
                             new SysLitigationRequestStatusTranslation
                             {
-                                RequestStatus = "تم إعادة تحديد ميعاد جلسة",
+                                RequestStatus =  "تم قبول محضر الصلح",
                                 LanguageCode = Constants.ArabicLanguage
                             }
                         }
                     },
+                    new SysLitigationRequestStatus
+                    {
+                        Id = Domain.Shared.Enum.RequestStatus.RejectionOfTheReconciliationReport,
+                        RequestStatus = "تم رفض محضر الصلح",
+                        CreatedOn = DateTime.Now,
+                        Translations=new List<SysLitigationRequestStatusTranslation>
+                        {
+                            new SysLitigationRequestStatusTranslation
+                            {
+                                RequestStatus = "Rejection Of The Reconciliation Report ",
+                                LanguageCode = Constants.EnglishLanguage
+                            },
+                            new SysLitigationRequestStatusTranslation
+                            {
+                                RequestStatus =  "تم رفض محضر الصلح",
+                                LanguageCode = Constants.ArabicLanguage
+                            }
+                        }
+                    },
+                    new SysLitigationRequestStatus
+                    {
+                        Id = Domain.Shared.Enum.RequestStatus.ReconciliationWasMade,
+                        RequestStatus = "تم الصلح",
+                        CreatedOn = DateTime.Now,
+                        Translations=new List<SysLitigationRequestStatusTranslation>
+                        {
+                            new SysLitigationRequestStatusTranslation
+                            {
+                                RequestStatus = "Reconciliation Was Made ",
+                                LanguageCode = Constants.EnglishLanguage
+                            },
+                            new SysLitigationRequestStatusTranslation
+                            {
+                                RequestStatus =  "تم الصلح",
+                                LanguageCode = Constants.ArabicLanguage
+                            }
+                        }
+                    },
+
             });
         context.SaveChanges();
     }

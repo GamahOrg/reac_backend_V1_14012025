@@ -120,10 +120,11 @@ namespace Bpf.Application.ModuleServices
             }
             #endregion
             #region Set Other Employee Id
-            if (!workFlowProcessingLog.EmployeeId.HasValue)
+            if (step.ProcessActorType == ProcessActorType.Employee)
             {
-                if (step.ProcessActorType == ProcessActorType.Employee)
+                if (!workFlowProcessingLog.EmployeeId.HasValue)
                 {
+
                     switch (step.ActorTypeId)
                     {
                         case StepActorType.Department:
@@ -153,6 +154,10 @@ namespace Bpf.Application.ModuleServices
                             break;
                     }
                 }
+            }
+            else if (step.ProcessActorType == ProcessActorType.Reformer)
+            {
+
             }
             #endregion
             #endregion

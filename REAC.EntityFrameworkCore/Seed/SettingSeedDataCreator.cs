@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Core.Security;
+using Microsoft.EntityFrameworkCore;
 using REAC.EntityFrameworkCore.Entities.System;
 
 namespace Ticketing.EntityFrameworkCore.SeedData
@@ -121,6 +122,53 @@ namespace Ticketing.EntityFrameworkCore.SeedData
                         Id = Guid.NewGuid(),
                         Key = "MC_GetCRInformationByCRNumber_URL",
                         Value = "https://api-dev.rega.gov.sa/v1/mc/cr-information",
+                    },
+
+                    #endregion
+
+                    #region SMS
+
+                    new SysSetting
+                    {
+                        Id = Guid.NewGuid(),
+                        Key = "Disable_SMS_Integration",
+                        Value = "false",
+                    },
+                    new SysSetting
+                    {
+                        Id = Guid.NewGuid(),
+                        Key = "SMS_URL",
+                        Value = "https://api-test.rega.gov.sa/v1/rega/notificationservice/notify",
+                    },
+                    new SysSetting
+                    {
+                        Id = Guid.NewGuid(),
+                        Key = "SMS_Notification_Type",
+                        Value = "SMS",
+                    },
+
+                    #endregion
+
+
+                    #region OTP Setting
+
+                    new SysSetting
+                    {
+                        Id = Guid.NewGuid(),
+                        Key = "OTP.Lenght",
+                        Value = "6",
+                    },
+                    new SysSetting
+                    {
+                        Id = Guid.NewGuid(),
+                        Key = "OTP.Key",
+                        Value = "D6",
+                    },
+                    new SysSetting
+                    {
+                        Id = Guid.NewGuid(),
+                        Key = "OTP.TimeoutInSeconds",
+                        Value = "120", // 2 minutes
                     },
 
                     #endregion

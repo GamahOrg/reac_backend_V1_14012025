@@ -36,7 +36,7 @@ public enum RequestStatus
     ///<summary>تم رفض محضر الصلح</summary>
     RejectionOfTheReconciliationReport = 17,
     ///<summary>تم الصلح</summary>
-    ReconciliationWasMade = 17
+    ReconciliationWasMade = 18
 
 }
 

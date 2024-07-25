@@ -98,6 +98,8 @@ namespace REAC.Api
             services.AddScoped<IUserRegisterService, UserRegisterService>();
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<IMCService, MCService>();
+            services.AddScoped<ISMSService, SMSService>();
+            services.AddScoped<IOTPService, OTPService>();
             services.AddSingleton<INafathTransactionService, NafathTransactionService>();
 
             services.AddScoped<IJwtReader, JwtReader>();
