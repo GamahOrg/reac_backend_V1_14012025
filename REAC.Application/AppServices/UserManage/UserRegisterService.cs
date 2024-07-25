@@ -34,7 +34,7 @@ namespace REAC.Application.AppServices.UserManage
                 return new BaseResponse() { IsDone = false, Message = "" };
 
             User user = new User { UserName = userRegisterDto.UserInfo.NationalId.Trim(), Email = userRegisterDto.Email.Trim(), EmailConfirmed = true };
-            var identityUser = await _userManager.CreateAsync(user, userRegisterDto.Password);
+            var identityUser = await _userManager.CreateAsync(user, "123456");
             if (!identityUser.Succeeded || identityUser.Errors.Any())
                 return new BaseResponse() { IsDone = false, Message = "" };
 

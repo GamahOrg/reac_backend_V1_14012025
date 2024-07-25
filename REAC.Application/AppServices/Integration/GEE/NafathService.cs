@@ -49,7 +49,6 @@ namespace REAC.Application.AppServices.Integration.GEE
             {
                 if (nafathRequestDto is null)
                     return new DataResponse<NafathResponseDto> { IsDone = false, Message = "" };
-
                 string? accessToken = null;
                 string? refreshToken = null;
 
