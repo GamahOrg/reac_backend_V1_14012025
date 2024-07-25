@@ -226,10 +226,10 @@ namespace REAC.Application.AppServices
                 });
                 #endregion
 
-                if (citizenRequestCreateUpdateDto.IsSend)
-                {
-                    // Execute action
-                }
+                if (citizenRequestCreateUpdateDto.IsSend & citizenRequests.FirstOrDefault().StatusId == CitizenRequestStatus.Draft)
+                    ExecuteAction(CitizenRequestAction.Send, citizenRequests.FirstOrDefault().Id, null);
+                if (citizenRequestCreateUpdateDto.IsSend & citizenRequests.FirstOrDefault().StatusId == CitizenRequestStatus.SentForEdit)
+                    ExecuteAction(CitizenRequestAction.SendFromEdit, citizenRequests.FirstOrDefault().Id, null);
 
                 return new BaseResponse();
 
@@ -274,6 +274,24 @@ namespace REAC.Application.AppServices
                     break;
                 case CitizenRequestAction.CertifiedWithOutFees:
                     citizenRequests.FirstOrDefault().StatusId = CitizenRequestStatus.Certified;
+                    var citizen = (await _repository.GetQueryable<Citizen, Guid>())
+                         .Where(x => x.Id == citizenRequests.FirstOrDefault().CitizenId)
+                          .ToList();
+                    if (citizen != null)
+                    {
+                        if (citizen.Count > 0)
+                        {
+                            switch (citizenRequests.FirstOrDefault().CitizenRequestTypeId)
+                            {
+                                case CitizenRequestType.Reformer:
+                                    citizen.FirstOrDefault().IsReformer = true;
+                                    break;
+                                case CitizenRequestType.Arbitrator:
+                                    citizen.FirstOrDefault().IsArbitrator = true;
+                                    break;
+                            }
+                        }
+                    }
                     saveResponse = await _repository.SaveChangesAsync();
                     break;
                 case CitizenRequestAction.SendForEdit:

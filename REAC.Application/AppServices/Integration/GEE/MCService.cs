@@ -119,7 +119,7 @@ namespace REAC.Application.AppServices.Integration.GEE
         private async Task<CRInformationByCRNumberDto> MapCRInformationByCRNumber(MCCRInformationByCRNumberResponseDto mCResponseDto)
         {
             var cRExpiryHijriDate = DateTime.ParseExact(mCResponseDto.Data.GetCRInformationByCRNumberResponse.GetCRInformationByCRNumberResult.getCRInformationByCRNumberResponseDetailObject.CRExpiryHijriDate
-                , "dd-MM-yyyy", CultureInfo.GetCultureInfo("ar-SA"), DateTimeStyles.None);
+                ,"dd-MM-yyyy",CultureInfo.GetCultureInfo("ar-sa"),DateTimeStyles.None);
             
             var cRIssueHijriDate = DateTime.ParseExact(mCResponseDto.Data.GetCRInformationByCRNumberResponse.GetCRInformationByCRNumberResult.getCRInformationByCRNumberResponseDetailObject.CRIssueHijriDate
                 , "dd-MM-yyyy", CultureInfo.GetCultureInfo("ar-SA"), DateTimeStyles.None);
@@ -128,11 +128,11 @@ namespace REAC.Application.AppServices.Integration.GEE
             {
                 CRNumber = mCResponseDto.Data.GetCRInformationByCRNumberResponse.GetCRInformationByCRNumberResult.getCRInformationByCRNumberResponseDetailObject.CRNumber,
                 CRAddress = mCResponseDto.Data.GetCRInformationByCRNumberResponse.GetCRInformationByCRNumberResult.getCRInformationByCRNumberResponseDetailObject.CRAddress,
-                CRName = mCResponseDto.Data.GetCRInformationByCRNumberResponse.GetCRInformationByCRNumberResult.getCRInformationByCRNumberResponseDetailObject.CRNumber,
+                CRName = mCResponseDto.Data.GetCRInformationByCRNumberResponse.GetCRInformationByCRNumberResult.getCRInformationByCRNumberResponseDetailObject.CRNameAR,
                 CRNationalNumber = mCResponseDto.Data.GetCRInformationByCRNumberResponse.GetCRInformationByCRNumberResult.getCRInformationByCRNumberResponseDetailObject.CRNationalNumber,
                 CRStatus = mCResponseDto.Data.GetCRInformationByCRNumberResponse.GetCRInformationByCRNumberResult.getCRInformationByCRNumberResponseDetailObject.CRStatus,
-                CRIssueHijriDate = cRIssueHijriDate,
-                CRExpiryHijriDate = cRExpiryHijriDate,
+                CRIssueDate = cRIssueHijriDate,
+                CRExpiryDate = cRExpiryHijriDate,
             };
         }
 

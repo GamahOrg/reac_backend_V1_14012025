@@ -51,6 +51,7 @@ namespace REAC.Api
             //services.AddScoped < IFacilityDelegatorService, FacilityDelegatorService>();
             //services.AddScoped<ICitizenLitigationRequestLawyerAgentService, CitizenLitigationRequestLawyerAgentService>();
             services.AddScoped<ICitizenService, CitizenService>();
+            services.AddScoped<IFacilityService, FacilityService>();
             services.AddScoped<ISysAreaService, SysAreaService>();
             services.AddScoped<ISysCityService, SysCityService>();
             services.AddScoped<IDelegatorService, DelegatorService>();

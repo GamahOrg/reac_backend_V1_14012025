@@ -5,7 +5,7 @@ namespace REAC.EntityFrameworkCore.Entities.Notification
 {
     public class SysNotificationPlanItem : BaseEntity<Guid>
     {
-        public string SysNotificationPlanId { get; set; } = null!;
+        public Guid SysNotificationPlanId { get; set; }
         public NotificationType NotificationType { get; set; }
         public string Template { get; set; } = null!;
         public virtual SysNotificationPlan SysNotificationPlan { get; set; } = null!;

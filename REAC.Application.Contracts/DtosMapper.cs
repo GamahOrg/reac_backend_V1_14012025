@@ -2,6 +2,7 @@
 using REAC.Application.Contracts.Dtos.Citizen;
 using REAC.Application.Contracts.Dtos.CitizenRequests;
 using REAC.Application.Contracts.Dtos.Delegator;
+using REAC.Application.Contracts.Dtos.Facility;
 using REAC.Application.Contracts.Dtos.Integration.Nafath;
 using REAC.Application.Contracts.Dtos.Litigation;
 using REAC.Application.Contracts.Dtos.System.AreaDto;
@@ -201,6 +202,9 @@ namespace REAC.Application.Contracts
             CreateMap<DelegationRequest, DelegationRequestCreateUpdateDto>().ReverseMap();
             CreateMap<Facility, FacilityCreateUpdateDto>().ReverseMap();
             CreateMap<Facility, FacilityShortDto>().ReverseMap();
+            CreateMap<Facility, GetAllFacilitiesResponseDto>().ReverseMap();
+            CreateMap<Facility, GetFacilityByIdResponse>().ReverseMap();
+            CreateMap<Facility, EditFacilityRequestDto>().ReverseMap();
 
 
             CreateMap<Delegator, DelegatorFullDataDto>().ReverseMap();

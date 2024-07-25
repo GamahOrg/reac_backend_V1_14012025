@@ -65,6 +65,12 @@ namespace REAC.Application.AppServices.UserManage
             var citizen = _mapper.Map<Citizen>(citizenCreateUpdateDto);
             await _repository.AddAsync<Citizen, Guid>(citizen);
             var result = await _repository.SaveChangesAsync();
+
+            user.ReferenceId = citizen.Id;
+            var updateUser = await _userManager.UpdateAsync(user);
+            if (!identityUser.Succeeded || identityUser.Errors.Any())
+                return new BaseResponse() { IsDone = false, Message = "" };
+
             if (!result.IsDone) return result;
 
             return new BaseResponse() { IsDone = true };

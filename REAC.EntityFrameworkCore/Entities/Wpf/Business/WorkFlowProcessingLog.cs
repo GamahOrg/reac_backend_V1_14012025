@@ -1,4 +1,5 @@
 ﻿using Core.GenericRepository.Shared.BaseEntities;
+using REAC.EntityFrameworkCore.Entities.Litigation;
 using REAC.EntityFrameworkCore.Entities.System;
 using REAC.EntityFrameworkCore.Entities.Wpf.System;
 
@@ -18,6 +19,8 @@ public partial class WorkFlowProcessingLog : BaseEntity<Guid>
 
     public Guid WorkFlowStepId { get; set; }
 
+    public Guid LitigationRequestId { get; set; }
+
     public bool IsWithNotes { get; set; }
 
     public bool? ShowForApplicant { get; set; }
@@ -27,6 +30,7 @@ public partial class WorkFlowProcessingLog : BaseEntity<Guid>
     public bool IsFinished { get; set; }
 
     public DateTime? FinishedOn { get; set; }
+    public virtual LitigationRequest LitigationRequest { get; set; } = null!;
 
     public virtual SysEmployee? Employee { get; set; } = null!;
 

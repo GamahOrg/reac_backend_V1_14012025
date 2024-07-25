@@ -253,6 +253,15 @@ namespace REAC.Application.AppServices.Litigation
                 litigations = litigations.Where(l => l.Contract.LitigationRequestContractTypeId == model.LitigationRequestContractTypeId.Value);
             }
 
+
+            Guid citizenId = Guid.Empty;
+            _jwtReader.GetReferenceId(ref citizenId);
+            litigations = litigations.Where(x => x.Contract.FirstPartyCitizenId == citizenId
+                                               | x.Contract.SecondPartyCitizenId == citizenId
+                                               | x.ApplicantCitizenId == citizenId);
+
+
+
             litigations = litigations.OrderByDescending(x => x.CreatedOn);
             var list = _mapper.Map<List<LitigationListDto>>(litigations);
 
@@ -320,6 +329,9 @@ namespace REAC.Application.AppServices.Litigation
                 litigations = litigations.Where(l => l.Contract.LitigationRequestContractTypeId == model.LitigationRequestContractTypeId.Value);
             }
 
+            Guid employeeId = Guid.Empty;
+            _jwtReader.GetReferenceId(ref employeeId);
+            litigations = litigations.Where(x => x.WorkFlowProcessingLogs.Where(t => t.EmployeeId == employeeId).Count() > 0);
             /*   if (model.AuditngRemaningDays.HasValue)
                {
                    litigations = litigations.Where(l => l.AuditngRemaningDays == model.AuditngRemaningDays.Value);

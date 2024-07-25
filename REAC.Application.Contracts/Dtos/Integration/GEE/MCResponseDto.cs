@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace REAC.Application.Contracts.Dtos.Integration.GEE
+﻿namespace REAC.Application.Contracts.Dtos.Integration.GEE
 {
     #region CRInformationByCRNumber
 
@@ -15,7 +9,7 @@ namespace REAC.Application.Contracts.Dtos.Integration.GEE
         public UnauthorizedErrorDto? UnauthorizedError { get; set; }
     }
 
-    
+
     public class CRInformationByCRNumberResponseDataDto
     {
         public GetCRInformationByCRNumberResponseDto GetCRInformationByCRNumberResponse { get; set; }
@@ -54,6 +48,7 @@ namespace REAC.Application.Contracts.Dtos.Integration.GEE
     public class CRInformationByCRNumberDto
     {
         //رقم 700 الخاص بالمنشأة
+        // 700
         public string CRNationalNumber { get; set; }
         //رقم السجل التجاري
         public string CRNumber { get; set; }
@@ -62,6 +57,8 @@ namespace REAC.Application.Contracts.Dtos.Integration.GEE
         //تاريخ انتهاء ترخيص المنشأة
         public DateTime CRExpiryHijriDate { get; set; }
         //اسم المنشأة
+        public DateTime CRIssueDate { get; set; }
+        public DateTime CRExpiryDate { get; set; }
         public string CRName { get; set; }
         //حالة ترخيص المنشأة
         public string CRStatus { get; set; }
@@ -124,7 +121,7 @@ namespace REAC.Application.Contracts.Dtos.Integration.GEE
     public class CRInformationByCROwnersUpdatedDto
     {
         //أرقام هوية مُلاك السجل التجاري
-        public List<string>? Data { get; set; } = new List<string> ();
+        public List<string>? Data { get; set; } = new List<string>();
         public GeneralGEEErrorDto? Error { get; set; }
         public UnauthorizedErrorDto? UnauthorizedError { get; set; }
     }

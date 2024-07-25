@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using REAC.EntityFrameworkCore.Entities.Litigation;
+using REAC.EntityFrameworkCore.Entities.Notification;
 using REAC.EntityFrameworkCore.Entities.Reconciliation;
 using REAC.EntityFrameworkCore.Entities.Wpf.Business;
 using REAC.EntityFrameworkCore.Entities.Wpf.System;
@@ -16,6 +17,11 @@ public partial class REACDBContext : DbContext
         : base(options)
     {
     }
+    public virtual DbSet<SysNotificationPlanItemDestination> SysNotificationPlanItemDestinations { get; set; }
+
+    public virtual DbSet<SysNotificationPlan> SysNotificationPlans { get; set; }
+    public virtual DbSet<SysNotificationPlanItem> SysNotificationPlanItems { get; set; }
+
     public virtual DbSet<SysCitizenRequestStatus> SysCitizenRequestStatuses { get; set; }
     public virtual DbSet<CitizenRequestNote> CitizenRequestNotes { get; set; }
     public virtual DbSet<SysArbitratorClass> SysArbitratorClasses { get; set; }
@@ -405,6 +411,11 @@ public partial class REACDBContext : DbContext
                 .HasForeignKey(d => d.EmployeeId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FKWorkFlowPr231724");
+
+            entity.HasOne(d => d.LitigationRequest).WithMany(p => p.WorkFlowProcessingLogs)
+                .HasForeignKey(d => d.LitigationRequestId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FKWorkFlowPrWorkFlowProcessingLog231724");
 
             entity.HasOne(d => d.WorkFlowStepEvent).WithMany(p => p.WorkFlowProcessingLogs)
                 .HasForeignKey(d => d.WorkFlowStepEventId)
@@ -1331,6 +1342,15 @@ public partial class REACDBContext : DbContext
             entity.OwnsMany(d => d.Translations, ownedNavigationBuilder => { ownedNavigationBuilder.ToJson(); });
 
         });
+        modelBuilder.Entity<SysNotificationPlan>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__SysNotificationPlan__C0743341C99");
+
+            entity.ToTable("SysNotificationPlan");
+
+            entity.Property(e => e.NotificationPlanName).HasMaxLength(100);
+
+        });
         modelBuilder.Entity<SysArbitratorClass>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK__SysArbitratorClass_3214EC0743341C99");
@@ -1342,7 +1362,30 @@ public partial class REACDBContext : DbContext
             entity.OwnsMany(d => d.Translations, ownedNavigationBuilder => { ownedNavigationBuilder.ToJson(); });
 
         });
+        modelBuilder.Entity<SysNotificationPlanItem>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__SysNotificationPlanItem__0743341C99");
 
+            entity.ToTable("SysNotificationPlanItem");
+
+
+            entity.HasOne(d => d.SysNotificationPlan).WithMany(p => p.SysNotificationPlanItems)
+               .HasForeignKey(d => d.SysNotificationPlanId)
+               .OnDelete(DeleteBehavior.ClientSetNull)
+               .HasConstraintName("FKSysNotificationPlanItemsSysNotificationPlan76101");
+        });
+        modelBuilder.Entity<SysNotificationPlanItemDestination>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__SysNotificationPlanItemDestination__0743341C99");
+
+            entity.ToTable("SysNotificationPlanItemDestination");
+
+
+            entity.HasOne(d => d.SysNotificationPlanItem).WithMany(p => p.SysNotificationPlanItemDestinations)
+               .HasForeignKey(d => d.SysNotificationPlanItemId)
+               .OnDelete(DeleteBehavior.ClientSetNull)
+               .HasConstraintName("FKSysSysNotificationPlanItemDestinationsPlan7610001");
+        });
         modelBuilder.Entity<SysCity>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK__SysCity_3214EC0743341C99");

@@ -742,6 +742,71 @@ namespace REAC.EntityFrameworkCore.Migrations
                     b.ToTable("OtherCategories");
                 });
 
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Notification.SysNotificationPlan", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("NotificationPlanName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("Id")
+                        .HasName("PK__SysNotificationPlan__C0743341C99");
+
+                    b.ToTable("SysNotificationPlan", (string)null);
+                });
+
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Notification.SysNotificationPlanItem", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("NotificationType")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("SysNotificationPlanId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Template")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id")
+                        .HasName("PK__SysNotificationPlanItem__0743341C99");
+
+                    b.HasIndex("SysNotificationPlanId");
+
+                    b.ToTable("SysNotificationPlanItem", (string)null);
+                });
+
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Notification.SysNotificationPlanItemDestination", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("NotificationDestinationType")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("SysNotificationPlanItemId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Template")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id")
+                        .HasName("PK__SysNotificationPlanItemDestination__0743341C99");
+
+                    b.HasIndex("SysNotificationPlanItemId");
+
+                    b.ToTable("SysNotificationPlanItemDestination", (string)null);
+                });
+
             modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Reconciliation.LitigationRequestExtendPeriodRequest", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1878,6 +1943,9 @@ namespace REAC.EntityFrameworkCore.Migrations
                     b.Property<bool>("IsWithNotes")
                         .HasColumnType("bit");
 
+                    b.Property<Guid>("LitigationRequestId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("Notes")
                         .HasColumnType("nvarchar(max)");
 
@@ -1900,6 +1968,8 @@ namespace REAC.EntityFrameworkCore.Migrations
                         .HasName("PK__WorkFlow__3214EC079C2E52E3");
 
                     b.HasIndex("EmployeeId");
+
+                    b.HasIndex("LitigationRequestId");
 
                     b.HasIndex("SourceWorkFlowProcessingLogId");
 
@@ -2926,6 +2996,28 @@ namespace REAC.EntityFrameworkCore.Migrations
                     b.Navigation("LitigationRequest");
                 });
 
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Notification.SysNotificationPlanItem", b =>
+                {
+                    b.HasOne("REAC.EntityFrameworkCore.Entities.Notification.SysNotificationPlan", "SysNotificationPlan")
+                        .WithMany("SysNotificationPlanItems")
+                        .HasForeignKey("SysNotificationPlanId")
+                        .IsRequired()
+                        .HasConstraintName("FKSysNotificationPlanItemsSysNotificationPlan76101");
+
+                    b.Navigation("SysNotificationPlan");
+                });
+
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Notification.SysNotificationPlanItemDestination", b =>
+                {
+                    b.HasOne("REAC.EntityFrameworkCore.Entities.Notification.SysNotificationPlanItem", "SysNotificationPlanItem")
+                        .WithMany("SysNotificationPlanItemDestinations")
+                        .HasForeignKey("SysNotificationPlanItemId")
+                        .IsRequired()
+                        .HasConstraintName("FKSysSysNotificationPlanItemDestinationsPlan7610001");
+
+                    b.Navigation("SysNotificationPlanItem");
+                });
+
             modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Reconciliation.LitigationRequestExtendPeriodRequest", b =>
                 {
                     b.HasOne("REAC.EntityFrameworkCore.Entities.System.SysLitigationRequestExtendPeriodRequestStatus", "LitigationRequestExtendPeriodRequestStatus")
@@ -3799,6 +3891,12 @@ namespace REAC.EntityFrameworkCore.Migrations
                         .HasForeignKey("EmployeeId")
                         .HasConstraintName("FKWorkFlowPr231724");
 
+                    b.HasOne("REAC.EntityFrameworkCore.Entities.Litigation.LitigationRequest", "LitigationRequest")
+                        .WithMany("WorkFlowProcessingLogs")
+                        .HasForeignKey("LitigationRequestId")
+                        .IsRequired()
+                        .HasConstraintName("FKWorkFlowPrWorkFlowProcessingLog231724");
+
                     b.HasOne("REAC.EntityFrameworkCore.Entities.Wpf.Business.WorkFlowProcessingLog", "SourceWorkFlowProcessingLog")
                         .WithMany("WorkFlowDestinationProcessingLogs")
                         .HasForeignKey("SourceWorkFlowProcessingLogId")
@@ -3816,6 +3914,8 @@ namespace REAC.EntityFrameworkCore.Migrations
                         .HasConstraintName("FKWorkFlowPr467617");
 
                     b.Navigation("Employee");
+
+                    b.Navigation("LitigationRequest");
 
                     b.Navigation("SourceWorkFlowProcessingLog");
 
@@ -4461,6 +4561,8 @@ namespace REAC.EntityFrameworkCore.Migrations
                     b.Navigation("LitigationRequestRequests");
 
                     b.Navigation("LitigationRequestSessions");
+
+                    b.Navigation("WorkFlowProcessingLogs");
                 });
 
             modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Litigation.LitigationRequestContract", b =>
@@ -4486,6 +4588,16 @@ namespace REAC.EntityFrameworkCore.Migrations
             modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Litigation.LitigationRequestRequest", b =>
                 {
                     b.Navigation("LitigationRequestRequestFiles");
+                });
+
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Notification.SysNotificationPlan", b =>
+                {
+                    b.Navigation("SysNotificationPlanItems");
+                });
+
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Notification.SysNotificationPlanItem", b =>
+                {
+                    b.Navigation("SysNotificationPlanItemDestinations");
                 });
 
             modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Reconciliation.LitigationRequestExtendPeriodRequest", b =>
