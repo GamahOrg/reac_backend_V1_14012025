@@ -4,6 +4,22 @@ using REAC.EntityFrameworkCore.Entities.Litigation;
 
 namespace REAC.EntityFrameworkCore.Entities.System;
 
+public enum LitigationRequestReformerRequestStatus
+{
+    Approve = 1,
+    Reject = 2
+}
+public class LitigationRequestReformerRequest : BaseEntity<Guid>
+{
+    public Guid LitigationRequestId { get; set; }
+    public Guid CitizenId { get; set; }
+    public LitigationRequestReformerRequestStatus? litigationRequestReformerRequestStatus { get; set; }
+    public DateTime? LitigationRequestReformerRequestStatusOn { get; set; }
+    public virtual Citizen ReformerCitizen { get; set; } = null!;
+    public virtual LitigationRequest LitigationRequest { get; set; } = null!;
+}
+
+
 public partial class Citizen : BaseEntity<Guid>
 {
 
