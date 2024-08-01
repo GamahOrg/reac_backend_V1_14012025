@@ -1,0 +1,158 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\admin\\source\\repos\\BackEnd\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{3BDA5A8F-8543-4D56-9878-BC2E50B8458D}|REAC.Application\\REAC.Application.csproj|c:\\users\\admin\\source\\repos\\backend\\reac.application\\appservices\\usermanage\\userregisterservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3BDA5A8F-8543-4D56-9878-BC2E50B8458D}|REAC.Application\\REAC.Application.csproj|solutionrelative:reac.application\\appservices\\usermanage\\userregisterservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3BDA5A8F-8543-4D56-9878-BC2E50B8458D}|REAC.Application\\REAC.Application.csproj|c:\\users\\admin\\source\\repos\\backend\\reac.application\\appservices\\integration\\gee\\nafathservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3BDA5A8F-8543-4D56-9878-BC2E50B8458D}|REAC.Application\\REAC.Application.csproj|solutionrelative:reac.application\\appservices\\integration\\gee\\nafathservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3BDA5A8F-8543-4D56-9878-BC2E50B8458D}|REAC.Application\\REAC.Application.csproj|c:\\users\\admin\\source\\repos\\backend\\reac.application\\appservices\\notification\\notificationplanservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3BDA5A8F-8543-4D56-9878-BC2E50B8458D}|REAC.Application\\REAC.Application.csproj|solutionrelative:reac.application\\appservices\\notification\\notificationplanservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3BDA5A8F-8543-4D56-9878-BC2E50B8458D}|REAC.Application\\REAC.Application.csproj|c:\\users\\admin\\source\\repos\\backend\\reac.application\\appservices\\litigation\\litigationrequestservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3BDA5A8F-8543-4D56-9878-BC2E50B8458D}|REAC.Application\\REAC.Application.csproj|solutionrelative:reac.application\\appservices\\litigation\\litigationrequestservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{070BFB6B-199B-495C-92DF-7698AE643641}|REAC.EntityFrameworkCore\\REAC.EntityFrameworkCore.csproj|c:\\users\\admin\\source\\repos\\backend\\reac.entityframeworkcore\\entities\\reacdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{070BFB6B-199B-495C-92DF-7698AE643641}|REAC.EntityFrameworkCore\\REAC.EntityFrameworkCore.csproj|solutionrelative:reac.entityframeworkcore\\entities\\reacdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{070BFB6B-199B-495C-92DF-7698AE643641}|REAC.EntityFrameworkCore\\REAC.EntityFrameworkCore.csproj|c:\\users\\admin\\source\\repos\\backend\\reac.entityframeworkcore\\entities\\notification\\sysnotificationplan.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{070BFB6B-199B-495C-92DF-7698AE643641}|REAC.EntityFrameworkCore\\REAC.EntityFrameworkCore.csproj|solutionrelative:reac.entityframeworkcore\\entities\\notification\\sysnotificationplan.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F9E6289B-7637-4C55-AA5E-A32FA039FD6F}|REAC.Application.Contracts\\REAC.Application.Contracts.csproj|c:\\users\\admin\\source\\repos\\backend\\reac.application.contracts\\dtos\\integration\\gee\\mcresponsedto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{F9E6289B-7637-4C55-AA5E-A32FA039FD6F}|REAC.Application.Contracts\\REAC.Application.Contracts.csproj|solutionrelative:reac.application.contracts\\dtos\\integration\\gee\\mcresponsedto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3BDA5A8F-8543-4D56-9878-BC2E50B8458D}|REAC.Application\\REAC.Application.csproj|c:\\users\\admin\\source\\repos\\backend\\reac.application\\moduleservices\\bpf\\litigation\\bpfservice.getworkflowstepeventsforreformer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3BDA5A8F-8543-4D56-9878-BC2E50B8458D}|REAC.Application\\REAC.Application.csproj|solutionrelative:reac.application\\moduleservices\\bpf\\litigation\\bpfservice.getworkflowstepeventsforreformer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 302,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "UserRegisterService.cs",
+              "DocumentMoniker": "C:\\Users\\admin\\source\\repos\\BackEnd\\REAC.Application\\AppServices\\UserManage\\UserRegisterService.cs",
+              "RelativeDocumentMoniker": "REAC.Application\\AppServices\\UserManage\\UserRegisterService.cs",
+              "ToolTip": "C:\\Users\\admin\\source\\repos\\BackEnd\\REAC.Application\\AppServices\\UserManage\\UserRegisterService.cs",
+              "RelativeToolTip": "REAC.Application\\AppServices\\UserManage\\UserRegisterService.cs",
+              "ViewState": "AQIAABUAAAAAAAAAAAAqwCQAAABLAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-07-25T14:52:55.984Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "NafathService.cs",
+              "DocumentMoniker": "C:\\Users\\admin\\source\\repos\\BackEnd\\REAC.Application\\AppServices\\Integration\\GEE\\NafathService.cs",
+              "RelativeDocumentMoniker": "REAC.Application\\AppServices\\Integration\\GEE\\NafathService.cs",
+              "ToolTip": "C:\\Users\\admin\\source\\repos\\BackEnd\\REAC.Application\\AppServices\\Integration\\GEE\\NafathService.cs",
+              "RelativeToolTip": "REAC.Application\\AppServices\\Integration\\GEE\\NafathService.cs",
+              "ViewState": "AQIAAC8AAAAAAAAAAAAqwDsAAABNAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-07-25T14:46:56.862Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:128:0:{1fc202d4-d401-403c-9834-5b218574bb67}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "NotificationPlanService.cs",
+              "DocumentMoniker": "C:\\Users\\admin\\source\\repos\\BackEnd\\REAC.Application\\AppServices\\Notification\\NotificationPlanService.cs",
+              "RelativeDocumentMoniker": "REAC.Application\\AppServices\\Notification\\NotificationPlanService.cs",
+              "ToolTip": "C:\\Users\\admin\\source\\repos\\BackEnd\\REAC.Application\\AppServices\\Notification\\NotificationPlanService.cs",
+              "RelativeToolTip": "REAC.Application\\AppServices\\Notification\\NotificationPlanService.cs",
+              "ViewState": "AQIAAAgAAAAAAAAAAAAcwB8AAAA2AAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-07-25T13:54:04.499Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "MCResponseDto.cs",
+              "DocumentMoniker": "C:\\Users\\admin\\source\\repos\\BackEnd\\REAC.Application.Contracts\\Dtos\\Integration\\GEE\\MCResponseDto.cs",
+              "RelativeDocumentMoniker": "REAC.Application.Contracts\\Dtos\\Integration\\GEE\\MCResponseDto.cs",
+              "ToolTip": "C:\\Users\\admin\\source\\repos\\BackEnd\\REAC.Application.Contracts\\Dtos\\Integration\\GEE\\MCResponseDto.cs",
+              "RelativeToolTip": "REAC.Application.Contracts\\Dtos\\Integration\\GEE\\MCResponseDto.cs",
+              "ViewState": "AQIAADMAAAAAAAAAAAAAAD0AAAABAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-07-25T13:45:59.644Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "SysNotificationPlan.cs",
+              "DocumentMoniker": "C:\\Users\\admin\\source\\repos\\BackEnd\\REAC.EntityFrameworkCore\\Entities\\Notification\\SysNotificationPlan.cs",
+              "RelativeDocumentMoniker": "REAC.EntityFrameworkCore\\Entities\\Notification\\SysNotificationPlan.cs",
+              "ToolTip": "C:\\Users\\admin\\source\\repos\\BackEnd\\REAC.EntityFrameworkCore\\Entities\\Notification\\SysNotificationPlan.cs",
+              "RelativeToolTip": "REAC.EntityFrameworkCore\\Entities\\Notification\\SysNotificationPlan.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAuwAcAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-07-25T10:50:37.307Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "REACDBContext.cs",
+              "DocumentMoniker": "C:\\Users\\admin\\source\\repos\\BackEnd\\REAC.EntityFrameworkCore\\Entities\\REACDBContext.cs",
+              "RelativeDocumentMoniker": "REAC.EntityFrameworkCore\\Entities\\REACDBContext.cs",
+              "ToolTip": "C:\\Users\\admin\\source\\repos\\BackEnd\\REAC.EntityFrameworkCore\\Entities\\REACDBContext.cs",
+              "RelativeToolTip": "REAC.EntityFrameworkCore\\Entities\\REACDBContext.cs",
+              "ViewState": "AQIAAFcFAAAAAAAAAAAqwF4FAABGAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-07-25T10:42:09.99Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "LitigationRequestService.cs",
+              "DocumentMoniker": "C:\\Users\\admin\\source\\repos\\BackEnd\\REAC.Application\\AppServices\\Litigation\\LitigationRequestService.cs",
+              "RelativeDocumentMoniker": "REAC.Application\\AppServices\\Litigation\\LitigationRequestService.cs",
+              "ToolTip": "C:\\Users\\admin\\source\\repos\\BackEnd\\REAC.Application\\AppServices\\Litigation\\LitigationRequestService.cs",
+              "RelativeToolTip": "REAC.Application\\AppServices\\Litigation\\LitigationRequestService.cs",
+              "ViewState": "AQIAAD0AAAAAAAAAAAAAAEwAAAAzAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-07-25T10:33:49.322Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "BpfService.GetWorkflowStepEventsForReformer.cs",
+              "DocumentMoniker": "C:\\Users\\admin\\source\\repos\\BackEnd\\REAC.Application\\ModuleServices\\Bpf\\Litigation\\BpfService.GetWorkflowStepEventsForReformer.cs",
+              "RelativeDocumentMoniker": "REAC.Application\\ModuleServices\\Bpf\\Litigation\\BpfService.GetWorkflowStepEventsForReformer.cs",
+              "ToolTip": "C:\\Users\\admin\\source\\repos\\BackEnd\\REAC.Application\\ModuleServices\\Bpf\\Litigation\\BpfService.GetWorkflowStepEventsForReformer.cs",
+              "RelativeToolTip": "REAC.Application\\ModuleServices\\Bpf\\Litigation\\BpfService.GetWorkflowStepEventsForReformer.cs",
+              "ViewState": "AQIAAAIAAAAAAAAAAAAAAAIAAAAqAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-07-24T19:40:45.923Z"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
