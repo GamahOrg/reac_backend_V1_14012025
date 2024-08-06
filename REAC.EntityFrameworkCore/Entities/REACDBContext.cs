@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using REAC.EntityFrameworkCore.Entities.Arbitration;
 using REAC.EntityFrameworkCore.Entities.Litigation;
 using REAC.EntityFrameworkCore.Entities.Notification;
 using REAC.EntityFrameworkCore.Entities.Reconciliation;
@@ -16,10 +17,21 @@ public partial class REACDBContext : DbContext
     public REACDBContext(DbContextOptions<REACDBContext> options)
         : base(options)
     {
+
     }
+    public virtual DbSet<LitigationRequestArbitrator> LitigationRequestArbitrators { get; set; }
+
+    public virtual DbSet<SysArbitratorStatus> SysArbitratorStatuses { get; set; }
+
+    public virtual DbSet<SysReformerStatus> SysReformerStatuses { get; set; }
+    public virtual DbSet<CitizenBankAccount> CitizenBankAccounts { get; set; }
+
+    public virtual DbSet<ReformerStopFreeUpDecision> ReformerStopFreeUpDecisions { get; set; }
+    public virtual DbSet<ArbitratorStopFreeUpDecision> ArbitratorStopFreeUpDecisions { get; set; }
+
     public virtual DbSet<SysBank> SysBanks { get; set; }
 
-
+    public virtual DbSet<LitigationRequestReformerAssigningRequest> LitigationRequestReformerAssigningRequests { get; set; }
     public virtual DbSet<SysNotificationPlanItemDestination> SysNotificationPlanItemDestinations { get; set; }
     public virtual DbSet<SysNotificationPlan> SysNotificationPlans { get; set; }
     public virtual DbSet<SysNotification> SysNotifications { get; set; }
@@ -154,6 +166,28 @@ public partial class REACDBContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+
+        modelBuilder.Entity<LitigationRequestArbitrator>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__LitigationRequestArbitrator07F533D1CD");
+
+            entity.ToTable("LitigationRequestArbitrator");
+            entity.HasIndex(e => e.Id, "LitigationRequestArbitrator_Id").IsUnique();
+            entity.Property(e => e.Id).ValueGeneratedNever();
+
+            entity.HasOne(d => d.ArbitratorCitizen).WithMany(p => p.LitigationRequestArbitrators)
+             .HasForeignKey(d => d.ArbitratorCitizenId)
+             .OnDelete(DeleteBehavior.ClientSetNull)
+             .HasConstraintName("FKArbitratorCitizenRequestArbitrators231388000");
+
+            entity.HasOne(d => d.LitigationRequest).WithMany(p => p.LitigationRequestArbitrators)
+             .HasForeignKey(d => d.LitigationRequestId)
+             .OnDelete(DeleteBehavior.ClientSetNull)
+             .HasConstraintName("FKLitigationRequestLitigationRequestArbitrators231388");
+
+        });
+
+
         modelBuilder.Entity<SysNotification>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK__SysNotification214EC07F533D1CD");
@@ -328,6 +362,28 @@ public partial class REACDBContext : DbContext
             entity.Property(e => e.Id).ValueGeneratedNever();
             entity.Property(e => e.DestinationType).HasMaxLength(50);
 
+            entity.OwnsMany(d => d.Translations, ownedNavigationBuilder =>
+            {
+                ownedNavigationBuilder.ToJson();
+            });
+        });
+        modelBuilder.Entity<SysReformerStatus>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__SysReformerStatus4AA46");
+            entity.ToTable("SysReformerStatus");
+            entity.HasIndex(e => e.Id, "SysReformerStatus_Id").IsUnique();
+            entity.Property(e => e.Id).ValueGeneratedNever();
+            entity.OwnsMany(d => d.Translations, ownedNavigationBuilder =>
+            {
+                ownedNavigationBuilder.ToJson();
+            });
+        });
+        modelBuilder.Entity<SysArbitratorStatus>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__SysArbitratorStatus4AA46");
+            entity.ToTable("SysArbitratorStatus");
+            entity.HasIndex(e => e.Id, "SysArbitratorStatus_Id").IsUnique();
+            entity.Property(e => e.Id).ValueGeneratedNever();
             entity.OwnsMany(d => d.Translations, ownedNavigationBuilder =>
             {
                 ownedNavigationBuilder.ToJson();
@@ -700,10 +756,26 @@ public partial class REACDBContext : DbContext
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FKCitizen92422");
 
+
             entity.HasOne(d => d.Area).WithMany(p => p.Citizens)
                 .HasForeignKey(d => d.AreaId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FKCitizen92459");
+
+            entity.HasOne(d => d.SysReformerStatus).WithMany(p => p.Citizens)
+                .HasForeignKey(d => d.ReformerStatusId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FKCSysReformerStatusCitizen92459");
+
+            entity.HasOne(d => d.SysArbitratorStatus).WithMany(p => p.Citizens)
+              .HasForeignKey(d => d.ArbitratorStatusId)
+              .OnDelete(DeleteBehavior.ClientSetNull)
+              .HasConstraintName("FKCSysArbitratorStatusCitizen92459");
+
+            entity.HasOne(d => d.SysArbitratorStatus).WithMany(p => p.Citizens)
+               .HasForeignKey(d => d.ArbitratorStatusId)
+               .OnDelete(DeleteBehavior.ClientSetNull)
+               .HasConstraintName("FKCSysArbitratorStatusitizen92459");
 
             entity.HasOne(d => d.Nationality).WithMany(p => p.Citizens)
                 .HasForeignKey(d => d.NationalityId)
@@ -730,9 +802,6 @@ public partial class REACDBContext : DbContext
                 .HasForeignKey(d => d.LawLicenseFileId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FKLawLicenseCitizens807894");
-
-
-
         });
 
         modelBuilder.Entity<DelegationRequest>(entity =>
@@ -759,6 +828,25 @@ public partial class REACDBContext : DbContext
                 .HasForeignKey(d => d.IdentityTypeId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FKDelegation632464");
+        });
+        modelBuilder.Entity<LitigationRequestReformerAssigningRequest>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__LitigationRequestReformerAssigningRequest4EC07AE06877A");
+
+            entity.ToTable("LitigationRequestReformerAssigningRequest");
+
+            entity.Property(e => e.Id).ValueGeneratedNever();
+
+            entity.HasOne(d => d.LitigationRequest).WithMany(p => p.LitigationRequestReformerAssigningRequests)
+                .HasForeignKey(d => d.LitigationRequestId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FKLitigationRequestLitigationRequestReformerAssigningRequest705");
+
+            entity.HasOne(d => d.ReformerCitizen).WithMany(p => p.LitigationRequestReformerAssigningRequests)
+                .HasForeignKey(d => d.CitizenId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FKReformerCitizenLitigationRequestReformerAssigningRequest705");
+
         });
 
         modelBuilder.Entity<Facility>(entity =>
@@ -834,10 +922,16 @@ public partial class REACDBContext : DbContext
             entity.Property(e => e.SentOn).HasColumnType("datetime");
             entity.Property(e => e.Title).HasMaxLength(250);
 
-            entity.HasOne(d => d.ReformerCitizen).WithMany(p => p.ReformerLitigationRequests)
+            entity.HasOne(d => d.ReformerCitizen).WithMany(p => p.ArbitratorLitigationRequests)
                 .HasForeignKey(d => d.ReformerCitizenId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FKReformerCitizenLitigation638578");
+                .HasConstraintName("FKArbitratorCitizenLitigation638578");
+
+
+            entity.HasOne(d => d.ArbitratorCitizen).WithMany(p => p.ReformerLitigationRequests)
+              .HasForeignKey(d => d.ArbitratorCitizenId)
+              .OnDelete(DeleteBehavior.ClientSetNull)
+              .HasConstraintName("FKReformerCitizenLitigation638578");
 
             entity.HasOne(d => d.ApplicantCitizen).WithMany(p => p.LitigationRequests)
                 .HasForeignKey(d => d.ApplicantCitizenId)
@@ -1307,6 +1401,11 @@ public partial class REACDBContext : DbContext
                .OnDelete(DeleteBehavior.ClientSetNull)
                .HasConstraintName("FKSysCitizenRequestTypeCitizenRequest676101");
 
+            entity.HasOne(d => d.Citizen).WithMany(p => p.CitizenRequests)
+              .HasForeignKey(d => d.CitizenId)
+              .OnDelete(DeleteBehavior.ClientSetNull)
+              .HasConstraintName("FKCitizenCitizenRequest676100000001");
+
 
             entity.HasOne(d => d.SysArea).WithMany(p => p.CitizenRequests)
                .HasForeignKey(d => d.AreaId)
@@ -1406,6 +1505,40 @@ public partial class REACDBContext : DbContext
             entity.ToTable("SysBank");
 
         });
+        modelBuilder.Entity<ArbitratorStopFreeUpDecision>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK_ArbitratorStopFreeUpDecision_3214EC0743341C99");
+
+            entity.ToTable("ArbitratorStopFreeUpDecision");
+
+            entity.HasOne(d => d.Citizen).WithMany(p => p.ArbitratorStopFreeUpDecisions)
+               .HasForeignKey(d => d.CitizenId)
+               .OnDelete(DeleteBehavior.Cascade)
+               .HasConstraintName("FKCitizenArbitratorStopFreeUpDecision676101");
+
+            entity.HasOne(d => d.SysArbitratorStatus).WithMany(p => p.ArbitratorStopFreeUpDecisions)
+              .HasForeignKey(d => d.ArbitratorStatusId)
+              .OnDelete(DeleteBehavior.Cascade)
+              .HasConstraintName("FKSysArbitratorStatusArbitratorStopFreeUpDecision676101");
+        });
+        modelBuilder.Entity<ReformerStopFreeUpDecision>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK_ReformerInactiveDecision_3214EC0743341C99");
+
+            entity.ToTable("ReformerStopFreeUpDecision");
+
+            entity.HasOne(d => d.Citizen).WithMany(p => p.ReformerStopFreeUpDecisions)
+               .HasForeignKey(d => d.CitizenId)
+               .OnDelete(DeleteBehavior.Cascade)
+               .HasConstraintName("FKCitizenReformerStopFreeUpDecision676101");
+
+            entity.HasOne(d => d.SysReformerStatus).WithMany(p => p.ReformerStopFreeUpDecisions)
+              .HasForeignKey(d => d.ReformerStatusId)
+              .OnDelete(DeleteBehavior.Cascade)
+              .HasConstraintName("FKSysReformerStatusReformerStopFreeUpDecision676101");
+        });
+
+
         modelBuilder.Entity<CitizenBankAccount>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK_CitizenBankAccount_3214EC0743341C99");

@@ -12,7 +12,7 @@ using REAC.EntityFrameworkCore.Entities.System;
 namespace REAC.EntityFrameworkCore.Migrations
 {
     [DbContext(typeof(REACDBContext))]
-    [Migration("20240801131406_InitDatabaseMigration")]
+    [Migration("20240806153033_InitDatabaseMigration")]
     partial class InitDatabaseMigration
     {
         /// <inheritdoc />
@@ -24,6 +24,75 @@ namespace REAC.EntityFrameworkCore.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Arbitration.LitigationRequestArbitrator", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ArbitratorCitizenId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("LitigationRequestId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("UpdatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id")
+                        .HasName("PK__LitigationRequestArbitrator07F533D1CD");
+
+                    b.HasIndex("ArbitratorCitizenId");
+
+                    b.HasIndex("LitigationRequestId");
+
+                    b.HasIndex(new[] { "Id" }, "LitigationRequestArbitrator_Id")
+                        .IsUnique();
+
+                    b.ToTable("LitigationRequestArbitrator", (string)null);
+                });
+
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.ArbitratorStopFreeUpDecision", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ArbitratorStatusId")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("CitizenId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("DecisionDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("LateLitigationRequestNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("StoppingReason")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id")
+                        .HasName("PK_ArbitratorStopFreeUpDecision_3214EC0743341C99");
+
+                    b.HasIndex("ArbitratorStatusId");
+
+                    b.HasIndex("CitizenId");
+
+                    b.ToTable("ArbitratorStopFreeUpDecision", (string)null);
+                });
 
             modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.CitizenBankAccount", b =>
                 {
@@ -269,6 +338,12 @@ namespace REAC.EntityFrameworkCore.Migrations
                     b.Property<Guid>("ApplicantCitizenId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<int?>("ArbitrationPeriod")
+                        .HasColumnType("int");
+
+                    b.Property<Guid?>("ArbitratorCitizenId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<int?>("ArbitratorSelectionDuration")
                         .HasColumnType("int");
 
@@ -298,6 +373,12 @@ namespace REAC.EntityFrameworkCore.Migrations
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("EndArbitrationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("EndReconciliationDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<Guid?>("ExemptionReductionCategoryId")
                         .HasColumnType("uniqueidentifier");
@@ -374,6 +455,9 @@ namespace REAC.EntityFrameworkCore.Migrations
                     b.Property<int?>("PretenderRating")
                         .HasColumnType("int");
 
+                    b.Property<int?>("ReconciliationPeriod")
+                        .HasColumnType("int");
+
                     b.Property<Guid?>("ReformerCitizenId")
                         .HasColumnType("uniqueidentifier");
 
@@ -387,6 +471,12 @@ namespace REAC.EntityFrameworkCore.Migrations
                     b.Property<DateTime?>("SentOn")
                         .HasColumnType("datetime");
 
+                    b.Property<DateTime?>("StartArbitrationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("StartReconciliationDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Title")
                         .HasMaxLength(250)
                         .HasColumnType("nvarchar(250)");
@@ -395,6 +485,8 @@ namespace REAC.EntityFrameworkCore.Migrations
                         .HasName("PK__Litigati__3214EC077962DFCA");
 
                     b.HasIndex("ApplicantCitizenId");
+
+                    b.HasIndex("ArbitratorCitizenId");
 
                     b.HasIndex("AreaId");
 
@@ -715,7 +807,6 @@ namespace REAC.EntityFrameworkCore.Migrations
             modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Litigation.LitigationRequestReformerAssigningRequest", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("CitizenId")
@@ -730,11 +821,14 @@ namespace REAC.EntityFrameworkCore.Migrations
                     b.Property<DateTime?>("ResponseOn")
                         .HasColumnType("datetime2");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("PK__LitigationRequestReformerAssigningRequest4EC07AE06877A");
+
+                    b.HasIndex("CitizenId");
 
                     b.HasIndex("LitigationRequestId");
 
-                    b.ToTable("LitigationRequestReformerAssigningRequest");
+                    b.ToTable("LitigationRequestReformerAssigningRequest", (string)null);
                 });
 
             modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Litigation.LitigationRequestRequest", b =>
@@ -789,6 +883,9 @@ namespace REAC.EntityFrameworkCore.Migrations
 
                     b.Property<Guid>("LitigationRequestId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("LitigationRequestSessionRequestTypeId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("SessionDatetime")
                         .HasColumnType("datetime2");
@@ -1019,14 +1116,13 @@ namespace REAC.EntityFrameworkCore.Migrations
                     b.Property<int?>("LitigationRequestExtendPeriodRequestStatusId")
                         .HasColumnType("int");
 
+                    b.Property<int>("LitigationRequestExtendPeriodRequestTypeId")
+                        .HasColumnType("int");
+
                     b.Property<Guid>("LitigationRequestId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Notes")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("RejectReason")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("RequestReason")
@@ -1122,10 +1218,46 @@ namespace REAC.EntityFrameworkCore.Migrations
                     b.ToTable("LitigationRequestMeetingReconciliationItem", (string)null);
                 });
 
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.ReformerStopFreeUpDecision", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<Guid>("CitizenId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("DecisionDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("LateLitigationRequestNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ReformerStatusId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("StoppingReason")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id")
+                        .HasName("PK_ReformerInactiveDecision_3214EC0743341C99");
+
+                    b.HasIndex("CitizenId");
+
+                    b.HasIndex("ReformerStatusId");
+
+                    b.ToTable("ReformerStopFreeUpDecision", (string)null);
+                });
+
             modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.System.Citizen", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<int?>("ArbitratorStatusId")
+                        .HasColumnType("int");
 
                     b.Property<Guid?>("AreaId")
                         .HasColumnType("uniqueidentifier");
@@ -1228,6 +1360,9 @@ namespace REAC.EntityFrameworkCore.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
+                    b.Property<int?>("ReformerStatusId")
+                        .HasColumnType("int");
+
                     b.Property<string>("ShortName")
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
@@ -1254,6 +1389,8 @@ namespace REAC.EntityFrameworkCore.Migrations
                     b.HasKey("Id")
                         .HasName("PK__Citizen__3214EC0756CF4E03");
 
+                    b.HasIndex("ArbitratorStatusId");
+
                     b.HasIndex("AreaId");
 
                     b.HasIndex("CityId");
@@ -1269,6 +1406,8 @@ namespace REAC.EntityFrameworkCore.Migrations
                     b.HasIndex("LitigationCompanyRepresentativeId");
 
                     b.HasIndex("NationalityId");
+
+                    b.HasIndex("ReformerStatusId");
 
                     b.ToTable("Citizen", (string)null);
                 });
@@ -1304,6 +1443,9 @@ namespace REAC.EntityFrameworkCore.Migrations
 
                     b.Property<bool>("IsVolunteerApproval")
                         .HasColumnType("bit");
+
+                    b.Property<DateTime>("RequestOn")
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("StatusId")
                         .HasColumnType("int");
@@ -1447,6 +1589,24 @@ namespace REAC.EntityFrameworkCore.Migrations
                     b.ToTable("SysArbitratorClass", (string)null);
                 });
 
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.System.SysArbitratorStatus", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("int");
+
+                    b.Property<string>("StatusName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id")
+                        .HasName("PK__SysArbitratorStatus4AA46");
+
+                    b.HasIndex(new[] { "Id" }, "SysArbitratorStatus_Id")
+                        .IsUnique();
+
+                    b.ToTable("SysArbitratorStatus", (string)null);
+                });
+
             modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.System.SysArea", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1574,6 +1734,9 @@ namespace REAC.EntityFrameworkCore.Migrations
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
+
+                    b.Property<int>("DepartmentType")
+                        .HasColumnType("int");
 
                     b.Property<int>("DistributionMode")
                         .HasColumnType("int");
@@ -1813,6 +1976,9 @@ namespace REAC.EntityFrameworkCore.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("ReconciliationPeriod")
+                        .HasColumnType("int");
+
                     b.Property<string>("TermsAndConditions")
                         .HasColumnType("nvarchar(max)");
 
@@ -1982,6 +2148,24 @@ namespace REAC.EntityFrameworkCore.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("SysNationalities");
+                });
+
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.System.SysReformerStatus", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("int");
+
+                    b.Property<string>("StatusName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id")
+                        .HasName("PK__SysReformerStatus4AA46");
+
+                    b.HasIndex(new[] { "Id" }, "SysReformerStatus_Id")
+                        .IsUnique();
+
+                    b.ToTable("SysReformerStatus", (string)null);
                 });
 
             modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.System.SysRegistrationRequest", b =>
@@ -2579,6 +2763,9 @@ namespace REAC.EntityFrameworkCore.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
+                    b.Property<bool>("IsEndOfWorkFlow")
+                        .HasColumnType("bit");
+
                     b.Property<bool?>("IsFinishedValue")
                         .HasColumnType("bit");
 
@@ -2828,6 +3015,46 @@ namespace REAC.EntityFrameworkCore.Migrations
                     b.ToTable("WorkFlowStepsActorType", (string)null);
                 });
 
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Arbitration.LitigationRequestArbitrator", b =>
+                {
+                    b.HasOne("REAC.EntityFrameworkCore.Entities.System.Citizen", "ArbitratorCitizen")
+                        .WithMany("LitigationRequestArbitrators")
+                        .HasForeignKey("ArbitratorCitizenId")
+                        .IsRequired()
+                        .HasConstraintName("FKArbitratorCitizenRequestArbitrators231388000");
+
+                    b.HasOne("REAC.EntityFrameworkCore.Entities.Litigation.LitigationRequest", "LitigationRequest")
+                        .WithMany("LitigationRequestArbitrators")
+                        .HasForeignKey("LitigationRequestId")
+                        .IsRequired()
+                        .HasConstraintName("FKLitigationRequestLitigationRequestArbitrators231388");
+
+                    b.Navigation("ArbitratorCitizen");
+
+                    b.Navigation("LitigationRequest");
+                });
+
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.ArbitratorStopFreeUpDecision", b =>
+                {
+                    b.HasOne("REAC.EntityFrameworkCore.Entities.System.SysArbitratorStatus", "SysArbitratorStatus")
+                        .WithMany("ArbitratorStopFreeUpDecisions")
+                        .HasForeignKey("ArbitratorStatusId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FKSysArbitratorStatusArbitratorStopFreeUpDecision676101");
+
+                    b.HasOne("REAC.EntityFrameworkCore.Entities.System.Citizen", "Citizen")
+                        .WithMany("ArbitratorStopFreeUpDecisions")
+                        .HasForeignKey("CitizenId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FKCitizenArbitratorStopFreeUpDecision676101");
+
+                    b.Navigation("Citizen");
+
+                    b.Navigation("SysArbitratorStatus");
+                });
+
             modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.CitizenBankAccount", b =>
                 {
                     b.HasOne("REAC.EntityFrameworkCore.Entities.System.SysBank", "SysBank")
@@ -2950,6 +3177,11 @@ namespace REAC.EntityFrameworkCore.Migrations
                         .IsRequired()
                         .HasConstraintName("FKLitigation638578");
 
+                    b.HasOne("REAC.EntityFrameworkCore.Entities.System.Citizen", "ArbitratorCitizen")
+                        .WithMany("ReformerLitigationRequests")
+                        .HasForeignKey("ArbitratorCitizenId")
+                        .HasConstraintName("FKReformerCitizenLitigation638578");
+
                     b.HasOne("REAC.EntityFrameworkCore.Entities.System.SysArea", "Area")
                         .WithMany("LitigationRequests")
                         .HasForeignKey("AreaId");
@@ -3008,11 +3240,13 @@ namespace REAC.EntityFrameworkCore.Migrations
                         .HasConstraintName("FKLitigation580725");
 
                     b.HasOne("REAC.EntityFrameworkCore.Entities.System.Citizen", "ReformerCitizen")
-                        .WithMany("ReformerLitigationRequests")
+                        .WithMany("ArbitratorLitigationRequests")
                         .HasForeignKey("ReformerCitizenId")
-                        .HasConstraintName("FKReformerCitizenLitigation638578");
+                        .HasConstraintName("FKArbitratorCitizenLitigation638578");
 
                     b.Navigation("ApplicantCitizen");
+
+                    b.Navigation("ArbitratorCitizen");
 
                     b.Navigation("Area");
 
@@ -3217,13 +3451,21 @@ namespace REAC.EntityFrameworkCore.Migrations
 
             modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Litigation.LitigationRequestReformerAssigningRequest", b =>
                 {
+                    b.HasOne("REAC.EntityFrameworkCore.Entities.System.Citizen", "ReformerCitizen")
+                        .WithMany("LitigationRequestReformerAssigningRequests")
+                        .HasForeignKey("CitizenId")
+                        .IsRequired()
+                        .HasConstraintName("FKReformerCitizenLitigationRequestReformerAssigningRequest705");
+
                     b.HasOne("REAC.EntityFrameworkCore.Entities.Litigation.LitigationRequest", "LitigationRequest")
                         .WithMany("LitigationRequestReformerAssigningRequests")
                         .HasForeignKey("LitigationRequestId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FKLitigationRequestLitigationRequestReformerAssigningRequest705");
 
                     b.Navigation("LitigationRequest");
+
+                    b.Navigation("ReformerCitizen");
                 });
 
             modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Litigation.LitigationRequestRequest", b =>
@@ -3389,8 +3631,34 @@ namespace REAC.EntityFrameworkCore.Migrations
                     b.Navigation("LitigationRequestReconciliationReport");
                 });
 
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.ReformerStopFreeUpDecision", b =>
+                {
+                    b.HasOne("REAC.EntityFrameworkCore.Entities.System.Citizen", "Citizen")
+                        .WithMany("ReformerStopFreeUpDecisions")
+                        .HasForeignKey("CitizenId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FKCitizenReformerStopFreeUpDecision676101");
+
+                    b.HasOne("REAC.EntityFrameworkCore.Entities.System.SysReformerStatus", "SysReformerStatus")
+                        .WithMany("ReformerStopFreeUpDecisions")
+                        .HasForeignKey("ReformerStatusId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FKSysReformerStatusReformerStopFreeUpDecision676101");
+
+                    b.Navigation("Citizen");
+
+                    b.Navigation("SysReformerStatus");
+                });
+
             modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.System.Citizen", b =>
                 {
+                    b.HasOne("REAC.EntityFrameworkCore.Entities.System.SysArbitratorStatus", "SysArbitratorStatus")
+                        .WithMany("Citizens")
+                        .HasForeignKey("ArbitratorStatusId")
+                        .HasConstraintName("FKCSysArbitratorStatusitizen92459");
+
                     b.HasOne("REAC.EntityFrameworkCore.Entities.System.SysArea", "Area")
                         .WithMany("Citizens")
                         .HasForeignKey("AreaId")
@@ -3430,6 +3698,11 @@ namespace REAC.EntityFrameworkCore.Migrations
                         .HasForeignKey("NationalityId")
                         .HasConstraintName("FKCitizen92411");
 
+                    b.HasOne("REAC.EntityFrameworkCore.Entities.System.SysReformerStatus", "SysReformerStatus")
+                        .WithMany("Citizens")
+                        .HasForeignKey("ReformerStatusId")
+                        .HasConstraintName("FKCSysReformerStatusCitizen92459");
+
                     b.Navigation("Area");
 
                     b.Navigation("City");
@@ -3445,6 +3718,10 @@ namespace REAC.EntityFrameworkCore.Migrations
                     b.Navigation("LitigationCompanyRepresentative");
 
                     b.Navigation("Nationality");
+
+                    b.Navigation("SysArbitratorStatus");
+
+                    b.Navigation("SysReformerStatus");
                 });
 
             modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.System.CitizenRequest", b =>
@@ -3460,10 +3737,10 @@ namespace REAC.EntityFrameworkCore.Migrations
                         .HasConstraintName("FKSysSysAreaCitizenRequest676101");
 
                     b.HasOne("REAC.EntityFrameworkCore.Entities.System.Citizen", "Citizen")
-                        .WithMany()
+                        .WithMany("CitizenRequests")
                         .HasForeignKey("CitizenId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FKCitizenCitizenRequest676100000001");
 
                     b.HasOne("REAC.EntityFrameworkCore.Entities.System.SysCitizenRequestType", "SysCitizenRequestType")
                         .WithMany("CitizenRequests")
@@ -3574,6 +3851,38 @@ namespace REAC.EntityFrameworkCore.Migrations
 
                             b1.WithOwner()
                                 .HasForeignKey("SysArbitratorClassId");
+                        });
+
+                    b.Navigation("Translations");
+                });
+
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.System.SysArbitratorStatus", b =>
+                {
+                    b.OwnsMany("REAC.EntityFrameworkCore.Entities.System.SysArbitratorStatusTranslation", "Translations", b1 =>
+                        {
+                            b1.Property<int>("SysArbitratorStatusId")
+                                .HasColumnType("int");
+
+                            b1.Property<int>("Id")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("int");
+
+                            b1.Property<string>("LanguageCode")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.Property<string>("StatusName")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.HasKey("SysArbitratorStatusId", "Id");
+
+                            b1.ToTable("SysArbitratorStatus");
+
+                            b1.ToJson("Translations");
+
+                            b1.WithOwner()
+                                .HasForeignKey("SysArbitratorStatusId");
                         });
 
                     b.Navigation("Translations");
@@ -4114,6 +4423,38 @@ namespace REAC.EntityFrameworkCore.Migrations
 
                             b1.WithOwner()
                                 .HasForeignKey("SysLitigationRequestStatusId");
+                        });
+
+                    b.Navigation("Translations");
+                });
+
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.System.SysReformerStatus", b =>
+                {
+                    b.OwnsMany("REAC.EntityFrameworkCore.Entities.System.SysReformerStatusTranslation", "Translations", b1 =>
+                        {
+                            b1.Property<int>("SysReformerStatusId")
+                                .HasColumnType("int");
+
+                            b1.Property<int>("Id")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("int");
+
+                            b1.Property<string>("LanguageCode")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.Property<string>("StatusName")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.HasKey("SysReformerStatusId", "Id");
+
+                            b1.ToTable("SysReformerStatus");
+
+                            b1.ToJson("Translations");
+
+                            b1.WithOwner()
+                                .HasForeignKey("SysReformerStatusId");
                         });
 
                     b.Navigation("Translations");
@@ -4858,6 +5199,8 @@ namespace REAC.EntityFrameworkCore.Migrations
 
             modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Litigation.LitigationRequest", b =>
                 {
+                    b.Navigation("LitigationRequestArbitrators");
+
                     b.Navigation("LitigationRequestCorrespondences");
 
                     b.Navigation("LitigationRequestExtendPeriodRequests");
@@ -4936,7 +5279,13 @@ namespace REAC.EntityFrameworkCore.Migrations
 
             modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.System.Citizen", b =>
                 {
+                    b.Navigation("ArbitratorLitigationRequests");
+
+                    b.Navigation("ArbitratorStopFreeUpDecisions");
+
                     b.Navigation("CitizenBankAccounts");
+
+                    b.Navigation("CitizenRequests");
 
                     b.Navigation("DelegatorLitigationRequests");
 
@@ -4944,15 +5293,21 @@ namespace REAC.EntityFrameworkCore.Migrations
 
                     b.Navigation("FromDelegators");
 
+                    b.Navigation("LitigationRequestArbitrators");
+
                     b.Navigation("LitigationRequestContractFirstPartyCitizens");
 
                     b.Navigation("LitigationRequestContractSecondPartyCitizens");
 
                     b.Navigation("LitigationRequestNotes");
 
+                    b.Navigation("LitigationRequestReformerAssigningRequests");
+
                     b.Navigation("LitigationRequests");
 
                     b.Navigation("ReformerLitigationRequests");
+
+                    b.Navigation("ReformerStopFreeUpDecisions");
 
                     b.Navigation("SysRegistrationRequestCitizens");
 
@@ -4975,6 +5330,13 @@ namespace REAC.EntityFrameworkCore.Migrations
             modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.System.SysArbitratorClass", b =>
                 {
                     b.Navigation("CitizenRequests");
+                });
+
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.System.SysArbitratorStatus", b =>
+                {
+                    b.Navigation("ArbitratorStopFreeUpDecisions");
+
+                    b.Navigation("Citizens");
                 });
 
             modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.System.SysArea", b =>
@@ -5143,6 +5505,13 @@ namespace REAC.EntityFrameworkCore.Migrations
             modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.System.SysNationality", b =>
                 {
                     b.Navigation("Citizens");
+                });
+
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.System.SysReformerStatus", b =>
+                {
+                    b.Navigation("Citizens");
+
+                    b.Navigation("ReformerStopFreeUpDecisions");
                 });
 
             modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.System.SysRegistrationRequest", b =>

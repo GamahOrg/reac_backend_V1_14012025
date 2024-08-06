@@ -40,7 +40,7 @@ namespace REAC.Application.AppServices
 
 
                 var result = await PaginatedList<GetAllFacilitiesResponseDto>.CreateAsync(list, pageIndex, pageSize);
-                if (result.Items.Count == 0) return new BaseResponse() { IsDone = false, Message = "Not Found" };
+                if (result.Items.Count == 0) return new BaseResponse() { IsDone = true, Message = "غير موجود" };
 
                 return new DataResponse<PaginatedList<GetAllFacilitiesResponseDto>>()
                 {
@@ -50,7 +50,29 @@ namespace REAC.Application.AppServices
 
 
             }
-            catch (Exception ex) { return new BaseResponse() { IsDone = false, Message = "Internal Error" }; }
+            catch (Exception ex) { return new BaseResponse() { IsDone = false, Message = "خطأ داخلي" }; }
+        }
+        public async Task<BaseResponse> GetAllFacilitiesDropdown()
+        {
+            try
+            {
+                Guid referenceId = Guid.Empty;
+                _jwtReader.GetReferenceId(ref referenceId);
+
+                var facilities = (await _repository.GetQueryable<Facility, Guid>()).Where(f => f.CitizenId == referenceId).ToList();
+
+                var list = _mapper.Map<List<GetAllFacilitiesForDropdownDto>>(facilities);
+
+
+                return new DataResponse<List<GetAllFacilitiesForDropdownDto>>()
+                {
+                    Data = list,
+                    IsDone = true
+                };
+
+
+            }
+            catch (Exception ex) { return new BaseResponse() { IsDone = false, Message = "خطأ داخلي" }; }
         }
 
         public async Task<BaseResponse> GetFacilityByIdAsync(Guid facilityId)
@@ -63,7 +85,7 @@ namespace REAC.Application.AppServices
                     .AsNoTracking().Where(x => x.Id == facilityId)
                               .FirstOrDefault();
 
-                if (facility == null) return new BaseResponse() { IsDone = false, Message = "Not Found" };
+                if (facility == null) return new BaseResponse() { IsDone = false, Message = "غير موجود" };
 
                 var result = _mapper.Map<GetFacilityByIdResponse>(facility);
 
@@ -74,7 +96,7 @@ namespace REAC.Application.AppServices
                     Data = result
                 };
             }
-            catch (Exception ex) { return new BaseResponse() { IsDone = false, Message = "Internal Error" }; }
+            catch (Exception ex) { return new BaseResponse() { IsDone = false, Message = "خطأ داخلي" }; }
         }
 
         public async Task<BaseResponse> EditFacilityAsync(EditFacilityRequestDto editFacilityRequestDto)
@@ -86,7 +108,7 @@ namespace REAC.Application.AppServices
                 var response = await _repository.GetByIdAsync<Facility, Guid>(editFacilityRequestDto.Id, default);
 
                 if (((DataResponse<Facility>)response).Data == null)
-                    return new BaseResponse() { IsDone = false, Message = "Id Not Found" };
+                    return new BaseResponse() { IsDone = false, Message = "غير موجود" };
 
                 if (response.IsDone != true)
                     return response;
@@ -120,113 +142,91 @@ namespace REAC.Application.AppServices
                 };
 
             }
-            catch (Exception ex) { return new BaseResponse() { IsDone = false, Message = "Internal Error" }; }
+            catch (Exception ex) { return new BaseResponse() { IsDone = false, Message = "خطأ داخلي" }; }
         }
 
         public async Task<BaseResponse> ValidateAndAddFacility(string crNumber, Guid? citizenId)
         {
-            // Get Facility Information
-            if (string.IsNullOrWhiteSpace(crNumber))
-                return new BaseResponse() { IsDone = false, Message = "يجب إدخال السجل التجارى" };
-
-            var isExist = (await _repository.GetQueryable<Facility, Guid>()).Any(x => x.CommercialRegisterNumber == crNumber || x.Facility700Number == crNumber);
-            if (isExist)
-                return new BaseResponse() { IsDone = false, Message = "السجل التجارى غير موجود" };
-
-            var crInformationResult = await _mCService.GetCRInformationByCRNumber(crNumber);
-
-            if (crInformationResult.Data == null || !crInformationResult.IsDone || crInformationResult.Data.Data is null
-                || crInformationResult.Data.Error is not null || crInformationResult.Data.UnauthorizedError is not null)
-                return new BaseResponse() { IsDone = false, Message = "السجل التجارى غير موجود" };
-
-            if (crInformationResult.Data.Data.CRStatus != CRStatusType.Active.ToString())
-                return new BaseResponse() { IsDone = false, Message = "المنشأة غير مفعلة" };
-
-            if (crInformationResult.Data.Data.CRExpiryDate < DateTime.Now)
-                return new BaseResponse() { IsDone = false, Message = "السجل التجارى منتهي" };
-
-            // Get CR Owners
-            var crOwnersnresult = await _mCService.GetCRInformationByCROwners(crNumber);
-
-            if (crOwnersnresult.Data == null || !crOwnersnresult.IsDone || crOwnersnresult.Data.Data is null
-                || crOwnersnresult.Data.Error is not null || crOwnersnresult.Data.UnauthorizedError is not null)
-                return new BaseResponse() { IsDone = false, Message = "المضيف ليس من قائمة الملاك" };
-
-            Guid referenceId = Guid.Empty;
-            if (citizenId.HasValue)
-                referenceId = citizenId.Value;
-            else
-                _jwtReader.GetReferenceId(ref referenceId);
-
-            var citizen = (await _repository.GetQueryable<Citizen, Guid>())
-                    .AsNoTracking().Where(x => x.Id == referenceId).FirstOrDefault();
-
-            // Check if User is an owner
-            if (!crOwnersnresult.Data.Data.Contains(citizen.IdentityNumber))
-                return new BaseResponse() { IsDone = false, Message = "المضيف ليس من قائمة الملاك" };
-
-
-            // Add new Facility
-
-            var facilityRequestList = (await _repository.GetQueryable<Facility, Guid>()).Where(x => x.Code != null).ToList();
-
-            string code = "FAC_00000001";
-
-            if (facilityRequestList is null)
-                code = "FAC_00000001";
-            else
-                code = "FAC_" + (facilityRequestList.Count() + 1).ToString("D8");
-
-            Facility facility = new Facility()
+            try
             {
-                Id = Guid.NewGuid(),
-                CitizenId = citizen.Id,
-                ArabicFacilityName = crInformationResult.Data.Data.CRName,
-                Code = code,
-                Facility700Number = crInformationResult.Data.Data.CRNationalNumber,
-                CommercialRegisterNumber = crInformationResult.Data.Data.CRNumber,
-                Street = crInformationResult.Data.Data.CRAddress,
-            };
+                // Get Facility Information
+                if (string.IsNullOrWhiteSpace(crNumber))
+                    return new BaseResponse() { IsDone = false, Message = "رقم السجل التجاري غير موجود" };
 
-            await _repository.AddAsync<Facility, Guid>(facility);
+                var isExist = (await _repository.GetQueryable<Facility, Guid>()).Any(x => x.CommercialRegisterNumber == crNumber || x.Facility700Number == crNumber);
+                if (isExist)
+                    return new BaseResponse() { IsDone = false, Message = "رقم السجل التجاري موجود مسبقا" };
 
-            var result = await _repository.SaveChangesAsync();
-            if (!result.IsDone) return result;
+                var crInformationResult = await _mCService.GetCRInformationByCRNumber(crNumber);
 
-            return new BaseResponse() { IsDone = true };
+                if (crInformationResult.Data == null || !crInformationResult.IsDone || crInformationResult.Data.Data is null
+                    || crInformationResult.Data.Error is not null || crInformationResult.Data.UnauthorizedError is not null)
+                    return new BaseResponse() { IsDone = false, Message = "المنشأة غير موجوده" };
+
+                if (crInformationResult.Data.Data.CRStatus != CRStatusType.Active.ToString())
+                    return new BaseResponse() { IsDone = false, Message = "رقم السجل التجاري غير فعال" };
+
+                if (crInformationResult.Data.Data.CRExpiryDate < DateTime.Now)
+                    return new BaseResponse() { IsDone = false, Message = "رقم السجل التجاري منتهي" };
+
+                // Get CR Owners
+                var crOwnersnresult = await _mCService.GetCRInformationByCROwners(crNumber);
+
+                if (crOwnersnresult.Data == null || !crOwnersnresult.IsDone || crOwnersnresult.Data.Data is null
+                    || crOwnersnresult.Data.Error is not null || crOwnersnresult.Data.UnauthorizedError is not null)
+                    return new BaseResponse() { IsDone = false, Message = "هذا المستخدم ليس من بين أصحاب السجل التجاري" };
+
+                Guid referenceId = Guid.Empty;
+                if (citizenId.HasValue)
+                    referenceId = citizenId.Value;
+                else
+                    _jwtReader.GetReferenceId(ref referenceId);
+
+                var citizen = (await _repository.GetQueryable<Citizen, Guid>())
+                        .AsNoTracking().Where(x => x.Id == referenceId).FirstOrDefault();
+
+                // Check if User is an owner
+                if (!crOwnersnresult.Data.Data.Contains(citizen.IdentityNumber))
+                    return new BaseResponse() { IsDone = false, Message = "هذا المستخدم ليس من بين أصحاب السجل التجاري" };
+
+
+                // Add new Facility
+
+                // Generate Facility Code
+                var facilityRequestList = (await _repository.GetQueryable<Facility, Guid>()).Where(x => x.Code != null).ToList();
+
+
+                string code = "FAC_00000001";
+
+                if (facilityRequestList is null)
+                    code = "FAC_00000001";
+                else
+                    code = "FAC_" + (facilityRequestList.Count() + 1).ToString("D8");
+
+                Facility facility = new Facility()
+                {
+                    Id = Guid.NewGuid(),
+                    CitizenId = citizen.Id,
+                    ArabicFacilityName = crInformationResult.Data.Data.CRName,
+                    Code = code,
+                    Facility700Number = crInformationResult.Data.Data.CRNationalNumber,
+                    CommercialRegisterNumber = crInformationResult.Data.Data.CRNumber,
+                    Street = crInformationResult.Data.Data.CRAddress,
+                };
+
+                await _repository.AddAsync<Facility, Guid>(facility);
+
+                var result = await _repository.SaveChangesAsync();
+                if (!result.IsDone) return result;
+
+                return new BaseResponse() { IsDone = true };
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse() { IsDone = false, Message = "خطأ داخلي" };
+            }
+
         }
-
-
-
-        //}
-        //public async Task<BaseResponse> AddFacility(AddFacilityRequestDto addFacilityRequestDto)
-        //{
-        //    try
-        //    {
-
-        //        Guid referenceId = Guid.Empty;
-        //        _jwtReader.GetReferenceId(ref referenceId);
-
-        //        if (addFacilityRequestDto.Id == Guid.Empty)
-        //        {
-        //            var request = _mapper.Map<Facility>(addFacilityRequestDto);
-        //            request.CitizenId = referenceId;
-        //            request.Id = Guid.NewGuid();
-        //            if (citizenRequestCreateUpdateDto.IsSend)
-        //                request.StatusId = CitizenRequestStatus.WaitingForCertify;
-        //            else
-        //                request.StatusId = CitizenRequestStatus.Draft;
-
-        //            await _repository.AddAsync<CitizenRequest, Guid>(request);
-        //            var response = await _repository.SaveChangesAsync();
-        //            return response;
-        //        }
-
-        //    }
-        //    catch (Exception ex) { return new BaseResponse() { IsDone = false, Message = "Internal Error" }; }
-        //}
-
-
 
     }
 }

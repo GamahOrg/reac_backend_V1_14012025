@@ -7,6 +7,7 @@ namespace REAC.EntityFrameworkCore.Entities.System;
 public partial class SysLitigationRequestContractType : BaseEntity<LitigationRequestContractType>
 {
     public string TypeName { get; set; } = null!;
+    public int ReconciliationPeriod { get; set; }
 
     public string CodingPrefixSymbol { get; set; } = null!;
 

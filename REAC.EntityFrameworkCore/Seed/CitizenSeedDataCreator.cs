@@ -24,7 +24,8 @@ namespace Ticketing.EntityFrameworkCore.SeedData
                         FullName = "محمد سعد الشهري",
                         ShortName = "محمد",
                         PassCitizenId = Guid.Parse("e5d55dcb-aa16-4719-8cdb-0ac8783269c6"),
-
+                        IsArbitrator = true,
+                        ArbitratorStatusId = ArbitratorStatus.Certified,
                         GenderId = Gender.Male,
                         IdentityExpiryDate = DateTime.Now.AddYears(2),
                         IdentityFileId = Guid.Parse("e5d55dcb-aa16-4719-8cdb-0ac8783269c6"),
@@ -58,7 +59,8 @@ namespace Ticketing.EntityFrameworkCore.SeedData
                         FullName = "عادل بن احمد محمد الغامدي",
                         ShortName = "عادل",
                         PassCitizenId = Guid.Parse("e5d55dcb-aa16-4719-8cdb-0ac8783269c6"),
-
+                        IsReformer = true,
+                        ReformerStatusId = ReformerStatus.Certified,
                         GenderId = Gender.Male,
                         IdentityExpiryDate = DateTime.Now.AddYears(2),
                         IdentityFileId = Guid.Parse("06f63ff3-28d8-41e2-8769-658406db0788"),
@@ -93,7 +95,8 @@ namespace Ticketing.EntityFrameworkCore.SeedData
                         FullName = "فهد بن غنام الفريدي",
                         ShortName = "فهد",
                         PassCitizenId = Guid.Parse("e5d55dcb-aa16-4719-8cdb-0ac8783269c6"),
-
+                        IsReformer = true,
+                    ReformerStatusId = ReformerStatus.Certified,
                         GenderId = Gender.Male,
                         IdentityExpiryDate = DateTime.Now.AddYears(2),
                         IdentityFileId = Guid.Parse("06f63ff3-28d8-41e2-8769-658406db0788"),
@@ -126,7 +129,8 @@ namespace Ticketing.EntityFrameworkCore.SeedData
                         FullName = "عبدالعزيز محمد الرواف ",
                         ShortName = "عبدالعزيز",
                         PassCitizenId = Guid.Parse("e5d55dcb-aa16-4719-8cdb-0ac8783269c6"),
-
+                        IsArbitrator = true,
+                        ArbitratorStatusId = ArbitratorStatus.Certified,
                         GenderId = Gender.Male,
                         IdentityExpiryDate = DateTime.Now.AddYears(2),
                         IdentityFileId = Guid.Parse("06f63ff3-28d8-41e2-8769-658406db0788"),
@@ -159,6 +163,9 @@ namespace Ticketing.EntityFrameworkCore.SeedData
                         FullName = "عبدالعزيز محمد الرواف ",
                         ShortName = "عبدالعزيز",
                         PassCitizenId = Guid.Parse("e5d55dcb-aa16-4719-8cdb-0ac8783269c6"),
+
+                        IsReformer = true,
+                        ReformerStatusId = ReformerStatus.Certified,
 
                         GenderId = Gender.Male,
                         IdentityExpiryDate = DateTime.Now.AddYears(2),

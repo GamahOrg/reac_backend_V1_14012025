@@ -79,5 +79,16 @@
 
 
 
+
+
+
+
+        public const string Reconciliation_Period = "Reconciliation.Period";
+        public const string Reconciliation_Request_Study_Period = "Reconciliation.Request.Study.Period";
+        public const string Reconciliation_Request_Process_Notes_Period = "Reconciliation.Request.Process.Notes.Period";
+        public const string Reconciliation_Reformer_Approve_Mission_Period = "Reconciliation.Reformer.Approve.Mission.Period";
+        public const string Reconciliation_LitigationParties_Response_Period = "Reconciliation.LitigationParties.Response.Period";
+
+
     }
 }

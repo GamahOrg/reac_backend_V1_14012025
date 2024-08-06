@@ -12,6 +12,7 @@ namespace REAC.Application.Contracts.Dtos.Integration.GEE
         public ResponseObjectDto? Data { get; set; }
         public GeneralGEEErrorDto? Error { get; set; }
         public UnauthorizedErrorDto? UnauthorizedError { get; set; }
+        public bool IsValid { get; set; } = false;
     }
 
     public class ResponseObjectDto
@@ -43,11 +44,11 @@ namespace REAC.Application.Contracts.Dtos.Integration.GEE
     public class PartiesDto
     {
         public string IdentityNo { get; set; }
-        //public string FullName { get; set; }
-        //public string NationalityId { get; set; }
-        //public string IsValid { get; set; }
-        //public string PartySefaTypeName { get; set; }
-        //public string PersonId { get; set; }
+        public string FullName { get; set; }
+        public int GenderId { get; set; }
+        public string BirthDate { get; set; }
+        public string FirstName { get; set; }
+        public string? MobileNumber { get; set; }
     }
 
     public class TextsValuesListDto

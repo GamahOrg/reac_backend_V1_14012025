@@ -9,6 +9,7 @@ using REAC.Application.Contracts.IAppServices;
 using REAC.Domain.Shared.Enum;
 using REAC.EntityFrameworkCore.Entities.Litigation;
 using REAC.EntityFrameworkCore.Entities.System;
+using System.Linq;
 
 namespace REAC.Application.AppServices
 {
@@ -80,21 +81,22 @@ namespace REAC.Application.AppServices
             Guid referenceId = Guid.Empty;
             _jwtReader.GetReferenceId(ref referenceId);
             var citizenRequests = (await _repository.GetQueryable<CitizenRequest, Guid>())
-                    .Include(x => x.SysCitizenRequestType)
-                    .Include(x => x.Status)
-                    .Include(x => x.SysArbitratorClass)
-                    .Include(x => x.SysArea)
-                    .Include(x => x.Citizen)
-                    .Include(x => x.CitizenRequestAcademicDegreeFiles)
-                    .ThenInclude(x => x.AcademicDegreeFile)
-                    .Include(x => x.CitizenRequestNotes)
-                    .Include(x => x.CitizenRequestFreelanceWorkDocumentFiles)
-                    .ThenInclude(x => x.FreelanceWorkDocumentFile)
-                    .Include(x => x.CitizenRequestExperienceCertificates)
-                    .ThenInclude(x => x.CitizenRequestExperienceCertificateFiles)
-                    .ThenInclude(x => x.ExperienceCertificateFile)
-                    .AsNoTracking().Where(x => x.Id == citizenRequestId)
-                              .ToList();
+                .Where(x => x.Id == citizenRequestId)
+                .Include(x => x.SysCitizenRequestType)
+                .Include(x => x.Status)
+                .Include(x => x.SysArbitratorClass)
+                .Include(x => x.SysArea)
+                .Include(x => x.Citizen)
+                .Include(x => x.CitizenRequestNotes)
+                .Include(x => x.CitizenRequestAcademicDegreeFiles)
+                .ThenInclude(x => x.AcademicDegreeFile)
+                .Include(x => x.CitizenRequestNotes)
+                .Include(x => x.CitizenRequestFreelanceWorkDocumentFiles)
+                .ThenInclude(x => x.FreelanceWorkDocumentFile)
+                .Include(x => x.CitizenRequestExperienceCertificates)
+                .ThenInclude(x => x.CitizenRequestExperienceCertificateFiles)
+                .ThenInclude(x => x.ExperienceCertificateFile)
+                .AsSplitQuery().AsNoTracking().ToList();
 
             if (citizenRequests.Count > 0)
             {
@@ -127,132 +129,148 @@ namespace REAC.Application.AppServices
                 else
                     request.StatusId = CitizenRequestStatus.Draft;
 
+                request.RequestOn = DateTime.Now;
                 await _repository.AddAsync<CitizenRequest, Guid>(request);
                 var response = await _repository.SaveChangesAsync();
+                if (!response.IsDone) return response;
                 return response;
             }
             else
             {
                 var citizenRequests = (await _repository.GetQueryable<CitizenRequest, Guid>())
-                        .Include(x => x.SysCitizenRequestType)
-                        .Include(x => x.Status)
-                        .Include(x => x.SysArbitratorClass)
-                        .Include(x => x.SysArea)
-                        .Include(x => x.CitizenRequestAcademicDegreeFiles)
-                        .ThenInclude(x => x.AcademicDegreeFile)
-                        .Include(x => x.CitizenRequestNotes)
-                        .Include(x => x.CitizenRequestFreelanceWorkDocumentFiles)
-                        .ThenInclude(x => x.FreelanceWorkDocumentFile)
-                        .Include(x => x.CitizenRequestExperienceCertificates)
-                        .ThenInclude(x => x.CitizenRequestExperienceCertificateFiles)
-                        .ThenInclude(x => x.ExperienceCertificateFile)
-                        .Where(x => x.Id == citizenRequestCreateUpdateDto.Id)
-                                  .ToList();
+                    .Where(x => x.Id == citizenRequestCreateUpdateDto.Id)
+                    .Include(x => x.SysCitizenRequestType)
+                    .Include(x => x.Status)
+                    .Include(x => x.SysArbitratorClass)
+                    .Include(x => x.SysArea)
+                    .Include(x => x.CitizenRequestAcademicDegreeFiles).ThenInclude(x => x.AcademicDegreeFile)
+                    .Include(x => x.CitizenRequestNotes)
+                    .Include(x => x.CitizenRequestFreelanceWorkDocumentFiles).ThenInclude(x => x.FreelanceWorkDocumentFile)
+                    .Include(x => x.CitizenRequestExperienceCertificates).ThenInclude(x => x.CitizenRequestExperienceCertificateFiles)
+                    .ThenInclude(x => x.ExperienceCertificateFile)
+                    .AsSplitQuery().FirstOrDefault();
 
-                if (citizenRequests.Count == 0)
+                if (citizenRequests is null)
                     return new BaseResponse() { IsDone = false, Message = "Not Found" };
 
                 #region citizenRequest
-                citizenRequests.FirstOrDefault().AreaId = citizenRequestCreateUpdateDto.AreaId;
-                citizenRequests.FirstOrDefault().AcademicDegreeName = citizenRequestCreateUpdateDto.AcademicDegreeName;
-                citizenRequests.FirstOrDefault().AcademicDegreeName = citizenRequestCreateUpdateDto.AcademicDegreeName;
-                citizenRequests.FirstOrDefault().ExperienceYears = citizenRequestCreateUpdateDto.ExperienceYears;
-                citizenRequests.FirstOrDefault().ExperienceYears = citizenRequestCreateUpdateDto.ExperienceYears;
-                citizenRequests.FirstOrDefault().ArbitratorClassId = citizenRequestCreateUpdateDto.ArbitratorClassId;
-                citizenRequests.FirstOrDefault().IsVolunteerApproval = citizenRequestCreateUpdateDto.IsVolunteerApproval;
-                citizenRequests.FirstOrDefault().Brief = citizenRequestCreateUpdateDto.Brief;
+
+                citizenRequests.AreaId = citizenRequestCreateUpdateDto.AreaId;
+                citizenRequests.AcademicDegreeName = citizenRequestCreateUpdateDto.AcademicDegreeName;
+                citizenRequests.AcademicDegreeName = citizenRequestCreateUpdateDto.AcademicDegreeName;
+                citizenRequests.ExperienceYears = citizenRequestCreateUpdateDto.ExperienceYears;
+                citizenRequests.ExperienceYears = citizenRequestCreateUpdateDto.ExperienceYears;
+                citizenRequests.ArbitratorClassId = citizenRequestCreateUpdateDto.ArbitratorClassId;
+                citizenRequests.IsVolunteerApproval = citizenRequestCreateUpdateDto.IsVolunteerApproval;
+                citizenRequests.Brief = citizenRequestCreateUpdateDto.Brief;
+
                 #endregion
 
-                citizenRequests.FirstOrDefault().CitizenRequestFreelanceWorkDocumentFiles.ToList().ForEach(async x =>
-                {
-                    _repository.Remove<CitizenRequestFreelanceWorkDocumentFile, Guid>(x);
-                    var saveResponse = await _repository.SaveChangesAsync();
-
-                });
-                citizenRequests.FirstOrDefault().CitizenRequestAcademicDegreeFiles.ToList().ForEach(async x =>
-                {
-                    _repository.Remove<CitizenRequestAcademicDegreeFile, Guid>(x);
-                    var saveResponse = await _repository.SaveChangesAsync();
-                });
-
-                citizenRequests.FirstOrDefault().CitizenRequestExperienceCertificates.ToList().ForEach(x =>
-                {
-                    x.CitizenRequestExperienceCertificateFiles.ToList().ForEach(x =>
-                    {
-                        citizenRequests.FirstOrDefault().CitizenRequestAcademicDegreeFiles.ToList().ForEach(async x =>
-                        {
-                            _repository.Remove<CitizenRequestAcademicDegreeFile, Guid>(x);
-                            var saveResponse = await _repository.SaveChangesAsync();
-
-                        });
-                    });
-                });
-                citizenRequests.FirstOrDefault().CitizenRequestExperienceCertificates.ToList().ForEach(async x =>
-                {
-                    _repository.Remove<CitizenRequestExperienceCertificate, Guid>(x);
-                    var saveResponse = await _repository.SaveChangesAsync();
-                });
-
+                var response = new BaseResponse { IsDone = true };
 
                 #region CitizenRequestFreelanceWorkDocumentFiles
-                citizenRequestCreateUpdateDto.CitizenRequestFreelanceWorkDocumentFiles.ToList().ForEach(async x =>
+
+                var deleteCitizenRequestFreelanceWorkDocumentFiles = citizenRequests.CitizenRequestFreelanceWorkDocumentFiles
+                    .Where(x => !citizenRequestCreateUpdateDto.CitizenRequestFreelanceWorkDocumentFiles.Any(y => y.Id == x.Id));
+
+                _repository.RemoveRange<CitizenRequestFreelanceWorkDocumentFile, Guid>(deleteCitizenRequestFreelanceWorkDocumentFiles);
+                response = await _repository.SaveChangesAsync();
+                if (!response.IsDone) return response;
+
+                foreach (var citizenRequestFreelanceWorkDocument in citizenRequestCreateUpdateDto.CitizenRequestFreelanceWorkDocumentFiles)
                 {
-                    _repository.AddAsync<CitizenRequestFreelanceWorkDocumentFile, Guid>(new CitizenRequestFreelanceWorkDocumentFile
+                    if (citizenRequestFreelanceWorkDocument.Id == Guid.Empty)
                     {
-                        Id = Guid.NewGuid(),
-                        CitizenRequestId = citizenRequests.FirstOrDefault().Id,
-                        FreelanceWorkDocumentFileId = x.FreelanceWorkDocumentFileId
-                    });
-                    var response = await _repository.SaveChangesAsync();
-                });
+                        await _repository.AddAsync<CitizenRequestFreelanceWorkDocumentFile, Guid>(new CitizenRequestFreelanceWorkDocumentFile
+                        {
+                            Id = Guid.NewGuid(),
+                            CitizenRequestId = citizenRequests.Id,
+                            FreelanceWorkDocumentFileId = citizenRequestFreelanceWorkDocument.FreelanceWorkDocumentFileId
+                        });
+                        response = await _repository.SaveChangesAsync();
+                        if (!response.IsDone) return response;
+                    }
+                }
+
+
                 #endregion
 
                 #region CitizenRequestAcademicDegreeFiles
-                citizenRequestCreateUpdateDto.CitizenRequestAcademicDegreeFiles.ToList().ForEach(async x =>
+
+                var deleteCitizenRequestAcademicDegreeFiles = citizenRequests.CitizenRequestAcademicDegreeFiles
+                    .Where(x => !citizenRequestCreateUpdateDto.CitizenRequestAcademicDegreeFiles.Any(y => y.Id == x.Id));
+
+                _repository.RemoveRange<CitizenRequestAcademicDegreeFile, Guid>(deleteCitizenRequestAcademicDegreeFiles);
+                response = await _repository.SaveChangesAsync();
+                if (!response.IsDone) return response;
+
+
+                foreach (var citizenRequestAcademicDegree in citizenRequestCreateUpdateDto.CitizenRequestAcademicDegreeFiles)
                 {
-                    _repository.AddAsync<CitizenRequestAcademicDegreeFile, Guid>(new CitizenRequestAcademicDegreeFile
+                    if (citizenRequestAcademicDegree.Id == Guid.Empty)
                     {
-                        CitizenRequestId = citizenRequests.FirstOrDefault().Id,
-                        Id = Guid.NewGuid(),
-                        AcademicDegreeFileId = x.AcademicDegreeFileId
-                    });
-                    var response = await _repository.SaveChangesAsync();
-                });
+                        await _repository.AddAsync<CitizenRequestAcademicDegreeFile, Guid>(new CitizenRequestAcademicDegreeFile
+                        {
+                            CitizenRequestId = citizenRequests.Id,
+                            Id = Guid.NewGuid(),
+                            AcademicDegreeFileId = citizenRequestAcademicDegree.AcademicDegreeFileId
+                        });
+                        response = await _repository.SaveChangesAsync();
+                        if (!response.IsDone) return response;
+                    }
+                }
+
                 #endregion
 
                 #region CitizenRequestExperienceCertificates
 
-                citizenRequestCreateUpdateDto.CitizenRequestExperienceCertificates.ToList().ForEach(async x =>
+                var deleteCitizenRequestExperienceCertificates = citizenRequests.CitizenRequestExperienceCertificates
+                    .Where(x => !citizenRequestCreateUpdateDto.CitizenRequestExperienceCertificates.Any(y => y.Id == x.Id));
+                
+                _repository.RemoveRange<CitizenRequestExperienceCertificate, Guid>(deleteCitizenRequestExperienceCertificates);
+                response = await _repository.SaveChangesAsync();
+                if (!response.IsDone) return response;
+               
+
+                foreach (var citizenRequestExperienceCertificates in citizenRequestCreateUpdateDto.CitizenRequestExperienceCertificates)
                 {
-                    CitizenRequestExperienceCertificate citizenRequestExperienceCertificate = new CitizenRequestExperienceCertificate();
-                    citizenRequestExperienceCertificate.Id = Guid.NewGuid();
-                    citizenRequestExperienceCertificate.CitizenRequestId = citizenRequests.FirstOrDefault().Id;
-                    citizenRequestExperienceCertificate.AcquisitionDate = x.AcquisitionDate;
-                    citizenRequestExperienceCertificate.CertificateName = x.CertificateName;
-                    citizenRequestExperienceCertificate.IssuingEntityName = x.IssuingEntityName;
-                    _repository.AddAsync<CitizenRequestExperienceCertificate, Guid>(citizenRequestExperienceCertificate);
-                    var response = await _repository.SaveChangesAsync();
+                    if (citizenRequestExperienceCertificates.AcquisitionDate > DateTime.Now)
+                        return new BaseResponse() { IsDone = false, Message = "تأكد من سنة الحصول على شهادة الخبرة" };
 
-
-                    x.CitizenRequestExperienceCertificateFiles.ToList().ForEach(async y =>
+                    if (citizenRequestExperienceCertificates.Id == Guid.Empty)
                     {
-                        _repository.AddAsync<CitizenRequestExperienceCertificateFile, Guid>(new CitizenRequestExperienceCertificateFile()
+                        CitizenRequestExperienceCertificate citizenRequestExperienceCertificate = new CitizenRequestExperienceCertificate();
+                        citizenRequestExperienceCertificate.Id = Guid.NewGuid();
+                        citizenRequestExperienceCertificate.CitizenRequestId = citizenRequests.Id;
+                        citizenRequestExperienceCertificate.AcquisitionDate = citizenRequestExperienceCertificates.AcquisitionDate;
+                        citizenRequestExperienceCertificate.CertificateName = citizenRequestExperienceCertificates.CertificateName;
+                        citizenRequestExperienceCertificate.IssuingEntityName = citizenRequestExperienceCertificates.IssuingEntityName;
+                        await _repository.AddAsync<CitizenRequestExperienceCertificate, Guid>(citizenRequestExperienceCertificate);
+                        response = await _repository.SaveChangesAsync();
+                        if (!response.IsDone) return response;
+
+                        foreach (var item in citizenRequestExperienceCertificates.CitizenRequestExperienceCertificateFiles)
                         {
-                            CitizenRequestExperienceCertificateId = citizenRequestExperienceCertificate.Id,
-                            Id = Guid.NewGuid(),
-                            ExperienceCertificateFileId = y.ExperienceCertificateFileId
-                        });
-                        var response = await _repository.SaveChangesAsync();
-                    });
-                });
+                            await _repository.AddAsync<CitizenRequestExperienceCertificateFile, Guid>(new CitizenRequestExperienceCertificateFile()
+                            {
+                                CitizenRequestExperienceCertificateId = citizenRequestExperienceCertificate.Id,
+                                Id = Guid.NewGuid(),
+                                ExperienceCertificateFileId = item.ExperienceCertificateFileId
+                            });
+                            response = await _repository.SaveChangesAsync();
+                            if (!response.IsDone) return response;
+                        }
+                    }
+                }
+                
                 #endregion
 
-                if (citizenRequestCreateUpdateDto.IsSend & citizenRequests.FirstOrDefault().StatusId == CitizenRequestStatus.Draft)
-                    ExecuteAction(CitizenRequestAction.Send, citizenRequests.FirstOrDefault().Id, null);
-                if (citizenRequestCreateUpdateDto.IsSend & citizenRequests.FirstOrDefault().StatusId == CitizenRequestStatus.SentForEdit)
-                    ExecuteAction(CitizenRequestAction.SendFromEdit, citizenRequests.FirstOrDefault().Id, null);
+                if (citizenRequestCreateUpdateDto.IsSend & citizenRequests.StatusId == CitizenRequestStatus.Draft)
+                    await ExecuteAction(CitizenRequestAction.Send, citizenRequests.Id, null);
+                if (citizenRequestCreateUpdateDto.IsSend & citizenRequests.StatusId == CitizenRequestStatus.SentForEdit)
+                    await ExecuteAction(CitizenRequestAction.SendFromEdit, citizenRequests.Id, null);
 
-                return new BaseResponse { IsDone = true };
+                return response; 
 
             }
         }
@@ -262,62 +280,80 @@ namespace REAC.Application.AppServices
             Guid referenceId = Guid.Empty;
             _jwtReader.GetReferenceId(ref referenceId);
             var citizenRequests = (await _repository.GetQueryable<CitizenRequest, Guid>())
-                  .Where(x => x.Id == requestId)
-                              .ToList();
+                  .FirstOrDefault(x => x.Id == requestId);
 
-            if (citizenRequests.Count == 0)
+            if (citizenRequests is null)
                 return new BaseResponse() { IsDone = false, Message = "Not Found" };
 
             BaseResponse saveResponse = new BaseResponse() { IsDone = false, Message = "Not Found" };
             switch (citizenRequestAction)
             {
                 case CitizenRequestAction.Send:
-                    citizenRequests.FirstOrDefault().StatusId = CitizenRequestStatus.WaitingForCertify;
+                    citizenRequests.StatusId = CitizenRequestStatus.WaitingForCertify;
                     saveResponse = await _repository.SaveChangesAsync();
+                    if (!saveResponse.IsDone) return saveResponse;
                     break;
                 case CitizenRequestAction.SendFromEdit:
-                    citizenRequests.FirstOrDefault().StatusId = CitizenRequestStatus.SentForEdit;
-                    CitizenRequestNote citizenRequestNote = new CitizenRequestNote();
-                    citizenRequestNote.Id = Guid.NewGuid();
-                    citizenRequestNote.CitizenRequestId = requestId;
-                    citizenRequestNote.Notes = notes;
-                    citizenRequestNote.NoteDateTime = DateTime.Now;
-                    await _repository.AddAsync<CitizenRequestNote, Guid>(citizenRequestNote);
+                    citizenRequests.StatusId = CitizenRequestStatus.SentFromEdit;
+                    if (!string.IsNullOrWhiteSpace(notes))
+                    {
+                        CitizenRequestNote citizenRequestNote = new CitizenRequestNote();
+                        citizenRequestNote.Id = Guid.NewGuid();
+                        citizenRequestNote.CitizenRequestId = requestId;
+                        citizenRequestNote.Notes = notes;
+                        citizenRequestNote.NoteDateTime = DateTime.Now;
+                        await _repository.AddAsync<CitizenRequestNote, Guid>(citizenRequestNote);
+                    }
                     saveResponse = await _repository.SaveChangesAsync();
+                    if (!saveResponse.IsDone) return saveResponse;
                     break;
                 case CitizenRequestAction.Reject:
-                    citizenRequests.FirstOrDefault().StatusId = CitizenRequestStatus.Rejected;
+                    citizenRequests.StatusId = CitizenRequestStatus.Rejected;
                     saveResponse = await _repository.SaveChangesAsync();
+                    if (!saveResponse.IsDone) return saveResponse;
                     break;
                 case CitizenRequestAction.CertifiedWithFees:
-                    citizenRequests.FirstOrDefault().StatusId = CitizenRequestStatus.WaitingForMembershipFeesToBePaid;
+                    citizenRequests.StatusId = CitizenRequestStatus.WaitingForMembershipFeesToBePaid;
                     saveResponse = await _repository.SaveChangesAsync();
+                    if (!saveResponse.IsDone) return saveResponse;
                     break;
                 case CitizenRequestAction.CertifiedWithOutFees:
-                    citizenRequests.FirstOrDefault().StatusId = CitizenRequestStatus.Certified;
+                    citizenRequests.StatusId = CitizenRequestStatus.Certified;
                     var citizen = (await _repository.GetQueryable<Citizen, Guid>())
-                         .Where(x => x.Id == citizenRequests.FirstOrDefault().CitizenId)
-                          .ToList();
+                         .FirstOrDefault(x => x.Id == citizenRequests.CitizenId);
                     if (citizen != null)
                     {
-                        if (citizen.Count > 0)
+                        if (citizen is not null)
                         {
-                            switch (citizenRequests.FirstOrDefault().CitizenRequestTypeId)
+                            switch (citizenRequests.CitizenRequestTypeId)
                             {
                                 case CitizenRequestType.Reformer:
-                                    citizen.FirstOrDefault().IsReformer = true;
+                                    citizen.IsReformer = true;
+                                    citizen.ReformerStatusId = ReformerStatus.Certified;
                                     break;
                                 case CitizenRequestType.Arbitrator:
-                                    citizen.FirstOrDefault().IsArbitrator = true;
+                                    citizen.IsArbitrator = true;
                                     break;
                             }
                         }
                     }
                     saveResponse = await _repository.SaveChangesAsync();
+                    if (!saveResponse.IsDone) return saveResponse;
                     break;
                 case CitizenRequestAction.SendForEdit:
-                    citizenRequests.FirstOrDefault().StatusId = CitizenRequestStatus.SentForEdit;
+                    citizenRequests.StatusId = CitizenRequestStatus.SentForEdit;
+                    if (!string.IsNullOrWhiteSpace(notes))
+                    {
+                        CitizenRequestNote newCitizenRequestNote = new CitizenRequestNote();
+                        newCitizenRequestNote.Id = Guid.NewGuid();
+                        newCitizenRequestNote.CitizenRequestId = requestId;
+                        newCitizenRequestNote.Notes = notes;
+                        newCitizenRequestNote.NoteDateTime = DateTime.Now;
+                        await _repository.AddAsync<CitizenRequestNote, Guid>(newCitizenRequestNote);
+                    }
+
                     saveResponse = await _repository.SaveChangesAsync();
+                    if (!saveResponse.IsDone) return saveResponse;
                     break;
             }
             return saveResponse;

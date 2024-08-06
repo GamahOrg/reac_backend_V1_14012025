@@ -3,8 +3,10 @@ using Microsoft.EntityFrameworkCore;
 using REAC.Application.Contracts.Dtos.Wpf.Business;
 using REAC.Application.Contracts.Dtos.Wpf.Business.WorkFlowLog;
 using REAC.Application.Contracts.Dtos.Wpf.System;
+using REAC.Domain.Shared.Enum;
 using REAC.Domain.Shared.Enum.Wpf;
 using REAC.EntityFrameworkCore.Entities.Litigation;
+using REAC.EntityFrameworkCore.Entities.System;
 using REAC.EntityFrameworkCore.Entities.Wpf.Business;
 using REAC.EntityFrameworkCore.Entities.Wpf.System;
 
@@ -64,16 +66,7 @@ namespace Bpf.Application.ModuleServices
 
                 #endregion
 
-                #region
-                if (processingLog.WorkFlowStep.WorkFlowStepEvents.Single().LitigationRequestStage.HasValue)
-                {
-                    litigationRequest.LitigationRequestStage = processingLog.WorkFlowStep.WorkFlowStepEvents.Single().LitigationRequestStage;
-                }
-                if (processingLog.WorkFlowStep.WorkFlowStepEvents.Single().LitigationRequestSubStage.HasValue)
-                {
-                    litigationRequest.LitigationRequestSubStage = processingLog.WorkFlowStep.WorkFlowStepEvents.Single().LitigationRequestSubStage;
-                }
-                #endregion
+
 
                 #region Validate processingLog
                 if (processingLog == null)
@@ -221,9 +214,22 @@ namespace Bpf.Application.ModuleServices
                 }
                 #endregion
 
-                //var response = await _workFlowProcessingLogService.UpdateAsync(processingLog);
-                //if (!response.IsDone)
-                //    return response;
+
+                if (processingLog.WorkFlowStep.WorkFlowStepEvents.Single().IsEndOfWorkFlow)
+                {
+                    switch (litigationRequest?.LitigationRequestCategoryId)
+                    {
+                        case REAC.Domain.Shared.Enum.LitigationRequestCategory.Arbitration:
+                            litigationRequest.LitigationRequestStage = LitigationRequestStage.Arbitration;
+                            litigationRequest.LitigationRequestSubStage = LitigationRequestSubStage.LitigationRequestAddArbitratorCount;
+                            break;
+                        default:
+                            litigationRequest.LitigationRequestStage = LitigationRequestStage.SetReformer;
+                            litigationRequest.LitigationRequestSubStage = LitigationRequestSubStage.SetReformerFirstTime;
+                            break;
+                    }
+                }
+
 
                 var response = _repository.Update<LitigationRequest, Guid>(litigationRequest);
                 if (!response.IsDone)
@@ -233,6 +239,48 @@ namespace Bpf.Application.ModuleServices
                 if (!repositorySaveResponse.IsDone)
                     return repositorySaveResponse;
 
+
+                if (processingLog.WorkFlowStep.WorkFlowStepEvents.Single().IsEndOfWorkFlow)
+                {
+                    switch (litigationRequest.LitigationRequestCategoryId)
+                    {
+                        case LitigationRequestCategory.Arbitration:
+                            break;
+                        default:
+                            var department = (await _repository.GetQueryable<SysDepartment, Guid>())?
+                               .Where(x => x.DepartmentType == DepartmentType.Reconciliation)
+                               .SingleOrDefault();
+                            if (department != null)
+                            {
+                                switch (department.DistributionMode)
+                                {
+                                    case DepartmentDistributionMode.AutoDistribution:
+                                        var reformers = (await _repository.GetQueryable<Citizen, Guid>())?
+                                                        .Where(x => x.IsReformer == true & x.ReformerStatusId == ReformerStatus.Certified)
+                                                        .OrderBy(x => x.ReformerLitigationRequests
+                                                        .Count(t => t.IsFinished == false))
+                                                        .ToList();
+                                        if (reformers != null)
+                                        {
+                                            if (reformers.Any())
+                                            {
+                                                LitigationRequestReformerAssigningRequest litigationRequestReformerAssigningRequest = new LitigationRequestReformerAssigningRequest();
+                                                litigationRequestReformerAssigningRequest.CitizenId = reformers.FirstOrDefault().Id;
+                                                litigationRequestReformerAssigningRequest.LitigationRequestId = litigationRequest.Id;
+                                                litigationRequestReformerAssigningRequest.Response = LitigationRequestReformerAssigningRequestStatus.None;
+                                                await _repository.AddAsync<LitigationRequestReformerAssigningRequest, Guid>(litigationRequestReformerAssigningRequest);
+                                            }
+                                            repositorySaveResponse = await _repository.SaveChangesAsync(new CancellationToken());
+                                            if (!repositorySaveResponse.IsDone)
+                                                return repositorySaveResponse;
+                                        }
+                                        break;
+                                }
+                            }
+                            break;
+                    }
+
+                }
             }
             catch (Exception ex)
             {
@@ -241,10 +289,7 @@ namespace Bpf.Application.ModuleServices
                     IsDone = false,
                     Exception = ex.Message + "\n" + ex.ToString()
                 };
-
             }
-
-
             return new DataResponse<ResponseWorkFlowDto>()
             {
                 IsDone = true,

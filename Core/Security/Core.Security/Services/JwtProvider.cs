@@ -4,12 +4,15 @@ using Core.Security.Contracts;
 using Core.Security.Dtos;
 using Core.Security.Entities;
 using Core.Shared.Responses;
+using Dapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Primitives;
 using Microsoft.IdentityModel.Tokens;
+using System.Data;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
@@ -60,8 +63,53 @@ namespace Core.Security.Services
                 new Claim("ReferenceId",user.ReferenceId.ToString()),
             };
 
-            var claims = claimsValues.Union(rolesAndClaims).ToList();
 
+            var claims = claimsValues.Union(rolesAndClaims).ToList();
+            bool? IsLawyer = false;
+            bool? IsReformer = false;
+            bool? IsArbitrator = false;
+            bool? IsAdmin = false;
+            try
+            {
+
+                ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                /// External claims (Remove it to reuse the component in other systems)
+                ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                using (IDbConnection db = new SqlConnection(_configuration.GetConnectionString("AppConnectionString")?.ToString()))
+                {
+                    db.Open();
+                    var citizen = db.Query<dynamic?>($@"SELECT * FROM Citizen where Id = '{user.ReferenceId}'").FirstOrDefault();
+                    if (citizen != null)
+                    {
+                        claimsValues.Add(new Claim("IsLawyer", citizen.IsLawyer.ToString()));
+                        claimsValues.Add(new Claim("IsReformer", citizen.IsReformer.ToString()));
+                        claimsValues.Add(new Claim("IsArbitrator", citizen.IsArbitrator.ToString()));
+                        IsLawyer = citizen.IsLawyer;
+                        IsReformer = citizen.IsReformer;
+                        IsArbitrator = citizen.IsArbitrator;
+                    }
+                    else
+                    {
+                        claimsValues.Add(new Claim("IsLawyer", ""));
+                        claimsValues.Add(new Claim("IsReformer", ""));
+                        claimsValues.Add(new Claim("IsArbitrator", ""));
+                        var employee = db.Query<dynamic?>($@"SELECT * FROM SysEmployee where Id = '{user.ReferenceId}'").FirstOrDefault();
+                        if (employee != null)
+                        {
+                            claimsValues.Add(new Claim("IsAdmin", citizen?.IsAdmin.ToString()));
+                            IsAdmin = citizen?.IsAdmin;
+                        }
+                        else
+                        {
+                            claimsValues.Add(new Claim("IsAdmin", ""));
+                        }
+                        db.Close();
+                    }
+                    db.Close();
+                }
+                ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////                
+            }
+            catch { }
             var symetricSecurityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtOptions.SecretKey));
             var signingCredentials = new SigningCredentials(symetricSecurityKey, SecurityAlgorithms.HmacSha256);
             var tokenHandler = new JwtSecurityTokenHandler();
@@ -74,20 +122,18 @@ namespace Core.Security.Services
                 SigningCredentials = signingCredentials
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);
-
             authDto.Token = new TokenModel
             {
                 AccessToken = tokenHandler.WriteToken(token),
-                RefreshToken = GenerateRefreshToken()
-
+                RefreshToken = GenerateRefreshToken(),
+                IsAdmin = IsAdmin,
+                IsArbitrator = IsArbitrator,
+                IsReformer = IsReformer,
+                IsLawyer = IsLawyer
             };
-
             authDto.RefreshTokenExpiration = DateTime.Now.AddHours(_jwtOptions.RefreshTokenDurationInHoures);
             return authDto;
         }
-
-
-
         #region private methods
         private async Task<bool> IsActiveAsync(string token)
         {

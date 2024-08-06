@@ -54,6 +54,10 @@ namespace REAC.Api.OptionsSetup
             {
                 return APISections.Security;
             }
+            else if (path.Contains(APISections.Arbitration))
+            {
+                return APISections.Arbitration;
+            }
             else if (path.Contains("v1"))
             {
                 return "v1";

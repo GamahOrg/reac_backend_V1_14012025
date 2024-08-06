@@ -21,6 +21,9 @@ namespace REAC.Api.OptionsSetup
             options.SwaggerDoc(APISections.WpfSystem, new OpenApiInfo { Title = $"{APISections.WpfSystem} v1.0", Version = $"{APISections.WpfSystem} API V1" });
             options.SwaggerDoc(APISections.Integration, new OpenApiInfo { Title = $"{APISections.Integration} v1.0", Version = $"{APISections.Integration} API V1" });
             options.SwaggerDoc(APISections.Public, new OpenApiInfo { Title = $"{APISections.Public} v1.0", Version = $"{APISections.Public} API V1" });
+            options.SwaggerDoc(APISections.Arbitration, new OpenApiInfo { Title = $"{APISections.Arbitration} v1.0", Version = $"{APISections.Arbitration} API V1" });
+
+
 
             // Include all paths
             options.DocInclusionPredicate((name, api) => true);

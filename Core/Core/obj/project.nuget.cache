@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "tbbCmqUQ/hzUKtIk0HnIJkE2F9Vg4jKuf7o8YM+CFcPicG5bJANE/AjBnGlOrYSbl/96bLeb8g2tATF6WVWywg==",
+  "dgSpecHash": "DzjsWMB+i5ZNrMrTl5YKEEm7Wya+fXMicNJ60yFLvifA9qiWO7HG0/gpSwUuTKuqbvnRGTJwT4+vVdeKNL3XoA==",
   "success": true,
-  "projectFilePath": "C:\\Users\\admin\\Documents\\GitHub\\backend\\Core\\Core\\Core.csproj",
+  "projectFilePath": "C:\\Users\\admin\\source\\repos\\BackEnd\\Core\\Core\\Core.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\admin\\.nuget\\packages\\microsoft.aspnetcore.http.abstractions\\2.2.0\\microsoft.aspnetcore.http.abstractions.2.2.0.nupkg.sha512",
     "C:\\Users\\admin\\.nuget\\packages\\microsoft.aspnetcore.http.extensions\\2.2.0\\microsoft.aspnetcore.http.extensions.2.2.0.nupkg.sha512",

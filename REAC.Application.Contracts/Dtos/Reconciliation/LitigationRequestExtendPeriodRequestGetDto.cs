@@ -8,8 +8,10 @@ namespace REAC.Application.Contracts.Dtos.Reconciliation
         public Guid LitigationRequestId { get; set; }
 
         public int RequiredDays { get; set; }
+        public string RequestReason { get; set; } = null!;
 
-        public string Reason { get; set; } = null!;
+
+        public string? Reason { get; set; }
 
         public string? Notes { get; set; }
 
@@ -17,7 +19,7 @@ namespace REAC.Application.Contracts.Dtos.Reconciliation
 
         public string? FinishStatusReason { get; set; }
 
-        public List<LitigationRequestExtendPeriodRequestFileCreateUpdateDto> LitigationRequestExtendPeriodRequestFiles = new List<LitigationRequestExtendPeriodRequestFileCreateUpdateDto>();
+        public List<LitigationRequestExtendPeriodRequestFileCreateUpdateDto> LitigationRequestExtendPeriodRequestFiles { get; set; }
 
     }
 }

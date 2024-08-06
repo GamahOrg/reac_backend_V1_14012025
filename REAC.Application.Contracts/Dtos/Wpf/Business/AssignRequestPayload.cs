@@ -4,8 +4,6 @@
     {
         public Guid RequestId { get; set; }
 
-        public Guid SourceEmployeeId { get; set; }
-
-        public Guid DestinationEmployeeId { get; set; }
+        public Guid ReformerId { get; set; }
     }
 }

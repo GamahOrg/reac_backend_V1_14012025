@@ -21,7 +21,9 @@ namespace REAC.Application.Contracts.IAppServices.Litigation
         Task<BaseResponse> AddLitigation(LitigationCreateUpdateDto model);
         Task<BaseResponse> CreateLitigationRequest(LitigationRequestDto litigationRequestDto);
         Task<BaseResponse> CreateLitigationRequestManual(CreateLitigationRequestNoIntegrationDto litigationRequestDto);
+        Task<BaseResponse> AuditngListArbitration(int pageIndex, int pageSize, string? searchKey, AuditingListDto model);
 
+        Task<BaseResponse> AuditngListReconciliation(int pageIndex, int pageSize, string? searchKey, AuditingListDto model);
 
         #region pagination
         public class PaginatedList<T>

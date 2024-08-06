@@ -4,9 +4,11 @@ using REAC.Application.Contracts.Dtos.Integration.GEE;
 using REAC.Application.Contracts.IAppServices.Integration;
 using REAC.Application.Contracts.IAppServices.System;
 using REAC.Domain.Shared.Constants;
-using REAC.EntityFrameworkCore.Entities.System;
+using System.Globalization;
 using System.Net;
 using System.Net.Http.Json;
+using System.Text.RegularExpressions;
+
 
 namespace REAC.Application.AppServices.Integration.GEE
 {
@@ -21,11 +23,11 @@ namespace REAC.Application.AppServices.Integration.GEE
             _gEELoginService = gEELoginService;
         }
 
-        public async Task<BaseResponse> ExternalAttorneyInquiry(MOJRequestDto mOJRequest)
+        public async Task<DataResponse<MOJResponseDto>> ExternalAttorneyInquiry(MOJRequestDto mOJRequest)
         {
             try
             {
-                if(mOJRequest is null)
+                if (mOJRequest is null)
                     return new DataResponse<MOJResponseDto> { IsDone = false, Message = "" };
 
                 var token = (await _gEELoginService.Login()).Data?.Access_token;
@@ -52,7 +54,10 @@ namespace REAC.Application.AppServices.Integration.GEE
                 {
                     responseDto.Data = await response.Content.ReadFromJsonAsync<ResponseObjectDto>();
                     var verifyPowerOfAttorney = await VerifyPowerOfAttorney(responseDto.Data, mOJRequest);
-                    return verifyPowerOfAttorney;
+                    if (verifyPowerOfAttorney.IsDone)
+                        responseDto.IsValid = true;
+                    return new DataResponse<MOJResponseDto> { IsDone = true, Data = responseDto };
+
                 }
                 else if (response.StatusCode == HttpStatusCode.Unauthorized)
                 {
@@ -73,15 +78,18 @@ namespace REAC.Application.AppServices.Integration.GEE
 
         private async Task<BaseResponse> VerifyPowerOfAttorney(ResponseObjectDto responseObjectDto, MOJRequestDto mOJRequestDto)
         {
-            if(responseObjectDto is null || mOJRequestDto is null || responseObjectDto.responseObject.Results is null)
-                return new BaseResponse() { IsDone = false, Message = ""};
+            if (responseObjectDto is null || mOJRequestDto is null || responseObjectDto.responseObject.Results is null)
+                return new BaseResponse() { IsDone = false, Message = "" };
 
             var powerOfAttorney = responseObjectDto.responseObject.Results.FirstOrDefault(x => x.Model.Code == mOJRequestDto.AttorneyCode);
-            if(powerOfAttorney is not null)
+            if (powerOfAttorney is not null)
             {
                 var firstPartiesIsExist = powerOfAttorney.Model.FirstParties.Any(x => x.IdentityNo == mOJRequestDto.FirstParties);
                 var secondPartiesIsExist = powerOfAttorney.Model.SecondParties.Any(x => x.IdentityNo == mOJRequestDto.SecondParties);
-                var endDateGreg = DateTime.Parse(powerOfAttorney.Model.EndDateGreg);
+
+                CultureInfo provider = new CultureInfo("en-US");
+                CultureInfo.CurrentCulture = provider;
+                var endDateGreg = DateTime.ParseExact(powerOfAttorney.Model.EndDateGreg, "M/d/yyyy h:mm:ss tt", provider);
                 var mOJControlID = powerOfAttorney.Model.TextsValuesList.Any(x => x.ControlID == SysSettingKeyConstants.MOJControlId);
 
                 if (firstPartiesIsExist && secondPartiesIsExist && endDateGreg > DateTime.Now && mOJControlID)

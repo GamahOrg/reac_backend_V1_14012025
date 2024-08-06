@@ -11,6 +11,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
+using Microsoft.Extensions.Options;
+using Microsoft.OpenApi.Models;
 using REAC.Api;
 using REAC.Api.OptionsSetup;
 using REAC.Application.AppServices.Common;
@@ -176,6 +178,9 @@ app.UseSwaggerUI(c =>
     c.SwaggerEndpoint($"/swagger/{APISections.WpfSystem}/swagger.json", $"{APISections.WpfSystem} API V1");
     c.SwaggerEndpoint($"/swagger/{APISections.Integration}/swagger.json", $"{APISections.Integration} API V1");
     c.SwaggerEndpoint($"/swagger/{APISections.Public}/swagger.json", $"{APISections.Public} API V1");
+    c.SwaggerEndpoint($"/swagger/{APISections.Arbitration}/swagger.json", $"{APISections.Arbitration} API V1");
+
+
 
     c.DocExpansion(DocExpansion.List);
 });

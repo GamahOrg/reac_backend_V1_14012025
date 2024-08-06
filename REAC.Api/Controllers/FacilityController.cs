@@ -8,7 +8,7 @@ namespace REAC.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [ApiExplorerSettings(GroupName = APISections.Security)]
+    [ApiExplorerSettings(GroupName = APISections.Public)]
     //[Authorize]
     [AllowAnonymous]
     public class FacilityController : ControllerBase
@@ -22,6 +22,11 @@ namespace REAC.Api.Controllers
         [HttpGet(nameof(GetAllFacilities))]
         public async Task<ActionResult> GetAllFacilities([FromQuery] int pageIndex, [FromQuery] int pageSize, [FromQuery] string? searchKey)
             => Ok(await _facilityService.GetAllFacilitiesAsync(pageIndex, pageSize, searchKey));
+
+        [HttpGet(nameof(GetAllFacilitiesDropdown))]
+        public async Task<ActionResult> GetAllFacilitiesDropdown()
+            => Ok(await _facilityService.GetAllFacilitiesDropdown());
+
 
 
         [HttpGet(nameof(GetFacilityById))]

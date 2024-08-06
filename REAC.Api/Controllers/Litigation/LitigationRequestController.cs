@@ -86,6 +86,30 @@ public class LitigationRequestController : BaseController<LitigationRequest,
 
         return BadRequest();
     }
+    [HttpGet(nameof(AuditngListReconciliation))]
+    [AllowAnonymous]
+    public async Task<ActionResult<IEnumerable<AuditingListDto>>> AuditngListReconciliation([FromQuery] int pageIndex, [FromQuery] int pageSize, [FromQuery] string? searchKey, [FromQuery] AuditingListDto model)
+    {
+        if (ModelState.IsValid)
+        {
+            var returnValue = await _litigationService.AuditngListReconciliation(pageIndex, pageSize, searchKey, model);
+            return Ok(returnValue);
+        }
+
+        return BadRequest();
+    }
+    [HttpGet(nameof(AuditngListArbitration))]
+    [AllowAnonymous]
+    public async Task<ActionResult<IEnumerable<AuditingListDto>>> AuditngListArbitration([FromQuery] int pageIndex, [FromQuery] int pageSize, [FromQuery] string? searchKey, [FromQuery] AuditingListDto model)
+    {
+        if (ModelState.IsValid)
+        {
+            var returnValue = await _litigationService.AuditngListArbitration(pageIndex, pageSize, searchKey, model);
+            return Ok(returnValue);
+        }
+
+        return BadRequest();
+    }
 
     [HttpGet(nameof(GetLitigationById))]
     [AllowAnonymous]

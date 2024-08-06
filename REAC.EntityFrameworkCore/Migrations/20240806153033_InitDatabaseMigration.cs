@@ -50,6 +50,19 @@ namespace REAC.EntityFrameworkCore.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "SysArbitratorStatus",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false),
+                    StatusName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Translations = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK__SysArbitratorStatus4AA46", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "SysArea",
                 columns: table => new
                 {
@@ -121,6 +134,7 @@ namespace REAC.EntityFrameworkCore.Migrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     DepartmentName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     DistributionMode = table.Column<int>(type: "int", nullable: false),
+                    DepartmentType = table.Column<int>(type: "int", nullable: false),
                     CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
@@ -225,6 +239,7 @@ namespace REAC.EntityFrameworkCore.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false),
                     TypeName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    ReconciliationPeriod = table.Column<int>(type: "int", nullable: false),
                     CodingPrefixSymbol = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     AcknowledgmentContent = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     TermsAndConditions = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -350,6 +365,19 @@ namespace REAC.EntityFrameworkCore.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK__SysNotificationPlan__C0743341C99", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "SysReformerStatus",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false),
+                    StatusName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Translations = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK__SysReformerStatus4AA46", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -732,7 +760,9 @@ namespace REAC.EntityFrameworkCore.Migrations
                     UnitNumber = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: true),
                     IsLawyer = table.Column<bool>(type: "bit", nullable: true),
                     IsReformer = table.Column<bool>(type: "bit", nullable: true),
+                    ReformerStatusId = table.Column<int>(type: "int", nullable: true),
                     IsArbitrator = table.Column<bool>(type: "bit", nullable: true),
+                    ArbitratorStatusId = table.Column<int>(type: "int", nullable: true),
                     LawyerLicenseNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     LawyerLicenseExpirationDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     LawLicenseFileId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
@@ -742,6 +772,16 @@ namespace REAC.EntityFrameworkCore.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK__Citizen__3214EC0756CF4E03", x => x.Id);
+                    table.ForeignKey(
+                        name: "FKCSysArbitratorStatusitizen92459",
+                        column: x => x.ArbitratorStatusId,
+                        principalTable: "SysArbitratorStatus",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FKCSysReformerStatusCitizen92459",
+                        column: x => x.ReformerStatusId,
+                        principalTable: "SysReformerStatus",
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FKCitizen807894",
                         column: x => x.IdentityTypeId,
@@ -960,6 +1000,35 @@ namespace REAC.EntityFrameworkCore.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ArbitratorStopFreeUpDecision",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CitizenId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ArbitratorStatusId = table.Column<int>(type: "int", nullable: false),
+                    DecisionDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    StoppingReason = table.Column<int>(type: "int", nullable: true),
+                    LateLitigationRequestNumber = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ArbitratorStopFreeUpDecision_3214EC0743341C99", x => x.Id);
+                    table.ForeignKey(
+                        name: "FKCitizenArbitratorStopFreeUpDecision676101",
+                        column: x => x.CitizenId,
+                        principalTable: "Citizen",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FKSysArbitratorStatusArbitratorStopFreeUpDecision676101",
+                        column: x => x.ArbitratorStatusId,
+                        principalTable: "SysArbitratorStatus",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "CitizenBankAccount",
                 columns: table => new
                 {
@@ -995,6 +1064,7 @@ namespace REAC.EntityFrameworkCore.Migrations
                     CitizenId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     AcademicDegreeName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     IsVolunteerApproval = table.Column<bool>(type: "bit", nullable: false),
+                    RequestOn = table.Column<DateTime>(type: "datetime2", nullable: false),
                     AreaId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     ExperienceYears = table.Column<int>(type: "int", nullable: true),
                     ArbitratorClassId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
@@ -1004,6 +1074,11 @@ namespace REAC.EntityFrameworkCore.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_CitizenRequest_3214EC0743341C99", x => x.Id);
+                    table.ForeignKey(
+                        name: "FKCitizenCitizenRequest676100000001",
+                        column: x => x.CitizenId,
+                        principalTable: "Citizen",
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FKCitizenRequestStatuses676880",
                         column: x => x.StatusId,
@@ -1024,12 +1099,6 @@ namespace REAC.EntityFrameworkCore.Migrations
                         column: x => x.AreaId,
                         principalTable: "SysArea",
                         principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_CitizenRequest_Citizen_CitizenId",
-                        column: x => x.CitizenId,
-                        principalTable: "Citizen",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -1061,6 +1130,35 @@ namespace REAC.EntityFrameworkCore.Migrations
                         column: x => x.CitizenId,
                         principalTable: "Citizen",
                         principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ReformerStopFreeUpDecision",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CitizenId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ReformerStatusId = table.Column<int>(type: "int", nullable: false),
+                    DecisionDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    StoppingReason = table.Column<int>(type: "int", nullable: true),
+                    LateLitigationRequestNumber = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ReformerInactiveDecision_3214EC0743341C99", x => x.Id);
+                    table.ForeignKey(
+                        name: "FKCitizenReformerStopFreeUpDecision676101",
+                        column: x => x.CitizenId,
+                        principalTable: "Citizen",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FKSysReformerStatusReformerStopFreeUpDecision676101",
+                        column: x => x.ReformerStatusId,
+                        principalTable: "SysReformerStatus",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -1118,6 +1216,7 @@ namespace REAC.EntityFrameworkCore.Migrations
                     LogMessage = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: true),
                     EventSecurityLevelId = table.Column<int>(type: "int", nullable: false),
                     IsAdminApprovalRequired = table.Column<bool>(type: "bit", nullable: false),
+                    IsEndOfWorkFlow = table.Column<bool>(type: "bit", nullable: false),
                     AllowChangeInternalStatus = table.Column<bool>(type: "bit", nullable: false),
                     InternalStatusId = table.Column<int>(type: "int", nullable: true),
                     AllowChangeExternalStatus = table.Column<bool>(type: "bit", nullable: false),
@@ -1467,6 +1566,7 @@ namespace REAC.EntityFrameworkCore.Migrations
                     SecondPartyArbitratorsCount = table.Column<int>(type: "int", nullable: true),
                     ArbitratorsCount = table.Column<int>(type: "int", nullable: true),
                     ReformerCitizenId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    ArbitratorCitizenId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     LitigationRequestCategoryId = table.Column<int>(type: "int", nullable: true),
                     LitigationRequestOwnerTypeId = table.Column<int>(type: "int", nullable: false),
                     IsMinutesOfMeetingApprovalRequired = table.Column<bool>(type: "bit", nullable: true),
@@ -1481,6 +1581,12 @@ namespace REAC.EntityFrameworkCore.Migrations
                     IsFinancialLitigation = table.Column<bool>(type: "bit", nullable: true),
                     LitigationRequestAmountId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     Fees = table.Column<decimal>(type: "money", nullable: false),
+                    ReconciliationPeriod = table.Column<int>(type: "int", nullable: true),
+                    ArbitrationPeriod = table.Column<int>(type: "int", nullable: true),
+                    StartReconciliationDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    EndReconciliationDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    StartArbitrationDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    EndArbitrationDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsPaid = table.Column<bool>(type: "bit", nullable: false),
                     PaidOn = table.Column<DateTime>(type: "datetime", nullable: true),
                     CreatedOn = table.Column<DateTime>(type: "datetime", nullable: false),
@@ -1498,6 +1604,11 @@ namespace REAC.EntityFrameworkCore.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK__Litigati__3214EC077962DFCA", x => x.Id);
+                    table.ForeignKey(
+                        name: "FKArbitratorCitizenLitigation638578",
+                        column: x => x.ReformerCitizenId,
+                        principalTable: "Citizen",
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FKExemptionReductionCategory580725",
                         column: x => x.ExemptionReductionCategoryId,
@@ -1550,7 +1661,7 @@ namespace REAC.EntityFrameworkCore.Migrations
                         principalColumn: "Id");
                     table.ForeignKey(
                         name: "FKReformerCitizenLitigation638578",
-                        column: x => x.ReformerCitizenId,
+                        column: x => x.ArbitratorCitizenId,
                         principalTable: "Citizen",
                         principalColumn: "Id");
                     table.ForeignKey(
@@ -1562,6 +1673,33 @@ namespace REAC.EntityFrameworkCore.Migrations
                         name: "FK_LitigationRequest_SysCity_CityId",
                         column: x => x.CityId,
                         principalTable: "SysCity",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "LitigationRequestArbitrator",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    LitigationRequestId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ArbitratorCitizenId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK__LitigationRequestArbitrator07F533D1CD", x => x.Id);
+                    table.ForeignKey(
+                        name: "FKArbitratorCitizenRequestArbitrators231388000",
+                        column: x => x.ArbitratorCitizenId,
+                        principalTable: "Citizen",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FKLitigationRequestLitigationRequestArbitrators231388",
+                        column: x => x.LitigationRequestId,
+                        principalTable: "LitigationRequest",
                         principalColumn: "Id");
                 });
 
@@ -1600,9 +1738,9 @@ namespace REAC.EntityFrameworkCore.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     LitigationRequestId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    LitigationRequestExtendPeriodRequestTypeId = table.Column<int>(type: "int", nullable: false),
                     RequiredDays = table.Column<int>(type: "int", nullable: false),
                     RequestReason = table.Column<string>(type: "nvarchar(300)", maxLength: 300, nullable: false),
-                    RejectReason = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Notes = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     LitigationRequestExtendPeriodRequestStatusId = table.Column<int>(type: "int", nullable: true),
                     FinishStatusReason = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -1707,13 +1845,17 @@ namespace REAC.EntityFrameworkCore.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_LitigationRequestReformerAssigningRequest", x => x.Id);
+                    table.PrimaryKey("PK__LitigationRequestReformerAssigningRequest4EC07AE06877A", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_LitigationRequestReformerAssigningRequest_LitigationRequest_LitigationRequestId",
+                        name: "FKLitigationRequestLitigationRequestReformerAssigningRequest705",
                         column: x => x.LitigationRequestId,
                         principalTable: "LitigationRequest",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FKReformerCitizenLitigationRequestReformerAssigningRequest705",
+                        column: x => x.CitizenId,
+                        principalTable: "Citizen",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -1741,6 +1883,7 @@ namespace REAC.EntityFrameworkCore.Migrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     LitigationRequestId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     SessionDatetime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    LitigationRequestSessionRequestTypeId = table.Column<int>(type: "int", nullable: false),
                     CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
                     SessionUrl = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true)
                 },
@@ -1966,6 +2109,21 @@ namespace REAC.EntityFrameworkCore.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_ArbitratorStopFreeUpDecision_ArbitratorStatusId",
+                table: "ArbitratorStopFreeUpDecision",
+                column: "ArbitratorStatusId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ArbitratorStopFreeUpDecision_CitizenId",
+                table: "ArbitratorStopFreeUpDecision",
+                column: "CitizenId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Citizen_ArbitratorStatusId",
+                table: "Citizen",
+                column: "ArbitratorStatusId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Citizen_AreaId",
                 table: "Citizen",
                 column: "AreaId");
@@ -2004,6 +2162,11 @@ namespace REAC.EntityFrameworkCore.Migrations
                 name: "IX_Citizen_NationalityId",
                 table: "Citizen",
                 column: "NationalityId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Citizen_ReformerStatusId",
+                table: "Citizen",
+                column: "ReformerStatusId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_CitizenBankAccount_BankId",
@@ -2138,6 +2301,11 @@ namespace REAC.EntityFrameworkCore.Migrations
                 column: "ApplicantCitizenId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_LitigationRequest_ArbitratorCitizenId",
+                table: "LitigationRequest",
+                column: "ArbitratorCitizenId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_LitigationRequest_AreaId",
                 table: "LitigationRequest",
                 column: "AreaId");
@@ -2203,6 +2371,22 @@ namespace REAC.EntityFrameworkCore.Migrations
                 column: "RequestCode",
                 unique: true,
                 filter: "[RequestCode] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_LitigationRequestArbitrator_ArbitratorCitizenId",
+                table: "LitigationRequestArbitrator",
+                column: "ArbitratorCitizenId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_LitigationRequestArbitrator_LitigationRequestId",
+                table: "LitigationRequestArbitrator",
+                column: "LitigationRequestId");
+
+            migrationBuilder.CreateIndex(
+                name: "LitigationRequestArbitrator_Id",
+                table: "LitigationRequestArbitrator",
+                column: "Id",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_LitigationRequestContract_AssociationRegistrationCertificateFileId",
@@ -2345,6 +2529,11 @@ namespace REAC.EntityFrameworkCore.Migrations
                 column: "LitigationRequestId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_LitigationRequestReformerAssigningRequest_CitizenId",
+                table: "LitigationRequestReformerAssigningRequest",
+                column: "CitizenId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_LitigationRequestReformerAssigningRequest_LitigationRequestId",
                 table: "LitigationRequestReformerAssigningRequest",
                 column: "LitigationRequestId");
@@ -2368,6 +2557,22 @@ namespace REAC.EntityFrameworkCore.Migrations
                 name: "IX_LitigationRequestSession_LitigationRequestId",
                 table: "LitigationRequestSession",
                 column: "LitigationRequestId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ReformerStopFreeUpDecision_CitizenId",
+                table: "ReformerStopFreeUpDecision",
+                column: "CitizenId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ReformerStopFreeUpDecision_ReformerStatusId",
+                table: "ReformerStopFreeUpDecision",
+                column: "ReformerStatusId");
+
+            migrationBuilder.CreateIndex(
+                name: "SysArbitratorStatus_Id",
+                table: "SysArbitratorStatus",
+                column: "Id",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_SysCity_AreaId",
@@ -2455,6 +2660,12 @@ namespace REAC.EntityFrameworkCore.Migrations
                 name: "IX_SysNotificationPlanItemDestination_SysNotificationPlanItemId",
                 table: "SysNotificationPlanItemDestination",
                 column: "SysNotificationPlanItemId");
+
+            migrationBuilder.CreateIndex(
+                name: "SysReformerStatus_Id",
+                table: "SysReformerStatus",
+                column: "Id",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_SysRegistrationRequest_CitizenId",
@@ -2805,6 +3016,9 @@ namespace REAC.EntityFrameworkCore.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "ArbitratorStopFreeUpDecision");
+
+            migrationBuilder.DropTable(
                 name: "CitizenBankAccount");
 
             migrationBuilder.DropTable(
@@ -2824,6 +3038,9 @@ namespace REAC.EntityFrameworkCore.Migrations
 
             migrationBuilder.DropTable(
                 name: "Delegator");
+
+            migrationBuilder.DropTable(
+                name: "LitigationRequestArbitrator");
 
             migrationBuilder.DropTable(
                 name: "LitigationRequestCorrespondenceFile");
@@ -2851,6 +3068,9 @@ namespace REAC.EntityFrameworkCore.Migrations
 
             migrationBuilder.DropTable(
                 name: "OtherCategories");
+
+            migrationBuilder.DropTable(
+                name: "ReformerStopFreeUpDecision");
 
             migrationBuilder.DropTable(
                 name: "SysMobileOTP");
@@ -3013,6 +3233,12 @@ namespace REAC.EntityFrameworkCore.Migrations
 
             migrationBuilder.DropTable(
                 name: "Citizen");
+
+            migrationBuilder.DropTable(
+                name: "SysArbitratorStatus");
+
+            migrationBuilder.DropTable(
+                name: "SysReformerStatus");
 
             migrationBuilder.DropTable(
                 name: "SysIdentityType");

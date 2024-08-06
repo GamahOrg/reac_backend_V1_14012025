@@ -15,7 +15,7 @@ public partial class CitizenRequest : BaseEntity<Guid>
     // Shared
     public string AcademicDegreeName { get; set; } = null!;
     public bool IsVolunteerApproval { get; set; }
-
+    public DateTime RequestOn { get; set; }
 
 
     // محكم

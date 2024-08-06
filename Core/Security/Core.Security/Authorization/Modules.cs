@@ -21,8 +21,9 @@
         public const string FacilityDelegator = "FacilityDelegator";
         public const string LitigationRequest = "LitigationRequest";
         public const string Reconciliation = "Reconciliation";
-
-
+        public const string LitigationRequestReformerAssigningRequest = "LitigationRequestReformerAssigningRequest";
+        public const string Bank = "Bank";
+        public const string Arbitration = "Arbitration";
         public const string LitigationRequestContract = "LitigationRequestContract";
         public const string LitigationRequestCorrespondence = "LitigationRequestCorrespondence";
         public const string LitigationRequestCorrespondenceFile = "LitigationRequestCorrespondenceFile";

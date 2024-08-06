@@ -2,7 +2,9 @@
 using Core.Security.Authorization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using REAC.Application.Contracts.Dtos.Reconciliation;
 using REAC.Application.Contracts.Dtos.Reconciliation.Process;
+using REAC.Application.Contracts.Dtos.Wpf.Business;
 using REAC.Application.ModuleServices;
 using REAC.Domain.Shared.Constants;
 using REAC.Domain.Shared.Enum;
@@ -37,6 +39,20 @@ public class ReconciliationController : ControllerBase
 
         return BadRequest();
     }
+
+    [HttpPost(nameof(Assign))]
+    public async Task<IActionResult> Assign([FromBody] AssignRequestPayload assignRequestPayload, CancellationToken cancellationToken)
+    {
+        if (ModelState.IsValid)
+        {
+            var returnValue = await _reconciliationService.Assign(assignRequestPayload, cancellationToken);
+            return Ok(returnValue);
+        }
+
+        return BadRequest();
+    }
+
+
     [HttpGet(nameof(GetReconciliationRequestForSession))]
     public async Task<IActionResult> GetReconciliationRequestForSession(CancellationToken cancellationToken)
     {
@@ -83,6 +99,51 @@ public class ReconciliationController : ControllerBase
 
         return BadRequest();
     }
+    [HttpGet(nameof(GetLitigationRequestForAllSessionForReformer))]
+    public async Task<IActionResult> GetLitigationRequestForAllSessionForReformer(int pageIndex, int pageSize, CancellationToken cancellationToken)
+    {
+        if (ModelState.IsValid)
+        {
+            var returnValue = await _reconciliationService.GetLitigationRequestForAllSessionForReformer(pageIndex, pageSize, cancellationToken);
+            return Ok(returnValue);
+        }
+        return BadRequest();
+    }
+    [HttpGet(nameof(GetLitigationRequestForAllSession))]
+    public async Task<IActionResult> GetLitigationRequestForAllSession(int pageIndex, int pageSize, CancellationToken cancellationToken)
+    {
+        if (ModelState.IsValid)
+        {
+            var returnValue = await _reconciliationService.GetLitigationRequestForAllSession(pageIndex, pageSize, cancellationToken);
+            return Ok(returnValue);
+        }
+        return BadRequest();
+    }
+    [HttpGet(nameof(GetLitigationRequestForFullAllReformer))]
+    public async Task<IActionResult> GetLitigationRequestForFullAllReformer(int pageIndex, int pageSize, CancellationToken cancellationToken)
+    {
+        if (ModelState.IsValid)
+        {
+            var returnValue = await _reconciliationService.GetLitigationRequestForFullAllReformer(pageIndex, pageSize, cancellationToken);
+            return Ok(returnValue);
+        }
+        return BadRequest();
+    }
+
+    [HttpGet(nameof(GetLitigationRequestForFullAllSession))]
+    public async Task<IActionResult> GetLitigationRequestForFullAllSession(int pageIndex, int pageSize, CancellationToken cancellationToken)
+    {
+        if (ModelState.IsValid)
+        {
+            var returnValue = await _reconciliationService.GetLitigationRequestForFullAllSession(pageIndex, pageSize, cancellationToken);
+            return Ok(returnValue);
+        }
+        return BadRequest();
+    }
+
+
+
+
     [HttpPost(nameof(AddReconciliationReport))]
     public async Task<IActionResult> AddReconciliationReport([FromBody] WritingMinutesOfTheMeetingRequestPayload scheduleSessionProcessRequestPayload, CancellationToken cancellationToken)
     {
@@ -95,6 +156,18 @@ public class ReconciliationController : ControllerBase
         return BadRequest();
     }
     #endregion
+    [HttpPost(nameof(AddLitigationRequestDecision))]
+    public async Task<IActionResult> AddLitigationRequestDecision([FromBody] LitigationRequestAction litigationRequestAction, CancellationToken cancellationToken)
+    {
+        if (ModelState.IsValid)
+        {
+            var returnValue = await _reconciliationService.AddLitigationRequestDecision(litigationRequestAction, cancellationToken);
+            return Ok(returnValue);
+        }
+
+        return BadRequest();
+    }
+
 
     #region Citizen Replay
     [HttpGet(nameof(AddCitizenLitigationRequestForReportReply))]
@@ -135,7 +208,7 @@ public class ReconciliationController : ControllerBase
     #endregion
 
     #region Extend Period
-    [HttpGet(nameof(AddReconciliationExtendPeriod))]
+    [HttpPost(nameof(AddReconciliationExtendPeriod))]
     public async Task<IActionResult> AddReconciliationExtendPeriod([FromBody] LitigationRequestExtendPeriodRequestCreateUpdateDto litigationRequestExtendPeriodRequestCreateUpdateDto, CancellationToken cancellationToken)
     {
         if (ModelState.IsValid)
@@ -146,7 +219,6 @@ public class ReconciliationController : ControllerBase
 
         return BadRequest();
     }
-
     [HttpGet(nameof(GetLitigationRequestExtendPeriod))]
     public async Task<IActionResult> GetLitigationRequestExtendPeriod(CancellationToken cancellationToken)
     {
@@ -158,13 +230,46 @@ public class ReconciliationController : ControllerBase
 
         return BadRequest();
     }
-
     [HttpGet(nameof(GetLitigationRequestExtendPeriodByRequestId))]
     public async Task<IActionResult> GetLitigationRequestExtendPeriodByRequestId(Guid requestId, CancellationToken cancellationToken)
     {
         if (ModelState.IsValid)
         {
             var returnValue = await _reconciliationService.GetLitigationRequestExtendPeriod(requestId, cancellationToken);
+            return Ok(returnValue);
+        }
+
+        return BadRequest();
+    }
+
+    [HttpPost(nameof(AddReconciliationExtendPeriodForEmployee))]
+    public async Task<IActionResult> AddReconciliationExtendPeriodForEmployee([FromBody] LitigationRequestExtendPeriodRequestCreateUpdateEmployeeDto litigationRequestExtendPeriodRequestCreateUpdateEmployeeDto, CancellationToken cancellationToken)
+    {
+        if (ModelState.IsValid)
+        {
+            var returnValue = await _reconciliationService.AddReconciliationExtendPeriodForEmployee(litigationRequestExtendPeriodRequestCreateUpdateEmployeeDto, cancellationToken);
+            return Ok(returnValue);
+        }
+
+        return BadRequest();
+    }
+    [HttpGet(nameof(GetLitigationRequestExtendPeriodForEmployee))]
+    public async Task<IActionResult> GetLitigationRequestExtendPeriodForEmployee(int pageIndex, int pageSize, CancellationToken cancellationToken)
+    {
+        if (ModelState.IsValid)
+        {
+            var returnValue = await _reconciliationService.GetLitigationRequestExtendPeriodForEmployee(pageIndex, pageSize, cancellationToken);
+            return Ok(returnValue);
+        }
+
+        return BadRequest();
+    }
+    [HttpGet(nameof(GetLitigationRequestExtendPeriodForEmployeeByRequestId))]
+    public async Task<IActionResult> GetLitigationRequestExtendPeriodForEmployeeByRequestId(Guid requestId, CancellationToken cancellationToken)
+    {
+        if (ModelState.IsValid)
+        {
+            var returnValue = await _reconciliationService.GetLitigationRequestExtendPeriodForEmployee(requestId, cancellationToken);
             return Ok(returnValue);
         }
 

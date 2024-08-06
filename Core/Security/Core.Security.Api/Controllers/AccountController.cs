@@ -1,6 +1,5 @@
 ﻿using Core.Dtos;
 using Core.Security.Contracts;
-using Core.Security.Dtos;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,7 +12,7 @@ namespace Core.Security.Api.Controllers
         private readonly IAccountService _accountService;
         private readonly IJwtProvider _jwtProvider;
 
-        public AccountController(IAccountService accountService,IJwtProvider jwtProvider)
+        public AccountController(IAccountService accountService, IJwtProvider jwtProvider)
         {
             _accountService = accountService;
             _jwtProvider = jwtProvider;
@@ -30,6 +29,6 @@ namespace Core.Security.Api.Controllers
 
         [HttpGet(nameof(ValidateActiveToken))]
         public async Task<IActionResult> ValidateActiveToken()
-            =>Ok(await _jwtProvider.ValidateActiveToken());
+            => Ok(await _jwtProvider.ValidateActiveToken());
     }
 }

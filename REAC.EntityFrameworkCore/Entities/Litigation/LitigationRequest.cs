@@ -1,34 +1,13 @@
 ﻿using Core.GenericRepository.Shared.BaseEntities;
 using REAC.Domain.Shared.Enum;
+using REAC.EntityFrameworkCore.Entities.Arbitration;
 using REAC.EntityFrameworkCore.Entities.Reconciliation;
 using REAC.EntityFrameworkCore.Entities.System;
 using REAC.EntityFrameworkCore.Entities.Wpf.Business;
 
 namespace REAC.EntityFrameworkCore.Entities.Litigation;
 
-public enum LitigationRequestReformerAssigningRequestStatus
-{
-    Approve = 0,
-    Reject = 1
-}
 
-public partial class LitigationRequestReformerAssigningRequest : BaseEntity<Guid>
-{
-    public Guid LitigationRequestId { get; set; }
-    public Guid CitizenId { get; set; }
-    public LitigationRequestReformerAssigningRequestStatus Response { get; set; }
-    public DateTime? ResponseOn { get; set; }
-    public virtual LitigationRequest LitigationRequest { get; set; } = null!;
-}
-
-public partial class LitigationRequestArbitratorAssigningRequest : BaseEntity<Guid>
-{
-    public Guid LitigationRequestId { get; set; }
-    public Guid CitizenId { get; set; }
-    public LitigationRequestReformerAssigningRequestStatus Response { get; set; }
-    public DateTime? ResponseOn { get; set; }
-    public virtual LitigationRequest LitigationRequest { get; set; } = null!;
-}
 
 public partial class LitigationRequest : BaseEntity<Guid>
 {
@@ -52,6 +31,8 @@ public partial class LitigationRequest : BaseEntity<Guid>
     public int? SecondPartyArbitratorsCount { get; set; }
     public int? ArbitratorsCount { get; set; }
     public Guid? ReformerCitizenId { get; set; }
+    public Guid? ArbitratorCitizenId { get; set; }
+
     public LitigationRequestCategory? LitigationRequestCategoryId { get; set; }
 
     public LitigationRequestOwnerType LitigationRequestOwnerTypeId { get; set; }
@@ -76,6 +57,14 @@ public partial class LitigationRequest : BaseEntity<Guid>
     public Guid? LitigationRequestAmountId { get; set; }
 
     public decimal Fees { get; set; } = 0;
+    public int? ReconciliationPeriod { get; set; }
+    public int? ArbitrationPeriod { get; set; }
+
+    public DateTime? StartReconciliationDate { get; set; }
+    public DateTime? EndReconciliationDate { get; set; }
+
+    public DateTime? StartArbitrationDate { get; set; }
+    public DateTime? EndArbitrationDate { get; set; }
 
     public bool IsPaid { get; set; } = false;
 
@@ -110,6 +99,7 @@ public partial class LitigationRequest : BaseEntity<Guid>
     public virtual SysCity City { get; set; } = null!;
     public virtual SysArea Area { get; set; } = null!;
     public virtual Citizen? ReformerCitizen { get; set; }
+    public virtual Citizen? ArbitratorCitizen { get; set; }
 
     public virtual LitigationRequestContract Contract { get; set; } = null!;
 
@@ -136,6 +126,8 @@ public partial class LitigationRequest : BaseEntity<Guid>
     public virtual ICollection<LitigationRequestReconciliationReport> LitigationRequestReconciliationReports { get; set; } = new List<LitigationRequestReconciliationReport>();
 
     public virtual ICollection<LitigationRequestNote> LitigationRequestNotes { get; set; } = new List<LitigationRequestNote>();
+    public virtual ICollection<LitigationRequestArbitrator> LitigationRequestArbitrators { get; set; } = new List<LitigationRequestArbitrator>();
+
 
     public virtual SysLitigationRequestOwnerType LitigationRequestOwnerType { get; set; } = null!;
 
@@ -143,3 +135,5 @@ public partial class LitigationRequest : BaseEntity<Guid>
     public virtual ICollection<WorkFlowProcessingLog> WorkFlowProcessingLogs { get; set; } = new List<WorkFlowProcessingLog>();
 
 }
+
+

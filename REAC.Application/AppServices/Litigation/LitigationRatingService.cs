@@ -1,21 +1,12 @@
 ﻿using AutoMapper;
 using Core.GenericRepository.BaseRepository;
 using Core.Log.Application.Contracts.IAppServices;
-using Core.Security.Entities;
-using Core.Security.Services;
 using Core.Shared.Responses;
 using Microsoft.EntityFrameworkCore;
-using REAC.Application.Contracts.Dtos.Litigation.List;
 using REAC.Application.Contracts.Dtos.Litigation.Rating;
 using REAC.Application.Contracts.IAppServices;
 using REAC.EntityFrameworkCore.Entities.Litigation;
 using REAC.EntityFrameworkCore.Entities.System;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static REAC.Application.Contracts.IAppServices.Litigation.ILitigationRequestService;
 
 namespace REAC.Application.AppServices.Litigation
 {
@@ -28,7 +19,7 @@ namespace REAC.Application.AppServices.Litigation
 
         public LitigationRatingService(REACDBContext context, IEntityRepository repository, IMapper mapper, ILoggerManager loggerManager, IJwtReader jwtReader, ICitizenService citizen) : base(repository, mapper, loggerManager, jwtReader)
         {
-            _context = context;      
+            _context = context;
             _mapper = mapper;
             _jwtReader = jwtReader;
             _citizen = citizen;
@@ -38,16 +29,16 @@ namespace REAC.Application.AppServices.Litigation
         public async Task<BaseResponse> GetRatings(Guid litigationId)
         {
             var quarble = await GetQueryableAsync();
-            var result = quarble.Include(x=>x.RatingValue).FirstOrDefault(x=>x.LitigationId == litigationId);
-           return new DataResponse<LitigationRatingDto>   { Data = result, IsDone = true };
+            var result = quarble.Include(x => x.RatingValue).FirstOrDefault(x => x.LitigationId == litigationId);
+            return new DataResponse<LitigationRatingDto> { Data = result, IsDone = true };
         }
 
         public async Task<BaseResponse> AddRating(Guid litigationId, Guid citizenId, int ratingValue)
         {
-           
+
             var ratingUser = new LitigationRequest();
 
-            if (ratingUser.Id== litigationId && ratingUser.ApplicantCitizenId == citizenId)
+            if (ratingUser.Id == litigationId && ratingUser.ApplicantCitizenId == citizenId)
             {
                 var newRating = new LitigationRatingDto
                 {

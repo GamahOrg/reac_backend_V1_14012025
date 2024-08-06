@@ -10,7 +10,7 @@ public partial class SysDepartment : FullAuditedBaseEntity<Guid>
     public string DepartmentName { get; set; } = null!;
 
     public DepartmentDistributionMode DistributionMode { get; set; }
-
+    public DepartmentType DepartmentType { get; set; }
     public virtual ICollection<SysDepartmentTranslation> Translations { get; set; } = new List<SysDepartmentTranslation>();
 
     public virtual ICollection<SysEmployee> SysEmployees { get; set; } = new List<SysEmployee>();

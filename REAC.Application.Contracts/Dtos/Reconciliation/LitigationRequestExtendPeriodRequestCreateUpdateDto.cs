@@ -2,7 +2,7 @@
 
 namespace REAC.EntityFrameworkCore.Entities.Reconciliation;
 
-public partial class LitigationRequestExtendPeriodRequestCreateUpdateDto : AuditedBaseEntity<Guid>
+public class LitigationRequestExtendPeriodRequestCreateUpdateDto : BaseEntity<Guid>
 {
     public Guid LitigationRequestId { get; set; }
 
@@ -10,10 +10,7 @@ public partial class LitigationRequestExtendPeriodRequestCreateUpdateDto : Audit
 
     public string RequestReason { get; set; } = null!;
 
-    public int LitigationRequestExtendPeriodRequestStatusId { get; set; }
-
-    public string? FinishStatusReason { get; set; }
-
-    public List<Guid> Files = new List<Guid>();
-
+    public List<Guid> Files { get; set; }
 }
+
+

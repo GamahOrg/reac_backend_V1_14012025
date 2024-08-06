@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\admin\\Documents\\GitHub\\backend\\Core\\Core\\Core.csproj": {}
+    "C:\\Users\\admin\\source\\repos\\BackEnd\\Core\\Core\\Core.csproj": {}
   },
   "projects": {
-    "C:\\Users\\admin\\Documents\\GitHub\\backend\\Core\\Core.Shared\\Core.Shared.csproj": {
+    "C:\\Users\\admin\\source\\repos\\BackEnd\\Core\\Core.Shared\\Core.Shared.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\admin\\Documents\\GitHub\\backend\\Core\\Core.Shared\\Core.Shared.csproj",
+        "projectUniqueName": "C:\\Users\\admin\\source\\repos\\BackEnd\\Core\\Core.Shared\\Core.Shared.csproj",
         "projectName": "Core.Shared",
-        "projectPath": "C:\\Users\\admin\\Documents\\GitHub\\backend\\Core\\Core.Shared\\Core.Shared.csproj",
+        "projectPath": "C:\\Users\\admin\\source\\repos\\BackEnd\\Core\\Core.Shared\\Core.Shared.csproj",
         "packagesPath": "C:\\Users\\admin\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\admin\\Documents\\GitHub\\backend\\Core\\Core.Shared\\obj\\",
+        "outputPath": "C:\\Users\\admin\\source\\repos\\BackEnd\\Core\\Core.Shared\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -69,14 +69,14 @@
         }
       }
     },
-    "C:\\Users\\admin\\Documents\\GitHub\\backend\\Core\\Core\\Core.csproj": {
+    "C:\\Users\\admin\\source\\repos\\BackEnd\\Core\\Core\\Core.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\admin\\Documents\\GitHub\\backend\\Core\\Core\\Core.csproj",
+        "projectUniqueName": "C:\\Users\\admin\\source\\repos\\BackEnd\\Core\\Core\\Core.csproj",
         "projectName": "Core",
-        "projectPath": "C:\\Users\\admin\\Documents\\GitHub\\backend\\Core\\Core\\Core.csproj",
+        "projectPath": "C:\\Users\\admin\\source\\repos\\BackEnd\\Core\\Core\\Core.csproj",
         "packagesPath": "C:\\Users\\admin\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\admin\\Documents\\GitHub\\backend\\Core\\Core\\obj\\",
+        "outputPath": "C:\\Users\\admin\\source\\repos\\BackEnd\\Core\\Core\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -98,8 +98,8 @@
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
-              "C:\\Users\\admin\\Documents\\GitHub\\backend\\Core\\Core.Shared\\Core.Shared.csproj": {
-                "projectPath": "C:\\Users\\admin\\Documents\\GitHub\\backend\\Core\\Core.Shared\\Core.Shared.csproj"
+              "C:\\Users\\admin\\source\\repos\\BackEnd\\Core\\Core.Shared\\Core.Shared.csproj": {
+                "projectPath": "C:\\Users\\admin\\source\\repos\\BackEnd\\Core\\Core.Shared\\Core.Shared.csproj"
               }
             }
           }

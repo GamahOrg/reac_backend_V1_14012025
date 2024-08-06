@@ -31,6 +31,7 @@ public partial class WorkFlowStepEvent : FullAuditedBaseEntity<Guid>
     public EventSecurityLevel EventSecurityLevelId { get; set; }
 
     public bool IsAdminApprovalRequired { get; set; }
+    public bool IsEndOfWorkFlow { get; set; }
 
     #region InternalStatus
     public bool AllowChangeInternalStatus { get; set; }

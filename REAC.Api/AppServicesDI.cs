@@ -41,6 +41,11 @@ namespace REAC.Api
             services.AddScoped<IHttpService, HttpService>();
             services.AddScoped<ILitigationWorkFlowService, LitigationWorkFlowService>();
             services.AddScoped<IReconciliationService, ReconciliationService>();
+            services.AddScoped<ILitigationRequestReformerAssigningRequest, LitigationRequestReformerAssigningRequestService>();
+            services.AddScoped<ICitizenBankAccountService, CitizenBankAccountService>();
+            services.AddScoped<ISysBankService, SysBankService>();
+            services.AddScoped<IArbitrationService, ArbitrationService>();
+
 
 
             services.AddScoped<ICitizenRequestService, CitizenRequestService>();

@@ -14,6 +14,7 @@ namespace REAC.Application.Contracts.Dtos.CitizenRequests
 
         public string AcademicDegreeName { get; set; } = null!;
         public bool? IsVolunteerApproval { get; set; }
+        public DateTime RequestOn { get; set; }
 
         public int? ExperienceYears { get; set; }
 

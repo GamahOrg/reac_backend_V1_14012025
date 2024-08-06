@@ -19,6 +19,7 @@ namespace Ticketing.EntityFrameworkCore.SeedData
                         Id = Guid.Parse("657004f4-57e1-4715-addc-0e5ff0b00938"),
 
                         DepartmentName = "إدراة التدقيق",
+                        DepartmentType = DepartmentType.Review,
                         DistributionMode = DepartmentDistributionMode.AutoDistribution,
                         Translations=new List<SysDepartmentTranslation>
                         {
@@ -71,6 +72,8 @@ namespace Ticketing.EntityFrameworkCore.SeedData
                                  IsActive = true,
                                  IsLocked = false,
                                  IsDeleted = false,
+                                 AllowAssign = true,
+                                 AllowReAssign= true,
                                  IsAdmin = false,
                                  Mobile = "0558800225",
                                  UserId = new Guid("17840ab6-b134-4c5f-9273-5c97345010a3"),
@@ -120,6 +123,7 @@ namespace Ticketing.EntityFrameworkCore.SeedData
                     {
                         Id = Guid.Parse("fa69b94c-53f2-49ca-8384-072ea272fa08"),
                         DepartmentName = "إدراة الصلح",
+                        DepartmentType = DepartmentType.Reconciliation,
                         DistributionMode = DepartmentDistributionMode.AutoDistribution,
                         Translations=new List<SysDepartmentTranslation>
                         {
@@ -173,6 +177,8 @@ namespace Ticketing.EntityFrameworkCore.SeedData
                                  IsLocked = false,
                                  IsDeleted = false,
                                  IsAdmin = true,
+                                 AllowAssign = true,
+                                 AllowReAssign= true,
                                  Mobile = "0558500225",
                                  UserId = new Guid("b0735375-8b63-4709-93a8-037eead509cf"),
                                  Translations = new List<SysEmployeeTranslation>()
@@ -221,6 +227,7 @@ namespace Ticketing.EntityFrameworkCore.SeedData
                     {
                         Id = Guid.Parse("a364bcfe-066a-473f-b852-621c5258945a"),
                         DepartmentName = "إدراة التحكيم",
+                        DepartmentType = DepartmentType.Arbitration,
                         DistributionMode = DepartmentDistributionMode.AutoDistribution,
                         Translations=new List<SysDepartmentTranslation>
                         {

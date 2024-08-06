@@ -498,6 +498,7 @@ namespace REAC.EntityFrameworkCore.Seed
                             {
                                 new WorkFlowStepEvent()
                                 {
+                                    IsEndOfWorkFlow = false,
                                     Id = Guid.Parse("88b70280-7c6a-48e4-bf20-66ba537c580b"),
                                     EventName = "إرسال طلب الدعوى",
                                     AllowChangeInternalStatus = true,
@@ -613,6 +614,7 @@ namespace REAC.EntityFrameworkCore.Seed
                             {
                                 new WorkFlowStepEvent()
                                 {
+                                    IsEndOfWorkFlow = true,
                                     Id = Guid.Parse("3f01924e-59f4-44b7-9506-75c85b89b773"),
                                     EventName = "قبول",
                                     AllowChangeInternalStatus = true,
@@ -694,6 +696,7 @@ namespace REAC.EntityFrameworkCore.Seed
                                 },
                                 new WorkFlowStepEvent()
                                 {
+                                    IsEndOfWorkFlow = false,
                                     Id = Guid.Parse("8a392baf-a959-429a-b2c9-eea05054ff11"),
                                     EventName = "إعادة الدعوى للتعديل",
                                     AllowChangeInternalStatus = true,

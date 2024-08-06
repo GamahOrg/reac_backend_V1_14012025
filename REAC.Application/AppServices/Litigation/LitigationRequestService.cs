@@ -24,6 +24,7 @@ using REAC.EntityFrameworkCore.Entities.Litigation;
 using REAC.EntityFrameworkCore.Entities.System;
 using REAC.EntityFrameworkCore.Entities.Wpf.Business;
 using REAC.EntityFrameworkCore.Seed.Integration;
+using System.Globalization;
 using static REAC.Application.Contracts.IAppServices.Litigation.ILitigationRequestService;
 
 
@@ -78,11 +79,11 @@ namespace REAC.Application.AppServices.Litigation
             {
                 var litigationRequest = (await _repository.GetQueryable<LitigationRequest, Guid>())
                           .Include(x => x.Contract)
+                          .Include(x => x.Contract.LitigationRequestContractType)
                           .Include(x => x.LitigationRequestRequests)
                           .Include(x => x.LitigationRequestGrounds)
                           .ThenInclude(x => x.LitigationRequestGroundFiles)
                           .Where(x => x.Contract.Id == model.ContractId).ToList().FirstOrDefault();
-
 
                 litigationRequest.Title = model.Title;
                 litigationRequest.Description = model.Description;
@@ -149,20 +150,46 @@ namespace REAC.Application.AppServices.Litigation
                 if (model.IsSent)
                 {
                     var litigationRequestList = (await _repository.GetQueryable<LitigationRequest, Guid>())
-                     .Where(x => x.RequestCode != null).ToList();
+                     .Where(x => x.RequestCode != null & x.Contract.LitigationRequestContractType == litigationRequest.Contract.LitigationRequestContractType).ToList();
+                    string requestCode = "";
 
                     if (litigationRequest.RequestCode == null)
                     {
-                        string requestCode = "REQ_00000001";
+                        switch (litigationRequest.Contract.LitigationRequestContractTypeId)
+                        {
+                            case LitigationRequestContractType.Wafi:
+                                if (litigationRequestList == null)
+                                    requestCode = "W00001-" + DateTime.Now.Date.ToString("yy", new CultureInfo("en-US"));
+                                else
+                                    requestCode = "W" + (litigationRequestList.Count() + 1).ToString("D5") + "-" + DateTime.Now.Date.ToString("yy", new CultureInfo("en-US"));
+                                break;
+                            case LitigationRequestContractType.Rent:
+                                if (litigationRequestList == null)
+                                    requestCode = "R00001-" + DateTime.Now.Date.ToString("yy", new CultureInfo("en-US"));
+                                else
+                                    requestCode = "R" + (litigationRequestList.Count() + 1).ToString("D5") + "-" + DateTime.Now.Date.ToString("yy", new CultureInfo("en-US"));
+                                break;
+                            case LitigationRequestContractType.Properties:
+                                if (litigationRequestList == null)
+                                    requestCode = "O00001-" + DateTime.Now.Date.ToString("yy", new CultureInfo("en-US"));
+                                else
+                                    requestCode = "O" + (litigationRequestList.Count() + 1).ToString("D5") + "-" + DateTime.Now.Date.ToString("yy", new CultureInfo("en-US"));
+                                break;
+                            case LitigationRequestContractType.RealEstateBrokerage:
+                                if (litigationRequestList == null)
+                                    requestCode = "B00001-" + DateTime.Now.Date.ToString("yy", new CultureInfo("en-US"));
+                                else
+                                    requestCode = "B" + (litigationRequestList.Count() + 1).ToString("D5") + "-" + DateTime.Now.Date.ToString("yy", new CultureInfo("en-US")); ;
+                                break;
+                            case LitigationRequestContractType.OtherServices:
+                                if (litigationRequestList == null)
+                                    requestCode = "N00001-" + DateTime.Now.Date.ToString("yy", new CultureInfo("en-US"));
+                                else
+                                    requestCode = "N" + (litigationRequestList.Count() + 1).ToString("D5") + "-" + DateTime.Now.Date.ToString("yy", new CultureInfo("en-US")); ;
+                                break;
+                        }
 
-                        if (litigationRequestList == null)
-                        {
-                            requestCode = "REQ_00000001";
-                        }
-                        else
-                        {
-                            requestCode = "REQ_" + (litigationRequestList.Count() + 1).ToString("D8");
-                        }
+
                         litigationRequest.IsSent = model.IsSent;
                         litigationRequest.SentOn = DateTime.Now;
                         litigationRequest.RequestCode = requestCode;
@@ -363,6 +390,102 @@ namespace REAC.Application.AppServices.Litigation
             };
 
         }
+        public async Task<BaseResponse> AuditngListArbitration(int pageIndex, int pageSize, string? searchKey, AuditingListDto model)
+        {
+            //var logdenUser = Guid.Parse("1c1b6018-69c8-43f5-b5b1-72cea64d0f9f");/*_jwtReader.GetUserId();*/
+
+            var litigations = await GetQueryableAsync();
+            litigations = litigations.Include(x => x.Contract);
+            litigations = litigations.Include(x => x.Contract.LitigationRequestContractType);
+            litigations = litigations.Include(x => x.Contract.FirstPartyCitizen);
+            litigations = litigations.Include(x => x.Contract.SecondPartyCitizen);
+            litigations = litigations.Include(x => x.Contract.FirstPartyFacility);
+            litigations = litigations.Include(x => x.Contract.SecondPartyFacility);
+            litigations = litigations.Include(x => x.InternalStatus);
+
+
+            if (!string.IsNullOrEmpty(searchKey))
+            {
+                litigations = litigations.Where(l => l.RequestCode.Contains(searchKey) || l.Contract.SecondPartyName.Contains(searchKey));
+            }
+
+            if (model.InternalStatusId.HasValue)
+            {
+                litigations = litigations.Where(l => l.InternalStatusId == model.InternalStatusId.Value);
+            }
+
+            if (model.LitigationRequestContractTypeId.HasValue)
+            {
+                litigations = litigations.Where(l => l.Contract.LitigationRequestContractTypeId == model.LitigationRequestContractTypeId.Value);
+            }
+            litigations = litigations.Where(l => l.LitigationRequestCategoryId == LitigationRequestCategory.Arbitration & l.LitigationRequestStage == LitigationRequestStage.Arbitration | l.LitigationRequestCategoryId == LitigationRequestCategory.ReconciliationAndArbitration & l.LitigationRequestStage == LitigationRequestStage.Arbitration);
+
+            Guid employeeId = Guid.Empty;
+            _jwtReader.GetReferenceId(ref employeeId);
+            litigations = litigations.Where(x => x.WorkFlowProcessingLogs.Where(t => t.EmployeeId == employeeId).Count() > 0);
+            /*   if (model.AuditngRemaningDays.HasValue)
+               {
+                   litigations = litigations.Where(l => l.AuditngRemaningDays == model.AuditngRemaningDays.Value);
+               }
+            */
+            litigations = litigations.OrderByDescending(x => x.CreatedOn);
+            var list = _mapper.Map<List<AuditingListDto>>(litigations).Where(x => x.InternalStatusId != RequestStatus.SaveAsDraft).ToList();
+            var result = await PaginatedList<AuditingListDto>.CreateAsync(list, pageIndex, pageSize);
+            return new DataResponse<PaginatedList<AuditingListDto>>()
+            {
+                Data = result,
+                IsDone = true
+            };
+
+        }
+        public async Task<BaseResponse> AuditngListReconciliation(int pageIndex, int pageSize, string? searchKey, AuditingListDto model)
+        {
+            //var logdenUser = Guid.Parse("1c1b6018-69c8-43f5-b5b1-72cea64d0f9f");/*_jwtReader.GetUserId();*/
+
+            var litigations = await GetQueryableAsync();
+            litigations = litigations.Include(x => x.Contract);
+            litigations = litigations.Include(x => x.Contract.LitigationRequestContractType);
+            litigations = litigations.Include(x => x.Contract.FirstPartyCitizen);
+            litigations = litigations.Include(x => x.Contract.SecondPartyCitizen);
+            litigations = litigations.Include(x => x.Contract.FirstPartyFacility);
+            litigations = litigations.Include(x => x.Contract.SecondPartyFacility);
+            litigations = litigations.Include(x => x.InternalStatus);
+
+
+            if (!string.IsNullOrEmpty(searchKey))
+            {
+                litigations = litigations.Where(l => l.RequestCode.Contains(searchKey) || l.Contract.SecondPartyName.Contains(searchKey));
+            }
+
+            if (model.InternalStatusId.HasValue)
+            {
+                litigations = litigations.Where(l => l.InternalStatusId == model.InternalStatusId.Value);
+            }
+
+            if (model.LitigationRequestContractTypeId.HasValue)
+            {
+                litigations = litigations.Where(l => l.Contract.LitigationRequestContractTypeId == model.LitigationRequestContractTypeId.Value);
+            }
+            litigations = litigations.Where(l => l.LitigationRequestCategoryId == LitigationRequestCategory.Reconciliation & l.LitigationRequestStage != LitigationRequestStage.Review | l.LitigationRequestCategoryId == LitigationRequestCategory.ReconciliationAndArbitration & l.LitigationRequestStage != LitigationRequestStage.Review);
+
+            Guid employeeId = Guid.Empty;
+            _jwtReader.GetReferenceId(ref employeeId);
+            litigations = litigations.Where(x => x.WorkFlowProcessingLogs.Where(t => t.EmployeeId == employeeId).Count() > 0);
+            /*   if (model.AuditngRemaningDays.HasValue)
+               {
+                   litigations = litigations.Where(l => l.AuditngRemaningDays == model.AuditngRemaningDays.Value);
+               }
+            */
+            litigations = litigations.OrderByDescending(x => x.CreatedOn);
+            var list = _mapper.Map<List<AuditingListDto>>(litigations).Where(x => x.InternalStatusId != RequestStatus.SaveAsDraft).ToList();
+            var result = await PaginatedList<AuditingListDto>.CreateAsync(list, pageIndex, pageSize);
+            return new DataResponse<PaginatedList<AuditingListDto>>()
+            {
+                Data = result,
+                IsDone = true
+            };
+
+        }
 
         public async Task<BaseResponse> Get(Guid litigationId)
         {
@@ -384,6 +507,11 @@ namespace REAC.Application.AppServices.Litigation
                 .Include(x => x.Contract.FirstPartyCitizen.Nationality)
                 .Include(x => x.Contract.FirstPartyFacility)
                 .Include(x => x.Contract.SecondPartyFacility)
+                .Include(x => x.Contract.ContractFile)
+                .Include(x => x.Contract.AssociationRegistrationCertificateFile)
+                .Include(x => x.Contract.FoundingLetterFile)
+                .Include(x => x.Contract.InternalRegulationsFile)
+
                 .Include(x => x.LitigationRequestGrounds)
                 .ThenInclude(x => x.LitigationRequestGroundFiles)
                 .ThenInclude(x => x.FileManager)
@@ -1432,7 +1560,7 @@ namespace REAC.Application.AppServices.Litigation
                 LitigationRequest litigationRequest = new LitigationRequest()
                 {
                     Id = Guid.NewGuid(),
-
+                    LitigationRequestStage = LitigationRequestStage.Review,
                     ContractId = litigationRequestContract.Id,
                     ApplicantCitizenId = referenceId,
                     LitigationRequestOwnerTypeId = litigationRequestDto.LitigationRequestOwnerType,
@@ -1451,7 +1579,6 @@ namespace REAC.Application.AppServices.Litigation
 
                 await _repository.AddAsync<LitigationRequest, Guid>(litigationRequest);
 
-
                 var saveResponse = await _repository.SaveChangesAsync();
                 if (saveResponse.IsDone)
                 {
@@ -1460,6 +1587,7 @@ namespace REAC.Application.AppServices.Litigation
                               .Include(x => x.ApplicantCitizen.LawLicenseFile)
                               .Include(x => x.ApplicantCitizen.IdentityFile)
                               .Include(x => x.Contract)
+                              .Include(x => x.Contract.LitigationRequestContractType)
                               .Include(x => x.Contract.FirstPartyCitizen)
                               .Include(x => x.Contract.FirstPartyCitizen.Nationality)
                               .Include(x => x.Contract.FirstPartyCitizen.FromDelegators)
@@ -1470,10 +1598,16 @@ namespace REAC.Application.AppServices.Litigation
                               .Include(x => x.Contract.FirstPartyFacility.Delegators)
                               .Include(x => x.Contract.SecondPartyFacility)
                               .Include(x => x.Contract.SecondPartyFacility.Delegators)
-                              .AsNoTracking()
                               .Where(x => x.Id == litigationRequest.Id).ToList().FirstOrDefault();
 
-                    return ReturnLitigationRequestDto(newlitigationRequest);
+                    newlitigationRequest.ReconciliationPeriod = newlitigationRequest.Contract.LitigationRequestContractType.ReconciliationPeriod;
+                    var newSaveResponse = await _repository.SaveChangesAsync();
+                    if (saveResponse.IsDone)
+                    {
+                        return ReturnLitigationRequestDto(newlitigationRequest);
+                    }
+                    else
+                        return saveResponse;
                 }
                 else
                     return saveResponse;

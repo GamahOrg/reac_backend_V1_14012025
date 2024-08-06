@@ -1,13 +1,17 @@
 ﻿using Core.Shared.Responses;
+using Microsoft.AspNetCore.Mvc;
 using REAC.Application.Contracts.Dtos.Delegator;
+using REAC.Application.Contracts.Dtos.Integration.GEE;
 
 namespace REAC.Application.Contracts.IAppServices
 {
     public interface IDelegatorService
     {
-        Task<BaseResponse> GetDelegators();
+        Task<BaseResponse> GetDelegators(int pageIndex, int pageSize, string? searchKey);
         Task<BaseResponse> GetDelegatorById(Guid delegatorId);
 
         Task<BaseResponse> SaveDelegator(DelegatorDto citizenDelegatorCreateUpdateDto);
+        Task<BaseResponse> ValidateDelegator(ValidateDelegatorDto validateDelegatorDto);
+        Task<DataResponse<PartiesDto>> GetDelegatorCitizenData(GetDeligatorCitizenData getDelegatorDataDto);
     }
 }

@@ -178,6 +178,38 @@ namespace Ticketing.EntityFrameworkCore.SeedData
 
                     #endregion
 
+                    #region
+                    new SysSetting
+                    {
+                        Id = Guid.NewGuid(),
+                        Key = "Reconciliation.Period",
+                        Value = "30",
+                    },
+                    new SysSetting
+                    {
+                        Id = Guid.NewGuid(),
+                        Key = "Reconciliation.Request.Study.Period",
+                        Value = "3",
+                    },
+                    new SysSetting
+                    {
+                        Id = Guid.NewGuid(),
+                        Key = "Reconciliation.Request.Process.Notes.Period",
+                        Value = "2",
+                    },
+                    new SysSetting
+                    {
+                        Id = Guid.NewGuid(),
+                        Key = "Reconciliation.Reformer.Approve.Mission.Period",
+                        Value = "3",
+                    },
+                    new SysSetting
+                    {
+                        Id = Guid.NewGuid(),
+                        Key = "Reconciliation.LitigationParties.Response.Period",
+                        Value = "3",
+                    },
+                    #endregion
                 });
             context.SaveChanges();
         }

@@ -6,7 +6,9 @@ using REAC.Application.Contracts.Dtos.Facility;
 using REAC.Application.Contracts.Dtos.Integration.Nafath;
 using REAC.Application.Contracts.Dtos.Litigation;
 using REAC.Application.Contracts.Dtos.Notification;
+using REAC.Application.Contracts.Dtos.Reconciliation;
 using REAC.Application.Contracts.Dtos.Session;
+using REAC.Application.Contracts.Dtos.System.ArbitratorStatusDto;
 using REAC.Application.Contracts.Dtos.System.AreaDto;
 using REAC.Application.Contracts.Dtos.System.CitizenRequestStatusDtos;
 using REAC.Application.Contracts.Dtos.System.CityDto;
@@ -20,6 +22,7 @@ using REAC.Application.Contracts.Dtos.System.LitigationRequestCorrespondenceDest
 using REAC.Application.Contracts.Dtos.System.LitigationRequestExtendPeriodRequestStatusDtos;
 using REAC.Application.Contracts.Dtos.System.LitigationRequestOwnerTypeDtos;
 using REAC.Application.Contracts.Dtos.System.LitigationRequestStatusDtos;
+using REAC.Application.Contracts.Dtos.System.ReformerStatusDto;
 using REAC.Application.Contracts.Dtos.Wpf.Business.WorkFlowLog;
 using REAC.Application.Contracts.Dtos.Wpf.Business.WorkFlowProcessingLogFile;
 using REAC.EntityFrameworkCore.Entities;
@@ -56,6 +59,18 @@ namespace REAC.Application.Contracts
                                        string.IsNullOrEmpty(src.Translations.FirstOrDefault(x => x.LanguageCode == CultureInfo.CurrentUICulture.Name).LogMessage)) ?
                                        src.LogMessage : src.Translations.FirstOrDefault(x => x.LanguageCode == CultureInfo.CurrentUICulture.Name).LogMessage));
 
+
+            CreateMap<SysReformerStatus, SysReformerStatusDto>()
+                                      .ForMember(des => des.StatusName,
+                                      opt => opt.MapFrom(src => (src.Translations.FirstOrDefault(x => x.LanguageCode == CultureInfo.CurrentUICulture.Name) == null ||
+                                      string.IsNullOrEmpty(src.Translations.FirstOrDefault(x => x.LanguageCode == CultureInfo.CurrentUICulture.Name).StatusName)) ?
+                                      src.StatusName : src.Translations.FirstOrDefault(x => x.LanguageCode == CultureInfo.CurrentUICulture.Name).StatusName));
+
+            CreateMap<SysArbitratorStatus, SysArbitratorStatusDto>()
+                                      .ForMember(des => des.StatusName,
+                                      opt => opt.MapFrom(src => (src.Translations.FirstOrDefault(x => x.LanguageCode == CultureInfo.CurrentUICulture.Name) == null ||
+                                      string.IsNullOrEmpty(src.Translations.FirstOrDefault(x => x.LanguageCode == CultureInfo.CurrentUICulture.Name).StatusName)) ?
+                                      src.StatusName : src.Translations.FirstOrDefault(x => x.LanguageCode == CultureInfo.CurrentUICulture.Name).StatusName));
 
 
 
@@ -183,43 +198,29 @@ namespace REAC.Application.Contracts
                     .ForMember(dest => dest.AreaName, opt => opt.MapFrom(src => src.Area.AreaName))
                     .ForMember(dest => dest.CityName, opt => opt.MapFrom(src => src.City.CityName))
                 .ReverseMap();
-
+            CreateMap<CitizenBankAccount, CitizenBankAccountCreateUpdateDto>().ReverseMap();
             CreateMap<LitigationRequestContract, LitigationRequestContractShortDto>().ReverseMap();
-
             CreateMap<SysNotification, SysNotificationCreateUpdateDto>().ReverseMap();
-
-            CreateMap<SysNotificationDto, SysNotification>()
-                 .ForMember(x => x.CreatedOn, src => src.MapFrom(x => DateTime.Now)).ReverseMap();
-
+            CreateMap<SysNotificationDto, SysNotification>().ForMember(x => x.CreatedOn, src => src.MapFrom(x => DateTime.Now)).ReverseMap();
             CreateMap<SysNotification, SysNotificationDto>().ReverseMap();
-
             CreateMap<SysNotification, NotificationDto>()
                 .ForMember(x => x.SysNotificationActorType, src => src.MapFrom(x => x.SysNotificationActorType.ActorType))
                 .ForMember(x => x.SysRequestType, src => src.MapFrom(x => x.SysRequestType.RequestTypeName)).ReverseMap();
             CreateMap<WorkFlowProcessingLogFile, WorkFlowProcessingLogFileAllDto>().ReverseMap();
-
-
-
             CreateMap<Citizen, CitizenShortDto>().ReverseMap();
-
             CreateMap<Citizen, CitizenCreateUpdateDto>().ReverseMap();
-
             CreateMap<CitizenRequestFreelanceWorkDocumentFile, CitizenRequestFreelanceWorkDocumentFileCreateUpdateDto>().ReverseMap();
-
             CreateMap<CitizenRequestAcademicDegreeFile, CitizenRequestAcademicDegreeFileCreateUpdateDto>().ReverseMap();
-
             CreateMap<CitizenRequestExperienceCertificate, CitizenRequestExperienceCertificateCreateUpdateDto>().ReverseMap();
-
-
             CreateMap<CitizenRequestFreelanceWorkDocumentFile, CitizenRequestFreelanceWorkDocumentFileFullDataDto>().ReverseMap();
-
             CreateMap<CitizenRequestAcademicDegreeFile, CitizenRequestAcademicDegreeFileFullDataDto>().ReverseMap();
-
             CreateMap<CitizenRequestExperienceCertificate, CitizenRequestExperienceCertificateFullDataDto>().ReverseMap();
             CreateMap<CitizenRequestExperienceCertificateFile, CitizenRequestExperienceCertificateFileFullDataDto>().ReverseMap();
             CreateMap<CitizenRequestExperienceCertificateFile, CitizenRequestExperienceCertificateFileCreateUpdateDto>().ReverseMap();
-
             CreateMap<CitizenRequestNote, CitizenRequestNoteCreateUpdateDto>().ReverseMap();
+
+            CreateMap<SysBank, SysBankCreateUpdateDto>().ReverseMap();
+
 
             CreateMap<CitizenRequest, CitizenRequestFullDataDto>().ReverseMap();
 
@@ -251,9 +252,6 @@ namespace REAC.Application.Contracts
                     .ForMember(dest => dest.SecondPartyCitizen, opt => opt.MapFrom(src => src.LitigationRequest.Contract.SecondPartyCitizen))
                     .ReverseMap();
 
-
-
-
             CreateMap<CitizenRequest, CitizenRequestShortDataDto>()
                       .ForMember(dest => dest.AreaName, opt => opt.MapFrom(src => src.SysArea.AreaName))
                     .ForMember(dest => dest.StatusName, opt => opt.MapFrom(src => src.Status.RequestStatus))
@@ -270,6 +268,7 @@ namespace REAC.Application.Contracts
             CreateMap<LitigationRequestCorrespondence, LitigationRequestCorrespondenceCreateUpdateDto>().ReverseMap();
             CreateMap<LitigationRequestCorrespondenceFile, LitigationRequestCorrespondenceFileCreateUpdateDto>().ReverseMap();
             CreateMap<LitigationRequestExtendPeriodRequest, LitigationRequestExtendPeriodRequestCreateUpdateDto>().ReverseMap();
+            CreateMap<LitigationRequestExtendPeriodRequest, LitigationRequestExtendPeriodRequestCreateUpdateEmployeeDto>().ReverseMap();
             CreateMap<LitigationRequestExtendPeriodRequestFile, LitigationRequestExtendPeriodRequestFileCreateUpdateDto>().ReverseMap();
             CreateMap<LitigationRequestGround, LitigationRequestGroundCreateUpdateDto>().ReverseMap();
             CreateMap<LitigationRequestGroundFile, LitigationRequestGroundFileCreateUpdateDto>().ReverseMap();

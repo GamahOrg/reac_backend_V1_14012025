@@ -5,7 +5,8 @@
         Add = 0,
         Review = 1,
         Reconciliation = 2,
-        Arbitration = 3
+        Arbitration = 3,
+        SetReformer = 4
     }
 
 }

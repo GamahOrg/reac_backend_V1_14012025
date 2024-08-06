@@ -3,6 +3,7 @@ using REAC.EntityFrameworkCore.Entities.Litigation;
 
 namespace REAC.Application.Contracts.IAppServices
 {
+
     public interface ILitigationRatingService : IBasicService<LitigationRequest, Guid>
     {
         Task<BaseResponse> GetRatings(Guid litigationId);

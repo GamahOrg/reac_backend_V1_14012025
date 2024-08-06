@@ -21,11 +21,11 @@ public class DelegatorController : ControllerBase
     }
 
     [HttpGet(nameof(GetDelegators))]
-    public async Task<ActionResult> GetDelegators()
+    public async Task<ActionResult> GetDelegators([FromQuery] int pageIndex, [FromQuery] int pageSize, [FromQuery] string? searchKey)
     {
         if (ModelState.IsValid)
         {
-            var returnValue = await _delegatorService.GetDelegators();
+            var returnValue = await _delegatorService.GetDelegators(pageIndex, pageSize, searchKey);
             return Ok(returnValue);
         }
         return BadRequest();
@@ -48,6 +48,18 @@ public class DelegatorController : ControllerBase
         if (ModelState.IsValid)
         {
             var returnValue = await _delegatorService.SaveDelegator(delegatorDto);
+            return Ok(returnValue);
+        }
+
+        return BadRequest();
+    }
+
+    [HttpPost(nameof(ValidateDelegator))]
+    public async Task<ActionResult> ValidateDelegator(ValidateDelegatorDto validateDelegatorDto)
+    {
+        if (ModelState.IsValid)
+        {
+            var returnValue = await _delegatorService.ValidateDelegator(validateDelegatorDto);
             return Ok(returnValue);
         }
 

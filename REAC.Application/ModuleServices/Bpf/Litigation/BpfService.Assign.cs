@@ -1,8 +1,8 @@
 ﻿using Core.Shared.Responses;
-using Microsoft.EntityFrameworkCore;
 using REAC.Application.Contracts.Dtos.Wpf.Business;
+using REAC.Domain.Shared.Enum;
+using REAC.EntityFrameworkCore.Entities.Litigation;
 using REAC.EntityFrameworkCore.Entities.System;
-using REAC.EntityFrameworkCore.Entities.Wpf.Business;
 
 namespace Bpf.Application.ModuleServices
 {
@@ -12,89 +12,54 @@ namespace Bpf.Application.ModuleServices
         {
             try
             {
+                Guid employeeId = Guid.Empty;
+                _jwtReader.GetReferenceId(ref employeeId);
 
-                #region SourceEmployee
-                var sourceEmployee = (await _repository.GetQueryable<SysEmployee, Guid>())?
-                .Where(x => x.Id == assignRequestPayload.SourceEmployeeId).Single();
+                var employee = (await _repository.GetQueryable<SysEmployee, Guid>())?
+                        .Where(x => x.Id == employeeId).Single();
 
-                if (sourceEmployee == null)
+                if (employee == null)
                     return new BaseResponse()
                     {
                         IsDone = false,
-                        Message = "Source Employee Not Found"
+                        Message = "موظف غير معروف"
                     };
 
-                if (!sourceEmployee.AllowAssign)
+                if (!employee.AllowAssign)
                     return new BaseResponse()
                     {
                         IsDone = false,
-                        Message = "Not allowed"
+                        Message = "موظف غير مسموح له"
                     };
-                #endregion
 
-                #region DestinationEmployee
-                var destinationEmployee = (await _repository.GetQueryable<SysEmployee, Guid>())?
-                    .Where(x => x.Id == assignRequestPayload.DestinationEmployeeId).Single();
+                var litigationRequest = (await _repository.GetQueryable<LitigationRequest, Guid>())?
+                       .Where(x => x.Id == assignRequestPayload.RequestId).Single();
 
-                if (destinationEmployee == null)
+                if (litigationRequest == null)
+                    return new BaseResponse()
+                    {
+                        IsDone = false,
+                        Message = "طلب غير موجود"
+                    };
+
+                if (litigationRequest.ReformerCitizenId.HasValue)
                 {
-                    return new BaseResponse()
-                    {
-                        IsDone = false,
-                        Message = "Destination Employee Not Found"
-                    };
+                    if (!employee.AllowReAssign)
+                        return new BaseResponse()
+                        {
+                            IsDone = false,
+                            Message = "موظف غير مسموح له"
+                        };
                 }
-                #endregion
 
-                #region Processinglogs
-                var processinglogs = (await _repository.GetQueryable<WorkFlowProcessingLog, Guid>())?
-                    .Where(x => x.RequestId == assignRequestPayload.RequestId
-                                            & !x.IsFinished
-                                            & x.WorkFlowStep.DepartmentId == destinationEmployee.DepartmentId)
-                    .Include(x => x.WorkFlowStep)
-                    .ThenInclude(x => x.WorkFlow)
-                    .ToList();
+                LitigationRequestReformerAssigningRequest litigationRequestReformerAssigningRequest = new LitigationRequestReformerAssigningRequest();
+                litigationRequestReformerAssigningRequest.CitizenId = assignRequestPayload.ReformerId;
+                litigationRequestReformerAssigningRequest.LitigationRequestId = litigationRequest.Id;
+                litigationRequestReformerAssigningRequest.Response = LitigationRequestReformerAssigningRequestStatus.None;
+                await _repository.AddAsync<LitigationRequestReformerAssigningRequest, Guid>(litigationRequestReformerAssigningRequest);
 
-                if (processinglogs == null)
-                    return new BaseResponse()
-                    {
-                        IsDone = false,
-                        Message = "request Not Found"
-                    };
-
-                bool passed = true;
-                processinglogs.ForEach(x =>
-                {
-                    if (x.EmployeeId.HasValue)
-                    {
-                        if (sourceEmployee.AllowReAssign)
-                            x.EmployeeId = destinationEmployee?.Id;
-                        else
-                            passed = false;
-                    }
-                    else
-                        x.EmployeeId = destinationEmployee?.Id;
-                });
-                #endregion
-
-                #region SaveChanges
                 var repositorySaveResponse = await _repository.SaveChangesAsync(new CancellationToken());
-                if (!repositorySaveResponse.IsDone)
-                    return repositorySaveResponse;
-
-                if (!passed)
-                    return new BaseResponse()
-                    {
-                        IsDone = true,
-                        Message = "employee not allow to reasign"
-                    };
-                else
-                    return new BaseResponse()
-                    {
-                        IsDone = true
-                    };
-                #endregion
-
+                return repositorySaveResponse;
             }
             catch (Exception ex)
             {
