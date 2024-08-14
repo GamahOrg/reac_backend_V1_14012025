@@ -4,7 +4,7 @@ namespace REAC.Application.Contracts.Dtos.UserManage
 {
     public class UserRegisterDto
     {
-        public string Password { get; set; }
+        //public string Password { get; set; }
         public Guid AreaId { get; set; }
         public Guid CityId { get; set; }
         public string District { get; set; }
