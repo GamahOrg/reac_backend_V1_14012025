@@ -7,8 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using REAC.Application.Contracts.Dtos.CitizenRequests;
 using REAC.Application.Contracts.IAppServices;
 using REAC.Domain.Shared.Enum;
-using REAC.EntityFrameworkCore.Entities.Litigation;
-using REAC.EntityFrameworkCore.Entities.System;
+using REAC.EntityFrameworkCore.Entities.Actor;
 using System.Linq;
 
 namespace REAC.Application.AppServices

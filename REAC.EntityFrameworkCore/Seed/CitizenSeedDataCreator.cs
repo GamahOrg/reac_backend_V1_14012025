@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using REAC.Domain.Shared.Enum;
+using REAC.EntityFrameworkCore.Entities.Actor;
 using REAC.EntityFrameworkCore.Entities.System;
 
 namespace Ticketing.EntityFrameworkCore.SeedData

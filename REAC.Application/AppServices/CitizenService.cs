@@ -8,6 +8,9 @@ using REAC.Application.Contracts.Dtos.Citizen;
 using REAC.Application.Contracts.IAppServices;
 using REAC.Domain.Shared.Enum;
 using REAC.EntityFrameworkCore.Entities;
+using REAC.EntityFrameworkCore.Entities.Actor;
+using REAC.EntityFrameworkCore.Entities.Arbitration;
+using REAC.EntityFrameworkCore.Entities.Litigation;
 using REAC.EntityFrameworkCore.Entities.System;
 
 namespace REAC.Application.AppServices
@@ -174,55 +177,108 @@ namespace REAC.Application.AppServices
 
             return await GetCitizenBasicData();
         }
-        public async Task<BaseResponse> GetReformersLookup(Guid? citizenId)
+        public async Task<BaseResponse> GetReformersLookup(Guid? citizenId, Guid requestId)
         {
-            if (citizenId == null | citizenId == Guid.Empty)
-            {
-                var citizens = (await _repository.GetQueryable<Citizen, Guid>())
-                             .Include(x => x.ReformerLitigationRequests)
-                             .Where(x => x.IsReformer == true & x.ReformerStatusId == ReformerStatus.Certified).ToList();
-                List<CitizenReformer> citizenReformers = new List<CitizenReformer>();
-                citizens.ForEach(t =>
-                {
-                    citizenReformers.Add(new CitizenReformer()
-                    {
-                        FullName = t.FullName,
-                        Id = t.Id,
-                        RequestsCount = t.ReformerLitigationRequests.Where(x => x.IsFinished == false).Count()
-                    });
-                });
-                return new DataResponse<List<CitizenReformer>>()
-                {
-                    IsDone = true,
-                    Data = citizenReformers.OrderBy(x => x.RequestsCount).ToList()
-                };
-            }
-            else
-            {
-                var citizens = (await _repository.GetQueryable<Citizen, Guid>())
-                                                 .Include(x => x.ReformerLitigationRequests)
-                            .Where(x => x.IsReformer == true & x.Id != citizenId).ToList();
-                List<CitizenReformer> citizenReformers = new List<CitizenReformer>();
-                citizens.ForEach(t =>
-                {
-                    citizenReformers.Add(new CitizenReformer()
-                    {
-                        FullName = t.FullName,
-                        Id = t.Id,
-                        RequestsCount = t.ReformerLitigationRequests.Where(x => x.IsFinished == false).Count()
-                    });
-                });
+            var litigationRequest = (await _repository.GetQueryable<LitigationRequest, Guid>())
+              .Include(x => x.Contract)
+              .Where(x => x.Id == requestId).SingleOrDefault();
 
-                return new DataResponse<List<CitizenReformer>>()
+            if (litigationRequest == null)
+                return new BaseResponse() { IsDone = false, Message = "طلب غير موجود" };
+
+            var citizens = (await _repository.GetQueryable<Citizen, Guid>())
+                             .Include(x => x.ReformerLitigationRequests)
+                             .Where(x => x.IsReformer == true & x.ReformerStatusId == ReformerStatus.Certified & x.Id != citizenId).ToList();
+            List<CitizenReformer> citizenReformers = new List<CitizenReformer>();
+            citizens.ForEach(t =>
+            {
+                if (t.Id != litigationRequest.ApplicantCitizenId & t.Id != litigationRequest.Contract.FirstPartyCitizenId & t.Id != litigationRequest.Contract.SecondPartyCitizenId)
                 {
-                    IsDone = true,
-                    Data = citizenReformers
-                };
-            }
+                    citizenReformers.Add(new CitizenReformer()
+                    {
+                        FullName = t.FullName,
+                        Id = t.Id,
+                        RequestsCount = t.ReformerLitigationRequests.Where(x => x.IsFinished == false).Count()
+                    });
+                }
+            });
+            return new DataResponse<List<CitizenReformer>>()
+            {
+                IsDone = true,
+                Data = citizenReformers.OrderBy(x => x.RequestsCount).ToList()
+            };
         }
-        public Task<BaseResponse> GetArbitratorsLookup(Guid? citizenId)
+        public async Task<BaseResponse> GetArbitratorsLookup(Guid? citizenId, Guid requestId)
         {
-            throw new NotImplementedException();
+            var litigationRequest = (await _repository.GetQueryable<LitigationRequest, Guid>())
+                .Include(x => x.Contract)
+                .Where(x => x.Id == requestId).SingleOrDefault();
+
+            if (litigationRequest == null)
+                return new BaseResponse() { IsDone = false, Message = "طلب غير موجود" };
+
+            var citizens = (await _repository.GetQueryable<Citizen, Guid>())
+                         .Include(x => x.ArbitratorLitigationRequests)
+                         .Include(x => x.LitigationRequestArbitratorLists)
+                         .Where(x => x.IsArbitrator == true & x.ArbitratorStatusId == ArbitratorStatus.Certified & x.Id != citizenId).ToList();
+
+            List<CitizenArbirator> citizenArbirators = new List<CitizenArbirator>();
+            citizens.ForEach(t =>
+            {
+                if (t.Id != litigationRequest.ApplicantCitizenId & t.Id != litigationRequest.Contract.FirstPartyCitizenId & t.Id != litigationRequest.Contract.SecondPartyCitizenId)
+                {
+                    citizenArbirators.Add(new CitizenArbirator()
+                    {
+                        FullName = t.FullName,
+                        Id = t.Id,
+                        RequestsCount = t.ArbitratorLitigationRequests.Where(x => x.IsFinished == false).Count() + t.LitigationRequestArbitratorLists.Count()
+                    });
+                }
+            });
+            return new DataResponse<List<CitizenArbirator>>()
+            {
+                IsDone = true,
+                Data = citizenArbirators.OrderBy(x => x.RequestsCount).ToList()
+            };
+
+        }
+        public async Task<BaseResponse> GetArbitratorsFullLookup(Guid? citizenId, Guid requestId)
+        {
+            var litigationRequest = (await _repository.GetQueryable<LitigationRequest, Guid>())
+                .Include(x => x.Contract)
+                .Where(x => x.Id == requestId).SingleOrDefault();
+
+            if (litigationRequest == null)
+                return new BaseResponse() { IsDone = false, Message = "طلب غير موجود" };
+
+            var citizens = (await _repository.GetQueryable<Citizen, Guid>())
+                         .Include(x => x.ArbitratorLitigationRequests)
+                         .Include(x => x.LitigationRequestArbitratorLists)
+                         .Include(x => x.Area)
+                         .Include(x => x.CitizenRequests)
+                         .Where(x => x.IsArbitrator == true & x.ArbitratorStatusId == ArbitratorStatus.Certified & x.Id != citizenId).ToList();
+            List<CitizenFullLookupArbirator> citizenArbirators = new List<CitizenFullLookupArbirator>();
+            citizens.ForEach(t =>
+            {
+                if (t.Id != litigationRequest.ApplicantCitizenId & t.Id != litigationRequest.Contract.FirstPartyCitizenId & t.Id != litigationRequest.Contract.SecondPartyCitizenId)
+                {
+                    citizenArbirators.Add(new CitizenFullLookupArbirator()
+                    {
+                        ArbitratorClass = t.CitizenRequests?.FirstOrDefault()?.SysArbitratorClass?.ArbitratorClassName,
+                        AreaName = t.CitizenRequests?.FirstOrDefault()?.SysArea?.AreaName,
+                        Brief = t.CitizenRequests?.FirstOrDefault()?.Brief,
+                        FullName = t.FullName,
+                        Id = t.Id,
+                        RequestsCount = t.ArbitratorLitigationRequests.Where(x => x.IsFinished == false).Count() + t.LitigationRequestArbitratorLists.Count()
+                    });
+                }
+            });
+            return new DataResponse<List<CitizenFullLookupArbirator>>()
+            {
+                IsDone = true,
+                Data = citizenArbirators.OrderBy(x => x.RequestsCount).ToList()
+            };
+
         }
 
         public async Task<BaseResponse> AddArbitratorFreeUpDecision(ArbitratorFreeUpDecisionCreateDto arbitratorFreeUpDecisionCreateDto)
@@ -491,6 +547,8 @@ namespace REAC.Application.AppServices
 
             var entitiesQuerable = (await _repository.GetQueryable<Citizen, Guid>())
                                       .Include(x => x.ArbitratorStopFreeUpDecisions)
+                                      .Include(x => x.ArbitratorLitigationRequests)
+                                      .Include(x => x.LitigationRequestArbitratorLists)
                        .Include(x => x.SysArbitratorStatus);
 
 
@@ -514,7 +572,7 @@ namespace REAC.Application.AppServices
                 citizenArbitrator.ArbitratorClass = citizen.CitizenRequests?.OrderBy(x => x.RequestOn).LastOrDefault()?.SysArbitratorClass?.ArbitratorClassName;
                 citizenArbitrator.ExperienceYears = citizen.CitizenRequests?.OrderBy(x => x.RequestOn).LastOrDefault()?.ExperienceYears;
                 citizenArbitrator.Email = citizen.Email;
-                citizenArbitrator.RequestsCount = 0;
+                citizenArbitrator.RequestsCount = citizen.ArbitratorLitigationRequests.Count + citizen.LitigationRequestArbitratorLists.Count;
                 citizenArbitrator.ArbitratorStatusDate = citizen.ArbitratorStopFreeUpDecisions?.OrderBy(x => x.DecisionDate).LastOrDefault()?.DecisionDate;
                 citizenArbitrators.Add(citizenArbitrator);
 
@@ -550,6 +608,8 @@ namespace REAC.Application.AppServices
         public async Task<BaseResponse> GetArbitratorsDecisions(Guid citizenId)
         {
             var citizen = (await _repository.GetQueryable<Citizen, Guid>())
+                .Include(x => x.ArbitratorLitigationRequests)
+                .Include(x => x.LitigationRequestArbitratorLists)
                          .Include(x => x.SysArbitratorStatus)
                          .Include(x => x.ArbitratorStopFreeUpDecisions)
                         .ThenInclude(x => x.SysArbitratorStatus)
@@ -583,7 +643,7 @@ namespace REAC.Application.AppServices
             citizenArbitrator.ArbitratorStatus = citizen.SysArbitratorStatus?.StatusName;
             citizenArbitrator.ArbitratorStatusId = citizen.ArbitratorStatusId;
             citizenArbitrator.Email = citizen.Email;
-            citizenArbitrator.RequestsCount = 0;
+            citizenArbitrator.RequestsCount = citizen.ArbitratorLitigationRequests.Count + citizen.LitigationRequestArbitratorLists.Count;
             citizenArbitrator.ArbitratorStatusDate = citizen.ArbitratorStopFreeUpDecisions?.OrderBy(x => x.DecisionDate).LastOrDefault()?.DecisionDate;
             if (citizen.ArbitratorStopFreeUpDecisions != null)
             {

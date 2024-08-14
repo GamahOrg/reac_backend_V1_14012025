@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using REAC.EntityFrameworkCore.Entities.Actor;
 using REAC.EntityFrameworkCore.Entities.Arbitration;
 using REAC.EntityFrameworkCore.Entities.Litigation;
 using REAC.EntityFrameworkCore.Entities.Notification;
@@ -19,7 +20,28 @@ public partial class REACDBContext : DbContext
     {
 
     }
-    public virtual DbSet<LitigationRequestArbitrator> LitigationRequestArbitrators { get; set; }
+    public virtual DbSet<LitigationRequestArbitratorRecusalRequest> LitigationRequestArbitratorRecusalRequests { get; set; }
+    public virtual DbSet<LitigationRequestArbitratorRecusalRequestFile> LitigationRequestArbitratorRecusalRequestFiles { get; set; }
+    public virtual DbSet<LitigationRequestArbitratorsChairmanNominationListValue> LitigationRequestArbitratorsChairmanNominationListValues { get; set; }
+
+
+    public virtual DbSet<LitigationRequestArbitratorsChairmanNominationList> LitigationRequestArbitratorsChairmanNominationLists { get; set; }
+
+
+    public virtual DbSet<SysArbitratorNominationListCount> SysArbitratorNominationListCounts { get; set; }
+    public virtual DbSet<SysArbitratorCount> SysArbitratorCounts { get; set; }
+
+
+    public virtual DbSet<LitigationRequestArbitrationReportExplanationRequest> LitigationRequestArbitrationReportExplanationRequests { get; set; }
+    public virtual DbSet<LitigationRequestArbitrationReportExplanationRequestFile> LitigationRequestArbitrationReportExplanationRequestFile { get; set; }
+
+
+    public virtual DbSet<SysArbitratorAssigningRequestType> SysArbitratorAssigningRequests { get; set; }
+    public virtual DbSet<SysMeetingLocation> SysMeetingLocations { get; set; }
+
+
+    public virtual DbSet<LitigationRequestArbitratorNominationList> LitigationRequestArbitratorNominationLists { get; set; }
+    public virtual DbSet<LitigationRequestArbitratorList> LitigationRequestArbitratorLists { get; set; }
 
     public virtual DbSet<SysArbitratorStatus> SysArbitratorStatuses { get; set; }
 
@@ -30,8 +52,9 @@ public partial class REACDBContext : DbContext
     public virtual DbSet<ArbitratorStopFreeUpDecision> ArbitratorStopFreeUpDecisions { get; set; }
 
     public virtual DbSet<SysBank> SysBanks { get; set; }
-
     public virtual DbSet<LitigationRequestReformerAssigningRequest> LitigationRequestReformerAssigningRequests { get; set; }
+
+    public virtual DbSet<LitigationRequestArbitratorAssigningRequest> LitigationRequestArbitratorAssigningRequest { get; set; }
     public virtual DbSet<SysNotificationPlanItemDestination> SysNotificationPlanItemDestinations { get; set; }
     public virtual DbSet<SysNotificationPlan> SysNotificationPlans { get; set; }
     public virtual DbSet<SysNotification> SysNotifications { get; set; }
@@ -118,6 +141,7 @@ public partial class REACDBContext : DbContext
 
     public virtual DbSet<LitigationRequestGroundFile> LitigationRequestGroundFiles { get; set; }
 
+    public virtual DbSet<LitigationRequestArbitrationReport> LitigationRequestArbitrationReports { get; set; }
     public virtual DbSet<LitigationRequestReconciliationReport> LitigationRequestReconciliationReports { get; set; }
 
     public virtual DbSet<LitigationRequestReconciliationReportItem> LitigationRequestMeetingReconciliationItems { get; set; }
@@ -166,8 +190,144 @@ public partial class REACDBContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<LitigationRequestArbitratorRecusalRequest>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__LitigationRequestArbitratorRecusalRequest");
 
-        modelBuilder.Entity<LitigationRequestArbitrator>(entity =>
+            entity.ToTable("LitigationRequestArbitratorRecusalRequest");
+            entity.HasIndex(e => e.Id, "LitigationRequestArbitratorRecusalRequest_Id").IsUnique();
+            entity.Property(e => e.Id).ValueGeneratedNever();
+
+            entity.HasOne(d => d.LitigationRequest).WithMany(p => p.LitigationRequestArbitratorRecusalRequests)
+             .HasForeignKey(d => d.LitigationRequestId)
+             .OnDelete(DeleteBehavior.ClientSetNull)
+             .HasConstraintName("FKLitigationRequestLitigationRequestArbitratorRecusalRequests231388ccc000");
+
+            entity.HasOne(d => d.ArbitratorCitizen).WithMany(p => p.LitigationRequestArbitratorRecusalRequests)
+            .HasForeignKey(d => d.ArbitratorCitizenId)
+            .OnDelete(DeleteBehavior.ClientSetNull)
+            .HasConstraintName("FKArbitratorCitizenLitigationRequestArbitratorRecusalRequests231388ccc000");
+
+        });
+        modelBuilder.Entity<LitigationRequestArbitratorRecusalRequestFile>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__LitigationRequestArbitratorRecusalRequestFile");
+
+            entity.ToTable("LitigationRequestArbitratorRecusalRequestFile");
+            entity.HasIndex(e => e.Id, "LitigationRequestArbitratorRecusalRequestFile_Id").IsUnique();
+            entity.Property(e => e.Id).ValueGeneratedNever();
+
+            entity.HasOne(d => d.RecusalRequestFile).WithMany(p => p.LitigationRequestArbitratorRecusalRequestFiles)
+             .HasForeignKey(d => d.RecusalRequestFileId)
+             .OnDelete(DeleteBehavior.ClientSetNull)
+             .HasConstraintName("FKRecusalRequestFileRequestArbitratorRecusalRequestsFile2313885888000");
+
+            entity.HasOne(d => d.LitigationRequestArbitratorRecusalRequest).WithMany(p => p.LitigationRequestArbitratorRecusalRequestFiles)
+            .HasForeignKey(d => d.LitigationRequestArbitratorRecusalRequestId)
+            .OnDelete(DeleteBehavior.ClientSetNull)
+            .HasConstraintName("FKLitigationRequestArbitratorRecusalRequesArbitratorRecusalRequestFiles2313000");
+
+        });
+        modelBuilder.Entity<LitigationRequestArbitrationReportExplanationRequest>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__LitigationRequestArbitrationReportExplanationRequest");
+
+            entity.ToTable("LitigationRequestArbitrationReportExplanationRequest");
+            entity.HasIndex(e => e.Id, "LitigationRequestArbitrationReportExplanationRequest_Id").IsUnique();
+            entity.Property(e => e.Id).ValueGeneratedNever();
+
+            entity.HasOne(d => d.LitigationRequestArbitrationReport).WithMany(p => p.LitigationRequestArbitrationReportExplanationRequests)
+             .HasForeignKey(d => d.LitigationRequestArbitrationReportId)
+             .OnDelete(DeleteBehavior.ClientSetNull)
+             .HasConstraintName("FKLitigationRequestArbitrationReportExplanationRequests231388ccc000");
+
+        });
+        modelBuilder.Entity<LitigationRequestArbitrationReportExplanationRequestFile>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__LitigationRequestArbitrationReportExplanationRequestFile");
+
+            entity.ToTable("LitigationRequestArbitrationReportExplanationRequestFile");
+            entity.HasIndex(e => e.Id, "LitigationRequestArbonRequestFile_Id").IsUnique();
+            entity.Property(e => e.Id).ValueGeneratedNever();
+
+            entity.HasOne(d => d.ArbitrationReportExplanationRequest).WithMany(p => p.LitigationRequestArbitrationReportExplanationRequestFiles)
+             .HasForeignKey(d => d.ArbitrationReportExplanationRequestId)
+             .OnDelete(DeleteBehavior.ClientSetNull)
+             .HasConstraintName("FKLitigationRequestArbitrationR2313800088c000");
+
+            entity.HasOne(d => d.ExplanationRequestFile).WithMany(p => p.LitigationRequestArbitrationReportExplanationRequestFiles)
+             .HasForeignKey(d => d.ExplanationRequestFileId)
+             .OnDelete(DeleteBehavior.ClientSetNull)
+             .HasConstraintName("FKArbitrationReportExplanationRequestFileRequestFile3800088000");
+        });
+
+        modelBuilder.Entity<LitigationRequestArbitratorsChairmanNominationListValue>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__LitigationRequestArbitratorsChairmanNominationListValue07F533D1CD");
+
+            entity.ToTable("LitigationRequestArbitratorsChairmanNominationListValue");
+            entity.HasIndex(e => e.Id, "LitigationRequestArbitratorsChairmanNominationListValue_Id").IsUnique();
+            entity.Property(e => e.Id).ValueGeneratedNever();
+
+            entity.HasOne(d => d.ArbitratorChairmanCitizen).WithMany(p => p.LitigationRequestArbitratorsChairmanNominationListChairmanValues)
+             .HasForeignKey(d => d.ArbitratorChairmanCitizenId)
+             .OnDelete(DeleteBehavior.ClientSetNull)
+             .HasConstraintName("FKArbitratorLitigationRequestArbitratorsChairmanNominationListChairmanValues000");
+
+            entity.HasOne(d => d.ArbitratorCitizen).WithMany(p => p.LitigationRequestArbitratorsChairmanNominationListArbitratorValues)
+            .HasForeignKey(d => d.ArbitratorCitizenId)
+            .OnDelete(DeleteBehavior.ClientSetNull)
+            .HasConstraintName("FKArbitratorLitigationRequestArbitratorsChairmanNominationListArbitratorValues000");
+
+
+            entity.HasOne(d => d.LitigationRequestArbitratorsChairmanNominationList).WithMany(p => p.LitigationRequestArbitratorsChairmanNominationListValues)
+             .HasForeignKey(d => d.LitigationRequestArbitratorsChairmanNominationListId)
+             .OnDelete(DeleteBehavior.ClientSetNull)
+             .HasConstraintName("FKLitigationRequesLitigationRequestArbitrChairmanNominationListValues011111112581388");
+
+        });
+
+        modelBuilder.Entity<LitigationRequestArbitratorsChairmanNominationList>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__LitigationRequestArbitratorsChairmanNominationList07F533D1CD");
+
+            entity.ToTable("LitigationRequestArbitratorsChairmanNominationList");
+            entity.HasIndex(e => e.Id, "LitigationRequestArbitratorsChairmanNominationList_Id").IsUnique();
+            entity.Property(e => e.Id).ValueGeneratedNever();
+
+            entity.HasOne(d => d.ArbitratorChairmanCitizen).WithMany(p => p.LitigationRequestArbitratorsChairmanNominationLists)
+             .HasForeignKey(d => d.ArbitratorChairmanCitizenId)
+             .OnDelete(DeleteBehavior.ClientSetNull)
+             .HasConstraintName("FKArbitratorLitigationRequestArbitratorsChairmanNominationLists000");
+
+            entity.HasOne(d => d.LitigationRequest).WithMany(p => p.LitigationRequestArbitratorsChairmanNominationLists)
+             .HasForeignKey(d => d.LitigationRequestId)
+             .OnDelete(DeleteBehavior.ClientSetNull)
+             .HasConstraintName("FKLitigationRequesLitigationRequestArbitrChairmanNominationList1388");
+
+        });
+
+
+        modelBuilder.Entity<LitigationRequestArbitratorNominationList>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__LitigationRequestArbitratorNominationList07F533D1CD");
+
+            entity.ToTable("LitigationRequestArbitratorNominationList");
+            entity.HasIndex(e => e.Id, "LitigationRequestArbitratorNominationList_Id").IsUnique();
+            entity.Property(e => e.Id).ValueGeneratedNever();
+
+            entity.HasOne(d => d.ArbitratorCitizen).WithMany(p => p.LitigationRequestArbitratorNominationLists)
+             .HasForeignKey(d => d.ArbitratorCitizenId)
+             .OnDelete(DeleteBehavior.ClientSetNull)
+             .HasConstraintName("FKArbitratorCitizenRequestArbitrators231388ccc000");
+
+            entity.HasOne(d => d.LitigationRequest).WithMany(p => p.LitigationRequestArbitratorNominationLists)
+             .HasForeignKey(d => d.LitigationRequestId)
+             .OnDelete(DeleteBehavior.ClientSetNull)
+             .HasConstraintName("FKLitigationRequestLitigationRequestArbitratorNominationList231388");
+
+        });
+        modelBuilder.Entity<LitigationRequestArbitratorList>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK__LitigationRequestArbitrator07F533D1CD");
 
@@ -175,18 +335,34 @@ public partial class REACDBContext : DbContext
             entity.HasIndex(e => e.Id, "LitigationRequestArbitrator_Id").IsUnique();
             entity.Property(e => e.Id).ValueGeneratedNever();
 
-            entity.HasOne(d => d.ArbitratorCitizen).WithMany(p => p.LitigationRequestArbitrators)
+            entity.HasOne(d => d.ArbitratorCitizen).WithMany(p => p.LitigationRequestArbitratorLists)
              .HasForeignKey(d => d.ArbitratorCitizenId)
              .OnDelete(DeleteBehavior.ClientSetNull)
-             .HasConstraintName("FKArbitratorCitizenRequestArbitrators231388000");
+             .HasConstraintName("FKArbitratorCitizenRequestArbitrators231388345000");
 
-            entity.HasOne(d => d.LitigationRequest).WithMany(p => p.LitigationRequestArbitrators)
+            entity.HasOne(d => d.LitigationRequest).WithMany(p => p.LitigationRequestArbitratorLists)
              .HasForeignKey(d => d.LitigationRequestId)
              .OnDelete(DeleteBehavior.ClientSetNull)
              .HasConstraintName("FKLitigationRequestLitigationRequestArbitrators231388");
 
         });
 
+
+        modelBuilder.Entity<SysArbitratorCount>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK_SysArbitratorCount");
+            entity.ToTable("SysArbitratorCount");
+            entity.HasIndex(e => e.Id, "SysArbitratorCount_Id").IsUnique();
+            entity.Property(e => e.Id).ValueGeneratedNever();
+        });
+
+        modelBuilder.Entity<SysArbitratorNominationListCount>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK_SysArbitratorNominationListCount");
+            entity.ToTable("SysArbitratorNominationListCount");
+            entity.HasIndex(e => e.Id, "SysArbitratorNominationListCount_Id").IsUnique();
+            entity.Property(e => e.Id).ValueGeneratedNever();
+        });
 
         modelBuilder.Entity<SysNotification>(entity =>
         {
@@ -848,6 +1024,35 @@ public partial class REACDBContext : DbContext
                 .HasConstraintName("FKReformerCitizenLitigationRequestReformerAssigningRequest705");
 
         });
+        modelBuilder.Entity<LitigationRequestArbitratorAssigningRequest>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__LitigationRequestArbitratorAssigningRequest4EC07AE06877A");
+
+            entity.ToTable("LitigationRequestArbitratorAssigningRequest");
+
+            entity.Property(e => e.Id).ValueGeneratedNever();
+
+            entity.HasOne(d => d.LitigationRequest).WithMany(p => p.LitigationRequestArbitratorAssigningRequests)
+                .HasForeignKey(d => d.LitigationRequestId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FKLitigationRequestLitigationRequestArbitratorAssigningRequest705");
+
+            entity.HasOne(d => d.ArbitratorCitizen).WithMany(p => p.LitigationRequestArbitratorAssigningRequests)
+                .HasForeignKey(d => d.CitizenId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FKArbitratorCitizenLitigationRequestArbitratorAssigningRequest705");
+
+            entity.HasOne(d => d.ArbitratorAssigningRequestType).WithMany(p => p.LitigationRequestArbitratorAssigningRequests)
+                .HasForeignKey(d => d.ArbitratorAssigningRequestTypeId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FKArbitratorAssigningRequestIdArbitratorAssigningRequest705");
+
+            entity.HasOne(d => d.LitigationRequestArbitratorNominationList).WithMany(p => p.LitigationRequestArbitratorAssigningRequests)
+                .HasForeignKey(d => d.LitigationRequestArbitratorNominationListId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FKLitigationRequestArbitratorNominationListAssigningRequest70502");
+
+        });
 
         modelBuilder.Entity<Facility>(entity =>
         {
@@ -1189,6 +1394,33 @@ public partial class REACDBContext : DbContext
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FKLitigation488105");
         });
+        modelBuilder.Entity<LitigationRequestArbitrationReport>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__LitigationRequestArbitrationReport_3214EC07F3A8E5CA");
+
+            entity.ToTable("LitigationRequestArbitrationReport");
+            entity.Property(e => e.Facts).HasMaxLength(5000);
+            entity.Property(e => e.Reasons).HasMaxLength(5000);
+            entity.Property(e => e.JudgmentDecisionText).HasMaxLength(5000);
+
+            entity.Property(e => e.ModificationRequest).HasMaxLength(1000);
+
+            entity.Property(e => e.Id).ValueGeneratedNever();
+            entity.Property(e => e.LitigationRequestId);
+            entity.Property(e => e.JudgmentDate).HasColumnType("datetime");
+            entity.Property(e => e.JudgmentDecisionDate).HasColumnType("datetime");
+
+            entity.HasOne(d => d.LitigationRequest).WithMany(p => p.LitigationRequestArbitrationReports)
+                .HasForeignKey(d => d.LitigationRequestId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FKLitigationLitigationRequestArbitrationReport334620");
+
+            entity.HasOne(d => d.MeetingLocation).WithMany(p => p.LitigationRequestArbitrationReports)
+               .HasForeignKey(d => d.MeetingLocationId)
+               .OnDelete(DeleteBehavior.ClientSetNull)
+               .HasConstraintName("FKMeetingLocationRequestArbitrationReport33000000004620");
+
+        });
 
         modelBuilder.Entity<LitigationRequestReconciliationReport>(entity =>
         {
@@ -1353,6 +1585,14 @@ public partial class REACDBContext : DbContext
             entity.Property(e => e.FilePath).HasMaxLength(1000);
             entity.Property(e => e.FileType).HasMaxLength(10);
         });
+        modelBuilder.Entity<SysArbitratorAssigningRequestType>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__SysArbitratorAssigningRequest3214EC0743341C99");
+
+            entity.ToTable("SysArbitratorAssigningRequestType");
+
+        });
+
         modelBuilder.Entity<SysGender>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK__SysGende__3214EC0743341C99");
@@ -1505,6 +1745,14 @@ public partial class REACDBContext : DbContext
             entity.ToTable("SysBank");
 
         });
+        modelBuilder.Entity<SysMeetingLocation>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__SysMeetingLocation_3214EC0743341C99");
+
+            entity.ToTable("SysMeetingLocation");
+
+        });
+
         modelBuilder.Entity<ArbitratorStopFreeUpDecision>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK_ArbitratorStopFreeUpDecision_3214EC0743341C99");

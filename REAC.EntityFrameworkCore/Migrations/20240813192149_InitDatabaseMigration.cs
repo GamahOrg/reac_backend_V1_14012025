@@ -35,6 +35,18 @@ namespace REAC.EntityFrameworkCore.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "SysArbitratorAssigningRequestType",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false),
+                    ArbitratorAssigningRequestName = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK__SysArbitratorAssigningRequest3214EC0743341C99", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "SysArbitratorClass",
                 columns: table => new
                 {
@@ -47,6 +59,32 @@ namespace REAC.EntityFrameworkCore.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK__SysArbitratorClass_3214EC0743341C99", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "SysArbitratorCount",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ArbitratorCount = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SysArbitratorCount", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "SysArbitratorNominationListCount",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ArbitratorCount = table.Column<int>(type: "int", nullable: false),
+                    ArbitratorNominationListCount = table.Column<int>(type: "int", nullable: false),
+                    ArbitratorChairmanNominationListCount = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SysArbitratorNominationListCount", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -307,6 +345,18 @@ namespace REAC.EntityFrameworkCore.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK__SysLitig__3214EC0715A02324", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "SysMeetingLocation",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    MeetingLocationName = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK__SysMeetingLocation_3214EC0743341C99", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -1570,6 +1620,8 @@ namespace REAC.EntityFrameworkCore.Migrations
                     LitigationRequestCategoryId = table.Column<int>(type: "int", nullable: true),
                     LitigationRequestOwnerTypeId = table.Column<int>(type: "int", nullable: false),
                     IsMinutesOfMeetingApprovalRequired = table.Column<bool>(type: "bit", nullable: true),
+                    IsPlaintiffArbitratorNominationListDone = table.Column<bool>(type: "bit", nullable: true),
+                    IsDefendantArbitratorNominationListDone = table.Column<bool>(type: "bit", nullable: true),
                     MintuesOfMeetingApprovalPlaintiffStatus = table.Column<int>(type: "int", nullable: true),
                     MintuesOfMeetingApprovalDefendantStatus = table.Column<int>(type: "int", nullable: true),
                     MintuesOfMeetingApprovalPlaintiffStatusOn = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -1599,7 +1651,14 @@ namespace REAC.EntityFrameworkCore.Migrations
                     ExemptionReductionCategoryId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     ExemptionReductionFileId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     PretenderRating = table.Column<int>(type: "int", nullable: true),
-                    DefendantRating = table.Column<int>(type: "int", nullable: true)
+                    DefendantRating = table.Column<int>(type: "int", nullable: true),
+                    ArbitratorsSelectionDurationDateTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    ArbitratorsCountDateTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    ArbitratorsNominationListCreationDateTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    ArbitratorsNominationListSelectionDoneDateTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    ArbitratorsChairmanNominationListCreationDateTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    ArbitratorsChairmanNominationListSelectionDoneDateTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    JudgmentDecisionIssuingDateTime = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -1677,27 +1736,133 @@ namespace REAC.EntityFrameworkCore.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "LitigationRequestArbitrationReport",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    LitigationRequestId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    JudgmentDate = table.Column<DateTime>(type: "datetime", nullable: false),
+                    Facts = table.Column<string>(type: "nvarchar(max)", maxLength: 5000, nullable: false),
+                    Reasons = table.Column<string>(type: "nvarchar(max)", maxLength: 5000, nullable: false),
+                    JudgmentDecisionText = table.Column<string>(type: "nvarchar(max)", maxLength: 5000, nullable: false),
+                    ModificationRequest = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: false),
+                    JudgmentDecisionDate = table.Column<DateTime>(type: "datetime", nullable: false),
+                    JudgmentDecisionPlace = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    MeetingLocationId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK__LitigationRequestArbitrationReport_3214EC07F3A8E5CA", x => x.Id);
+                    table.ForeignKey(
+                        name: "FKLitigationLitigationRequestArbitrationReport334620",
+                        column: x => x.LitigationRequestId,
+                        principalTable: "LitigationRequest",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FKMeetingLocationRequestArbitrationReport33000000004620",
+                        column: x => x.MeetingLocationId,
+                        principalTable: "SysMeetingLocation",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "LitigationRequestArbitrator",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     LitigationRequestId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ArbitratorCitizenId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    ArbitratorCitizenId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK__LitigationRequestArbitrator07F533D1CD", x => x.Id);
                     table.ForeignKey(
-                        name: "FKArbitratorCitizenRequestArbitrators231388000",
+                        name: "FKArbitratorCitizenRequestArbitrators231388345000",
                         column: x => x.ArbitratorCitizenId,
                         principalTable: "Citizen",
                         principalColumn: "Id");
                     table.ForeignKey(
                         name: "FKLitigationRequestLitigationRequestArbitrators231388",
+                        column: x => x.LitigationRequestId,
+                        principalTable: "LitigationRequest",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "LitigationRequestArbitratorNominationList",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    LitigationRequestId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ArbitratorCitizenId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    PlaintiffPriority = table.Column<int>(type: "int", nullable: true),
+                    DefendantPriority = table.Column<int>(type: "int", nullable: true),
+                    TotalPriority = table.Column<int>(type: "int", nullable: true),
+                    IsSent = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK__LitigationRequestArbitratorNominationList07F533D1CD", x => x.Id);
+                    table.ForeignKey(
+                        name: "FKArbitratorCitizenRequestArbitrators231388ccc000",
+                        column: x => x.ArbitratorCitizenId,
+                        principalTable: "Citizen",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FKLitigationRequestLitigationRequestArbitratorNominationList231388",
+                        column: x => x.LitigationRequestId,
+                        principalTable: "LitigationRequest",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "LitigationRequestArbitratorRecusalRequest",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    LitigationRequestId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ArbitratorCitizenId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Reason = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    RequestOn = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    RequestParty = table.Column<int>(type: "int", nullable: false),
+                    ApproveRejectStatus = table.Column<int>(type: "int", nullable: true),
+                    ResponseOn = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK__LitigationRequestArbitratorRecusalRequest", x => x.Id);
+                    table.ForeignKey(
+                        name: "FKArbitratorCitizenLitigationRequestArbitratorRecusalRequests231388ccc000",
+                        column: x => x.ArbitratorCitizenId,
+                        principalTable: "Citizen",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FKLitigationRequestLitigationRequestArbitratorRecusalRequests231388ccc000",
+                        column: x => x.LitigationRequestId,
+                        principalTable: "LitigationRequest",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "LitigationRequestArbitratorsChairmanNominationList",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    LitigationRequestId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ArbitratorChairmanCitizenId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    TotalPriority = table.Column<int>(type: "int", nullable: true),
+                    IsSent = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK__LitigationRequestArbitratorsChairmanNominationList07F533D1CD", x => x.Id);
+                    table.ForeignKey(
+                        name: "FKArbitratorLitigationRequestArbitratorsChairmanNominationLists000",
+                        column: x => x.ArbitratorChairmanCitizenId,
+                        principalTable: "Citizen",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FKLitigationRequesLitigationRequestArbitrChairmanNominationList1388",
                         column: x => x.LitigationRequestId,
                         principalTable: "LitigationRequest",
                         principalColumn: "Id");
@@ -1838,6 +2003,7 @@ namespace REAC.EntityFrameworkCore.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    RequestOn = table.Column<DateTime>(type: "datetime2", nullable: true),
                     LitigationRequestId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CitizenId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Response = table.Column<int>(type: "int", nullable: false),
@@ -1941,6 +2107,120 @@ namespace REAC.EntityFrameworkCore.Migrations
                         name: "FKWorkFlowPrWorkFlowProcessingLog231724",
                         column: x => x.RequestId,
                         principalTable: "LitigationRequest",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "LitigationRequestArbitrationReportExplanationRequest",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ExplanationRequestDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    LitigationRequestArbitrationReportId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    RequestArbitrationReportExplanationRequestParty = table.Column<int>(type: "int", nullable: false),
+                    ExplanationRequests = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Response = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ResponseOn = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK__LitigationRequestArbitrationReportExplanationRequest", x => x.Id);
+                    table.ForeignKey(
+                        name: "FKLitigationRequestArbitrationReportExplanationRequests231388ccc000",
+                        column: x => x.LitigationRequestArbitrationReportId,
+                        principalTable: "LitigationRequestArbitrationReport",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "LitigationRequestArbitratorAssigningRequest",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    RequestOn = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    LitigationRequestId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ArbitratorAssigningRequestTypeId = table.Column<int>(type: "int", nullable: false),
+                    LitigationRequestArbitratorNominationListId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    CitizenId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Response = table.Column<int>(type: "int", nullable: false),
+                    ResponseOn = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK__LitigationRequestArbitratorAssigningRequest4EC07AE06877A", x => x.Id);
+                    table.ForeignKey(
+                        name: "FKArbitratorAssigningRequestIdArbitratorAssigningRequest705",
+                        column: x => x.ArbitratorAssigningRequestTypeId,
+                        principalTable: "SysArbitratorAssigningRequestType",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FKArbitratorCitizenLitigationRequestArbitratorAssigningRequest705",
+                        column: x => x.CitizenId,
+                        principalTable: "Citizen",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FKLitigationRequestArbitratorNominationListAssigningRequest70502",
+                        column: x => x.LitigationRequestArbitratorNominationListId,
+                        principalTable: "LitigationRequestArbitratorNominationList",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FKLitigationRequestLitigationRequestArbitratorAssigningRequest705",
+                        column: x => x.LitigationRequestId,
+                        principalTable: "LitigationRequest",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "LitigationRequestArbitratorRecusalRequestFile",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    LitigationRequestArbitratorRecusalRequestId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    RecusalRequestFileId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK__LitigationRequestArbitratorRecusalRequestFile", x => x.Id);
+                    table.ForeignKey(
+                        name: "FKLitigationRequestArbitratorRecusalRequesArbitratorRecusalRequestFiles2313000",
+                        column: x => x.LitigationRequestArbitratorRecusalRequestId,
+                        principalTable: "LitigationRequestArbitratorRecusalRequest",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FKRecusalRequestFileRequestArbitratorRecusalRequestsFile2313885888000",
+                        column: x => x.RecusalRequestFileId,
+                        principalTable: "SysFileManager",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "LitigationRequestArbitratorsChairmanNominationListValue",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    LitigationRequestArbitratorsChairmanNominationListId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ArbitratorChairmanCitizenId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ArbitratorCitizenId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Priority = table.Column<int>(type: "int", nullable: false),
+                    IsSent = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK__LitigationRequestArbitratorsChairmanNominationListValue07F533D1CD", x => x.Id);
+                    table.ForeignKey(
+                        name: "FKArbitratorLitigationRequestArbitratorsChairmanNominationListArbitratorValues000",
+                        column: x => x.ArbitratorCitizenId,
+                        principalTable: "Citizen",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FKArbitratorLitigationRequestArbitratorsChairmanNominationListChairmanValues000",
+                        column: x => x.ArbitratorChairmanCitizenId,
+                        principalTable: "Citizen",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FKLitigationRequesLitigationRequestArbitrChairmanNominationListValues011111112581388",
+                        column: x => x.LitigationRequestArbitratorsChairmanNominationListId,
+                        principalTable: "LitigationRequestArbitratorsChairmanNominationList",
                         principalColumn: "Id");
                 });
 
@@ -2105,6 +2385,29 @@ namespace REAC.EntityFrameworkCore.Migrations
                         name: "FKWorkFlowPr653271",
                         column: x => x.WorkFlowProcessingLogId,
                         principalTable: "WorkFlowProcessingLog",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "LitigationRequestArbitrationReportExplanationRequestFile",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ArbitrationReportExplanationRequestId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ExplanationRequestFileId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK__LitigationRequestArbitrationReportExplanationRequestFile", x => x.Id);
+                    table.ForeignKey(
+                        name: "FKArbitrationReportExplanationRequestFileRequestFile3800088000",
+                        column: x => x.ExplanationRequestFileId,
+                        principalTable: "SysFileManager",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FKLitigationRequestArbitrationR2313800088c000",
+                        column: x => x.ArbitrationReportExplanationRequestId,
+                        principalTable: "LitigationRequestArbitrationReportExplanationRequest",
                         principalColumn: "Id");
                 });
 
@@ -2373,6 +2676,43 @@ namespace REAC.EntityFrameworkCore.Migrations
                 filter: "[RequestCode] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
+                name: "IX_LitigationRequestArbitrationReport_LitigationRequestId",
+                table: "LitigationRequestArbitrationReport",
+                column: "LitigationRequestId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_LitigationRequestArbitrationReport_MeetingLocationId",
+                table: "LitigationRequestArbitrationReport",
+                column: "MeetingLocationId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_LitigationRequestArbitrationReportExplanationRequest_LitigationRequestArbitrationReportId",
+                table: "LitigationRequestArbitrationReportExplanationRequest",
+                column: "LitigationRequestArbitrationReportId");
+
+            migrationBuilder.CreateIndex(
+                name: "LitigationRequestArbitrationReportExplanationRequest_Id",
+                table: "LitigationRequestArbitrationReportExplanationRequest",
+                column: "Id",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_LitigationRequestArbitrationReportExplanationRequestFile_ArbitrationReportExplanationRequestId",
+                table: "LitigationRequestArbitrationReportExplanationRequestFile",
+                column: "ArbitrationReportExplanationRequestId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_LitigationRequestArbitrationReportExplanationRequestFile_ExplanationRequestFileId",
+                table: "LitigationRequestArbitrationReportExplanationRequestFile",
+                column: "ExplanationRequestFileId");
+
+            migrationBuilder.CreateIndex(
+                name: "LitigationRequestArbonRequestFile_Id",
+                table: "LitigationRequestArbitrationReportExplanationRequestFile",
+                column: "Id",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_LitigationRequestArbitrator_ArbitratorCitizenId",
                 table: "LitigationRequestArbitrator",
                 column: "ArbitratorCitizenId");
@@ -2385,6 +2725,111 @@ namespace REAC.EntityFrameworkCore.Migrations
             migrationBuilder.CreateIndex(
                 name: "LitigationRequestArbitrator_Id",
                 table: "LitigationRequestArbitrator",
+                column: "Id",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_LitigationRequestArbitratorAssigningRequest_ArbitratorAssigningRequestTypeId",
+                table: "LitigationRequestArbitratorAssigningRequest",
+                column: "ArbitratorAssigningRequestTypeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_LitigationRequestArbitratorAssigningRequest_CitizenId",
+                table: "LitigationRequestArbitratorAssigningRequest",
+                column: "CitizenId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_LitigationRequestArbitratorAssigningRequest_LitigationRequestArbitratorNominationListId",
+                table: "LitigationRequestArbitratorAssigningRequest",
+                column: "LitigationRequestArbitratorNominationListId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_LitigationRequestArbitratorAssigningRequest_LitigationRequestId",
+                table: "LitigationRequestArbitratorAssigningRequest",
+                column: "LitigationRequestId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_LitigationRequestArbitratorNominationList_ArbitratorCitizenId",
+                table: "LitigationRequestArbitratorNominationList",
+                column: "ArbitratorCitizenId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_LitigationRequestArbitratorNominationList_LitigationRequestId",
+                table: "LitigationRequestArbitratorNominationList",
+                column: "LitigationRequestId");
+
+            migrationBuilder.CreateIndex(
+                name: "LitigationRequestArbitratorNominationList_Id",
+                table: "LitigationRequestArbitratorNominationList",
+                column: "Id",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_LitigationRequestArbitratorRecusalRequest_ArbitratorCitizenId",
+                table: "LitigationRequestArbitratorRecusalRequest",
+                column: "ArbitratorCitizenId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_LitigationRequestArbitratorRecusalRequest_LitigationRequestId",
+                table: "LitigationRequestArbitratorRecusalRequest",
+                column: "LitigationRequestId");
+
+            migrationBuilder.CreateIndex(
+                name: "LitigationRequestArbitratorRecusalRequest_Id",
+                table: "LitigationRequestArbitratorRecusalRequest",
+                column: "Id",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_LitigationRequestArbitratorRecusalRequestFile_LitigationRequestArbitratorRecusalRequestId",
+                table: "LitigationRequestArbitratorRecusalRequestFile",
+                column: "LitigationRequestArbitratorRecusalRequestId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_LitigationRequestArbitratorRecusalRequestFile_RecusalRequestFileId",
+                table: "LitigationRequestArbitratorRecusalRequestFile",
+                column: "RecusalRequestFileId");
+
+            migrationBuilder.CreateIndex(
+                name: "LitigationRequestArbitratorRecusalRequestFile_Id",
+                table: "LitigationRequestArbitratorRecusalRequestFile",
+                column: "Id",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_LitigationRequestArbitratorsChairmanNominationList_ArbitratorChairmanCitizenId",
+                table: "LitigationRequestArbitratorsChairmanNominationList",
+                column: "ArbitratorChairmanCitizenId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_LitigationRequestArbitratorsChairmanNominationList_LitigationRequestId",
+                table: "LitigationRequestArbitratorsChairmanNominationList",
+                column: "LitigationRequestId");
+
+            migrationBuilder.CreateIndex(
+                name: "LitigationRequestArbitratorsChairmanNominationList_Id",
+                table: "LitigationRequestArbitratorsChairmanNominationList",
+                column: "Id",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_LitigationRequestArbitratorsChairmanNominationListValue_ArbitratorChairmanCitizenId",
+                table: "LitigationRequestArbitratorsChairmanNominationListValue",
+                column: "ArbitratorChairmanCitizenId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_LitigationRequestArbitratorsChairmanNominationListValue_ArbitratorCitizenId",
+                table: "LitigationRequestArbitratorsChairmanNominationListValue",
+                column: "ArbitratorCitizenId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_LitigationRequestArbitratorsChairmanNominationListValue_LitigationRequestArbitratorsChairmanNominationListId",
+                table: "LitigationRequestArbitratorsChairmanNominationListValue",
+                column: "LitigationRequestArbitratorsChairmanNominationListId");
+
+            migrationBuilder.CreateIndex(
+                name: "LitigationRequestArbitratorsChairmanNominationListValue_Id",
+                table: "LitigationRequestArbitratorsChairmanNominationListValue",
                 column: "Id",
                 unique: true);
 
@@ -2567,6 +3012,18 @@ namespace REAC.EntityFrameworkCore.Migrations
                 name: "IX_ReformerStopFreeUpDecision_ReformerStatusId",
                 table: "ReformerStopFreeUpDecision",
                 column: "ReformerStatusId");
+
+            migrationBuilder.CreateIndex(
+                name: "SysArbitratorCount_Id",
+                table: "SysArbitratorCount",
+                column: "Id",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "SysArbitratorNominationListCount_Id",
+                table: "SysArbitratorNominationListCount",
+                column: "Id",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "SysArbitratorStatus_Id",
@@ -3040,7 +3497,19 @@ namespace REAC.EntityFrameworkCore.Migrations
                 name: "Delegator");
 
             migrationBuilder.DropTable(
+                name: "LitigationRequestArbitrationReportExplanationRequestFile");
+
+            migrationBuilder.DropTable(
                 name: "LitigationRequestArbitrator");
+
+            migrationBuilder.DropTable(
+                name: "LitigationRequestArbitratorAssigningRequest");
+
+            migrationBuilder.DropTable(
+                name: "LitigationRequestArbitratorRecusalRequestFile");
+
+            migrationBuilder.DropTable(
+                name: "LitigationRequestArbitratorsChairmanNominationListValue");
 
             migrationBuilder.DropTable(
                 name: "LitigationRequestCorrespondenceFile");
@@ -3071,6 +3540,12 @@ namespace REAC.EntityFrameworkCore.Migrations
 
             migrationBuilder.DropTable(
                 name: "ReformerStopFreeUpDecision");
+
+            migrationBuilder.DropTable(
+                name: "SysArbitratorCount");
+
+            migrationBuilder.DropTable(
+                name: "SysArbitratorNominationListCount");
 
             migrationBuilder.DropTable(
                 name: "SysMobileOTP");
@@ -3107,6 +3582,21 @@ namespace REAC.EntityFrameworkCore.Migrations
 
             migrationBuilder.DropTable(
                 name: "SysDelegationRelationshipType");
+
+            migrationBuilder.DropTable(
+                name: "LitigationRequestArbitrationReportExplanationRequest");
+
+            migrationBuilder.DropTable(
+                name: "SysArbitratorAssigningRequestType");
+
+            migrationBuilder.DropTable(
+                name: "LitigationRequestArbitratorNominationList");
+
+            migrationBuilder.DropTable(
+                name: "LitigationRequestArbitratorRecusalRequest");
+
+            migrationBuilder.DropTable(
+                name: "LitigationRequestArbitratorsChairmanNominationList");
 
             migrationBuilder.DropTable(
                 name: "LitigationRequestCorrespondence");
@@ -3151,6 +3641,9 @@ namespace REAC.EntityFrameworkCore.Migrations
                 name: "CitizenRequest");
 
             migrationBuilder.DropTable(
+                name: "LitigationRequestArbitrationReport");
+
+            migrationBuilder.DropTable(
                 name: "SysLitigationRequestCorrespondenceDestination");
 
             migrationBuilder.DropTable(
@@ -3163,9 +3656,6 @@ namespace REAC.EntityFrameworkCore.Migrations
                 name: "WorkFlowStepEvent");
 
             migrationBuilder.DropTable(
-                name: "LitigationRequest");
-
-            migrationBuilder.DropTable(
                 name: "SysCitizenRequestStatus");
 
             migrationBuilder.DropTable(
@@ -3173,6 +3663,12 @@ namespace REAC.EntityFrameworkCore.Migrations
 
             migrationBuilder.DropTable(
                 name: "SysCitizenRequestType");
+
+            migrationBuilder.DropTable(
+                name: "LitigationRequest");
+
+            migrationBuilder.DropTable(
+                name: "SysMeetingLocation");
 
             migrationBuilder.DropTable(
                 name: "WorkFlowStep");

@@ -1,5 +1,6 @@
 ﻿using Core.GenericRepository.Shared.BaseEntities;
 using REAC.Domain.Shared.Enum;
+using REAC.EntityFrameworkCore.Entities.Actor;
 
 namespace REAC.EntityFrameworkCore.Entities.System
 {

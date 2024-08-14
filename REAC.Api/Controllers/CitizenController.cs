@@ -126,22 +126,32 @@ public class CitizenController : ControllerBase
         return BadRequest();
     }
     [HttpGet(nameof(GetReformersLookup))]
-    public async Task<ActionResult> GetReformersLookup(Guid? citizenId)
+    public async Task<ActionResult> GetReformersLookup(Guid? citizenId, Guid requestId)
     {
         if (ModelState.IsValid)
         {
-            var returnValue = await _citizenService.GetReformersLookup(citizenId);
+            var returnValue = await _citizenService.GetReformersLookup(citizenId, requestId);
             return Ok(returnValue);
         }
 
         return BadRequest();
     }
     [HttpGet(nameof(GetArbitratorsLookup))]
-    public async Task<ActionResult> GetArbitratorsLookup(Guid? citizenId)
+    public async Task<ActionResult> GetArbitratorsLookup(Guid? citizenId, Guid requestId)
     {
         if (ModelState.IsValid)
         {
-            var returnValue = await _citizenService.GetArbitratorsLookup(citizenId);
+            var returnValue = await _citizenService.GetArbitratorsLookup(citizenId, requestId);
+            return Ok(returnValue);
+        }
+        return BadRequest();
+    }
+    [HttpGet(nameof(GetArbitratorsFullLookup))]
+    public async Task<ActionResult> GetArbitratorsFullLookup(Guid? citizenId, Guid requestId)
+    {
+        if (ModelState.IsValid)
+        {
+            var returnValue = await _citizenService.GetArbitratorsFullLookup(citizenId, requestId);
             return Ok(returnValue);
         }
 

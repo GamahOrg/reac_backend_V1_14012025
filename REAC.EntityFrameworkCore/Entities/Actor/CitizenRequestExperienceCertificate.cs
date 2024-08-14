@@ -1,7 +1,6 @@
 ﻿using Core.GenericRepository.Shared.BaseEntities;
-using REAC.EntityFrameworkCore.Entities.System;
 
-namespace REAC.EntityFrameworkCore.Entities.Litigation;
+namespace REAC.EntityFrameworkCore.Entities.Actor;
 
 public partial class CitizenRequestExperienceCertificate : BaseEntity<Guid>
 {

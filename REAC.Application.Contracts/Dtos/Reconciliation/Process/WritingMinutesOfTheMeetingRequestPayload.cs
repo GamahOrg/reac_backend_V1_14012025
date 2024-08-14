@@ -10,4 +10,15 @@ namespace REAC.Application.Contracts.Dtos.Reconciliation.Process
         public List<Guid>? UploadedFilesIds { get; set; }
         public virtual ICollection<LitigationRequestReconciliationReportItemCreateUpdateDto> LitigationRequestMeetingReconciliationItems { get; set; } = new List<LitigationRequestReconciliationReportItemCreateUpdateDto>();
     }
+    public class WritingArbitrationReportRequestPayload
+    {
+        public Guid Id { get; set; }
+        public string Facts { get; set; } = null!;
+        public string Reasons { get; set; } = null!;
+        public string JudgmentDecisionText { get; set; } = null!;
+        public string ModificationRequest { get; set; } = null!;
+        public DateTime JudgmentDecisionDate { get; set; }
+        public string JudgmentDecisionPlace { get; set; } = null!;
+        public Guid MeetingLocationId { get; set; }
+    }
 }

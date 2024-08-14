@@ -1,5 +1,6 @@
 ﻿using REAC.Application.Contracts.Dtos.Integration.Nafath;
 using REAC.Domain.Shared.Enum;
+using System.Text.Json.Serialization;
 
 namespace REAC.Application.Contracts.Dtos.Integration.GEE
 {
@@ -88,11 +89,16 @@ namespace REAC.Application.Contracts.Dtos.Integration.GEE
     public class UserInfoDto
     {
         public string id { get; set; }
+        [JsonPropertyName("full_name#ar")]
         public string full_name_ar { get; set; }
+        [JsonPropertyName("first_name#ar")]
         public string first_name_ar { get; set; }
+        [JsonPropertyName("id_expiry_date#g")]
         public string id_expiry_date_g { get; set; }
         public int nationality { get; set; }
+        [JsonPropertyName("nationality#ar")]
         public string nationality_ar { get; set; }
+        [JsonPropertyName("dob#g")]
         public string dob_g { get; set; }
         public string gender { get; set; }
     }

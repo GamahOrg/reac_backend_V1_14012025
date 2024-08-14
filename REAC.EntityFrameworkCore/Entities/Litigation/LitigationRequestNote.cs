@@ -1,16 +1,16 @@
 ﻿using Core.GenericRepository.Shared.BaseEntities;
-using REAC.EntityFrameworkCore.Entities.Litigation;
-using REAC.EntityFrameworkCore.Entities.System;
 
-namespace REAC.EntityFrameworkCore.Entities.Arbitration;
+namespace REAC.EntityFrameworkCore.Entities.Litigation;
 
-public partial class LitigationRequestArbitrator : AuditedBaseEntity<Guid>
+public partial class LitigationRequestNote : AuditedBaseEntity<Guid>
 {
     public Guid LitigationRequestId { get; set; }
 
-    public Guid ArbitratorCitizenId { get; set; }
+    public string? Title { get; set; }
+
+    public string Notes { get; set; } = null!;
 
     public virtual LitigationRequest LitigationRequest { get; set; } = null!;
-    public virtual Citizen ArbitratorCitizen { get; set; } = null!;
 
+    public virtual ICollection<LitigationRequestNoteFile> LitigationRequestNoteFiles { get; set; } = new List<LitigationRequestNoteFile>();
 }

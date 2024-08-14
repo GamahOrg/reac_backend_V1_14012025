@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Core.GenericRepository.BaseRepository;
+using Core.GenericRepository.Shared.Pagging;
 using Core.Log.Application.Contracts.IAppServices;
 using Core.Shared.Responses;
 using Microsoft.EntityFrameworkCore;
@@ -7,6 +8,7 @@ using REAC.Application.Contracts.Dtos.Litigation;
 using REAC.Application.Contracts.IAppServices;
 using REAC.Application.Contracts.IAppServices.Litigation;
 using REAC.Domain.Shared.Enum;
+using REAC.EntityFrameworkCore.Entities.Actor;
 using REAC.EntityFrameworkCore.Entities.Litigation;
 using REAC.EntityFrameworkCore.Entities.System;
 
@@ -79,6 +81,7 @@ namespace REAC.Application.AppServices.Litigation
                                         {
                                             LitigationRequestReformerAssigningRequest newLitigationRequestReformerAssigningRequest = new LitigationRequestReformerAssigningRequest();
                                             newLitigationRequestReformerAssigningRequest.CitizenId = reformers.FirstOrDefault().Id;
+                                            newLitigationRequestReformerAssigningRequest.RequestOn = DateTime.Now;
                                             newLitigationRequestReformerAssigningRequest.LitigationRequestId = litigationRequest.Id;
                                             newLitigationRequestReformerAssigningRequest.Response = LitigationRequestReformerAssigningRequestStatus.None;
                                             await _repository.AddAsync<LitigationRequestReformerAssigningRequest, Guid>(newLitigationRequestReformerAssigningRequest);
@@ -129,7 +132,7 @@ namespace REAC.Application.AppServices.Litigation
                          .Include(x => x.Contract.SecondPartyCitizen)
                          .Include(x => x.Contract.LitigationRequestContractType)
                          .Where(x => x.LitigationRequestReformerAssigningRequests
-                         .Where(t => t.CitizenId == referenceId).Count() > 0).ToList();
+                         .Where(t => t.CitizenId == referenceId).Count() > 0).OrderByDescending(x => x.CreatedOn).ToList();
 
             List<CustomLitigationRequestMircoDto> litigationRequestMircoDtos = new List<CustomLitigationRequestMircoDto>();
             if (litigationRequests != null)
@@ -177,6 +180,89 @@ namespace REAC.Application.AppServices.Litigation
 
             throw new NotImplementedException();
         }
+        public async Task<BaseResponse> GetLitigationRequestReformerAssigningRequestsAll(int pageIndex, int pageSize, CancellationToken cancellationToken)
+        {
+            Guid referenceId = Guid.Empty;
+            _jwtReader.GetReferenceId(ref referenceId);
+
+            PagedResult<LitigationRequestReformerAssigningRequest> litigationRequests = null;
+
+            var entitiesQuerable = (await _repository.GetQueryable<LitigationRequestReformerAssigningRequest, Guid>())
+                          .Include(x => x.ReformerCitizen)
+                         .Include(x => x.LitigationRequest)
+
+                         .Include(x => x.LitigationRequest.ApplicantCitizen)
+                         .Include(x => x.LitigationRequest.InternalStatus)
+                         .Include(x => x.LitigationRequest.ExternalStatus)
+
+                         .Include(x => x.LitigationRequest.LitigationRequestCategory)
+                          .Include(x => x.LitigationRequest.Contract)
+                          .Include(x => x.LitigationRequest.Contract.FirstPartyFacility)
+                         .Include(x => x.LitigationRequest.Contract.FirstPartyCitizen)
+                         .Include(x => x.LitigationRequest.Contract.SecondPartyFacility)
+                         .Include(x => x.LitigationRequest.Contract.SecondPartyCitizen)
+                         .Include(x => x.LitigationRequest.Contract.LitigationRequestContractType);
+
+
+            litigationRequests = entitiesQuerable
+                                       .OrderByDescending(x => x.LitigationRequest.CreatedOn)
+                                       .AsSplitQuery()
+                                       .AsNoTracking()
+                                       .GetPaged(pageIndex, pageSize);
+
+
+            List<CustomLitigationRequestMircoAllDto> litigationRequestMircoDtos = new List<CustomLitigationRequestMircoAllDto>();
+            if (litigationRequests != null)
+            {
+                foreach (var litigationRequest in litigationRequests.Results)
+                {
+                    CustomLitigationRequestMircoAllDto litigationRequestMircoDto = new CustomLitigationRequestMircoAllDto();
+                    litigationRequestMircoDto.Id = litigationRequest.Id;
+                    litigationRequestMircoDto.RequestId = litigationRequest.Id;
+                    litigationRequestMircoDto.RequestDate = litigationRequest.LitigationRequest.CreatedOn;
+                    litigationRequestMircoDto.RequestCode = litigationRequest.LitigationRequest.RequestCode;
+                    litigationRequestMircoDto.FirstPartyName = (litigationRequest.LitigationRequest.Contract.FirstPartyCitizen == null) ? litigationRequest.LitigationRequest.Contract.FirstPartyFacility.ArabicFacilityName : litigationRequest.LitigationRequest.Contract.FirstPartyCitizen.FullName;
+                    litigationRequestMircoDto.SecondPartyName = (litigationRequest.LitigationRequest.Contract.SecondPartyCitizen == null) ? litigationRequest.LitigationRequest.Contract.SecondPartyFacility.ArabicFacilityName : litigationRequest.LitigationRequest.Contract.SecondPartyCitizen.FullName;
+                    litigationRequestMircoDto.RequestTypeName = litigationRequest.LitigationRequest.Contract.LitigationRequestContractType.TypeName;
+                    litigationRequestMircoDto.Response = litigationRequest.Response;
+                    litigationRequestMircoDto.ReformerName = litigationRequest.ReformerCitizen?.FullName;
+                    litigationRequestMircoDto.ResponseOn = litigationRequest.ResponseOn;
+
+                    bool allowAdd = true;
+
+
+                    if (litigationRequest.Response == LitigationRequestReformerAssigningRequestStatus.Approve |
+                        litigationRequest.Response == LitigationRequestReformerAssigningRequestStatus.Cancelled |
+                        litigationRequest.Response == LitigationRequestReformerAssigningRequestStatus.Reject)
+                    {
+                        allowAdd = false;
+                    }
+
+
+                    if (allowAdd)
+                        litigationRequestMircoDto.IsDone = "--";
+                    else
+                        litigationRequestMircoDto.IsDone = "تم";
+
+                    litigationRequestMircoDto.Status = litigationRequest.LitigationRequest.InternalStatus.RequestStatus;
+                    litigationRequestMircoDtos.Add(litigationRequestMircoDto);
+                }
+            }
+            return new DataResponse<PagedResult<CustomLitigationRequestMircoAllDto>>
+            {
+                Data =
+                              new PagedResult<CustomLitigationRequestMircoAllDto>
+                              {
+                                  Results = litigationRequestMircoDtos,
+                                  CurrentPage = litigationRequests.CurrentPage,
+                                  PageCount = litigationRequests.PageCount,
+                                  PageSize = litigationRequests.PageSize,
+                                  TotalCount = litigationRequests.TotalCount
+                              },
+                IsDone = true
+            };
+        }
+
         public async Task<BaseResponse> GetLitigationRequestReformerAssigningRequests(Guid requestId, Guid LitigationRequestReformerAssigningRequestId, CancellationToken cancellationToken)
         {
             Guid referenceId = Guid.Empty;

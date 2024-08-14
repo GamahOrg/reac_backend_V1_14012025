@@ -1,4 +1,5 @@
 ﻿using Core.GenericRepository.Shared.BaseEntities;
+using REAC.EntityFrameworkCore.Entities.Actor;
 
 namespace REAC.EntityFrameworkCore.Entities.System
 {

@@ -1,5 +1,5 @@
 ﻿using Core.GenericRepository.Shared.BaseEntities;
-using REAC.EntityFrameworkCore.Entities.System;
+using REAC.EntityFrameworkCore.Entities.Actor;
 using System;
 using System.Collections.Generic;
 using System.Linq;

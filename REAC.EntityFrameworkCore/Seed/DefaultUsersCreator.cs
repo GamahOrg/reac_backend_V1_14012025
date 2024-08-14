@@ -162,7 +162,7 @@ namespace REAC.EntityFrameworkCore.Seed
             var defaultUser = new User
             {
                 Id = Guid.Parse("fdcb7911-c808-4225-aae9-4900915df16f"),
-                UserName = "2345678901",
+                UserName = "1120528482",
                 ReferenceId = Guid.Parse("04540979-8ae2-489f-bf90-d59790d7204e"),
                 Email = "Citizin2@domain.com",
                 EmailConfirmed = true,

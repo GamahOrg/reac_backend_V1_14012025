@@ -1,5 +1,6 @@
 ﻿using Core.GenericRepository.Shared.BaseEntities;
 using REAC.Domain.Shared.Enum;
+using REAC.EntityFrameworkCore.Entities.Actor;
 using REAC.EntityFrameworkCore.Entities.Arbitration;
 using REAC.EntityFrameworkCore.Entities.Reconciliation;
 using REAC.EntityFrameworkCore.Entities.System;
@@ -38,10 +39,12 @@ public partial class LitigationRequest : BaseEntity<Guid>
     public LitigationRequestOwnerType LitigationRequestOwnerTypeId { get; set; }
     public bool? IsMinutesOfMeetingApprovalRequired { get; set; }
 
+    public bool? IsPlaintiffArbitratorNominationListDone { get; set; }
+    public bool? IsDefendantArbitratorNominationListDone { get; set; }
 
-    public MinutesOfMeetingApprovalStatus? MintuesOfMeetingApprovalPlaintiffStatus { get; set; }
+    public ApproveRejectStatus? MintuesOfMeetingApprovalPlaintiffStatus { get; set; }
 
-    public MinutesOfMeetingApprovalStatus? MintuesOfMeetingApprovalDefendantStatus { get; set; }
+    public ApproveRejectStatus? MintuesOfMeetingApprovalDefendantStatus { get; set; }
     public DateTime? MintuesOfMeetingApprovalPlaintiffStatusOn { get; set; }
     public DateTime? MintuesOfMeetingApprovalDefendantStatusOn { get; set; }
     public RequestStatus InternalStatusId { get; set; }
@@ -93,6 +96,19 @@ public partial class LitigationRequest : BaseEntity<Guid>
     public int? PretenderRating { get; set; }
     public int? DefendantRating { get; set; }
 
+
+    /// <summary>
+    /// Actions Times
+    /// </summary>
+    public DateTime? ArbitratorsSelectionDurationDateTime { get; set; }
+    public DateTime? ArbitratorsCountDateTime { get; set; }
+    public DateTime? ArbitratorsNominationListCreationDateTime { get; set; }
+    public DateTime? ArbitratorsNominationListSelectionDoneDateTime { get; set; }
+    public DateTime? ArbitratorsChairmanNominationListCreationDateTime { get; set; }
+    public DateTime? ArbitratorsChairmanNominationListSelectionDoneDateTime { get; set; }
+    public DateTime? JudgmentDecisionIssuingDateTime { get; set; }
+
+
     public virtual Citizen? DelegatorCitizen { get; set; }
 
     public virtual Citizen ApplicantCitizen { get; set; } = null!;
@@ -116,17 +132,23 @@ public partial class LitigationRequest : BaseEntity<Guid>
     public virtual ICollection<LitigationRequestSession> LitigationRequestSessions { get; set; } = new List<LitigationRequestSession>();
 
     public virtual ICollection<LitigationRequestReformerAssigningRequest> LitigationRequestReformerAssigningRequests { get; set; } = new List<LitigationRequestReformerAssigningRequest>();
+    public virtual ICollection<LitigationRequestArbitratorAssigningRequest> LitigationRequestArbitratorAssigningRequests { get; set; } = new List<LitigationRequestArbitratorAssigningRequest>();
 
     public virtual ICollection<LitigationRequestCorrespondence> LitigationRequestCorrespondences { get; set; } = new List<LitigationRequestCorrespondence>();
 
     public virtual ICollection<LitigationRequestExtendPeriodRequest> LitigationRequestExtendPeriodRequests { get; set; } = new List<LitigationRequestExtendPeriodRequest>();
+    public virtual ICollection<LitigationRequestArbitrationReport> LitigationRequestArbitrationReports { get; set; } = new List<LitigationRequestArbitrationReport>();
+    public virtual ICollection<LitigationRequestArbitratorRecusalRequest> LitigationRequestArbitratorRecusalRequests { get; set; } = new List<LitigationRequestArbitratorRecusalRequest>();
 
     public virtual ICollection<LitigationRequestGround> LitigationRequestGrounds { get; set; } = new List<LitigationRequestGround>();
 
     public virtual ICollection<LitigationRequestReconciliationReport> LitigationRequestReconciliationReports { get; set; } = new List<LitigationRequestReconciliationReport>();
 
     public virtual ICollection<LitigationRequestNote> LitigationRequestNotes { get; set; } = new List<LitigationRequestNote>();
-    public virtual ICollection<LitigationRequestArbitrator> LitigationRequestArbitrators { get; set; } = new List<LitigationRequestArbitrator>();
+    public virtual ICollection<LitigationRequestArbitratorList> LitigationRequestArbitratorLists { get; set; } = new List<LitigationRequestArbitratorList>();
+    public virtual ICollection<LitigationRequestArbitratorNominationList> LitigationRequestArbitratorNominationLists { get; set; } = new List<LitigationRequestArbitratorNominationList>();
+    public virtual ICollection<LitigationRequestArbitratorsChairmanNominationList> LitigationRequestArbitratorsChairmanNominationLists { get; set; } = new List<LitigationRequestArbitratorsChairmanNominationList>();
+
 
 
     public virtual SysLitigationRequestOwnerType LitigationRequestOwnerType { get; set; } = null!;

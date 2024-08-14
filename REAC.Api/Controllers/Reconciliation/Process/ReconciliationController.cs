@@ -99,26 +99,7 @@ public class ReconciliationController : ControllerBase
 
         return BadRequest();
     }
-    [HttpGet(nameof(GetLitigationRequestForAllSessionForReformer))]
-    public async Task<IActionResult> GetLitigationRequestForAllSessionForReformer(int pageIndex, int pageSize, CancellationToken cancellationToken)
-    {
-        if (ModelState.IsValid)
-        {
-            var returnValue = await _reconciliationService.GetLitigationRequestForAllSessionForReformer(pageIndex, pageSize, cancellationToken);
-            return Ok(returnValue);
-        }
-        return BadRequest();
-    }
-    [HttpGet(nameof(GetLitigationRequestForAllSession))]
-    public async Task<IActionResult> GetLitigationRequestForAllSession(int pageIndex, int pageSize, CancellationToken cancellationToken)
-    {
-        if (ModelState.IsValid)
-        {
-            var returnValue = await _reconciliationService.GetLitigationRequestForAllSession(pageIndex, pageSize, cancellationToken);
-            return Ok(returnValue);
-        }
-        return BadRequest();
-    }
+
     [HttpGet(nameof(GetLitigationRequestForFullAllReformer))]
     public async Task<IActionResult> GetLitigationRequestForFullAllReformer(int pageIndex, int pageSize, CancellationToken cancellationToken)
     {
@@ -140,7 +121,26 @@ public class ReconciliationController : ControllerBase
         }
         return BadRequest();
     }
-
+    [HttpGet(nameof(GetLitigationRequestForAllSessionForReformer))]
+    public async Task<IActionResult> GetLitigationRequestForAllSessionForReformer(int pageIndex, int pageSize, CancellationToken cancellationToken)
+    {
+        if (ModelState.IsValid)
+        {
+            var returnValue = await _reconciliationService.GetLitigationRequestForAllSessionForReformer(pageIndex, pageSize, cancellationToken);
+            return Ok(returnValue);
+        }
+        return BadRequest();
+    }
+    [HttpGet(nameof(GetLitigationRequestForAllSession))]
+    public async Task<IActionResult> GetLitigationRequestForAllSession(int pageIndex, int pageSize, CancellationToken cancellationToken)
+    {
+        if (ModelState.IsValid)
+        {
+            var returnValue = await _reconciliationService.GetLitigationRequestForAllSession(pageIndex, pageSize, cancellationToken);
+            return Ok(returnValue);
+        }
+        return BadRequest();
+    }
 
 
 
@@ -171,7 +171,7 @@ public class ReconciliationController : ControllerBase
 
     #region Citizen Replay
     [HttpGet(nameof(AddCitizenLitigationRequestForReportReply))]
-    public async Task<IActionResult> AddCitizenLitigationRequestForReportReply(Guid requestId, MinutesOfMeetingApprovalStatus minutesOfMeetingApprovalStatus, CancellationToken cancellationToken)
+    public async Task<IActionResult> AddCitizenLitigationRequestForReportReply(Guid requestId, ApproveRejectStatus minutesOfMeetingApprovalStatus, CancellationToken cancellationToken)
     {
         if (ModelState.IsValid)
         {

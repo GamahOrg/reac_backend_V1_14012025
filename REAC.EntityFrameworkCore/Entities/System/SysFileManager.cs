@@ -1,4 +1,6 @@
 ﻿using Core.GenericRepository.Shared.BaseEntities;
+using REAC.EntityFrameworkCore.Entities.Actor;
+using REAC.EntityFrameworkCore.Entities.Arbitration;
 using REAC.EntityFrameworkCore.Entities.Litigation;
 using REAC.EntityFrameworkCore.Entities.Reconciliation;
 using REAC.EntityFrameworkCore.Entities.Wpf.Business;
@@ -12,6 +14,10 @@ public partial class SysFileManager : CreationBaseEntity<Guid>
     public string FilePath { get; set; } = null!;
 
     public string FileType { get; set; } = null!;
+
+    public virtual ICollection<LitigationRequestArbitratorRecusalRequestFile> LitigationRequestArbitratorRecusalRequestFiles { get; set; } = new List<LitigationRequestArbitratorRecusalRequestFile>();
+
+    public virtual ICollection<LitigationRequestArbitrationReportExplanationRequestFile> LitigationRequestArbitrationReportExplanationRequestFiles { get; set; } = new List<LitigationRequestArbitrationReportExplanationRequestFile>();
 
     public virtual ICollection<Citizen> IndentityCitizens { get; set; } = new List<Citizen>();
     public virtual ICollection<Citizen> LawLicenseCitizens { get; set; } = new List<Citizen>();

@@ -354,6 +354,83 @@ public partial class LitigationRequestStatusSeedDataCreator
                             }
                         }
                     },
+                    new SysLitigationRequestStatus
+                    {
+                        Id = Domain.Shared.Enum.RequestStatus.ReconciliationWasNotMadeAndMoveToArbitration,
+                        RequestStatus = "عدم الصُلح والانتقال للتحكيم",
+                        CreatedOn = DateTime.Now,
+                        Translations=new List<SysLitigationRequestStatusTranslation>
+                        {
+                            new SysLitigationRequestStatusTranslation
+                            {
+                                RequestStatus = "Reconciliation Was Not Made And Move To Arbitration ",
+                                LanguageCode = Constants.EnglishLanguage
+                            },
+                            new SysLitigationRequestStatusTranslation
+                            {
+                                RequestStatus =  "عدم الصُلح والانتقال للتحكيم",
+                                LanguageCode = Constants.ArabicLanguage
+                            }
+                        }
+                    },
+                    new SysLitigationRequestStatus
+                    {
+                        Id = Domain.Shared.Enum.RequestStatus.JudgmentDecisionIssued,
+                        RequestStatus = "تم إصدار حكم التحكيم",
+                        CreatedOn = DateTime.Now,
+                        Translations=new List<SysLitigationRequestStatusTranslation>
+                        {
+                            new SysLitigationRequestStatusTranslation
+                            {
+                                RequestStatus = "Judgment Decision Issued",
+                                LanguageCode = Constants.EnglishLanguage
+                            },
+                            new SysLitigationRequestStatusTranslation
+                            {
+                                RequestStatus =  "تم إصدار حكم التحكيم",
+                                LanguageCode = Constants.ArabicLanguage
+                            }
+                        }
+                    },
+                    new SysLitigationRequestStatus
+                    {
+                        Id = Domain.Shared.Enum.RequestStatus.WaitingForExplanation,
+                        RequestStatus = "بإنتظار التفسير",
+                        CreatedOn = DateTime.Now,
+                        Translations=new List<SysLitigationRequestStatusTranslation>
+                        {
+                            new SysLitigationRequestStatusTranslation
+                            {
+                                RequestStatus = "Wait For Ex",
+                                LanguageCode = Constants.EnglishLanguage
+                            },
+                            new SysLitigationRequestStatusTranslation
+                            {
+                                RequestStatus =  "بإنتظار التفسير",
+                                LanguageCode = Constants.ArabicLanguage
+                            }
+                        }
+                    },
+                    new SysLitigationRequestStatus
+                    {
+                        Id = Domain.Shared.Enum.RequestStatus.ExplanationResponsed,
+                        RequestStatus = "تم الرد على طلب التفسير",
+                        CreatedOn = DateTime.Now,
+                        Translations=new List<SysLitigationRequestStatusTranslation>
+                        {
+                            new SysLitigationRequestStatusTranslation
+                            {
+                                RequestStatus = "Explanation Responsed",
+                                LanguageCode = Constants.EnglishLanguage
+                            },
+                            new SysLitigationRequestStatusTranslation
+                            {
+                                RequestStatus = "تم الرد على طلب التفسير",
+                                LanguageCode = Constants.ArabicLanguage
+                            }
+                        }
+                    }
+
 
             });
         context.SaveChanges();

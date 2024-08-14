@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using REAC.Application.Contracts.Dtos.Arbitration;
 using REAC.Application.Contracts.Dtos.Citizen;
 using REAC.Application.Contracts.Dtos.CitizenRequests;
 using REAC.Application.Contracts.Dtos.Delegator;
@@ -8,6 +9,7 @@ using REAC.Application.Contracts.Dtos.Litigation;
 using REAC.Application.Contracts.Dtos.Notification;
 using REAC.Application.Contracts.Dtos.Reconciliation;
 using REAC.Application.Contracts.Dtos.Session;
+using REAC.Application.Contracts.Dtos.System;
 using REAC.Application.Contracts.Dtos.System.ArbitratorStatusDto;
 using REAC.Application.Contracts.Dtos.System.AreaDto;
 using REAC.Application.Contracts.Dtos.System.CitizenRequestStatusDtos;
@@ -26,6 +28,8 @@ using REAC.Application.Contracts.Dtos.System.ReformerStatusDto;
 using REAC.Application.Contracts.Dtos.Wpf.Business.WorkFlowLog;
 using REAC.Application.Contracts.Dtos.Wpf.Business.WorkFlowProcessingLogFile;
 using REAC.EntityFrameworkCore.Entities;
+using REAC.EntityFrameworkCore.Entities.Actor;
+using REAC.EntityFrameworkCore.Entities.Arbitration;
 using REAC.EntityFrameworkCore.Entities.Integration;
 using REAC.EntityFrameworkCore.Entities.Litigation;
 using REAC.EntityFrameworkCore.Entities.Notification;
@@ -203,6 +207,11 @@ namespace REAC.Application.Contracts
             CreateMap<SysNotification, SysNotificationCreateUpdateDto>().ReverseMap();
             CreateMap<SysNotificationDto, SysNotification>().ForMember(x => x.CreatedOn, src => src.MapFrom(x => DateTime.Now)).ReverseMap();
             CreateMap<SysNotification, SysNotificationDto>().ReverseMap();
+
+            CreateMap<LitigationRequestArbitrationReport, LitigationRequestArbitrationReportCreateUpdateDto>()
+                                .ForMember(x => x.MeetingLocationName, src => src.MapFrom(x => x.MeetingLocation.MeetingLocationName)).ReverseMap();
+
+
             CreateMap<SysNotification, NotificationDto>()
                 .ForMember(x => x.SysNotificationActorType, src => src.MapFrom(x => x.SysNotificationActorType.ActorType))
                 .ForMember(x => x.SysRequestType, src => src.MapFrom(x => x.SysRequestType.RequestTypeName)).ReverseMap();
@@ -220,6 +229,13 @@ namespace REAC.Application.Contracts
             CreateMap<CitizenRequestNote, CitizenRequestNoteCreateUpdateDto>().ReverseMap();
 
             CreateMap<SysBank, SysBankCreateUpdateDto>().ReverseMap();
+            CreateMap<SysMeetingLocation, SysMeetingLocationCreateUpdateDto>().ReverseMap();
+            CreateMap<LitigationRequestArbitrationReportExplanationRequest, LitigationRequestArbitrationReportExplanationRequestGetDto>().ReverseMap();
+            CreateMap<LitigationRequestArbitrationReportExplanationRequestFile, LitigationRequestArbitrationReportExplanationRequestFileGetDto>().ReverseMap();
+            CreateMap<SysArbitratorCount, SysArbitratorCountCreateUpdateDto>().ReverseMap();
+
+
+
 
 
             CreateMap<CitizenRequest, CitizenRequestFullDataDto>().ReverseMap();
@@ -260,6 +276,13 @@ namespace REAC.Application.Contracts
                     .ReverseMap();
             CreateMap<SysCitizenRequestType, SysCitizenRequestTypeCreateUpdateDto>().ReverseMap();
             CreateMap<SysCitizenRequestTypeTranslation, SysCitizenRequestTypeTranslationCreateUpdateDto>().ReverseMap();
+
+
+            CreateMap<LitigationRequestArbitratorRecusalRequest, LitigationRequestArbitratorRecusalRequestGetDto>()
+                .ForMember(dest => dest.FullName,
+                opt => opt.MapFrom(src => src.ArbitratorCitizen.FullName))
+                .ReverseMap();
+
 
 
             CreateMap<Delegator, FacilityDelegatorCreateUpdateDto>().ReverseMap();

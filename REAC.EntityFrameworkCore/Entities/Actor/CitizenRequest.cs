@@ -1,8 +1,8 @@
 ﻿using Core.GenericRepository.Shared.BaseEntities;
 using REAC.Domain.Shared.Enum;
-using REAC.EntityFrameworkCore.Entities.Litigation;
+using REAC.EntityFrameworkCore.Entities.System;
 
-namespace REAC.EntityFrameworkCore.Entities.System;
+namespace REAC.EntityFrameworkCore.Entities.Actor;
 
 public partial class CitizenRequest : BaseEntity<Guid>
 {

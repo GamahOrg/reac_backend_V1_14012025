@@ -8,3 +8,4 @@ public enum LitigationRequestCorrespondenceDestination
     ///<summary>كلاهما</summary>
     BothOfThem = 3
 }
+

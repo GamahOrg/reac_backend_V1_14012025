@@ -54,6 +54,7 @@ namespace Bpf.Application.ModuleServices
 
                 LitigationRequestReformerAssigningRequest litigationRequestReformerAssigningRequest = new LitigationRequestReformerAssigningRequest();
                 litigationRequestReformerAssigningRequest.CitizenId = assignRequestPayload.ReformerId;
+                litigationRequestReformerAssigningRequest.RequestOn = DateTime.Now;
                 litigationRequestReformerAssigningRequest.LitigationRequestId = litigationRequest.Id;
                 litigationRequestReformerAssigningRequest.Response = LitigationRequestReformerAssigningRequestStatus.None;
                 await _repository.AddAsync<LitigationRequestReformerAssigningRequest, Guid>(litigationRequestReformerAssigningRequest);

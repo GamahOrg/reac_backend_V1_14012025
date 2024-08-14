@@ -2,8 +2,9 @@
 using REAC.Domain.Shared.Enum;
 using REAC.EntityFrameworkCore.Entities.Arbitration;
 using REAC.EntityFrameworkCore.Entities.Litigation;
+using REAC.EntityFrameworkCore.Entities.System;
 
-namespace REAC.EntityFrameworkCore.Entities.System;
+namespace REAC.EntityFrameworkCore.Entities.Actor;
 
 
 public partial class Citizen : BaseEntity<Guid>
@@ -45,13 +46,20 @@ public partial class Citizen : BaseEntity<Guid>
     public DateTime? LawyerLicenseExpirationDate { get; set; }
     public Guid? LawLicenseFileId { get; set; }
     public bool? IsDraftAccount { get; set; }
+    public virtual ICollection<LitigationRequestArbitratorsChairmanNominationListValue> LitigationRequestArbitratorsChairmanNominationListArbitratorValues { get; set; } = new List<LitigationRequestArbitratorsChairmanNominationListValue>();
+
+    public virtual ICollection<LitigationRequestArbitratorRecusalRequest> LitigationRequestArbitratorRecusalRequests { get; set; } = new List<LitigationRequestArbitratorRecusalRequest>();
+    public virtual ICollection<LitigationRequestArbitratorsChairmanNominationListValue> LitigationRequestArbitratorsChairmanNominationListChairmanValues { get; set; } = new List<LitigationRequestArbitratorsChairmanNominationListValue>();
+
     public virtual ICollection<Facility> Facilities { get; set; } = new List<Facility>();
     public virtual ICollection<Delegator> FromDelegators { get; set; } = new List<Delegator>();
     public virtual ICollection<ReformerStopFreeUpDecision> ReformerStopFreeUpDecisions { get; set; } = new List<ReformerStopFreeUpDecision>();
     public virtual ICollection<ArbitratorStopFreeUpDecision> ArbitratorStopFreeUpDecisions { get; set; } = new List<ArbitratorStopFreeUpDecision>();
     public virtual ICollection<Delegator> ToDelegators { get; set; } = new List<Delegator>();
     public virtual ICollection<CitizenRequest> CitizenRequests { get; set; } = new List<CitizenRequest>();
-    public virtual ICollection<LitigationRequestArbitrator> LitigationRequestArbitrators { get; set; } = new List<LitigationRequestArbitrator>();
+    public virtual ICollection<LitigationRequestArbitratorList> LitigationRequestArbitratorLists { get; set; } = new List<LitigationRequestArbitratorList>();
+    public virtual ICollection<LitigationRequestArbitratorNominationList> LitigationRequestArbitratorNominationLists { get; set; } = new List<LitigationRequestArbitratorNominationList>();
+    public virtual ICollection<LitigationRequestArbitratorsChairmanNominationList> LitigationRequestArbitratorsChairmanNominationLists { get; set; } = new List<LitigationRequestArbitratorsChairmanNominationList>();
 
 
     public virtual ICollection<LitigationRequestNote> LitigationRequestNotes { get; set; } = new List<LitigationRequestNote>();
@@ -67,6 +75,7 @@ public partial class Citizen : BaseEntity<Guid>
     public virtual SysFileManager? IdentityFile { get; set; }
     public virtual SysFileManager? LawLicenseFile { get; set; }
     public virtual ICollection<LitigationRequest> ArbitratorLitigationRequests { get; set; } = new List<LitigationRequest>();
+    public virtual ICollection<LitigationRequestArbitratorAssigningRequest> LitigationRequestArbitratorAssigningRequests { get; set; } = new List<LitigationRequestArbitratorAssigningRequest>();
 
     public virtual ICollection<LitigationRequest> ReformerLitigationRequests { get; set; } = new List<LitigationRequest>();
     public virtual SysIdentityType? IdentityType { get; set; }

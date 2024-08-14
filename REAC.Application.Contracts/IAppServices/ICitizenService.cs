@@ -14,8 +14,9 @@ namespace REAC.Application.Contracts.IAppServices
         Task<BaseResponse> GetDelegatedPersons();
         Task<BaseResponse> GetDelegatedFacilities();
 
-        Task<BaseResponse> GetReformersLookup(Guid? citizenId);
-        Task<BaseResponse> GetArbitratorsLookup(Guid? citizenId);
+        Task<BaseResponse> GetReformersLookup(Guid? citizenId, Guid requestId);
+        Task<BaseResponse> GetArbitratorsLookup(Guid? citizenId, Guid requestId);
+        Task<BaseResponse> GetArbitratorsFullLookup(Guid? citizenId, Guid requestId);
         Task<BaseResponse> GetReformersDecisions(int pageIndex, int pageSize, CancellationToken cancellationToken = default);
         Task<BaseResponse> GetReformersDecisions(Guid citizenId);
         Task<BaseResponse> GetArbitratorsDecisions(int pageIndex, int pageSize, CancellationToken cancellationToken = default);

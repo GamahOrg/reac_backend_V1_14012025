@@ -5,7 +5,7 @@ using Core.Shared.Responses;
 using Microsoft.EntityFrameworkCore;
 using REAC.Application.Contracts.Dtos.Citizen;
 using REAC.Application.Contracts.IAppServices;
-using REAC.EntityFrameworkCore.Entities;
+using REAC.EntityFrameworkCore.Entities.Actor;
 using REAC.EntityFrameworkCore.Entities.System;
 
 namespace REAC.Application.AppServices

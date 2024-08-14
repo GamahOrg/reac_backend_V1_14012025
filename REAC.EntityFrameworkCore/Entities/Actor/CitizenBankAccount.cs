@@ -1,7 +1,7 @@
 ﻿using Core.GenericRepository.Shared.BaseEntities;
 using REAC.EntityFrameworkCore.Entities.System;
 
-namespace REAC.EntityFrameworkCore.Entities
+namespace REAC.EntityFrameworkCore.Entities.Actor
 {
     public class CitizenBankAccount : BaseEntity<Guid>
     {

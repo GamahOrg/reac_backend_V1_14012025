@@ -4,11 +4,7 @@ using REAC.EntityFrameworkCore.Entities.Litigation;
 using REAC.EntityFrameworkCore.Entities.System;
 
 namespace REAC.EntityFrameworkCore.Entities.Reconciliation;
-public enum LitigationRequestExtendPeriodRequestType
-{
-    Reconciliation = 1,
-    Arbitration = 2
-}
+
 public partial class LitigationRequestExtendPeriodRequest : BaseEntity<Guid>
 {
     public Guid LitigationRequestId { get; set; }

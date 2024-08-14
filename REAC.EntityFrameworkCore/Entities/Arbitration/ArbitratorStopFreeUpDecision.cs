@@ -1,8 +1,9 @@
 ﻿using Core.GenericRepository.Shared.BaseEntities;
 using REAC.Domain.Shared.Enum;
+using REAC.EntityFrameworkCore.Entities.Actor;
 using REAC.EntityFrameworkCore.Entities.System;
 
-namespace REAC.EntityFrameworkCore.Entities
+namespace REAC.EntityFrameworkCore.Entities.Arbitration
 {
     public class ArbitratorStopFreeUpDecision : BaseEntity<int>
     {

@@ -45,7 +45,9 @@ namespace REAC.Api
             services.AddScoped<ICitizenBankAccountService, CitizenBankAccountService>();
             services.AddScoped<ISysBankService, SysBankService>();
             services.AddScoped<IArbitrationService, ArbitrationService>();
-
+            services.AddScoped<ILitigationRequestArbitratorAssigningRequestService, LitigationRequestArbitratorAssigningRequestService>();
+            services.AddScoped<ISysMeetingLocationService, SysMeetingLocationService>();
+            services.AddScoped<ISysArbitratorCountService, SysArbitratorCountService>();
 
 
             services.AddScoped<ICitizenRequestService, CitizenRequestService>();

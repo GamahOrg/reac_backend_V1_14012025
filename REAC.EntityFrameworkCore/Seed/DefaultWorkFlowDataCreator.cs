@@ -657,6 +657,7 @@ namespace REAC.EntityFrameworkCore.Seed
                                     Id = Guid.Parse("8d305628-46f7-45da-a177-77274c06d433"),
                                     EventName = "رفض",
                                     AllowChangeInternalStatus = true,
+                                    IsEndOfWorkFlow = true,
                                     InternalStatusId = RequestStatus.Rejected,
                                     AllowChangeExternalStatus = true,
                                     ExternalStatusId = RequestStatus.Rejected,

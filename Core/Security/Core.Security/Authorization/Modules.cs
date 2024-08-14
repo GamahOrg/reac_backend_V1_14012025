@@ -11,6 +11,7 @@
 
         public const string Basic = "Basic";
         public const string Account = "Account";
+
         public const string WorkFlow = "WorkFlow";
         public const string WorkFlowNotification = "WorkFlowNotification";
         public const string DelegationRequest = "DelegationRequest";
@@ -22,7 +23,16 @@
         public const string LitigationRequest = "LitigationRequest";
         public const string Reconciliation = "Reconciliation";
         public const string LitigationRequestReformerAssigningRequest = "LitigationRequestReformerAssigningRequest";
+        public const string LitigationRequestArbitratorAssigningRequest = "LitigationRequestArbitratorAssigningRequest";
+        public const string MeetingLocation = "MeetingLocation";
+
+        public const string ArbitratorCount = "ArbitratorCount";
         public const string Bank = "Bank";
+
+        public const string ArbitratorNominationListCount = "ArbitratorNominationListCount";
+        public const string ArbitrationSession = "ArbitrationSession";
+
+
         public const string Arbitration = "Arbitration";
         public const string LitigationRequestContract = "LitigationRequestContract";
         public const string LitigationRequestCorrespondence = "LitigationRequestCorrespondence";

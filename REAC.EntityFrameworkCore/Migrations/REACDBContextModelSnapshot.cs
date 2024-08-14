@@ -22,43 +22,373 @@ namespace REAC.EntityFrameworkCore.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Arbitration.LitigationRequestArbitrator", b =>
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Actor.Citizen", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("ArbitratorCitizenId")
+                    b.Property<int?>("ArbitratorStatusId")
+                        .HasColumnType("int");
+
+                    b.Property<Guid?>("AreaId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("CreatedBy")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreatedOn")
+                    b.Property<DateTime?>("BirthDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("LitigationRequestId")
+                    b.Property<string>("BuildingNumber")
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
+                    b.Property<Guid?>("CityId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("UpdatedBy")
+                    b.Property<string>("Code")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("District")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
+                    b.Property<string>("Employer")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Fax")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("FullName")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
+                    b.Property<int?>("GenderId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("HomeTelephone")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<DateTime?>("IdentityExpiryDate")
+                        .HasColumnType("date");
+
+                    b.Property<Guid?>("IdentityFileId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime?>("UpdatedOn")
+                    b.Property<string>("IdentityNumber")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int?>("IdentityTypeId")
+                        .HasColumnType("int");
+
+                    b.Property<bool?>("IsArbitrator")
+                        .HasColumnType("bit");
+
+                    b.Property<bool?>("IsDraftAccount")
+                        .HasColumnType("bit");
+
+                    b.Property<bool?>("IsLawyer")
+                        .HasColumnType("bit");
+
+                    b.Property<bool?>("IsReformer")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid?>("LawLicenseFileId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("LawyerLicenseExpirationDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("LawyerLicenseNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("LitigationCompanyRepresentativeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Mobile")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("NationalAddress")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("NationalityId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("PassCitizenId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("PostalCode")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<int?>("ReformerStatusId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ShortName")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("Street")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("SubNumber")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("UnitNumber")
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
+                    b.Property<Guid?>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("WorkTelephone")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
 
                     b.HasKey("Id")
-                        .HasName("PK__LitigationRequestArbitrator07F533D1CD");
+                        .HasName("PK__Citizen__3214EC0756CF4E03");
 
-                    b.HasIndex("ArbitratorCitizenId");
+                    b.HasIndex("ArbitratorStatusId");
 
-                    b.HasIndex("LitigationRequestId");
+                    b.HasIndex("AreaId");
 
-                    b.HasIndex(new[] { "Id" }, "LitigationRequestArbitrator_Id")
-                        .IsUnique();
+                    b.HasIndex("CityId");
 
-                    b.ToTable("LitigationRequestArbitrator", (string)null);
+                    b.HasIndex("GenderId");
+
+                    b.HasIndex("IdentityFileId");
+
+                    b.HasIndex("IdentityTypeId");
+
+                    b.HasIndex("LawLicenseFileId");
+
+                    b.HasIndex("LitigationCompanyRepresentativeId");
+
+                    b.HasIndex("NationalityId");
+
+                    b.HasIndex("ReformerStatusId");
+
+                    b.ToTable("Citizen", (string)null);
                 });
 
-            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.ArbitratorStopFreeUpDecision", b =>
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Actor.CitizenBankAccount", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("AccountOwnerName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("BankId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("CitizenId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("IBan")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id")
+                        .HasName("PK_CitizenBankAccount_3214EC0743341C99");
+
+                    b.HasIndex("BankId");
+
+                    b.HasIndex("CitizenId");
+
+                    b.ToTable("CitizenBankAccount", (string)null);
+                });
+
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Actor.CitizenRequest", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("AcademicDegreeName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("ArbitratorClassId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("AreaId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Brief")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<Guid>("CitizenId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("CitizenRequestTypeId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ExperienceYears")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsVolunteerApproval")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("RequestOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("StatusId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id")
+                        .HasName("PK_CitizenRequest_3214EC0743341C99");
+
+                    b.HasIndex("ArbitratorClassId");
+
+                    b.HasIndex("AreaId");
+
+                    b.HasIndex("CitizenId");
+
+                    b.HasIndex("CitizenRequestTypeId");
+
+                    b.HasIndex("StatusId");
+
+                    b.ToTable("CitizenRequest", (string)null);
+                });
+
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Actor.CitizenRequestAcademicDegreeFile", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("AcademicDegreeFileId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("CitizenRequestId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id")
+                        .HasName("PK_CitizenRequestAcademicDegreeFile3214EC0743341C99");
+
+                    b.HasIndex("AcademicDegreeFileId");
+
+                    b.HasIndex("CitizenRequestId");
+
+                    b.ToTable("CitizenRequestAcademicDegreeFile", (string)null);
+                });
+
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Actor.CitizenRequestExperienceCertificate", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("AcquisitionDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CertificateName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("CitizenRequestId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("IssuingEntityName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id")
+                        .HasName("PK_CitizenRequestExperienceCertificate3214EC0743341C99");
+
+                    b.HasIndex("CitizenRequestId");
+
+                    b.ToTable("CitizenRequestExperienceCertificate", (string)null);
+                });
+
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Actor.CitizenRequestExperienceCertificateFile", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("CitizenRequestExperienceCertificateId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ExperienceCertificateFileId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id")
+                        .HasName("PK_CitizenRequestExperienceCertificateFileEC0743341C99");
+
+                    b.HasIndex("CitizenRequestExperienceCertificateId");
+
+                    b.HasIndex("ExperienceCertificateFileId");
+
+                    b.ToTable("CitizenRequestExperienceCertificateFile", (string)null);
+                });
+
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Actor.CitizenRequestFreelanceWorkDocumentFile", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("CitizenRequestId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("FreelanceWorkDocumentFileId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id")
+                        .HasName("PK_CitizenRequestFreelanceWorkDocumentFile3214EC0743341C99");
+
+                    b.HasIndex("CitizenRequestId");
+
+                    b.HasIndex("FreelanceWorkDocumentFileId");
+
+                    b.ToTable("CitizenRequestFreelanceWorkDocumentFile", (string)null);
+                });
+
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Actor.CitizenRequestNote", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("CitizenRequestId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("NoteDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Notes")
+                        .IsRequired()
+                        .HasMaxLength(2147483647)
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id")
+                        .HasName("PK__CitizenRequestNote_3214EC07F533D1CD");
+
+                    b.HasIndex("CitizenRequestId");
+
+                    b.HasIndex(new[] { "Id" }, "CitizenRequestNote_Id")
+                        .IsUnique();
+
+                    b.ToTable("CitizenRequestNote", (string)null);
+                });
+
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Arbitration.ArbitratorStopFreeUpDecision", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -91,34 +421,343 @@ namespace REAC.EntityFrameworkCore.Migrations
                     b.ToTable("ArbitratorStopFreeUpDecision", (string)null);
                 });
 
-            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.CitizenBankAccount", b =>
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Arbitration.LitigationRequestArbitrationReport", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("AccountOwnerName")
+                    b.Property<string>("Facts")
+                        .IsRequired()
+                        .HasMaxLength(5000)
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("JudgmentDate")
+                        .HasColumnType("datetime");
+
+                    b.Property<DateTime>("JudgmentDecisionDate")
+                        .HasColumnType("datetime");
+
+                    b.Property<string>("JudgmentDecisionPlace")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("BankId")
+                    b.Property<string>("JudgmentDecisionText")
+                        .IsRequired()
+                        .HasMaxLength(5000)
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("LitigationRequestId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("MeetingLocationId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ModificationRequest")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<string>("Reasons")
+                        .IsRequired()
+                        .HasMaxLength(5000)
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id")
+                        .HasName("PK__LitigationRequestArbitrationReport_3214EC07F3A8E5CA");
+
+                    b.HasIndex("LitigationRequestId");
+
+                    b.HasIndex("MeetingLocationId");
+
+                    b.ToTable("LitigationRequestArbitrationReport", (string)null);
+                });
+
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Arbitration.LitigationRequestArbitrationReportExplanationRequest", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("ExplanationRequestDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ExplanationRequests")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("LitigationRequestArbitrationReportId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("RequestArbitrationReportExplanationRequestParty")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Response")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("ResponseOn")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id")
+                        .HasName("PK__LitigationRequestArbitrationReportExplanationRequest");
+
+                    b.HasIndex("LitigationRequestArbitrationReportId");
+
+                    b.HasIndex(new[] { "Id" }, "LitigationRequestArbitrationReportExplanationRequest_Id")
+                        .IsUnique();
+
+                    b.ToTable("LitigationRequestArbitrationReportExplanationRequest", (string)null);
+                });
+
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Arbitration.LitigationRequestArbitrationReportExplanationRequestFile", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ArbitrationReportExplanationRequestId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ExplanationRequestFileId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id")
+                        .HasName("PK__LitigationRequestArbitrationReportExplanationRequestFile");
+
+                    b.HasIndex("ArbitrationReportExplanationRequestId");
+
+                    b.HasIndex("ExplanationRequestFileId");
+
+                    b.HasIndex(new[] { "Id" }, "LitigationRequestArbonRequestFile_Id")
+                        .IsUnique();
+
+                    b.ToTable("LitigationRequestArbitrationReportExplanationRequestFile", (string)null);
+                });
+
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Arbitration.LitigationRequestArbitratorAssigningRequest", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("ArbitratorAssigningRequestTypeId")
+                        .HasColumnType("int");
 
                     b.Property<Guid>("CitizenId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("IBan")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<Guid?>("LitigationRequestArbitratorNominationListId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("LitigationRequestId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("RequestOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Response")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("ResponseOn")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("Id")
-                        .HasName("PK_CitizenBankAccount_3214EC0743341C99");
+                        .HasName("PK__LitigationRequestArbitratorAssigningRequest4EC07AE06877A");
 
-                    b.HasIndex("BankId");
+                    b.HasIndex("ArbitratorAssigningRequestTypeId");
 
                     b.HasIndex("CitizenId");
 
-                    b.ToTable("CitizenBankAccount", (string)null);
+                    b.HasIndex("LitigationRequestArbitratorNominationListId");
+
+                    b.HasIndex("LitigationRequestId");
+
+                    b.ToTable("LitigationRequestArbitratorAssigningRequest", (string)null);
+                });
+
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Arbitration.LitigationRequestArbitratorList", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ArbitratorCitizenId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("LitigationRequestId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id")
+                        .HasName("PK__LitigationRequestArbitrator07F533D1CD");
+
+                    b.HasIndex("ArbitratorCitizenId");
+
+                    b.HasIndex("LitigationRequestId");
+
+                    b.HasIndex(new[] { "Id" }, "LitigationRequestArbitrator_Id")
+                        .IsUnique();
+
+                    b.ToTable("LitigationRequestArbitrator", (string)null);
+                });
+
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Arbitration.LitigationRequestArbitratorNominationList", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ArbitratorCitizenId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int?>("DefendantPriority")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsSent")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid>("LitigationRequestId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int?>("PlaintiffPriority")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("TotalPriority")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id")
+                        .HasName("PK__LitigationRequestArbitratorNominationList07F533D1CD");
+
+                    b.HasIndex("ArbitratorCitizenId");
+
+                    b.HasIndex("LitigationRequestId");
+
+                    b.HasIndex(new[] { "Id" }, "LitigationRequestArbitratorNominationList_Id")
+                        .IsUnique();
+
+                    b.ToTable("LitigationRequestArbitratorNominationList", (string)null);
+                });
+
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Arbitration.LitigationRequestArbitratorRecusalRequest", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int?>("ApproveRejectStatus")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("ArbitratorCitizenId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("LitigationRequestId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Reason")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("RequestOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("RequestParty")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("ResponseOn")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id")
+                        .HasName("PK__LitigationRequestArbitratorRecusalRequest");
+
+                    b.HasIndex("ArbitratorCitizenId");
+
+                    b.HasIndex("LitigationRequestId");
+
+                    b.HasIndex(new[] { "Id" }, "LitigationRequestArbitratorRecusalRequest_Id")
+                        .IsUnique();
+
+                    b.ToTable("LitigationRequestArbitratorRecusalRequest", (string)null);
+                });
+
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Arbitration.LitigationRequestArbitratorRecusalRequestFile", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("LitigationRequestArbitratorRecusalRequestId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("RecusalRequestFileId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id")
+                        .HasName("PK__LitigationRequestArbitratorRecusalRequestFile");
+
+                    b.HasIndex("LitigationRequestArbitratorRecusalRequestId");
+
+                    b.HasIndex("RecusalRequestFileId");
+
+                    b.HasIndex(new[] { "Id" }, "LitigationRequestArbitratorRecusalRequestFile_Id")
+                        .IsUnique();
+
+                    b.ToTable("LitigationRequestArbitratorRecusalRequestFile", (string)null);
+                });
+
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Arbitration.LitigationRequestArbitratorsChairmanNominationList", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ArbitratorChairmanCitizenId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsSent")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid>("LitigationRequestId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int?>("TotalPriority")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id")
+                        .HasName("PK__LitigationRequestArbitratorsChairmanNominationList07F533D1CD");
+
+                    b.HasIndex("ArbitratorChairmanCitizenId");
+
+                    b.HasIndex("LitigationRequestId");
+
+                    b.HasIndex(new[] { "Id" }, "LitigationRequestArbitratorsChairmanNominationList_Id")
+                        .IsUnique();
+
+                    b.ToTable("LitigationRequestArbitratorsChairmanNominationList", (string)null);
+                });
+
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Arbitration.LitigationRequestArbitratorsChairmanNominationListValue", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ArbitratorChairmanCitizenId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ArbitratorCitizenId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsSent")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid>("LitigationRequestArbitratorsChairmanNominationListId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Priority")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id")
+                        .HasName("PK__LitigationRequestArbitratorsChairmanNominationListValue07F533D1CD");
+
+                    b.HasIndex("ArbitratorChairmanCitizenId");
+
+                    b.HasIndex("ArbitratorCitizenId");
+
+                    b.HasIndex("LitigationRequestArbitratorsChairmanNominationListId");
+
+                    b.HasIndex(new[] { "Id" }, "LitigationRequestArbitratorsChairmanNominationListValue_Id")
+                        .IsUnique();
+
+                    b.ToTable("LitigationRequestArbitratorsChairmanNominationListValue", (string)null);
                 });
 
             modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Facility", b =>
@@ -195,127 +834,6 @@ namespace REAC.EntityFrameworkCore.Migrations
                     b.ToTable("Facility", (string)null);
                 });
 
-            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Litigation.CitizenRequestAcademicDegreeFile", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("AcademicDegreeFileId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("CitizenRequestId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id")
-                        .HasName("PK_CitizenRequestAcademicDegreeFile3214EC0743341C99");
-
-                    b.HasIndex("AcademicDegreeFileId");
-
-                    b.HasIndex("CitizenRequestId");
-
-                    b.ToTable("CitizenRequestAcademicDegreeFile", (string)null);
-                });
-
-            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Litigation.CitizenRequestExperienceCertificate", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("AcquisitionDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CertificateName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("CitizenRequestId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("IssuingEntityName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id")
-                        .HasName("PK_CitizenRequestExperienceCertificate3214EC0743341C99");
-
-                    b.HasIndex("CitizenRequestId");
-
-                    b.ToTable("CitizenRequestExperienceCertificate", (string)null);
-                });
-
-            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Litigation.CitizenRequestExperienceCertificateFile", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("CitizenRequestExperienceCertificateId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("ExperienceCertificateFileId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id")
-                        .HasName("PK_CitizenRequestExperienceCertificateFileEC0743341C99");
-
-                    b.HasIndex("CitizenRequestExperienceCertificateId");
-
-                    b.HasIndex("ExperienceCertificateFileId");
-
-                    b.ToTable("CitizenRequestExperienceCertificateFile", (string)null);
-                });
-
-            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Litigation.CitizenRequestFreelanceWorkDocumentFile", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("CitizenRequestId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("FreelanceWorkDocumentFileId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id")
-                        .HasName("PK_CitizenRequestFreelanceWorkDocumentFile3214EC0743341C99");
-
-                    b.HasIndex("CitizenRequestId");
-
-                    b.HasIndex("FreelanceWorkDocumentFileId");
-
-                    b.ToTable("CitizenRequestFreelanceWorkDocumentFile", (string)null);
-                });
-
-            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Litigation.CitizenRequestNote", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("CitizenRequestId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("NoteDateTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Notes")
-                        .IsRequired()
-                        .HasMaxLength(2147483647)
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id")
-                        .HasName("PK__CitizenRequestNote_3214EC07F533D1CD");
-
-                    b.HasIndex("CitizenRequestId");
-
-                    b.HasIndex(new[] { "Id" }, "CitizenRequestNote_Id")
-                        .IsUnique();
-
-                    b.ToTable("CitizenRequestNote", (string)null);
-                });
-
             modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Litigation.LitigationCompanyRepresentative", b =>
                 {
                     b.Property<Guid>("Id")
@@ -344,8 +862,26 @@ namespace REAC.EntityFrameworkCore.Migrations
                     b.Property<int?>("ArbitratorSelectionDuration")
                         .HasColumnType("int");
 
+                    b.Property<DateTime?>("ArbitratorsChairmanNominationListCreationDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("ArbitratorsChairmanNominationListSelectionDoneDateTime")
+                        .HasColumnType("datetime2");
+
                     b.Property<int?>("ArbitratorsCount")
                         .HasColumnType("int");
+
+                    b.Property<DateTime?>("ArbitratorsCountDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("ArbitratorsNominationListCreationDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("ArbitratorsNominationListSelectionDoneDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("ArbitratorsSelectionDurationDateTime")
+                        .HasColumnType("datetime2");
 
                     b.Property<Guid?>("AreaId")
                         .HasColumnType("uniqueidentifier");
@@ -401,6 +937,9 @@ namespace REAC.EntityFrameworkCore.Migrations
                     b.Property<bool>("IsAllowEdit")
                         .HasColumnType("bit");
 
+                    b.Property<bool?>("IsDefendantArbitratorNominationListDone")
+                        .HasColumnType("bit");
+
                     b.Property<bool?>("IsExemptionReduction")
                         .HasColumnType("bit");
 
@@ -416,8 +955,14 @@ namespace REAC.EntityFrameworkCore.Migrations
                     b.Property<bool>("IsPaid")
                         .HasColumnType("bit");
 
+                    b.Property<bool?>("IsPlaintiffArbitratorNominationListDone")
+                        .HasColumnType("bit");
+
                     b.Property<bool>("IsSent")
                         .HasColumnType("bit");
+
+                    b.Property<DateTime?>("JudgmentDecisionIssuingDateTime")
+                        .HasColumnType("datetime2");
 
                     b.Property<Guid?>("LitigationRequestAmountId")
                         .HasColumnType("uniqueidentifier");
@@ -811,6 +1356,9 @@ namespace REAC.EntityFrameworkCore.Migrations
 
                     b.Property<Guid>("LitigationRequestId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("RequestOn")
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("Response")
                         .HasColumnType("int");
@@ -1248,221 +1796,6 @@ namespace REAC.EntityFrameworkCore.Migrations
                     b.ToTable("ReformerStopFreeUpDecision", (string)null);
                 });
 
-            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.System.Citizen", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int?>("ArbitratorStatusId")
-                        .HasColumnType("int");
-
-                    b.Property<Guid?>("AreaId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("BirthDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("BuildingNumber")
-                        .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)");
-
-                    b.Property<Guid?>("CityId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Code")
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.Property<string>("District")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<string>("Email")
-                        .HasMaxLength(250)
-                        .HasColumnType("nvarchar(250)");
-
-                    b.Property<string>("Employer")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("Fax")
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.Property<string>("FullName")
-                        .IsRequired()
-                        .HasMaxLength(250)
-                        .HasColumnType("nvarchar(250)");
-
-                    b.Property<int?>("GenderId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("HomeTelephone")
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.Property<DateTime?>("IdentityExpiryDate")
-                        .HasColumnType("date");
-
-                    b.Property<Guid?>("IdentityFileId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("IdentityNumber")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<int?>("IdentityTypeId")
-                        .HasColumnType("int");
-
-                    b.Property<bool?>("IsArbitrator")
-                        .HasColumnType("bit");
-
-                    b.Property<bool?>("IsDraftAccount")
-                        .HasColumnType("bit");
-
-                    b.Property<bool?>("IsLawyer")
-                        .HasColumnType("bit");
-
-                    b.Property<bool?>("IsReformer")
-                        .HasColumnType("bit");
-
-                    b.Property<Guid?>("LawLicenseFileId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("LawyerLicenseExpirationDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("LawyerLicenseNumber")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid?>("LitigationCompanyRepresentativeId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Mobile")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.Property<string>("NationalAddress")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid?>("NationalityId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("PassCitizenId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("PostalCode")
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.Property<int?>("ReformerStatusId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ShortName")
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.Property<string>("Street")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<string>("SubNumber")
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.Property<string>("UnitNumber")
-                        .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)");
-
-                    b.Property<Guid?>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("WorkTelephone")
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.HasKey("Id")
-                        .HasName("PK__Citizen__3214EC0756CF4E03");
-
-                    b.HasIndex("ArbitratorStatusId");
-
-                    b.HasIndex("AreaId");
-
-                    b.HasIndex("CityId");
-
-                    b.HasIndex("GenderId");
-
-                    b.HasIndex("IdentityFileId");
-
-                    b.HasIndex("IdentityTypeId");
-
-                    b.HasIndex("LawLicenseFileId");
-
-                    b.HasIndex("LitigationCompanyRepresentativeId");
-
-                    b.HasIndex("NationalityId");
-
-                    b.HasIndex("ReformerStatusId");
-
-                    b.ToTable("Citizen", (string)null);
-                });
-
-            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.System.CitizenRequest", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("AcademicDegreeName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid?>("ArbitratorClassId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("AreaId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Brief")
-                        .HasMaxLength(1000)
-                        .HasColumnType("nvarchar(1000)");
-
-                    b.Property<Guid>("CitizenId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("CitizenRequestTypeId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("ExperienceYears")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("IsVolunteerApproval")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime>("RequestOn")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("StatusId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id")
-                        .HasName("PK_CitizenRequest_3214EC0743341C99");
-
-                    b.HasIndex("ArbitratorClassId");
-
-                    b.HasIndex("AreaId");
-
-                    b.HasIndex("CitizenId");
-
-                    b.HasIndex("CitizenRequestTypeId");
-
-                    b.HasIndex("StatusId");
-
-                    b.ToTable("CitizenRequest", (string)null);
-                });
-
             modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.System.DelegationRequest", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1563,6 +1896,21 @@ namespace REAC.EntityFrameworkCore.Migrations
                     b.ToTable("Delegator", (string)null);
                 });
 
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.System.SysArbitratorAssigningRequestType", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ArbitratorAssigningRequestName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id")
+                        .HasName("PK__SysArbitratorAssigningRequest3214EC0743341C99");
+
+                    b.ToTable("SysArbitratorAssigningRequestType", (string)null);
+                });
+
             modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.System.SysArbitratorClass", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1584,6 +1932,46 @@ namespace REAC.EntityFrameworkCore.Migrations
                         .HasName("PK__SysArbitratorClass_3214EC0743341C99");
 
                     b.ToTable("SysArbitratorClass", (string)null);
+                });
+
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.System.SysArbitratorCount", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("ArbitratorCount")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id")
+                        .HasName("PK_SysArbitratorCount");
+
+                    b.HasIndex(new[] { "Id" }, "SysArbitratorCount_Id")
+                        .IsUnique();
+
+                    b.ToTable("SysArbitratorCount", (string)null);
+                });
+
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.System.SysArbitratorNominationListCount", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("ArbitratorChairmanNominationListCount")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ArbitratorCount")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ArbitratorNominationListCount")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id")
+                        .HasName("PK_SysArbitratorNominationListCount");
+
+                    b.HasIndex(new[] { "Id" }, "SysArbitratorNominationListCount_Id")
+                        .IsUnique();
+
+                    b.ToTable("SysArbitratorNominationListCount", (string)null);
                 });
 
             modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.System.SysArbitratorStatus", b =>
@@ -2083,6 +2471,22 @@ namespace REAC.EntityFrameworkCore.Migrations
                         .HasName("PK__SysLitig__3214EC0715A02324");
 
                     b.ToTable("SysLitigationRequestStatus", (string)null);
+                });
+
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.System.SysMeetingLocation", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("MeetingLocationName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id")
+                        .HasName("PK__SysMeetingLocation_3214EC0743341C99");
+
+                    b.ToTable("SysMeetingLocation", (string)null);
                 });
 
             modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.System.SysMobileOTP", b =>
@@ -3012,47 +3416,79 @@ namespace REAC.EntityFrameworkCore.Migrations
                     b.ToTable("WorkFlowStepsActorType", (string)null);
                 });
 
-            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Arbitration.LitigationRequestArbitrator", b =>
-                {
-                    b.HasOne("REAC.EntityFrameworkCore.Entities.System.Citizen", "ArbitratorCitizen")
-                        .WithMany("LitigationRequestArbitrators")
-                        .HasForeignKey("ArbitratorCitizenId")
-                        .IsRequired()
-                        .HasConstraintName("FKArbitratorCitizenRequestArbitrators231388000");
-
-                    b.HasOne("REAC.EntityFrameworkCore.Entities.Litigation.LitigationRequest", "LitigationRequest")
-                        .WithMany("LitigationRequestArbitrators")
-                        .HasForeignKey("LitigationRequestId")
-                        .IsRequired()
-                        .HasConstraintName("FKLitigationRequestLitigationRequestArbitrators231388");
-
-                    b.Navigation("ArbitratorCitizen");
-
-                    b.Navigation("LitigationRequest");
-                });
-
-            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.ArbitratorStopFreeUpDecision", b =>
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Actor.Citizen", b =>
                 {
                     b.HasOne("REAC.EntityFrameworkCore.Entities.System.SysArbitratorStatus", "SysArbitratorStatus")
-                        .WithMany("ArbitratorStopFreeUpDecisions")
+                        .WithMany("Citizens")
                         .HasForeignKey("ArbitratorStatusId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("FKSysArbitratorStatusArbitratorStopFreeUpDecision676101");
+                        .HasConstraintName("FKCSysArbitratorStatusitizen92459");
 
-                    b.HasOne("REAC.EntityFrameworkCore.Entities.System.Citizen", "Citizen")
-                        .WithMany("ArbitratorStopFreeUpDecisions")
-                        .HasForeignKey("CitizenId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("FKCitizenArbitratorStopFreeUpDecision676101");
+                    b.HasOne("REAC.EntityFrameworkCore.Entities.System.SysArea", "Area")
+                        .WithMany("Citizens")
+                        .HasForeignKey("AreaId")
+                        .HasConstraintName("FKCitizen92459");
 
-                    b.Navigation("Citizen");
+                    b.HasOne("REAC.EntityFrameworkCore.Entities.System.SysCity", "City")
+                        .WithMany("Citizens")
+                        .HasForeignKey("CityId")
+                        .HasConstraintName("FKCitizen92422");
+
+                    b.HasOne("REAC.EntityFrameworkCore.Entities.System.SysGender", "Gender")
+                        .WithMany("Citizens")
+                        .HasForeignKey("GenderId")
+                        .HasConstraintName("FKCitizen92455");
+
+                    b.HasOne("REAC.EntityFrameworkCore.Entities.System.SysFileManager", "IdentityFile")
+                        .WithMany("IndentityCitizens")
+                        .HasForeignKey("IdentityFileId")
+                        .HasConstraintName("FKIndentityCitizens616003");
+
+                    b.HasOne("REAC.EntityFrameworkCore.Entities.System.SysIdentityType", "IdentityType")
+                        .WithMany("Citizens")
+                        .HasForeignKey("IdentityTypeId")
+                        .HasConstraintName("FKCitizen807894");
+
+                    b.HasOne("REAC.EntityFrameworkCore.Entities.System.SysFileManager", "LawLicenseFile")
+                        .WithMany("LawLicenseCitizens")
+                        .HasForeignKey("LawLicenseFileId")
+                        .HasConstraintName("FKLawLicenseCitizens807894");
+
+                    b.HasOne("REAC.EntityFrameworkCore.Entities.Litigation.LitigationCompanyRepresentative", "LitigationCompanyRepresentative")
+                        .WithMany("Citizens")
+                        .HasForeignKey("LitigationCompanyRepresentativeId");
+
+                    b.HasOne("REAC.EntityFrameworkCore.Entities.System.SysNationality", "Nationality")
+                        .WithMany("Citizens")
+                        .HasForeignKey("NationalityId")
+                        .HasConstraintName("FKCitizen92411");
+
+                    b.HasOne("REAC.EntityFrameworkCore.Entities.System.SysReformerStatus", "SysReformerStatus")
+                        .WithMany("Citizens")
+                        .HasForeignKey("ReformerStatusId")
+                        .HasConstraintName("FKCSysReformerStatusCitizen92459");
+
+                    b.Navigation("Area");
+
+                    b.Navigation("City");
+
+                    b.Navigation("Gender");
+
+                    b.Navigation("IdentityFile");
+
+                    b.Navigation("IdentityType");
+
+                    b.Navigation("LawLicenseFile");
+
+                    b.Navigation("LitigationCompanyRepresentative");
+
+                    b.Navigation("Nationality");
 
                     b.Navigation("SysArbitratorStatus");
+
+                    b.Navigation("SysReformerStatus");
                 });
 
-            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.CitizenBankAccount", b =>
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Actor.CitizenBankAccount", b =>
                 {
                     b.HasOne("REAC.EntityFrameworkCore.Entities.System.SysBank", "SysBank")
                         .WithMany("CitizenBankAccounts")
@@ -3061,7 +3497,7 @@ namespace REAC.EntityFrameworkCore.Migrations
                         .IsRequired()
                         .HasConstraintName("FKSysBankCitizenBankAccounts676101");
 
-                    b.HasOne("REAC.EntityFrameworkCore.Entities.System.Citizen", "Citizen")
+                    b.HasOne("REAC.EntityFrameworkCore.Entities.Actor.Citizen", "Citizen")
                         .WithMany("CitizenBankAccounts")
                         .HasForeignKey("CitizenId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -3073,25 +3509,55 @@ namespace REAC.EntityFrameworkCore.Migrations
                     b.Navigation("SysBank");
                 });
 
-            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Facility", b =>
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Actor.CitizenRequest", b =>
                 {
-                    b.HasOne("REAC.EntityFrameworkCore.Entities.System.Citizen", "Citizen")
-                        .WithMany("Facilities")
+                    b.HasOne("REAC.EntityFrameworkCore.Entities.System.SysArbitratorClass", "SysArbitratorClass")
+                        .WithMany("CitizenRequests")
+                        .HasForeignKey("ArbitratorClassId")
+                        .HasConstraintName("FKSysArbitratorClassCitizenRequest676101");
+
+                    b.HasOne("REAC.EntityFrameworkCore.Entities.System.SysArea", "SysArea")
+                        .WithMany("CitizenRequests")
+                        .HasForeignKey("AreaId")
+                        .HasConstraintName("FKSysSysAreaCitizenRequest676101");
+
+                    b.HasOne("REAC.EntityFrameworkCore.Entities.Actor.Citizen", "Citizen")
+                        .WithMany("CitizenRequests")
                         .HasForeignKey("CitizenId")
                         .IsRequired()
-                        .HasConstraintName("FKFacility36705");
+                        .HasConstraintName("FKCitizenCitizenRequest676100000001");
+
+                    b.HasOne("REAC.EntityFrameworkCore.Entities.System.SysCitizenRequestType", "SysCitizenRequestType")
+                        .WithMany("CitizenRequests")
+                        .HasForeignKey("CitizenRequestTypeId")
+                        .IsRequired()
+                        .HasConstraintName("FKSysCitizenRequestTypeCitizenRequest676101");
+
+                    b.HasOne("REAC.EntityFrameworkCore.Entities.System.SysCitizenRequestStatus", "Status")
+                        .WithMany("CitizenRequests")
+                        .HasForeignKey("StatusId")
+                        .IsRequired()
+                        .HasConstraintName("FKCitizenRequestStatuses676880");
 
                     b.Navigation("Citizen");
+
+                    b.Navigation("Status");
+
+                    b.Navigation("SysArbitratorClass");
+
+                    b.Navigation("SysArea");
+
+                    b.Navigation("SysCitizenRequestType");
                 });
 
-            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Litigation.CitizenRequestAcademicDegreeFile", b =>
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Actor.CitizenRequestAcademicDegreeFile", b =>
                 {
                     b.HasOne("REAC.EntityFrameworkCore.Entities.System.SysFileManager", "AcademicDegreeFile")
                         .WithMany("CitizenRequestAcademicDegreeFiles")
                         .HasForeignKey("AcademicDegreeFileId")
                         .HasConstraintName("CitizenRequestAcademicDegreeFiles616003");
 
-                    b.HasOne("REAC.EntityFrameworkCore.Entities.System.CitizenRequest", "CitizenRequest")
+                    b.HasOne("REAC.EntityFrameworkCore.Entities.Actor.CitizenRequest", "CitizenRequest")
                         .WithMany("CitizenRequestAcademicDegreeFiles")
                         .HasForeignKey("CitizenRequestId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -3103,9 +3569,9 @@ namespace REAC.EntityFrameworkCore.Migrations
                     b.Navigation("CitizenRequest");
                 });
 
-            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Litigation.CitizenRequestExperienceCertificate", b =>
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Actor.CitizenRequestExperienceCertificate", b =>
                 {
-                    b.HasOne("REAC.EntityFrameworkCore.Entities.System.CitizenRequest", "CitizenRequest")
+                    b.HasOne("REAC.EntityFrameworkCore.Entities.Actor.CitizenRequest", "CitizenRequest")
                         .WithMany("CitizenRequestExperienceCertificates")
                         .HasForeignKey("CitizenRequestId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -3115,9 +3581,9 @@ namespace REAC.EntityFrameworkCore.Migrations
                     b.Navigation("CitizenRequest");
                 });
 
-            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Litigation.CitizenRequestExperienceCertificateFile", b =>
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Actor.CitizenRequestExperienceCertificateFile", b =>
                 {
-                    b.HasOne("REAC.EntityFrameworkCore.Entities.Litigation.CitizenRequestExperienceCertificate", "CitizenRequestExperienceCertificate")
+                    b.HasOne("REAC.EntityFrameworkCore.Entities.Actor.CitizenRequestExperienceCertificate", "CitizenRequestExperienceCertificate")
                         .WithMany("CitizenRequestExperienceCertificateFiles")
                         .HasForeignKey("CitizenRequestExperienceCertificateId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -3135,9 +3601,9 @@ namespace REAC.EntityFrameworkCore.Migrations
                     b.Navigation("ExperienceCertificateFile");
                 });
 
-            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Litigation.CitizenRequestFreelanceWorkDocumentFile", b =>
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Actor.CitizenRequestFreelanceWorkDocumentFile", b =>
                 {
-                    b.HasOne("REAC.EntityFrameworkCore.Entities.System.CitizenRequest", "CitizenRequest")
+                    b.HasOne("REAC.EntityFrameworkCore.Entities.Actor.CitizenRequest", "CitizenRequest")
                         .WithMany("CitizenRequestFreelanceWorkDocumentFiles")
                         .HasForeignKey("CitizenRequestId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -3155,9 +3621,9 @@ namespace REAC.EntityFrameworkCore.Migrations
                     b.Navigation("FreelanceWorkDocumentFile");
                 });
 
-            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Litigation.CitizenRequestNote", b =>
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Actor.CitizenRequestNote", b =>
                 {
-                    b.HasOne("REAC.EntityFrameworkCore.Entities.System.CitizenRequest", "CitizenRequest")
+                    b.HasOne("REAC.EntityFrameworkCore.Entities.Actor.CitizenRequest", "CitizenRequest")
                         .WithMany("CitizenRequestNotes")
                         .HasForeignKey("CitizenRequestId")
                         .IsRequired()
@@ -3166,15 +3632,252 @@ namespace REAC.EntityFrameworkCore.Migrations
                     b.Navigation("CitizenRequest");
                 });
 
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Arbitration.ArbitratorStopFreeUpDecision", b =>
+                {
+                    b.HasOne("REAC.EntityFrameworkCore.Entities.System.SysArbitratorStatus", "SysArbitratorStatus")
+                        .WithMany("ArbitratorStopFreeUpDecisions")
+                        .HasForeignKey("ArbitratorStatusId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FKSysArbitratorStatusArbitratorStopFreeUpDecision676101");
+
+                    b.HasOne("REAC.EntityFrameworkCore.Entities.Actor.Citizen", "Citizen")
+                        .WithMany("ArbitratorStopFreeUpDecisions")
+                        .HasForeignKey("CitizenId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FKCitizenArbitratorStopFreeUpDecision676101");
+
+                    b.Navigation("Citizen");
+
+                    b.Navigation("SysArbitratorStatus");
+                });
+
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Arbitration.LitigationRequestArbitrationReport", b =>
+                {
+                    b.HasOne("REAC.EntityFrameworkCore.Entities.Litigation.LitigationRequest", "LitigationRequest")
+                        .WithMany("LitigationRequestArbitrationReports")
+                        .HasForeignKey("LitigationRequestId")
+                        .IsRequired()
+                        .HasConstraintName("FKLitigationLitigationRequestArbitrationReport334620");
+
+                    b.HasOne("REAC.EntityFrameworkCore.Entities.System.SysMeetingLocation", "MeetingLocation")
+                        .WithMany("LitigationRequestArbitrationReports")
+                        .HasForeignKey("MeetingLocationId")
+                        .IsRequired()
+                        .HasConstraintName("FKMeetingLocationRequestArbitrationReport33000000004620");
+
+                    b.Navigation("LitigationRequest");
+
+                    b.Navigation("MeetingLocation");
+                });
+
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Arbitration.LitigationRequestArbitrationReportExplanationRequest", b =>
+                {
+                    b.HasOne("REAC.EntityFrameworkCore.Entities.Arbitration.LitigationRequestArbitrationReport", "LitigationRequestArbitrationReport")
+                        .WithMany("LitigationRequestArbitrationReportExplanationRequests")
+                        .HasForeignKey("LitigationRequestArbitrationReportId")
+                        .IsRequired()
+                        .HasConstraintName("FKLitigationRequestArbitrationReportExplanationRequests231388ccc000");
+
+                    b.Navigation("LitigationRequestArbitrationReport");
+                });
+
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Arbitration.LitigationRequestArbitrationReportExplanationRequestFile", b =>
+                {
+                    b.HasOne("REAC.EntityFrameworkCore.Entities.Arbitration.LitigationRequestArbitrationReportExplanationRequest", "ArbitrationReportExplanationRequest")
+                        .WithMany("LitigationRequestArbitrationReportExplanationRequestFiles")
+                        .HasForeignKey("ArbitrationReportExplanationRequestId")
+                        .IsRequired()
+                        .HasConstraintName("FKLitigationRequestArbitrationR2313800088c000");
+
+                    b.HasOne("REAC.EntityFrameworkCore.Entities.System.SysFileManager", "ExplanationRequestFile")
+                        .WithMany("LitigationRequestArbitrationReportExplanationRequestFiles")
+                        .HasForeignKey("ExplanationRequestFileId")
+                        .IsRequired()
+                        .HasConstraintName("FKArbitrationReportExplanationRequestFileRequestFile3800088000");
+
+                    b.Navigation("ArbitrationReportExplanationRequest");
+
+                    b.Navigation("ExplanationRequestFile");
+                });
+
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Arbitration.LitigationRequestArbitratorAssigningRequest", b =>
+                {
+                    b.HasOne("REAC.EntityFrameworkCore.Entities.System.SysArbitratorAssigningRequestType", "ArbitratorAssigningRequestType")
+                        .WithMany("LitigationRequestArbitratorAssigningRequests")
+                        .HasForeignKey("ArbitratorAssigningRequestTypeId")
+                        .IsRequired()
+                        .HasConstraintName("FKArbitratorAssigningRequestIdArbitratorAssigningRequest705");
+
+                    b.HasOne("REAC.EntityFrameworkCore.Entities.Actor.Citizen", "ArbitratorCitizen")
+                        .WithMany("LitigationRequestArbitratorAssigningRequests")
+                        .HasForeignKey("CitizenId")
+                        .IsRequired()
+                        .HasConstraintName("FKArbitratorCitizenLitigationRequestArbitratorAssigningRequest705");
+
+                    b.HasOne("REAC.EntityFrameworkCore.Entities.Arbitration.LitigationRequestArbitratorNominationList", "LitigationRequestArbitratorNominationList")
+                        .WithMany("LitigationRequestArbitratorAssigningRequests")
+                        .HasForeignKey("LitigationRequestArbitratorNominationListId")
+                        .HasConstraintName("FKLitigationRequestArbitratorNominationListAssigningRequest70502");
+
+                    b.HasOne("REAC.EntityFrameworkCore.Entities.Litigation.LitigationRequest", "LitigationRequest")
+                        .WithMany("LitigationRequestArbitratorAssigningRequests")
+                        .HasForeignKey("LitigationRequestId")
+                        .IsRequired()
+                        .HasConstraintName("FKLitigationRequestLitigationRequestArbitratorAssigningRequest705");
+
+                    b.Navigation("ArbitratorAssigningRequestType");
+
+                    b.Navigation("ArbitratorCitizen");
+
+                    b.Navigation("LitigationRequest");
+
+                    b.Navigation("LitigationRequestArbitratorNominationList");
+                });
+
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Arbitration.LitigationRequestArbitratorList", b =>
+                {
+                    b.HasOne("REAC.EntityFrameworkCore.Entities.Actor.Citizen", "ArbitratorCitizen")
+                        .WithMany("LitigationRequestArbitratorLists")
+                        .HasForeignKey("ArbitratorCitizenId")
+                        .IsRequired()
+                        .HasConstraintName("FKArbitratorCitizenRequestArbitrators231388345000");
+
+                    b.HasOne("REAC.EntityFrameworkCore.Entities.Litigation.LitigationRequest", "LitigationRequest")
+                        .WithMany("LitigationRequestArbitratorLists")
+                        .HasForeignKey("LitigationRequestId")
+                        .IsRequired()
+                        .HasConstraintName("FKLitigationRequestLitigationRequestArbitrators231388");
+
+                    b.Navigation("ArbitratorCitizen");
+
+                    b.Navigation("LitigationRequest");
+                });
+
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Arbitration.LitigationRequestArbitratorNominationList", b =>
+                {
+                    b.HasOne("REAC.EntityFrameworkCore.Entities.Actor.Citizen", "ArbitratorCitizen")
+                        .WithMany("LitigationRequestArbitratorNominationLists")
+                        .HasForeignKey("ArbitratorCitizenId")
+                        .IsRequired()
+                        .HasConstraintName("FKArbitratorCitizenRequestArbitrators231388ccc000");
+
+                    b.HasOne("REAC.EntityFrameworkCore.Entities.Litigation.LitigationRequest", "LitigationRequest")
+                        .WithMany("LitigationRequestArbitratorNominationLists")
+                        .HasForeignKey("LitigationRequestId")
+                        .IsRequired()
+                        .HasConstraintName("FKLitigationRequestLitigationRequestArbitratorNominationList231388");
+
+                    b.Navigation("ArbitratorCitizen");
+
+                    b.Navigation("LitigationRequest");
+                });
+
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Arbitration.LitigationRequestArbitratorRecusalRequest", b =>
+                {
+                    b.HasOne("REAC.EntityFrameworkCore.Entities.Actor.Citizen", "ArbitratorCitizen")
+                        .WithMany("LitigationRequestArbitratorRecusalRequests")
+                        .HasForeignKey("ArbitratorCitizenId")
+                        .IsRequired()
+                        .HasConstraintName("FKArbitratorCitizenLitigationRequestArbitratorRecusalRequests231388ccc000");
+
+                    b.HasOne("REAC.EntityFrameworkCore.Entities.Litigation.LitigationRequest", "LitigationRequest")
+                        .WithMany("LitigationRequestArbitratorRecusalRequests")
+                        .HasForeignKey("LitigationRequestId")
+                        .IsRequired()
+                        .HasConstraintName("FKLitigationRequestLitigationRequestArbitratorRecusalRequests231388ccc000");
+
+                    b.Navigation("ArbitratorCitizen");
+
+                    b.Navigation("LitigationRequest");
+                });
+
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Arbitration.LitigationRequestArbitratorRecusalRequestFile", b =>
+                {
+                    b.HasOne("REAC.EntityFrameworkCore.Entities.Arbitration.LitigationRequestArbitratorRecusalRequest", "LitigationRequestArbitratorRecusalRequest")
+                        .WithMany("LitigationRequestArbitratorRecusalRequestFiles")
+                        .HasForeignKey("LitigationRequestArbitratorRecusalRequestId")
+                        .IsRequired()
+                        .HasConstraintName("FKLitigationRequestArbitratorRecusalRequesArbitratorRecusalRequestFiles2313000");
+
+                    b.HasOne("REAC.EntityFrameworkCore.Entities.System.SysFileManager", "RecusalRequestFile")
+                        .WithMany("LitigationRequestArbitratorRecusalRequestFiles")
+                        .HasForeignKey("RecusalRequestFileId")
+                        .IsRequired()
+                        .HasConstraintName("FKRecusalRequestFileRequestArbitratorRecusalRequestsFile2313885888000");
+
+                    b.Navigation("LitigationRequestArbitratorRecusalRequest");
+
+                    b.Navigation("RecusalRequestFile");
+                });
+
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Arbitration.LitigationRequestArbitratorsChairmanNominationList", b =>
+                {
+                    b.HasOne("REAC.EntityFrameworkCore.Entities.Actor.Citizen", "ArbitratorChairmanCitizen")
+                        .WithMany("LitigationRequestArbitratorsChairmanNominationLists")
+                        .HasForeignKey("ArbitratorChairmanCitizenId")
+                        .IsRequired()
+                        .HasConstraintName("FKArbitratorLitigationRequestArbitratorsChairmanNominationLists000");
+
+                    b.HasOne("REAC.EntityFrameworkCore.Entities.Litigation.LitigationRequest", "LitigationRequest")
+                        .WithMany("LitigationRequestArbitratorsChairmanNominationLists")
+                        .HasForeignKey("LitigationRequestId")
+                        .IsRequired()
+                        .HasConstraintName("FKLitigationRequesLitigationRequestArbitrChairmanNominationList1388");
+
+                    b.Navigation("ArbitratorChairmanCitizen");
+
+                    b.Navigation("LitigationRequest");
+                });
+
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Arbitration.LitigationRequestArbitratorsChairmanNominationListValue", b =>
+                {
+                    b.HasOne("REAC.EntityFrameworkCore.Entities.Actor.Citizen", "ArbitratorChairmanCitizen")
+                        .WithMany("LitigationRequestArbitratorsChairmanNominationListChairmanValues")
+                        .HasForeignKey("ArbitratorChairmanCitizenId")
+                        .IsRequired()
+                        .HasConstraintName("FKArbitratorLitigationRequestArbitratorsChairmanNominationListChairmanValues000");
+
+                    b.HasOne("REAC.EntityFrameworkCore.Entities.Actor.Citizen", "ArbitratorCitizen")
+                        .WithMany("LitigationRequestArbitratorsChairmanNominationListArbitratorValues")
+                        .HasForeignKey("ArbitratorCitizenId")
+                        .IsRequired()
+                        .HasConstraintName("FKArbitratorLitigationRequestArbitratorsChairmanNominationListArbitratorValues000");
+
+                    b.HasOne("REAC.EntityFrameworkCore.Entities.Arbitration.LitigationRequestArbitratorsChairmanNominationList", "LitigationRequestArbitratorsChairmanNominationList")
+                        .WithMany("LitigationRequestArbitratorsChairmanNominationListValues")
+                        .HasForeignKey("LitigationRequestArbitratorsChairmanNominationListId")
+                        .IsRequired()
+                        .HasConstraintName("FKLitigationRequesLitigationRequestArbitrChairmanNominationListValues011111112581388");
+
+                    b.Navigation("ArbitratorChairmanCitizen");
+
+                    b.Navigation("ArbitratorCitizen");
+
+                    b.Navigation("LitigationRequestArbitratorsChairmanNominationList");
+                });
+
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Facility", b =>
+                {
+                    b.HasOne("REAC.EntityFrameworkCore.Entities.Actor.Citizen", "Citizen")
+                        .WithMany("Facilities")
+                        .HasForeignKey("CitizenId")
+                        .IsRequired()
+                        .HasConstraintName("FKFacility36705");
+
+                    b.Navigation("Citizen");
+                });
+
             modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Litigation.LitigationRequest", b =>
                 {
-                    b.HasOne("REAC.EntityFrameworkCore.Entities.System.Citizen", "ApplicantCitizen")
+                    b.HasOne("REAC.EntityFrameworkCore.Entities.Actor.Citizen", "ApplicantCitizen")
                         .WithMany("LitigationRequests")
                         .HasForeignKey("ApplicantCitizenId")
                         .IsRequired()
                         .HasConstraintName("FKLitigation638578");
 
-                    b.HasOne("REAC.EntityFrameworkCore.Entities.System.Citizen", "ArbitratorCitizen")
+                    b.HasOne("REAC.EntityFrameworkCore.Entities.Actor.Citizen", "ArbitratorCitizen")
                         .WithMany("ReformerLitigationRequests")
                         .HasForeignKey("ArbitratorCitizenId")
                         .HasConstraintName("FKReformerCitizenLitigation638578");
@@ -3193,7 +3896,7 @@ namespace REAC.EntityFrameworkCore.Migrations
                         .IsRequired()
                         .HasConstraintName("FKLitigation216575");
 
-                    b.HasOne("REAC.EntityFrameworkCore.Entities.System.Citizen", "DelegatorCitizen")
+                    b.HasOne("REAC.EntityFrameworkCore.Entities.Actor.Citizen", "DelegatorCitizen")
                         .WithMany("DelegatorLitigationRequests")
                         .HasForeignKey("DelegatorCitizenId")
                         .HasConstraintName("FKLitigation6DelegatorLitigationRequests38578");
@@ -3236,7 +3939,7 @@ namespace REAC.EntityFrameworkCore.Migrations
                         .IsRequired()
                         .HasConstraintName("FKLitigation580725");
 
-                    b.HasOne("REAC.EntityFrameworkCore.Entities.System.Citizen", "ReformerCitizen")
+                    b.HasOne("REAC.EntityFrameworkCore.Entities.Actor.Citizen", "ReformerCitizen")
                         .WithMany("ArbitratorLitigationRequests")
                         .HasForeignKey("ReformerCitizenId")
                         .HasConstraintName("FKArbitratorCitizenLitigation638578");
@@ -3282,7 +3985,7 @@ namespace REAC.EntityFrameworkCore.Migrations
                         .HasForeignKey("ContractFileId")
                         .HasConstraintName("FKLitigation945532");
 
-                    b.HasOne("REAC.EntityFrameworkCore.Entities.System.Citizen", "FirstPartyCitizen")
+                    b.HasOne("REAC.EntityFrameworkCore.Entities.Actor.Citizen", "FirstPartyCitizen")
                         .WithMany("LitigationRequestContractFirstPartyCitizens")
                         .HasForeignKey("FirstPartyCitizenId")
                         .HasConstraintName("FKLitigation253862");
@@ -3308,7 +4011,7 @@ namespace REAC.EntityFrameworkCore.Migrations
                         .IsRequired()
                         .HasConstraintName("FKLitigation989644");
 
-                    b.HasOne("REAC.EntityFrameworkCore.Entities.System.Citizen", "SecondPartyCitizen")
+                    b.HasOne("REAC.EntityFrameworkCore.Entities.Actor.Citizen", "SecondPartyCitizen")
                         .WithMany("LitigationRequestContractSecondPartyCitizens")
                         .HasForeignKey("SecondPartyCitizenId")
                         .HasConstraintName("FKLitigation28965");
@@ -3414,7 +4117,7 @@ namespace REAC.EntityFrameworkCore.Migrations
 
             modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Litigation.LitigationRequestNote", b =>
                 {
-                    b.HasOne("REAC.EntityFrameworkCore.Entities.System.Citizen", null)
+                    b.HasOne("REAC.EntityFrameworkCore.Entities.Actor.Citizen", null)
                         .WithMany("LitigationRequestNotes")
                         .HasForeignKey("CitizenId");
 
@@ -3448,7 +4151,7 @@ namespace REAC.EntityFrameworkCore.Migrations
 
             modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Litigation.LitigationRequestReformerAssigningRequest", b =>
                 {
-                    b.HasOne("REAC.EntityFrameworkCore.Entities.System.Citizen", "ReformerCitizen")
+                    b.HasOne("REAC.EntityFrameworkCore.Entities.Actor.Citizen", "ReformerCitizen")
                         .WithMany("LitigationRequestReformerAssigningRequests")
                         .HasForeignKey("CitizenId")
                         .IsRequired()
@@ -3630,7 +4333,7 @@ namespace REAC.EntityFrameworkCore.Migrations
 
             modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.ReformerStopFreeUpDecision", b =>
                 {
-                    b.HasOne("REAC.EntityFrameworkCore.Entities.System.Citizen", "Citizen")
+                    b.HasOne("REAC.EntityFrameworkCore.Entities.Actor.Citizen", "Citizen")
                         .WithMany("ReformerStopFreeUpDecisions")
                         .HasForeignKey("CitizenId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -3647,119 +4350,6 @@ namespace REAC.EntityFrameworkCore.Migrations
                     b.Navigation("Citizen");
 
                     b.Navigation("SysReformerStatus");
-                });
-
-            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.System.Citizen", b =>
-                {
-                    b.HasOne("REAC.EntityFrameworkCore.Entities.System.SysArbitratorStatus", "SysArbitratorStatus")
-                        .WithMany("Citizens")
-                        .HasForeignKey("ArbitratorStatusId")
-                        .HasConstraintName("FKCSysArbitratorStatusitizen92459");
-
-                    b.HasOne("REAC.EntityFrameworkCore.Entities.System.SysArea", "Area")
-                        .WithMany("Citizens")
-                        .HasForeignKey("AreaId")
-                        .HasConstraintName("FKCitizen92459");
-
-                    b.HasOne("REAC.EntityFrameworkCore.Entities.System.SysCity", "City")
-                        .WithMany("Citizens")
-                        .HasForeignKey("CityId")
-                        .HasConstraintName("FKCitizen92422");
-
-                    b.HasOne("REAC.EntityFrameworkCore.Entities.System.SysGender", "Gender")
-                        .WithMany("Citizens")
-                        .HasForeignKey("GenderId")
-                        .HasConstraintName("FKCitizen92455");
-
-                    b.HasOne("REAC.EntityFrameworkCore.Entities.System.SysFileManager", "IdentityFile")
-                        .WithMany("IndentityCitizens")
-                        .HasForeignKey("IdentityFileId")
-                        .HasConstraintName("FKIndentityCitizens616003");
-
-                    b.HasOne("REAC.EntityFrameworkCore.Entities.System.SysIdentityType", "IdentityType")
-                        .WithMany("Citizens")
-                        .HasForeignKey("IdentityTypeId")
-                        .HasConstraintName("FKCitizen807894");
-
-                    b.HasOne("REAC.EntityFrameworkCore.Entities.System.SysFileManager", "LawLicenseFile")
-                        .WithMany("LawLicenseCitizens")
-                        .HasForeignKey("LawLicenseFileId")
-                        .HasConstraintName("FKLawLicenseCitizens807894");
-
-                    b.HasOne("REAC.EntityFrameworkCore.Entities.Litigation.LitigationCompanyRepresentative", "LitigationCompanyRepresentative")
-                        .WithMany("Citizens")
-                        .HasForeignKey("LitigationCompanyRepresentativeId");
-
-                    b.HasOne("REAC.EntityFrameworkCore.Entities.System.SysNationality", "Nationality")
-                        .WithMany("Citizens")
-                        .HasForeignKey("NationalityId")
-                        .HasConstraintName("FKCitizen92411");
-
-                    b.HasOne("REAC.EntityFrameworkCore.Entities.System.SysReformerStatus", "SysReformerStatus")
-                        .WithMany("Citizens")
-                        .HasForeignKey("ReformerStatusId")
-                        .HasConstraintName("FKCSysReformerStatusCitizen92459");
-
-                    b.Navigation("Area");
-
-                    b.Navigation("City");
-
-                    b.Navigation("Gender");
-
-                    b.Navigation("IdentityFile");
-
-                    b.Navigation("IdentityType");
-
-                    b.Navigation("LawLicenseFile");
-
-                    b.Navigation("LitigationCompanyRepresentative");
-
-                    b.Navigation("Nationality");
-
-                    b.Navigation("SysArbitratorStatus");
-
-                    b.Navigation("SysReformerStatus");
-                });
-
-            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.System.CitizenRequest", b =>
-                {
-                    b.HasOne("REAC.EntityFrameworkCore.Entities.System.SysArbitratorClass", "SysArbitratorClass")
-                        .WithMany("CitizenRequests")
-                        .HasForeignKey("ArbitratorClassId")
-                        .HasConstraintName("FKSysArbitratorClassCitizenRequest676101");
-
-                    b.HasOne("REAC.EntityFrameworkCore.Entities.System.SysArea", "SysArea")
-                        .WithMany("CitizenRequests")
-                        .HasForeignKey("AreaId")
-                        .HasConstraintName("FKSysSysAreaCitizenRequest676101");
-
-                    b.HasOne("REAC.EntityFrameworkCore.Entities.System.Citizen", "Citizen")
-                        .WithMany("CitizenRequests")
-                        .HasForeignKey("CitizenId")
-                        .IsRequired()
-                        .HasConstraintName("FKCitizenCitizenRequest676100000001");
-
-                    b.HasOne("REAC.EntityFrameworkCore.Entities.System.SysCitizenRequestType", "SysCitizenRequestType")
-                        .WithMany("CitizenRequests")
-                        .HasForeignKey("CitizenRequestTypeId")
-                        .IsRequired()
-                        .HasConstraintName("FKSysCitizenRequestTypeCitizenRequest676101");
-
-                    b.HasOne("REAC.EntityFrameworkCore.Entities.System.SysCitizenRequestStatus", "Status")
-                        .WithMany("CitizenRequests")
-                        .HasForeignKey("StatusId")
-                        .IsRequired()
-                        .HasConstraintName("FKCitizenRequestStatuses676880");
-
-                    b.Navigation("Citizen");
-
-                    b.Navigation("Status");
-
-                    b.Navigation("SysArbitratorClass");
-
-                    b.Navigation("SysArea");
-
-                    b.Navigation("SysCitizenRequestType");
                 });
 
             modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.System.DelegationRequest", b =>
@@ -3783,7 +4373,7 @@ namespace REAC.EntityFrameworkCore.Migrations
 
             modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.System.Delegator", b =>
                 {
-                    b.HasOne("REAC.EntityFrameworkCore.Entities.System.Citizen", "Citizen")
+                    b.HasOne("REAC.EntityFrameworkCore.Entities.Actor.Citizen", "Citizen")
                         .WithMany("FromDelegators")
                         .HasForeignKey("CitizenId")
                         .HasConstraintName("FKDelegatorFromDelegators8143");
@@ -3799,7 +4389,7 @@ namespace REAC.EntityFrameworkCore.Migrations
                         .IsRequired()
                         .HasConstraintName("FKCDelegatorSysDelegationRelationshipTypes2455");
 
-                    b.HasOne("REAC.EntityFrameworkCore.Entities.System.Citizen", "DelegatorCitizen")
+                    b.HasOne("REAC.EntityFrameworkCore.Entities.Actor.Citizen", "DelegatorCitizen")
                         .WithMany("ToDelegators")
                         .HasForeignKey("DelegatorCitizenId")
                         .IsRequired()
@@ -4459,12 +5049,12 @@ namespace REAC.EntityFrameworkCore.Migrations
 
             modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.System.SysRegistrationRequest", b =>
                 {
-                    b.HasOne("REAC.EntityFrameworkCore.Entities.System.Citizen", "Citizen")
+                    b.HasOne("REAC.EntityFrameworkCore.Entities.Actor.Citizen", "Citizen")
                         .WithMany("SysRegistrationRequestCitizens")
                         .HasForeignKey("CitizenId")
                         .HasConstraintName("FKSysRegistr415781");
 
-                    b.HasOne("REAC.EntityFrameworkCore.Entities.System.Citizen", "SourceCitizen")
+                    b.HasOne("REAC.EntityFrameworkCore.Entities.Actor.Citizen", "SourceCitizen")
                         .WithMany("SysRegistrationRequestSourceCitizens")
                         .HasForeignKey("SourceCitizenId")
                         .IsRequired()
@@ -5175,6 +5765,98 @@ namespace REAC.EntityFrameworkCore.Migrations
                     b.Navigation("Translations");
                 });
 
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Actor.Citizen", b =>
+                {
+                    b.Navigation("ArbitratorLitigationRequests");
+
+                    b.Navigation("ArbitratorStopFreeUpDecisions");
+
+                    b.Navigation("CitizenBankAccounts");
+
+                    b.Navigation("CitizenRequests");
+
+                    b.Navigation("DelegatorLitigationRequests");
+
+                    b.Navigation("Facilities");
+
+                    b.Navigation("FromDelegators");
+
+                    b.Navigation("LitigationRequestArbitratorAssigningRequests");
+
+                    b.Navigation("LitigationRequestArbitratorLists");
+
+                    b.Navigation("LitigationRequestArbitratorNominationLists");
+
+                    b.Navigation("LitigationRequestArbitratorRecusalRequests");
+
+                    b.Navigation("LitigationRequestArbitratorsChairmanNominationListArbitratorValues");
+
+                    b.Navigation("LitigationRequestArbitratorsChairmanNominationListChairmanValues");
+
+                    b.Navigation("LitigationRequestArbitratorsChairmanNominationLists");
+
+                    b.Navigation("LitigationRequestContractFirstPartyCitizens");
+
+                    b.Navigation("LitigationRequestContractSecondPartyCitizens");
+
+                    b.Navigation("LitigationRequestNotes");
+
+                    b.Navigation("LitigationRequestReformerAssigningRequests");
+
+                    b.Navigation("LitigationRequests");
+
+                    b.Navigation("ReformerLitigationRequests");
+
+                    b.Navigation("ReformerStopFreeUpDecisions");
+
+                    b.Navigation("SysRegistrationRequestCitizens");
+
+                    b.Navigation("SysRegistrationRequestSourceCitizens");
+
+                    b.Navigation("ToDelegators");
+                });
+
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Actor.CitizenRequest", b =>
+                {
+                    b.Navigation("CitizenRequestAcademicDegreeFiles");
+
+                    b.Navigation("CitizenRequestExperienceCertificates");
+
+                    b.Navigation("CitizenRequestFreelanceWorkDocumentFiles");
+
+                    b.Navigation("CitizenRequestNotes");
+                });
+
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Actor.CitizenRequestExperienceCertificate", b =>
+                {
+                    b.Navigation("CitizenRequestExperienceCertificateFiles");
+                });
+
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Arbitration.LitigationRequestArbitrationReport", b =>
+                {
+                    b.Navigation("LitigationRequestArbitrationReportExplanationRequests");
+                });
+
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Arbitration.LitigationRequestArbitrationReportExplanationRequest", b =>
+                {
+                    b.Navigation("LitigationRequestArbitrationReportExplanationRequestFiles");
+                });
+
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Arbitration.LitigationRequestArbitratorNominationList", b =>
+                {
+                    b.Navigation("LitigationRequestArbitratorAssigningRequests");
+                });
+
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Arbitration.LitigationRequestArbitratorRecusalRequest", b =>
+                {
+                    b.Navigation("LitigationRequestArbitratorRecusalRequestFiles");
+                });
+
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Arbitration.LitigationRequestArbitratorsChairmanNominationList", b =>
+                {
+                    b.Navigation("LitigationRequestArbitratorsChairmanNominationListValues");
+                });
+
             modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Facility", b =>
                 {
                     b.Navigation("Delegators");
@@ -5184,11 +5866,6 @@ namespace REAC.EntityFrameworkCore.Migrations
                     b.Navigation("LitigationRequestContractSecondPartyFacilities");
                 });
 
-            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Litigation.CitizenRequestExperienceCertificate", b =>
-                {
-                    b.Navigation("CitizenRequestExperienceCertificateFiles");
-                });
-
             modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Litigation.LitigationCompanyRepresentative", b =>
                 {
                     b.Navigation("Citizens");
@@ -5196,7 +5873,17 @@ namespace REAC.EntityFrameworkCore.Migrations
 
             modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Litigation.LitigationRequest", b =>
                 {
-                    b.Navigation("LitigationRequestArbitrators");
+                    b.Navigation("LitigationRequestArbitrationReports");
+
+                    b.Navigation("LitigationRequestArbitratorAssigningRequests");
+
+                    b.Navigation("LitigationRequestArbitratorLists");
+
+                    b.Navigation("LitigationRequestArbitratorNominationLists");
+
+                    b.Navigation("LitigationRequestArbitratorRecusalRequests");
+
+                    b.Navigation("LitigationRequestArbitratorsChairmanNominationLists");
 
                     b.Navigation("LitigationRequestCorrespondences");
 
@@ -5274,54 +5961,9 @@ namespace REAC.EntityFrameworkCore.Migrations
                     b.Navigation("LitigationRequestMeetingReconciliationItems");
                 });
 
-            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.System.Citizen", b =>
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.System.SysArbitratorAssigningRequestType", b =>
                 {
-                    b.Navigation("ArbitratorLitigationRequests");
-
-                    b.Navigation("ArbitratorStopFreeUpDecisions");
-
-                    b.Navigation("CitizenBankAccounts");
-
-                    b.Navigation("CitizenRequests");
-
-                    b.Navigation("DelegatorLitigationRequests");
-
-                    b.Navigation("Facilities");
-
-                    b.Navigation("FromDelegators");
-
-                    b.Navigation("LitigationRequestArbitrators");
-
-                    b.Navigation("LitigationRequestContractFirstPartyCitizens");
-
-                    b.Navigation("LitigationRequestContractSecondPartyCitizens");
-
-                    b.Navigation("LitigationRequestNotes");
-
-                    b.Navigation("LitigationRequestReformerAssigningRequests");
-
-                    b.Navigation("LitigationRequests");
-
-                    b.Navigation("ReformerLitigationRequests");
-
-                    b.Navigation("ReformerStopFreeUpDecisions");
-
-                    b.Navigation("SysRegistrationRequestCitizens");
-
-                    b.Navigation("SysRegistrationRequestSourceCitizens");
-
-                    b.Navigation("ToDelegators");
-                });
-
-            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.System.CitizenRequest", b =>
-                {
-                    b.Navigation("CitizenRequestAcademicDegreeFiles");
-
-                    b.Navigation("CitizenRequestExperienceCertificates");
-
-                    b.Navigation("CitizenRequestFreelanceWorkDocumentFiles");
-
-                    b.Navigation("CitizenRequestNotes");
+                    b.Navigation("LitigationRequestArbitratorAssigningRequests");
                 });
 
             modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.System.SysArbitratorClass", b =>
@@ -5435,6 +6077,10 @@ namespace REAC.EntityFrameworkCore.Migrations
 
                     b.Navigation("LawLicenseCitizens");
 
+                    b.Navigation("LitigationRequestArbitrationReportExplanationRequestFiles");
+
+                    b.Navigation("LitigationRequestArbitratorRecusalRequestFiles");
+
                     b.Navigation("LitigationRequestContracts");
 
                     b.Navigation("LitigationRequestCorrespondenceFiles");
@@ -5497,6 +6143,11 @@ namespace REAC.EntityFrameworkCore.Migrations
                     b.Navigation("LitigationRequestExternalStatuses");
 
                     b.Navigation("LitigationRequestInternalStatuses");
+                });
+
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.System.SysMeetingLocation", b =>
+                {
+                    b.Navigation("LitigationRequestArbitrationReports");
                 });
 
             modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.System.SysNationality", b =>

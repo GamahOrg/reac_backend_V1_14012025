@@ -1,11 +1,12 @@
 ﻿using Core.GenericRepository.Shared.BaseEntities;
 using REAC.Domain.Shared.Enum;
-using REAC.EntityFrameworkCore.Entities.System;
+using REAC.EntityFrameworkCore.Entities.Actor;
 
 namespace REAC.EntityFrameworkCore.Entities.Litigation
 {
     public partial class LitigationRequestReformerAssigningRequest : BaseEntity<Guid>
     {
+        public DateTime? RequestOn { get; set; }
         public Guid LitigationRequestId { get; set; }
         public Guid CitizenId { get; set; }
         public LitigationRequestReformerAssigningRequestStatus Response { get; set; }
@@ -14,4 +15,6 @@ namespace REAC.EntityFrameworkCore.Entities.Litigation
         public virtual Citizen ReformerCitizen { get; set; } = null!;
 
     }
+
+
 }

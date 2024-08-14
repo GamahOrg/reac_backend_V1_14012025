@@ -125,6 +125,8 @@ namespace REAC.Application.AppServices.Integration.GEE
                 return new DataResponse<NafathResponseDto>() { IsDone = false, Message = e.Message + e.InnerException };
             }
         }
+        
+        
         public async Task<DataResponse<UserInfoUpdatedDto>> CheckNafathStatus()
         {
             if (_nafathTransactionService.GettAll() is null || !_nafathTransactionService.GettAll().Any())
@@ -165,7 +167,7 @@ namespace REAC.Application.AppServices.Integration.GEE
                     if (nafathCheckStatusResponse.Data?.Data?.Status == SysSettingKeyConstants.NafathStatus_COMPLETED
                         && nafathCheckStatusResponse.Data?.Data?.AccessToken is not null)
                     {
-                        var userInfo = NafathGetUserInfo(nafathCheckStatusResponse.Data.Data.AccessToken).Result;
+                        var userInfo = await NafathGetUserInfo(nafathCheckStatusResponse.Data.Data.AccessToken);
                         if (!userInfo.IsDone)
                             return new DataResponse<UserInfoUpdatedDto> { IsDone = false, Message = "" };
 
@@ -200,6 +202,10 @@ namespace REAC.Application.AppServices.Integration.GEE
             }
             return new DataResponse<UserInfoUpdatedDto> { IsDone = false, Message = "" };
         }
+        
+        
+        
+        
         private async Task<DataResponse<UserInfoUpdatedDto>> NafathGetUserInfo(string token)
         {
             try

@@ -8,7 +8,7 @@ using REAC.Application.Contracts.IAppServices;
 using REAC.Application.Contracts.IAppServices.Integration;
 using REAC.Domain.Shared.Enum;
 using REAC.EntityFrameworkCore.Entities;
-using REAC.EntityFrameworkCore.Entities.System;
+using REAC.EntityFrameworkCore.Entities.Actor;
 using static REAC.Application.Contracts.IAppServices.Litigation.ILitigationRequestService;
 
 namespace REAC.Application.AppServices

@@ -5,6 +5,7 @@ using REAC.Application.Contracts.Dtos.Wpf.Business.WorkFlowLog;
 using REAC.Application.Contracts.Dtos.Wpf.System;
 using REAC.Domain.Shared.Enum;
 using REAC.Domain.Shared.Enum.Wpf;
+using REAC.EntityFrameworkCore.Entities.Actor;
 using REAC.EntityFrameworkCore.Entities.Litigation;
 using REAC.EntityFrameworkCore.Entities.System;
 using REAC.EntityFrameworkCore.Entities.Wpf.Business;
@@ -32,6 +33,7 @@ namespace Bpf.Application.ModuleServices
 
 
                 var litigationRequest = (await _repository.GetQueryable<LitigationRequest, Guid>())?
+                    .Include(x => x.Contract)
                         .Where(x => x.Id == requestPayload.RequestId)
                         .Single();
 
@@ -221,7 +223,7 @@ namespace Bpf.Application.ModuleServices
                     {
                         case REAC.Domain.Shared.Enum.LitigationRequestCategory.Arbitration:
                             litigationRequest.LitigationRequestStage = LitigationRequestStage.Arbitration;
-                            litigationRequest.LitigationRequestSubStage = LitigationRequestSubStage.LitigationRequestAddArbitratorCount;
+                            litigationRequest.LitigationRequestSubStage = LitigationRequestSubStage.ArbitratorSelectionDuration;
                             break;
                         default:
                             litigationRequest.LitigationRequestStage = LitigationRequestStage.SetReformer;
@@ -256,16 +258,22 @@ namespace Bpf.Application.ModuleServices
                                 {
                                     case DepartmentDistributionMode.AutoDistribution:
                                         var reformers = (await _repository.GetQueryable<Citizen, Guid>())?
-                                                        .Where(x => x.IsReformer == true & x.ReformerStatusId == ReformerStatus.Certified)
+                                                        .Where(x => x.IsReformer == true & x.ReformerStatusId == ReformerStatus.Certified
+                                                        & x.Id != litigationRequest.ApplicantCitizenId
+                                                        & x.Id != litigationRequest.Contract.FirstPartyCitizenId
+                                                        & x.Id != litigationRequest.Contract.SecondPartyCitizenId)
+
                                                         .OrderBy(x => x.ReformerLitigationRequests
-                                                        .Count(t => t.IsFinished == false))
+                                                        .Count(t => t.IsFinished == false) + x.LitigationRequestArbitratorLists.Count(x => x.LitigationRequest.IsFinished == false))
                                                         .ToList();
+
                                         if (reformers != null)
                                         {
                                             if (reformers.Any())
                                             {
                                                 LitigationRequestReformerAssigningRequest litigationRequestReformerAssigningRequest = new LitigationRequestReformerAssigningRequest();
                                                 litigationRequestReformerAssigningRequest.CitizenId = reformers.FirstOrDefault().Id;
+                                                litigationRequestReformerAssigningRequest.RequestOn = DateTime.Now;
                                                 litigationRequestReformerAssigningRequest.LitigationRequestId = litigationRequest.Id;
                                                 litigationRequestReformerAssigningRequest.Response = LitigationRequestReformerAssigningRequestStatus.None;
                                                 await _repository.AddAsync<LitigationRequestReformerAssigningRequest, Guid>(litigationRequestReformerAssigningRequest);

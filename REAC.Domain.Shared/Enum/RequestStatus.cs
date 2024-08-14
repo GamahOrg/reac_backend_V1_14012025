@@ -39,6 +39,12 @@ public enum RequestStatus
     ReconciliationWasMade = 18,
     ///<summary>عدم الصُلح والانتقال للتحكيم</summary>
     ReconciliationWasNotMadeAndMoveToArbitration = 19,
+    ///<summary>تم التحكيم</summary>
+    JudgmentDecisionIssued = 20,
+    ///<summary>بإنتظار التفسير</summary>
+    WaitingForExplanation = 21,
+    ///<summary>تم الرد</summary>
+    ExplanationResponsed = 22,
 
 }
 

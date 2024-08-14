@@ -98,6 +98,21 @@ public class LitigationRequestController : BaseController<LitigationRequest,
 
         return BadRequest();
     }
+
+    [HttpGet(nameof(GetLitigationArbitrators))]
+    [AllowAnonymous]
+    public async Task<IActionResult> GetLitigationArbitrators(Guid requestId)
+
+    {
+        if (ModelState.IsValid)
+        {
+            var returnValue = await _litigationService.GetLitigationArbitrators(requestId);
+            return Ok(returnValue);
+        }
+
+        return BadRequest();
+    }
+
     [HttpGet(nameof(AuditngListArbitration))]
     [AllowAnonymous]
     public async Task<ActionResult<IEnumerable<AuditingListDto>>> AuditngListArbitration([FromQuery] int pageIndex, [FromQuery] int pageSize, [FromQuery] string? searchKey, [FromQuery] AuditingListDto model)

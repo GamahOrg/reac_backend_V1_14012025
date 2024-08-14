@@ -12,4 +12,9 @@ namespace REAC.Application.Contracts.Dtos.Reconciliation.Process
         public Guid Id { get; set; }
         public LitigationRequestReformerAssigningRequestStatus LitigationRequestReformerAssigningRequestStatus { get; set; }
     }
+    public class AssigningArbitratorRequestsPayload
+    {
+        public Guid Id { get; set; }
+        public LitigationRequestArbitratorAssigningRequestStatus LitigationRequestReformerAssigningRequestStatus { get; set; }
+    }
 }

@@ -1,5 +1,6 @@
 ﻿using Core.GenericRepository.Shared.BaseEntities;
 using Core.Security.Entities;
+using REAC.EntityFrameworkCore.Entities.Actor;
 using System.ComponentModel.DataAnnotations;
 
 namespace REAC.EntityFrameworkCore.Entities.System;

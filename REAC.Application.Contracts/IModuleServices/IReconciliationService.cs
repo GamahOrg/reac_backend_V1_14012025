@@ -34,7 +34,7 @@ namespace REAC.Application.ModuleServices
         #region Citizen Report Reply
         Task<BaseResponse> GetCitizenLitigationRequestForReportReply(CancellationToken cancellationToken);
         Task<BaseResponse> GetCitizenLitigationRequestForReportReply(Guid requestId, CancellationToken cancellationToken);
-        Task<BaseResponse> AddCitizenLitigationRequestForReportReply(Guid requestId, MinutesOfMeetingApprovalStatus requestMinutesOfMeetingApprovalStatus, CancellationToken cancellationToken);
+        Task<BaseResponse> AddCitizenLitigationRequestForReportReply(Guid requestId, ApproveRejectStatus requestMinutesOfMeetingApprovalStatus, CancellationToken cancellationToken);
         #endregion
 
 

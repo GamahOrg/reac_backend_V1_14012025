@@ -7,7 +7,7 @@ using REAC.Application.Contracts.Dtos.Citizen;
 using REAC.Application.Contracts.Dtos.UserManage;
 using REAC.Application.Contracts.IAppServices.UserManage;
 using REAC.Domain.Shared.Enum;
-using REAC.EntityFrameworkCore.Entities.System;
+using REAC.EntityFrameworkCore.Entities.Actor;
 
 namespace REAC.Application.AppServices.UserManage
 {

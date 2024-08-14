@@ -56,6 +56,11 @@ namespace REAC.EntityFrameworkCore.Seed
                 await AreasSeedDataCreator.SeedAsync(context);
                 await CitiesSeedDataCreator.SeedAsync(context);
                 await ReformerStatusSeedDataCreator.SeedAsync(context);
+                await ArbitratorAssigningRequestSeedDataCreator.SeedAsync(context);
+
+                await MeetingLocationSeedDataCreator.SeedAsync(context);
+                await ArbitratorNominationListCountSeedDataCreator.SeedAsync(context);
+                await ArbitratorCountSeedDataCreator.SeedAsync(context);
 
 
                 await NationalitySeedDataCreator.SeedAsync(context);

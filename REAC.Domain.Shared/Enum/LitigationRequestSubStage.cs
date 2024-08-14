@@ -10,13 +10,22 @@
         PrepareArbitratorsListAndSendTheNominationRequest = 5,
         SetReformerFirstTime = 6,
         LitigationRequestReformerDecisionAdded = 7,
-        ArbitratorSelectionDuration = 8,
-        ArbitratorSelectionDurationAdded = 9,
 
-        LitigationRequestAddArbitratorCount = 10,
-        LitigationRequestAddArbitratorCountAdded = 11,
-        LitigationRequestAddArbitratorList = 12,
-        LitigationRequestAddArbitratorListAdded = 13,
+
+        ArbitratorSelectionDuration = 8,
+        LitigationRequestAddArbitratorCount = 9,
+
+        LitigationRequestAddArbitratorListNomination = 10,
+        LitigationRequestAddArbitratorListNominationDone = 11,
+
+        LitigationRequestAddArbitratorChairmanListNomination = 12,
+        LitigationRequestAddArbitratorChairmanListNominationDone = 13,
+
+        LitigationRequestAddArbitrationSession = 14,
+
+        JudgmentDecisionIssuing = 15,
+        JudgmentDecisionIssued = 16,
+
 
 
     }
