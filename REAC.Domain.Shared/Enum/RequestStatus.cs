@@ -45,6 +45,8 @@ public enum RequestStatus
     WaitingForExplanation = 21,
     ///<summary>تم الرد</summary>
     ExplanationResponsed = 22,
+    ///<summary>رفض طلب المشارطة</summary>
+    AgreementRequestHasBeenRejected = 23,
 
 }
 

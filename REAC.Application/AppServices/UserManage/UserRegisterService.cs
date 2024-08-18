@@ -27,16 +27,16 @@ namespace REAC.Application.AppServices.UserManage
         public async Task<BaseResponse> Register(UserRegisterDto userRegisterDto)
         {
             if (userRegisterDto == null)
-                return new BaseResponse() { IsDone = false, Message = "" };
+                return new BaseResponse() { IsDone = false, Message = "invalid user register obj" };
 
             var isExistUser = _userManager.Users.Any(x => x.UserName == userRegisterDto.UserInfo.NationalId);
             if (isExistUser)
-                return new BaseResponse() { IsDone = false, Message = "" };
+                return new BaseResponse() { IsDone = false, Message = "user exist" };
 
             User user = new User { UserName = userRegisterDto.UserInfo.NationalId.Trim(), Email = userRegisterDto.Email.Trim(), EmailConfirmed = true };
             var identityUser = await _userManager.CreateAsync(user, "123456");
             if (!identityUser.Succeeded || identityUser.Errors.Any())
-                return new BaseResponse() { IsDone = false, Message = "" };
+                return new BaseResponse() { IsDone = false, Message = "user can't be created" };
 
             CitizenCreateUpdateDto citizenCreateUpdateDto = new CitizenCreateUpdateDto()
             {
@@ -70,7 +70,7 @@ namespace REAC.Application.AppServices.UserManage
             user.ReferenceId = citizen.Id;
             var updateUser = await _userManager.UpdateAsync(user);
             if (!identityUser.Succeeded || identityUser.Errors.Any())
-                return new BaseResponse() { IsDone = false, Message = "" };
+                return new BaseResponse() { IsDone = false, Message = "user can't be updated" };
 
             if (!result.IsDone) return result;
 

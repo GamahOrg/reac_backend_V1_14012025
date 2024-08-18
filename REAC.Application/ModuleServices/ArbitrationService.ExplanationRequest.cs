@@ -142,6 +142,10 @@ namespace REAC.Application.ModuleServices
                     repositorySaveResponse = await _repository.SaveChangesAsync(new CancellationToken());
                     if (!repositorySaveResponse.IsDone)
                         return repositorySaveResponse;
+
+                    // Send Notification
+                    // تم اضافة طلب تفسير على حكم التحكيم
+
                 }
                 else
                 {
@@ -692,6 +696,9 @@ namespace REAC.Application.ModuleServices
                 var saveResponse = await _repository.SaveChangesAsync();
                 if (!saveResponse.IsDone)
                     return saveResponse;
+
+                // Send Notification
+                // تم الرد على طلب تفسير حكم التحكيم
             }
             catch (Exception ex)
             {

@@ -123,6 +123,10 @@ namespace REAC.Application.ModuleServices
                     if (!saveResponse.IsDone)
                         return saveResponse;
 
+
+                    // Send Notification
+                    // تم أضافة طلب رد محكم
+
                     requestPayload.LitigationRequestArbitrationArbitratorRecusalRequestFiles.ForEach(t =>
                     {
                         _repository.AddAsync<LitigationRequestArbitratorRecusalRequestFile, Guid>(new LitigationRequestArbitratorRecusalRequestFile()
@@ -819,6 +823,19 @@ namespace REAC.Application.ModuleServices
                 var saveResponse = await _repository.SaveChangesAsync();
                 if (!saveResponse.IsDone)
                     return saveResponse;
+
+                switch (requestPayload.Response)
+                {
+                    case ApproveRejectStatus.Approve:
+                        // Send Notification
+                        // تم الموافقة على طلب رد محكم
+                        break;
+                    case ApproveRejectStatus.Reject:
+                        // Send Notification
+                        // تم رفض طلب رد محكم
+                        break;
+                }
+
             }
             catch (Exception ex)
             {

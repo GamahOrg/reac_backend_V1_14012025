@@ -49,6 +49,7 @@ namespace Bpf.Application.ModuleServices
                 //        Message = "Employee Not Found"
                 //    };
 
+
                 //if (employeeId != processingLog?.Employee?.Id)
                 //{
                 //    if (!employee.IsAdmin)
@@ -67,8 +68,6 @@ namespace Bpf.Application.ModuleServices
                 //}
 
                 #endregion
-
-
 
                 #region Validate processingLog
                 if (processingLog == null)
@@ -165,130 +164,159 @@ namespace Bpf.Application.ModuleServices
                 #endregion
 
                 #region EventActionMode
-                switch (processingLog.WorkFlowStep.WorkFlowStepEvents.Single().ActionModeId)
+                if (processingLog.WorkFlowStep.WorkFlowStepEvents.Single().ActionModeId.HasValue)
                 {
-                    case EventActionMode.GoPreviousStep:
-                        var previoudProcessingLog = (await _repository.GetQueryable<WorkFlowProcessingLog, Guid>())?
-                                           .Where(x => x.Id == processingLog.SourceWorkFlowProcessingLogId)
-                                           .Single();
+                    switch (processingLog.WorkFlowStep.WorkFlowStepEvents.Single().ActionModeId)
+                    {
+                        case EventActionMode.GoPreviousStep:
+                            var previoudProcessingLog = (await _repository.GetQueryable<WorkFlowProcessingLog, Guid>())?
+                                               .Where(x => x.Id == processingLog.SourceWorkFlowProcessingLogId)
+                                               .Single();
 
-                        if (previoudProcessingLog != null)
-                        {
-                            var newProcessingLog = new WorkFlowProcessingLog()
+                            if (previoudProcessingLog != null)
                             {
-                                CreatedOn = DateTime.Now,
-                                IsFinished = false,
-                                EmployeeId = previoudProcessingLog.EmployeeId,
-                                RequestId = previoudProcessingLog.RequestId,
-                                SourceWorkFlowProcessingLogId = processingLog.Id,
-                                WorkFlowStepId = previoudProcessingLog.WorkFlowStepId
-                            };
+                                var newProcessingLog = new WorkFlowProcessingLog()
+                                {
+                                    CreatedOn = DateTime.Now,
+                                    IsFinished = false,
+                                    EmployeeId = previoudProcessingLog.EmployeeId,
+                                    RequestId = previoudProcessingLog.RequestId,
+                                    SourceWorkFlowProcessingLogId = processingLog.Id,
+                                    WorkFlowStepId = previoudProcessingLog.WorkFlowStepId
+                                };
 
-                            var newProcessingLogResponse = await _workFlowProcessingLogService.AddAsync(newProcessingLog, cancellationToken);
-                            if (!newProcessingLogResponse.IsDone)
-                                return newProcessingLogResponse;
-                        }
-                        break;
-                    case EventActionMode.GoNextStep:
-                        await ExecuteWorkFlowSteps(processingLog.WorkFlowStep.WorkFlowId,
-                                                   requestPayload.RequestId,
-                                                   processingLog.Id,
-                                                   processingLog.WorkFlowStep.Order + 1,
-                                                   processingLog.WorkFlowStep.WorkFlowStepEvents.Single().SameEmployee,
-                                                   cancellationToken);
-                        break;
-                    case EventActionMode.SpecificStep:
-                        var specificworkFlowStep = (await _repository.GetQueryable<WorkFlowStep, Guid>())?
-                                                   .Where(x => x.Id == processingLog.WorkFlowStep.WorkFlowStepEvents.Single().NextWorkFlowStepDestinationId)
-                                                   .Include(x => x.Department)
-                                                   .ThenInclude(x => x.SysEmployees
-                                                   .OrderBy(x => x.WorkFlowProcessingLogs
-                                                   .Count(x => x.IsFinished))
-                                                   .ThenBy(x => x.IsAdmin))
-                                                   .Single();
+                                var newProcessingLogResponse = await _workFlowProcessingLogService.AddAsync(newProcessingLog, cancellationToken);
+                                if (!newProcessingLogResponse.IsDone)
+                                    return newProcessingLogResponse;
+                            }
+                            break;
+                        case EventActionMode.GoNextStep:
+                            await ExecuteWorkFlowSteps(processingLog.WorkFlowStep.WorkFlowId,
+                                                       requestPayload.RequestId,
+                                                       processingLog.Id,
+                                                       processingLog.WorkFlowStep.Order + 1,
+                                                       processingLog.WorkFlowStep.WorkFlowStepEvents.Single().SameEmployee,
+                                                       cancellationToken);
+                            break;
+                        case EventActionMode.SpecificStep:
+                            if (processingLog.WorkFlowStep.WorkFlowStepEvents.Single().NextWorkFlowStepDestinationId.HasValue)
+                            {
+                                var specificworkFlowStep = (await _repository.GetQueryable<WorkFlowStep, Guid>())?
+                                                           .Where(x => x.Id == processingLog.WorkFlowStep.WorkFlowStepEvents.Single().NextWorkFlowStepDestinationId)
+                                                           .Include(x => x.Department)
+                                                           .ThenInclude(x => x.SysEmployees
+                                                           .OrderBy(x => x.WorkFlowProcessingLogs
+                                                           .Count(x => x.IsFinished))
+                                                           .ThenBy(x => x.IsAdmin))
+                                                           .Single();
 
-                        await ExecuteWorkFlowStep(specificworkFlowStep,
-                                                  requestPayload.RequestId,
-                                                  processingLog.Id,
-                                                  processingLog.WorkFlowStep.WorkFlowStepEvents.Single().SameEmployee,
-                                                  cancellationToken);
-                        break;
+                                await ExecuteWorkFlowStep(specificworkFlowStep,
+                                                          requestPayload.RequestId,
+                                                          processingLog.Id,
+                                                          processingLog.WorkFlowStep.WorkFlowStepEvents.Single().SameEmployee,
+                                                          cancellationToken);
+                            }
+                            break;
+                    }
                 }
                 #endregion
 
 
-                if (processingLog.WorkFlowStep.WorkFlowStepEvents.Single().IsEndOfWorkFlow)
+
+                switch (litigationRequest.InternalStatusId)
                 {
-                    switch (litigationRequest?.LitigationRequestCategoryId)
-                    {
-                        case REAC.Domain.Shared.Enum.LitigationRequestCategory.Arbitration:
-                            litigationRequest.LitigationRequestStage = LitigationRequestStage.Arbitration;
-                            litigationRequest.LitigationRequestSubStage = LitigationRequestSubStage.ArbitratorSelectionDuration;
-                            break;
-                        default:
-                            litigationRequest.LitigationRequestStage = LitigationRequestStage.SetReformer;
-                            litigationRequest.LitigationRequestSubStage = LitigationRequestSubStage.SetReformerFirstTime;
-                            break;
-                    }
-                }
+                    case RequestStatus.Rejected:
+                        // Send Notification
+                        // تم رفض الطلب
+                        break;
+                    case RequestStatus.SentBackForEdit:
+                        // Send Notification
+                        // تم إعادة الطلب لوجود بعض الملاحظات
+                        break;
+                    case RequestStatus.Received:
 
+                        switch (litigationRequest?.LitigationRequestCategoryId)
+                        {
+                            case REAC.Domain.Shared.Enum.LitigationRequestCategory.Arbitration:
+                                litigationRequest.LitigationRequestStage = LitigationRequestStage.Arbitration;
+                                litigationRequest.LitigationRequestSubStage = LitigationRequestSubStage.ArbitratorSelectionDuration;
+                                break;
+                            default:
+                                litigationRequest.LitigationRequestStage = LitigationRequestStage.SetReformer;
+                                litigationRequest.LitigationRequestSubStage = LitigationRequestSubStage.SetReformerFirstTime;
+                                break;
+                        }
 
-                var response = _repository.Update<LitigationRequest, Guid>(litigationRequest);
-                if (!response.IsDone)
-                    return response;
+                        var response = _repository.Update<LitigationRequest, Guid>(litigationRequest);
+                        if (!response.IsDone)
+                            return response;
 
-                var repositorySaveResponse = await _repository.SaveChangesAsync(new CancellationToken());
-                if (!repositorySaveResponse.IsDone)
-                    return repositorySaveResponse;
-
-
-                if (processingLog.WorkFlowStep.WorkFlowStepEvents.Single().IsEndOfWorkFlow)
-                {
-                    switch (litigationRequest.LitigationRequestCategoryId)
-                    {
-                        case LitigationRequestCategory.Arbitration:
-                            break;
-                        default:
-                            var department = (await _repository.GetQueryable<SysDepartment, Guid>())?
-                               .Where(x => x.DepartmentType == DepartmentType.Reconciliation)
-                               .SingleOrDefault();
-                            if (department != null)
-                            {
-                                switch (department.DistributionMode)
+                        switch (litigationRequest.LitigationRequestCategoryId)
+                        {
+                            case LitigationRequestCategory.Arbitration:
+                                break;
+                            default:
+                                var department = (await _repository.GetQueryable<SysDepartment, Guid>())?
+                                   .Where(x => x.DepartmentType == DepartmentType.Reconciliation)
+                                   .SingleOrDefault();
+                                if (department != null)
                                 {
-                                    case DepartmentDistributionMode.AutoDistribution:
-                                        var reformers = (await _repository.GetQueryable<Citizen, Guid>())?
-                                                        .Where(x => x.IsReformer == true & x.ReformerStatusId == ReformerStatus.Certified
-                                                        & x.Id != litigationRequest.ApplicantCitizenId
-                                                        & x.Id != litigationRequest.Contract.FirstPartyCitizenId
-                                                        & x.Id != litigationRequest.Contract.SecondPartyCitizenId)
+                                    switch (department.DistributionMode)
+                                    {
+                                        case DepartmentDistributionMode.AutoDistribution:
+                                            var reformers = (await _repository.GetQueryable<Citizen, Guid>())?
+                                                            .Where(x => x.IsReformer == true & x.ReformerStatusId == ReformerStatus.Certified
+                                                            & x.Id != litigationRequest.ApplicantCitizenId
+                                                            & x.Id != litigationRequest.Contract.FirstPartyCitizenId
+                                                            & x.Id != litigationRequest.Contract.SecondPartyCitizenId)
 
-                                                        .OrderBy(x => x.ReformerLitigationRequests
-                                                        .Count(t => t.IsFinished == false) + x.LitigationRequestArbitratorLists.Count(x => x.LitigationRequest.IsFinished == false))
-                                                        .ToList();
+                                                            .OrderBy(x => x.ReformerLitigationRequests
+                                                            .Count(t => t.IsFinished == false) + x.LitigationRequestArbitratorLists.Count(x => x.LitigationRequest.IsFinished == false))
+                                                            .ToList();
 
-                                        if (reformers != null)
-                                        {
-                                            if (reformers.Any())
+                                            if (reformers != null)
                                             {
-                                                LitigationRequestReformerAssigningRequest litigationRequestReformerAssigningRequest = new LitigationRequestReformerAssigningRequest();
-                                                litigationRequestReformerAssigningRequest.CitizenId = reformers.FirstOrDefault().Id;
-                                                litigationRequestReformerAssigningRequest.RequestOn = DateTime.Now;
-                                                litigationRequestReformerAssigningRequest.LitigationRequestId = litigationRequest.Id;
-                                                litigationRequestReformerAssigningRequest.Response = LitigationRequestReformerAssigningRequestStatus.None;
-                                                await _repository.AddAsync<LitigationRequestReformerAssigningRequest, Guid>(litigationRequestReformerAssigningRequest);
+                                                if (reformers.Any())
+                                                {
+                                                    LitigationRequestReformerAssigningRequest litigationRequestReformerAssigningRequest = new LitigationRequestReformerAssigningRequest();
+                                                    litigationRequestReformerAssigningRequest.CitizenId = reformers.FirstOrDefault().Id;
+                                                    litigationRequestReformerAssigningRequest.RequestOn = DateTime.Now;
+                                                    litigationRequestReformerAssigningRequest.LitigationRequestId = litigationRequest.Id;
+                                                    litigationRequestReformerAssigningRequest.Response = LitigationRequestReformerAssigningRequestStatus.None;
+                                                    await _repository.AddAsync<LitigationRequestReformerAssigningRequest, Guid>(litigationRequestReformerAssigningRequest);
+                                                }
+                                                var approveSaveResponse = await _repository.SaveChangesAsync(new CancellationToken());
+                                                if (!approveSaveResponse.IsDone)
+                                                    return approveSaveResponse;
                                             }
-                                            repositorySaveResponse = await _repository.SaveChangesAsync(new CancellationToken());
-                                            if (!repositorySaveResponse.IsDone)
-                                                return repositorySaveResponse;
-                                        }
-                                        break;
+                                            break;
+                                    }
                                 }
-                            }
-                            break;
-                    }
+                                break;
+                        }
+                        // Send Notification
+                        // تم قبول الدعوى واستلامها
+                        break;
+                    case RequestStatus.Edited:
+                        // Send Notification
+                        // تم تعديل الدعوى وإرسالها مرة أخرى
+                        break;
+                    case RequestStatus.AgreementRequestHasBeenSent:
+                        if (litigationRequest.IsAgreementRequestRequired.HasValue)
+                            return new BaseResponse() { IsDone = false, Message = "تم طلب المشارطة من قبل" };
 
+                        litigationRequest.IsAgreementRequestRequired = true;
+                        litigationRequest.LitigationRequestSubStage = LitigationRequestSubStage.LitigationRequestAgreementRequestRequired;
+                        var repositorySaveResponse = await _repository.SaveChangesAsync(new CancellationToken());
+                        if (!repositorySaveResponse.IsDone)
+                            return repositorySaveResponse;
+
+                        // Send Notification
+                        // تم إرسال طلب المشارطة
+                        break;
                 }
+
+
             }
             catch (Exception ex)
             {

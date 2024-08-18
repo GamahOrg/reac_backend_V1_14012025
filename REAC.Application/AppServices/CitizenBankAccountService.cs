@@ -6,7 +6,6 @@ using Microsoft.EntityFrameworkCore;
 using REAC.Application.Contracts.Dtos.Citizen;
 using REAC.Application.Contracts.IAppServices;
 using REAC.EntityFrameworkCore.Entities.Actor;
-using REAC.EntityFrameworkCore.Entities.System;
 
 namespace REAC.Application.AppServices
 {
@@ -64,6 +63,9 @@ namespace REAC.Application.AppServices
                 if (!saveResponse.IsDone)
                     return saveResponse;
 
+                // Send Notification
+                // تم إضافة بيانات حساب البنك 
+
                 return await GetCitizenBankAccount();
             }
             else
@@ -97,6 +99,8 @@ namespace REAC.Application.AppServices
                 if (!saveExistResponse.IsDone)
                     return saveExistResponse;
 
+                // Send Notification
+                // تم تعديل بيانات حساب البنك 
 
                 return await GetCitizenBankAccount();
             }

@@ -20,7 +20,6 @@ namespace REAC.Application.Contracts.Dtos.Citizen
 
         public DateTime? ArbitratorStatusDate { get; set; }
 
-
     }
 
     public class CitizenArbitratorShortStatusDto : BaseEntity<Guid>

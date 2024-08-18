@@ -84,6 +84,9 @@ namespace REAC.Application.ModuleServices
                     var repositorySaveResponse = await _repository.SaveChangesAsync(new CancellationToken());
                     if (!repositorySaveResponse.IsDone)
                         return repositorySaveResponse;
+
+                    // Send Notification
+                    // تم إضافة قائمة تعيين هيئة التحكيم
                 }
                 else
                 {
@@ -823,11 +826,16 @@ namespace REAC.Application.ModuleServices
                     litigationRequestArbitratorAssigningRequest.CitizenId = arbitratorsList[record].ArbitratorCitizenId;
                     litigationRequestArbitratorAssigningRequest.Response = LitigationRequestArbitratorAssigningRequestStatus.None;
                     await _repository.AddAsync<LitigationRequestArbitratorAssigningRequest, Guid>(litigationRequestArbitratorAssigningRequest);
+                    arbitratorsList[record].IsSent = true;
                 }
+                repositorySaveResponse = await _repository.SaveChangesAsync(new CancellationToken());
+                if (!repositorySaveResponse.IsDone)
+                    return repositorySaveResponse;
+
+                // Send Notification
+                // تم تعيين هيئة التحكيم وإرسال طلبات المهام
             }
-            repositorySaveResponse = await _repository.SaveChangesAsync(new CancellationToken());
-            if (!repositorySaveResponse.IsDone)
-                return repositorySaveResponse;
+
 
             return await GetCitizenLitigationRequestForArbitratorsNominationListReply(arbitratorNominationListRequestReplyPayload.RequestId, cancellationToken);
 

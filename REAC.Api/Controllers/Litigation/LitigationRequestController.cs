@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using REAC.Application.Contracts.Dtos.Litigation;
 using REAC.Application.Contracts.Dtos.Litigation.Create.Litigation;
 using REAC.Application.Contracts.Dtos.Litigation.CreateUpdate.Litigation;
 using REAC.Application.Contracts.Dtos.Litigation.Get;
 using REAC.Application.Contracts.Dtos.Litigation.List;
+using REAC.Application.Contracts.Dtos.Reconciliation.Process;
 using REAC.Application.Contracts.IAppServices.Litigation;
 using REAC.Domain.Shared.Constants;
 using REAC.EntityFrameworkCore.Entities.Litigation;
@@ -140,6 +142,20 @@ public class LitigationRequestController : BaseController<LitigationRequest,
         return BadRequest();
     }
 
+    [HttpGet(nameof(GetLitigationAcceptanceOrRejectDocumentData))]
+    [AllowAnonymous]
+    public async Task<ActionResult<LitigationAcceptOrRejectDocumentDto>> GetLitigationAcceptanceOrRejectDocumentData(Guid litigationId, Guid requestId)
+    {
+        if (ModelState.IsValid)
+        {
+            var returnValue = await _litigationService.GetLitigationAcceptanceOrRejectDocumentData(litigationId, requestId);
+
+            return Ok(returnValue);
+        }
+
+        return BadRequest();
+    }
+
     [HttpGet(nameof(GetLitigationPartiesDetailsById))]
     [AllowAnonymous]
     public async Task<ActionResult<LitigationPartiesDetailsDto>> GetLitigationPartiesDetailsById(Guid litigationId)
@@ -178,5 +194,41 @@ public class LitigationRequestController : BaseController<LitigationRequest,
 
         return BadRequest();
     }
+
+    #region AgreementRequest
+    [HttpPost(nameof(AddCitizenLitigationRequestForAgreementRequestReply))]
+    public async Task<IActionResult> AddCitizenLitigationRequestForAgreementRequestReply([FromBody] AgreementRequestPayload agreementRequestPayload, CancellationToken cancellationToken)
+    {
+        if (ModelState.IsValid)
+        {
+            var returnValue = await _litigationService.AddCitizenLitigationRequestForAgreementRequestReply(agreementRequestPayload.RequestId, agreementRequestPayload.agreementRequestStatus);
+            return Ok(returnValue);
+        }
+
+        return BadRequest();
+    }
+
+    [HttpGet(nameof(GetCitizenLitigationRequestForAgreementRequestReplyByRequestId))]
+    public async Task<IActionResult> GetCitizenLitigationRequestForAgreementRequestReplyByRequestId(Guid requestId)
+    {
+        if (ModelState.IsValid)
+        {
+            var returnValue = await _litigationService.GetCitizenLitigationRequestForAgreementRequestReply(requestId);
+            return Ok(returnValue);
+        }
+        return BadRequest();
+    }
+
+    [HttpGet(nameof(GetCitizenLitigationRequestForAgreementRequestReply))]
+    public async Task<IActionResult> GetCitizenLitigationRequestForAgreementRequestReply()
+    {
+        if (ModelState.IsValid)
+        {
+            var returnValue = await _litigationService.GetCitizenLitigationRequestForAgreementRequestReply();
+            return Ok(returnValue);
+        }
+        return BadRequest();
+    }
+    #endregion
 
 }

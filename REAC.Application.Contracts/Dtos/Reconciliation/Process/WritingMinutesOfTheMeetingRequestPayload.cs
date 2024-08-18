@@ -1,7 +1,14 @@
-﻿using REAC.EntityFrameworkCore.Entities.Reconciliation;
+﻿using REAC.Domain.Shared.Enum;
+using REAC.EntityFrameworkCore.Entities.Reconciliation;
 
 namespace REAC.Application.Contracts.Dtos.Reconciliation.Process
 {
+    public class AgreementRequestPayload
+    {
+        public Guid RequestId { get; set; }
+        public ApproveRejectStatus agreementRequestStatus { get; set; }
+
+    }
     public class WritingMinutesOfTheMeetingRequestPayload
     {
         public Guid RequestId { get; set; }

@@ -1266,7 +1266,6 @@ namespace REAC.EntityFrameworkCore.Migrations
                     LogMessage = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: true),
                     EventSecurityLevelId = table.Column<int>(type: "int", nullable: false),
                     IsAdminApprovalRequired = table.Column<bool>(type: "bit", nullable: false),
-                    IsEndOfWorkFlow = table.Column<bool>(type: "bit", nullable: false),
                     AllowChangeInternalStatus = table.Column<bool>(type: "bit", nullable: false),
                     InternalStatusId = table.Column<int>(type: "int", nullable: true),
                     AllowChangeExternalStatus = table.Column<bool>(type: "bit", nullable: false),
@@ -1622,6 +1621,11 @@ namespace REAC.EntityFrameworkCore.Migrations
                     IsMinutesOfMeetingApprovalRequired = table.Column<bool>(type: "bit", nullable: true),
                     IsPlaintiffArbitratorNominationListDone = table.Column<bool>(type: "bit", nullable: true),
                     IsDefendantArbitratorNominationListDone = table.Column<bool>(type: "bit", nullable: true),
+                    IsAgreementRequestRequired = table.Column<bool>(type: "bit", nullable: true),
+                    PlaintiffAgreementRequestResponse = table.Column<int>(type: "int", nullable: true),
+                    PlaintiffAgreementRequestResponseOn = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    DefendantAgreementRequestResponse = table.Column<int>(type: "int", nullable: true),
+                    DefendantAgreementRequestResponseOn = table.Column<DateTime>(type: "datetime2", nullable: true),
                     MintuesOfMeetingApprovalPlaintiffStatus = table.Column<int>(type: "int", nullable: true),
                     MintuesOfMeetingApprovalDefendantStatus = table.Column<int>(type: "int", nullable: true),
                     MintuesOfMeetingApprovalPlaintiffStatusOn = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -1658,7 +1662,8 @@ namespace REAC.EntityFrameworkCore.Migrations
                     ArbitratorsNominationListSelectionDoneDateTime = table.Column<DateTime>(type: "datetime2", nullable: true),
                     ArbitratorsChairmanNominationListCreationDateTime = table.Column<DateTime>(type: "datetime2", nullable: true),
                     ArbitratorsChairmanNominationListSelectionDoneDateTime = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    JudgmentDecisionIssuingDateTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    JudgmentDecisionIssuingDateTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IsArbitratorsChairmanDecisionRequired = table.Column<bool>(type: "bit", nullable: true)
                 },
                 constraints: table =>
                 {

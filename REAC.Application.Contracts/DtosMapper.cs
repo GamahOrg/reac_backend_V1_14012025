@@ -216,6 +216,7 @@ namespace REAC.Application.Contracts
                 .ForMember(x => x.SysNotificationActorType, src => src.MapFrom(x => x.SysNotificationActorType.ActorType))
                 .ForMember(x => x.SysRequestType, src => src.MapFrom(x => x.SysRequestType.RequestTypeName)).ReverseMap();
             CreateMap<WorkFlowProcessingLogFile, WorkFlowProcessingLogFileAllDto>().ReverseMap();
+
             CreateMap<Citizen, CitizenShortDto>().ReverseMap();
             CreateMap<Citizen, CitizenCreateUpdateDto>().ReverseMap();
             CreateMap<CitizenRequestFreelanceWorkDocumentFile, CitizenRequestFreelanceWorkDocumentFileCreateUpdateDto>().ReverseMap();

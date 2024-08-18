@@ -26,18 +26,15 @@ namespace REAC.Application.AppServices.Notification
             _localization = localization;
         }
 
-
-        public async Task<BaseResponse> GetNotificationList(Guid actorId, NotificationActorType actorTypeId)
+        public async Task<BaseResponse> GetNotificationListForPortal(Guid actorId, NotificationActorType actorTypeId)
         {
             var query = await _repository.GetQueryable<SysNotification, Guid>();
 
-            query = query.Where(x => x.ActorId == actorId && x.NotificationActorTypeId == actorTypeId);
-
+            query = query.Where(x => x.ActorId == actorId && x.NotificationActorTypeId != actorTypeId);
 
             var notifications = await query.Include(x => x.SysNotificationActorType)
                 .Include(x => x.SysRequestType).OrderByDescending(x => x.CreatedOn).Take(5).ToListAsync();
             var notViewNotificationCount = await query.CountAsync(x => x.IsViewed == false);
-
 
             return new DataResponse<NotificationListDto>
             {
@@ -49,7 +46,26 @@ namespace REAC.Application.AppServices.Notification
                 }
             };
         }
+        public async Task<BaseResponse> GetNotificationListForBackOffice(Guid actorId, NotificationActorType actorTypeId)
+        {
+            var query = await _repository.GetQueryable<SysNotification, Guid>();
 
+            query = query.Where(x => x.ActorId == actorId && x.NotificationActorTypeId == actorTypeId);
+
+            var notifications = await query.Include(x => x.SysNotificationActorType)
+                .Include(x => x.SysRequestType).OrderByDescending(x => x.CreatedOn).Take(5).ToListAsync();
+            var notViewNotificationCount = await query.CountAsync(x => x.IsViewed == false);
+
+            return new DataResponse<NotificationListDto>
+            {
+                IsDone = true,
+                Data = new NotificationListDto
+                {
+                    NotificationList = _mapper.Map<List<NotificationDto>>(notifications),
+                    NotViewedCount = notViewNotificationCount,
+                }
+            };
+        }
         public async Task<BaseResponse> MarkNotificationViewed(Guid notificationId)
         {
             try
@@ -74,8 +90,36 @@ namespace REAC.Application.AppServices.Notification
             return new BaseResponse { IsDone = false, Message = _localization["GeneralNotFound"] };
 
         }
+        public async Task<BaseResponse> GetNotificationListForPortal(int pageIndex, int pageSize, Guid actorId, NotificationActorType actorTypeId)
+        {
+            PagedResult<SysNotification> entities = null;
 
-        public async Task<BaseResponse> GetNotificationList(int pageIndex, int pageSize, Guid actorId, NotificationActorType actorTypeId)
+            var entitiesQuerable = (await _repository.GetQueryable<SysNotification, Guid>())
+                                   .Include(x => x.SysNotificationActorType)
+                                   .Include(x => x.SysRequestType);
+
+            entities = entitiesQuerable.Where(x => x.ActorId == actorId && x.NotificationActorTypeId != actorTypeId)
+                                       .OrderByDescending(x => x.CreatedOn)
+                                       .AsSplitQuery()
+                                       .AsNoTracking()
+                                       .GetPaged(pageIndex, pageSize);
+
+            return new DataResponse<PagedResult<NotificationDto>>
+            {
+                Data =
+                    new PagedResult<NotificationDto>
+                    {
+                        Results = _mapper.Map<List<NotificationDto>>(entities.Results),
+                        CurrentPage = entities.CurrentPage,
+                        PageCount = entities.PageCount,
+                        PageSize = entities.PageSize,
+                        TotalCount = entities.TotalCount
+                    },
+                IsDone = true
+            };
+
+        }
+        public async Task<BaseResponse> GetNotificationListForBackOffice(int pageIndex, int pageSize, Guid actorId, NotificationActorType actorTypeId)
         {
             PagedResult<SysNotification> entities = null;
 

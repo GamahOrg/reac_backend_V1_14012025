@@ -209,9 +209,314 @@ namespace Ticketing.EntityFrameworkCore.SeedData
                         Key = "Reconciliation.LitigationParties.Response.Period",
                         Value = "3",
                     },
+                    new SysSetting
+                    {
+                        Id = Guid.NewGuid(),
+
+                        Key = "Reconciliation.Report.Creation",
+                        Value = "تم تحرير محضر الصُلح على الدعوى رقم {Litigation.Code}",
+                    },
                     #endregion
+
+                    #region NotificationMessages
+                    new SysSetting
+                    {
+                        Id = Guid.NewGuid(),
+                        Key = "Citizen.AddBankAccount",
+                        Value = "تم اضافة بيانات الحساب البنكي",
+                    },new SysSetting
+                    {
+                        Id = Guid.NewGuid(),
+                        Key = "Citizen.EditBankAccount",
+                        Value = "تم تعديل بيانات حساب البنك",
+                    },new SysSetting
+                    {
+                        Id = Guid.NewGuid(),
+                        Key = " Reconciliator.AcceptJoiningRequest",
+                        Value = "تم اعتماد طلبكم",
+                    },new SysSetting
+                    {
+                        Id = Guid.NewGuid(),
+                        Key = " Arbitrator.AcceptJoiningRequest",
+                        Value = "تم اعتماد طلبكم",
+                    },new SysSetting
+                    {
+                        Id = Guid.NewGuid(),
+                        Key = " Reconciliator.AcceptJoiningRequest.WaitingForFees",
+                        Value = "تم اعتماد طلبكم و انتظار دفع رسوم العضوية.",
+                    },new SysSetting
+                    {
+                        Id = Guid.NewGuid(),
+                        Key = " Arbitrator.AcceptJoiningRequest.WaitingForFees",
+                        Value = "تم اعتماد طلبكم و انتظار دفع رسوم العضوية.",
+                    },new SysSetting
+                    {
+                        Id = Guid.NewGuid(),
+                        Key = " Reconciliator.UpdateJoiningRequest",
+                        Value = "تنويه بانه تم إعادة طلبكم للتعديل",
+                    },new SysSetting
+                    {
+                        Id = Guid.NewGuid(),
+                        Key = " Arbitrator.UpdateJoiningRequest",
+                        Value = "تنويه بانه تم إعادة طلبكم للتعديل",
+                    },new SysSetting
+                    {
+                        Id = Guid.NewGuid(),
+                        Key = " Reconciliator.RejectJoiningRequest",
+                        Value = "تنويه بانه تم رفض طلبكم",
+                    },new SysSetting
+                    {
+                        Id = Guid.NewGuid(),
+                        Key = " Arbitrator.RejectJoiningRequest",
+                        Value = "تنويه بانه تم رفض طلبكم",
+                    },new SysSetting
+                    {
+                        Id = Guid.NewGuid(),
+                        Key = " Reconciliator.Activate",
+                        Value = "تم تفعيل الحساب كمصلح معتمد",
+                    },new SysSetting
+                    {
+                        Id = Guid.NewGuid(),
+                        Key = " Arbitrator.Activate",
+                        Value = "تم تفعيل الحساب كمحكم معتمد",
+                    },new SysSetting
+                    {
+                        Id = Guid.NewGuid(),
+                        Key = " Reconciliator.DeActivate",
+                        Value = "تم إيقاف حسابك",
+                    },new SysSetting
+                    {
+                        Id = Guid.NewGuid(),
+                        Key = " Arbitrator.DeActivate",
+                        Value = "تم إيقاف حسابك",
+                    },new SysSetting
+                    {
+                        Id = Guid.NewGuid(),
+                        Key = "Reconciliation.Reconciliator.AcceptTask",
+                        Value = "تم قبول الدعوى من قبل المصلح {ReconciliatorName}",
+                    },new SysSetting
+                    {
+                       Id = Guid.NewGuid(),
+                        Key = "Arbitration.Arbitraor.Assigned",
+                        Value = "تم تعيينك كمحكم على الدعوى رقم {LitigationCode}",
+                    },new SysSetting
+                    {
+                       Id = Guid.NewGuid(),
+                        Key = "Arbitration.ArbitraorChairman.Assigned",
+                        Value = "تم تعيينك كرئيس هيئة تحكيم على الدعوى رقم {LitigationCode}",
+                    },new SysSetting
+                    {
+                       Id = Guid.NewGuid(),
+                        Key = "Arbitration.Arbitraor.AcceptTask",
+                        Value = "تم قبول الدعوى من قبل المحكم {ArbitratorName}",
+                    },new SysSetting
+                    {
+                        Id = Guid.NewGuid(),
+                        Key = "Reconciliation.Reconciliator.RejectTask",
+                        Value = "تم رفض الدعوى من قبل المصلح {ReconciliatorName}",
+                    },new SysSetting
+                    {
+                       Id = Guid.NewGuid(),
+                        Key = "Arbitration.Arbitraor.RejectTask",
+                        Value = "تم رفض الدعوى من قبل المحكم {ArbitratorName}",
+                    },new SysSetting
+                    {
+                        Id = Guid.NewGuid(),
+                        Key = "Reconciliation.ReSendTask",
+                        Value = "تم إرسال مهمة العمل كمصلح بالدعوى للمصلح {ReconciliatorName}",
+                    },new SysSetting
+                    {
+                       Id = Guid.NewGuid(),
+                        Key = "ArbitraorRecusal.AddRequest",
+                        Value = " يوجد طلب رد محكم جديد {ArbitratorName}",
+                    },new SysSetting
+                    {
+                       Id = Guid.NewGuid(),
+                        Key = "ArbitraorRecusal.AddRequest.Approve",
+                        Value = "تم الموافقة على طلب رد محكم {ArbitratorName}",
+                    },new SysSetting
+                    {
+                       Id = Guid.NewGuid(),
+                        Key = "ArbitraorRecusal.AddRequest.Reject",
+                        Value = "تم رفض طلب رد محكم {ArbitratorName}",
+                    },new SysSetting
+                    {
+                       Id = Guid.NewGuid(),
+                        Key = "ArbitraorRecusal.InformArbitrator.Reject",
+                        Value = "تم إلغاء تعيينك كمحكم على الدعوى رقم {LitigationCode}",
+                    },new SysSetting
+                    {
+                       Id = Guid.NewGuid(),
+                        Key = "ArbitraorRecusal.InformArbitratorChairman.Rejected",
+                        Value = "تم إلغاء تعيينك كرئيس هيئة تحكيم على الدعوى رقم {LitigationCode}",
+                    },new SysSetting
+                    {
+                       Id = Guid.NewGuid(),
+                        Key = "ArbitratorsChairmanNominationList.Added",
+                        Value = "تم إضافة قائمة مرشحى رئيس هيئة التحكيم لدعوي رقم {LitigationCode}",
+                    },new SysSetting
+                    {
+                       Id = Guid.NewGuid(),
+                        Key = "ArbitratorsNominationList.Added.FirstParty",
+                        Value = "عزيزي {FirstPartyName} {ExpirationDate}تم أحالة طلبكم للتحكيم, لاختيار المحكم يمكنك الدخول الي حسابك في منصة التحكيم العقاري واختيار المحكم المرشح,علما بأنه سيتم انتهاء صلاحية ترشيح محكم في خلال ",
+                    },new SysSetting
+                    {
+                       Id = Guid.NewGuid(),
+                        Key = "ArbitratorsNominationList.Added.SecondParty",
+                        Value = "عزيزي {SecondPartyName} {ExpirationDate}تم أحالة طلبكم للتحكيم, لاختيار المحكم يمكنك الدخول الي حسابك في منصة التحكيم العقاري واختيار المحكم المرشح,علما بأنه سيتم انتهاء صلاحية ترشيح محكم في خلال ",
+
+                    },new SysSetting
+                    {
+                       Id = Guid.NewGuid(),
+                        Key = "ArbitratorsNominationList.Assigned.And.Sent",
+                        Value = "تم تعيين هيئة التحكيم وإرسال طلبات المهام لدعوي رقم {LitigationCode}",
+                    },new SysSetting
+                    {
+                       Id = Guid.NewGuid(),
+                        Key = "ArbitratorsChairmanNominationListReply.Added",
+                        Value = "تم الإنتهاء من تحديد اولوية الاختيار لرئيس هيئة التحكيم من قبل المحكمين لدعوي رقم {LitigationCode}",
+                    },new SysSetting
+                    {
+                        Id = Guid.NewGuid(),
+                        Key = "Arbitration.ExplanationReport.Added",
+                        Value = "تم اضافة طلب تفسير على حكم التحكيم لدعوي رقم {LitigationCode}",
+                    },new SysSetting
+                    {
+                        Id = Guid.NewGuid(),
+                        Key = "Arbitration.ExplanationReport.RepliedOn",
+                        Value = "تم الرد على طلب تفسير حكم التحكيم لدعوي رقم {LitigationCode}",
+                    },new SysSetting
+                    {
+                        Id = Guid.NewGuid(),
+                        Key = "Arbitration.ExtendRequest.Added",
+                        Value = "تم اضافة طلب مد مدة التحكيم لدعوي رقم {LitigationCode}",
+                    },new SysSetting
+                    {
+                        Id = Guid.NewGuid(),
+                        Key = "Arbitration.ExtendRequest.Accepted",
+                        Value = "تم قبول طلب مد مدة التحكيم لدعوي رقم {LitigationCode}",
+                    },new SysSetting
+                    {
+                        Id = Guid.NewGuid(),
+                        Key = "Arbitration.ExtendRequest.Rejected",
+                        Value = "تم رفض طلب مد مدة التحكيم لدعوي رقم {LitigationCode}",
+                    },new SysSetting
+                    {
+                        Id = Guid.NewGuid(),
+                        Key = "Arbitrators.Count.Added",
+                        Value = "تم الإنتهاء من تحديد عدد المحكمين النهائي لدعوي رقم {LitigationCode}",
+                    },new SysSetting
+                    {
+                        Id = Guid.NewGuid(),
+                        Key = "Arbitrators.Count.Added.AfterAgreement",
+                        Value = "تم الإنتهاء من تحديد عدد المحكمين النهائي لاتفاق كلا المدعى والمدعى عليه على عدد المحكمين لدعوي رقم {LitigationCode}",
+                    },new SysSetting
+                    {
+                        Id = Guid.NewGuid(),
+                        Key = "Arbitrators.Count.FromBothSides",
+                        Value = "تم الإنتهاء من تحديد عدد المحكمين من قبل المدعى {FirstParty} والمدعى عليه {SecondParty} لدعوي رقم {LitigationCode}",
+                    },new SysSetting
+                    {
+                        Id = Guid.NewGuid(),
+                        Key = "ArbitratorSelectionDuration.Added",
+                        Value = "تم تحديد مدة تحديد المحكمين لدعوي رقم {LitigationCode}",
+                    },new SysSetting
+                    {
+                        Id = Guid.NewGuid(),
+                        Key = "ArbitrationReport.Added",
+                        Value = "تم إضافة حكم التحكيم لدعوي رقم {LitigationCode}",
+                    },new SysSetting
+                    {
+                        Id = Guid.NewGuid(),
+                        Key = "ArbitrationSession.Added",
+                        Value = "تم إضافة جلسة التحكيم لدعوي رقم {LitigationCode}",
+                    },new SysSetting
+                    {
+                        Id = Guid.NewGuid(),
+                        Key = "ExcuteWorkflow",
+                        Value = "تم إرسال الدعوى رقم {LitigationCode}",
+                    },new SysSetting
+                    {
+                        Id = Guid.NewGuid(),
+                        Key = "ProcessWorkflow.Reject",
+                        Value = "تم رفض الدعوى رقم {LitigationCode} بسبب {RejectionReason}",
+                    },new SysSetting
+                    {
+                        Id = Guid.NewGuid(),
+                        Key = "ProcessWorkflow.SentBackForEdit",
+                        Value = "تم إعادة الطلب لوجود بعض الملاحظات الدعوى رقم {LitigationCode}",
+                    },new SysSetting
+                    {
+                        Id = Guid.NewGuid(),
+                        Key = "ProcessWorkflow.Edited",
+                        Value = "تم تعديل الدعوى وإرسالها مرة أخرى رقم {LitigationCode}",
+                    },new SysSetting
+                    {
+                        Id = Guid.NewGuid(),
+                        Key = "Reconciliation.Cancelled",
+                        Value = "تم إلغاء المهمة (دعوى صلح) رقم {LitigationCode}",
+                    },new SysSetting
+                    {
+                        Id = Guid.NewGuid(),
+                        Key = "Reconciliation.ReAssigned",
+                        Value = "تم إرسال مهمة مصلح لمصلح أخر لدعوي رقم {LitigationCode}",
+                    },new SysSetting
+                    {
+                        Id = Guid.NewGuid(),
+                        Key = "LitigationRequest.Decision.WaiverOfRight",
+                        Value = "تم التنازل عن الحق لدعوي رقم {LitigationCode}",
+                    },new SysSetting
+                    {
+                        Id = Guid.NewGuid(),
+                        Key = "LitigationRequest.Decision.ReconciliationWasMade",
+                        Value = "تم الصلح لدعوي رقم {LitigationCode}",
+                    },new SysSetting
+                    {
+                        Id = Guid.NewGuid(),
+                        Key = "LitigationRequest.Decision.WaiverOfTheLitigation",
+                        Value = "تم التنازل عن الدعوى لدعوي رقم {LitigationCode}",
+                    },new SysSetting
+                    {
+                        Id = Guid.NewGuid(),
+                        Key = "LitigationRequest.Decision.ReconciliationWasNotMadeAndMoveToArbitration",
+                        Value = "عدم الصلح والانتقال للتحكيم لدعوي رقم {LitigationCode}",
+                    },new SysSetting
+                    {
+                        Id = Guid.NewGuid(),
+                        Key = "LitigationRequest.Decision.ReconciliationWasNotMade",
+                        Value = " عدم الصلح لدعوي رقم {LitigationCode}",
+                    },new SysSetting
+                    {
+                        Id = Guid.NewGuid(),
+                        Key = "Reconciliation.ExtendRequest.Added",
+                        Value = "تم اضافة طلب مد مدة الصلح لدعوي رقم {LitigationCode}",
+                    },new SysSetting
+                    {
+                        Id = Guid.NewGuid(),
+                        Key = "Reconciliation.ExtendRequest.Accepted",
+                        Value = "تم قبول طلب مد مدة الصلح لدعوي رقم {LitigationCode}",
+                    },new SysSetting
+                    {
+                        Id = Guid.NewGuid(),
+                        Key = "Reconciliation.ExtendRequest.Rejected",
+                        Value = "تم رفض طلب مد مدة الصلح لدعوي رقم {LitigationCode}",
+                    },new SysSetting
+                    {
+                        Id = Guid.NewGuid(),
+                        Key = "ReconciliationSession.Set",
+                        Value = "تم تحديد موعد لجلسة الصلح\r\nرقم الدعوى: {LitigationCode}\r\nنوع الدعوى: {LitigationType}\r\nتاريت الجلسة: {LitigationDate}\r\nالتوقيت: {LitigationDateTime}\r\n \r\nبرجاء التواجد ف الموعد المحدد",
+
+                    },new SysSetting
+                    {
+                        Id = Guid.NewGuid(),
+                        Key = "ReconciliationSession.Reset",
+                        Value = "تم أعادة تعيين جلسة الصلح\r\nترقم الدعوى: {LitigationCode}\r\nنوع الدعوى: {LitigationType}\r\nتاريت الجلسة: {LitigationDate}\r\nالتوقيت: {LitigationDateTime}\r\n \r\nبرجاء التواجد ف الموعد المحدد",
+
+                    }
+	                #endregion
                 });
             context.SaveChanges();
         }
+
     }
 }

@@ -8,7 +8,6 @@ using REAC.Application.Contracts.Dtos.CitizenRequests;
 using REAC.Application.Contracts.IAppServices;
 using REAC.Domain.Shared.Enum;
 using REAC.EntityFrameworkCore.Entities.Actor;
-using System.Linq;
 
 namespace REAC.Application.AppServices
 {
@@ -225,11 +224,11 @@ namespace REAC.Application.AppServices
 
                 var deleteCitizenRequestExperienceCertificates = citizenRequests.CitizenRequestExperienceCertificates
                     .Where(x => !citizenRequestCreateUpdateDto.CitizenRequestExperienceCertificates.Any(y => y.Id == x.Id));
-                
+
                 _repository.RemoveRange<CitizenRequestExperienceCertificate, Guid>(deleteCitizenRequestExperienceCertificates);
                 response = await _repository.SaveChangesAsync();
                 if (!response.IsDone) return response;
-               
+
 
                 foreach (var citizenRequestExperienceCertificates in citizenRequestCreateUpdateDto.CitizenRequestExperienceCertificates)
                 {
@@ -261,7 +260,7 @@ namespace REAC.Application.AppServices
                         }
                     }
                 }
-                
+
                 #endregion
 
                 if (citizenRequestCreateUpdateDto.IsSend & citizenRequests.StatusId == CitizenRequestStatus.Draft)
@@ -269,7 +268,7 @@ namespace REAC.Application.AppServices
                 if (citizenRequestCreateUpdateDto.IsSend & citizenRequests.StatusId == CitizenRequestStatus.SentForEdit)
                     await ExecuteAction(CitizenRequestAction.SendFromEdit, citizenRequests.Id, null);
 
-                return response; 
+                return response;
 
             }
         }
@@ -291,6 +290,17 @@ namespace REAC.Application.AppServices
                     citizenRequests.StatusId = CitizenRequestStatus.WaitingForCertify;
                     saveResponse = await _repository.SaveChangesAsync();
                     if (!saveResponse.IsDone) return saveResponse;
+                    switch (citizenRequests.CitizenRequestTypeId)
+                    {
+                        case CitizenRequestType.Arbitrator:
+                            // Send Notification
+                            // تم اضافة طلب جديد بالانضمام كمحكم
+                            break;
+                        case CitizenRequestType.Reformer:
+                            // Send Notification
+                            // تم اضافة طلب جديد بالانضمام كمصلح
+                            break;
+                    }
                     break;
                 case CitizenRequestAction.SendFromEdit:
                     citizenRequests.StatusId = CitizenRequestStatus.SentFromEdit;
@@ -305,16 +315,49 @@ namespace REAC.Application.AppServices
                     }
                     saveResponse = await _repository.SaveChangesAsync();
                     if (!saveResponse.IsDone) return saveResponse;
+                    switch (citizenRequests.CitizenRequestTypeId)
+                    {
+                        case CitizenRequestType.Arbitrator:
+                            // Send Notification
+                            // تم تعديل طلب بالانضمام كمحكم
+                            break;
+                        case CitizenRequestType.Reformer:
+                            // Send Notification
+                            // تم تعديل طلب بالانضمام كمصلح
+                            break;
+                    }
                     break;
                 case CitizenRequestAction.Reject:
                     citizenRequests.StatusId = CitizenRequestStatus.Rejected;
                     saveResponse = await _repository.SaveChangesAsync();
                     if (!saveResponse.IsDone) return saveResponse;
+                    switch (citizenRequests.CitizenRequestTypeId)
+                    {
+                        case CitizenRequestType.Arbitrator:
+                            // Send Notification
+                            // تم رفض طلب بالانضمام كمحكم
+                            break;
+                        case CitizenRequestType.Reformer:
+                            // Send Notification
+                            // تم رفض طلب بالانضمام كمصلح
+                            break;
+                    }
                     break;
                 case CitizenRequestAction.CertifiedWithFees:
                     citizenRequests.StatusId = CitizenRequestStatus.WaitingForMembershipFeesToBePaid;
                     saveResponse = await _repository.SaveChangesAsync();
                     if (!saveResponse.IsDone) return saveResponse;
+                    switch (citizenRequests.CitizenRequestTypeId)
+                    {
+                        case CitizenRequestType.Arbitrator:
+                            // Send Notification
+                            // تم إعتماد طلب بالانضمام كمحكم مع وجود رسوم
+                            break;
+                        case CitizenRequestType.Reformer:
+                            // Send Notification
+                            // تم إعتماد طلب بالانضمام كمصلح مع وجود رسوم
+                            break;
+                    }
                     break;
                 case CitizenRequestAction.CertifiedWithOutFees:
                     citizenRequests.StatusId = CitizenRequestStatus.Certified;
@@ -338,6 +381,17 @@ namespace REAC.Application.AppServices
                     }
                     saveResponse = await _repository.SaveChangesAsync();
                     if (!saveResponse.IsDone) return saveResponse;
+                    switch (citizenRequests.CitizenRequestTypeId)
+                    {
+                        case CitizenRequestType.Arbitrator:
+                            // Send Notification
+                            // تم إعتماد طلب بالانضمام كمحكم مع عدم وجود رسوم
+                            break;
+                        case CitizenRequestType.Reformer:
+                            // Send Notification
+                            // تم إعتماد طلب بالانضمام كمصلح مع عدم وجود رسوم
+                            break;
+                    }
                     break;
                 case CitizenRequestAction.SendForEdit:
                     citizenRequests.StatusId = CitizenRequestStatus.SentForEdit;
@@ -353,6 +407,17 @@ namespace REAC.Application.AppServices
 
                     saveResponse = await _repository.SaveChangesAsync();
                     if (!saveResponse.IsDone) return saveResponse;
+                    switch (citizenRequests.CitizenRequestTypeId)
+                    {
+                        case CitizenRequestType.Arbitrator:
+                            // Send Notification
+                            // تم مراجعة طلب بالانضمام كمحكم مع وجود واعادته للتعديل لوجود ملاحظات
+                            break;
+                        case CitizenRequestType.Reformer:
+                            // Send Notification
+                            // تم مراجعة طلب بالانضمام كمصلح مع وجود واعادته للتعديل لوجود ملاحظات
+                            break;
+                    }
                     break;
             }
             return saveResponse;

@@ -60,6 +60,7 @@ namespace REAC.Application.AppServices.Litigation
                         litigationRequest.LitigationRequestSubStage = LitigationRequestSubStage.AddSession;
                         litigationRequest.StartReconciliationDate = DateTime.Now;
                         // Send Notification
+                        // تم قبول مهمة العمل كمصلح بالدعوى
                         break;
                     case LitigationRequestReformerAssigningRequestStatus.Reject:
                         var department = (await _repository.GetQueryable<SysDepartment, Guid>())?
@@ -71,7 +72,7 @@ namespace REAC.Application.AppServices.Litigation
                             {
                                 case DepartmentDistributionMode.AutoDistribution:
                                     var reformers = (await _repository.GetQueryable<Citizen, Guid>())?
-                                                .Where(x => x.IsReformer == true & x.ReformerStatusId == ReformerStatus.Certified)
+                                                .Where(x => x.IsReformer == true & x.ReformerStatusId == ReformerStatus.Certified & x.Id != referenceId)
                                                 .OrderBy(x => x.ReformerLitigationRequests
                                                 .Count(t => t.IsFinished == false))
                                                 .ToList();
@@ -94,6 +95,10 @@ namespace REAC.Application.AppServices.Litigation
                             }
                         }
                         // Send Notification
+                        // تم رفض مهمة العمل كمصلح بالدعوى
+
+                        // Send Notification
+                        // تم إرسال مهمة العمل كمصلح بالدعوى للمصلح التالى
                         break;
                 }
             }

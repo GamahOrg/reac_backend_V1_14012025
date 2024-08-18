@@ -498,7 +498,6 @@ namespace REAC.EntityFrameworkCore.Seed
                             {
                                 new WorkFlowStepEvent()
                                 {
-                                    IsEndOfWorkFlow = false,
                                     Id = Guid.Parse("88b70280-7c6a-48e4-bf20-66ba537c580b"),
                                     EventName = "إرسال طلب الدعوى",
                                     AllowChangeInternalStatus = true,
@@ -614,7 +613,6 @@ namespace REAC.EntityFrameworkCore.Seed
                             {
                                 new WorkFlowStepEvent()
                                 {
-                                    IsEndOfWorkFlow = true,
                                     Id = Guid.Parse("3f01924e-59f4-44b7-9506-75c85b89b773"),
                                     EventName = "قبول",
                                     AllowChangeInternalStatus = true,
@@ -657,7 +655,6 @@ namespace REAC.EntityFrameworkCore.Seed
                                     Id = Guid.Parse("8d305628-46f7-45da-a177-77274c06d433"),
                                     EventName = "رفض",
                                     AllowChangeInternalStatus = true,
-                                    IsEndOfWorkFlow = true,
                                     InternalStatusId = RequestStatus.Rejected,
                                     AllowChangeExternalStatus = true,
                                     ExternalStatusId = RequestStatus.Rejected,
@@ -697,7 +694,6 @@ namespace REAC.EntityFrameworkCore.Seed
                                 },
                                 new WorkFlowStepEvent()
                                 {
-                                    IsEndOfWorkFlow = false,
                                     Id = Guid.Parse("8a392baf-a959-429a-b2c9-eea05054ff11"),
                                     EventName = "إعادة الدعوى للتعديل",
                                     AllowChangeInternalStatus = true,
@@ -732,41 +728,40 @@ namespace REAC.EntityFrameworkCore.Seed
                                         }
                                     }
                                 },
-                                //new WorkFlowStepEvent()
-                                //{
-                                //    Id = Guid.Parse("40b92a76-2c2d-4c32-a0f9-0c8bb03a67a9"),
-                                //    EventName = "إرسال طلب مشارطة",
-                                //    AllowChangeInternalStatus = true,
-                                //    InternalStatusId = RequestStatus.AgreementRequestHasBeenSent,
-                                //    AllowChangeExternalStatus = true,
-                                //    ExternalStatusId = RequestStatus.AgreementRequestHasBeenSent,
-                                //    AllowChangeIsActive = false,
-                                //    AllowNotes = true,
-                                //    EventSecurityLevelId = EventSecurityLevel.UnSpecified,
-                                //    LogMessage = "تم إرسال طلب مشارطة",
-                                //    ActionModeId = EventActionMode.SpecificStep,
-                                //    CreatedOn = DateTime.Now,
-                                //    CreatedBy = Guid.NewGuid(),
-                                //    IsDeleted = false,
-                                //    ShowLogForApplicant = true,
-                                //    ShowProcessingLogForApplicant = true,
-                                //    NextWorkFlowStepDestinationId = Guid.Parse("d443b2ba-64a1-4eb7-b053-4267577be668"),
-                                //    Translations  = new List<WorkFlowStepEventTranslation>()
-                                //    {
-                                //        new WorkFlowStepEventTranslation()
-                                //        {
-                                //            LanguageCode = "ar-SA",
-                                //            EventName = "إرسال طلب مشارطة",
-                                //            LogMessage = "تم إرسال طلب مشارطة",
-                                //        },
-                                //        new WorkFlowStepEventTranslation()
-                                //        {
-                                //            LanguageCode = "en-US",
-                                //            EventName = "Charter Request Sent",
-                                //            LogMessage = "Agreement Request Has Been Sent",
-                                //        }
-                                //    }
-                                //}
+                                new WorkFlowStepEvent()
+                                {
+                                    Id = Guid.Parse("40b92a76-2c2d-4c32-a0f9-0c8bb03a67a9"),
+                                    EventName = "إرسال طلب مشارطة",
+                                    AllowChangeInternalStatus = true,
+                                    InternalStatusId = RequestStatus.AgreementRequestHasBeenSent,
+                                    AllowChangeExternalStatus = true,
+                                    ExternalStatusId = RequestStatus.AgreementRequestHasBeenSent,
+                                    AllowChangeIsActive = false,
+                                    AllowNotes = true,
+                                    EventSecurityLevelId = EventSecurityLevel.UnSpecified,
+                                    LogMessage = "تم إرسال طلب مشارطة",
+                                    ActionModeId = EventActionMode.SpecificStep,
+                                    CreatedOn = DateTime.Now,
+                                    CreatedBy = Guid.NewGuid(),
+                                    IsDeleted = false,
+                                    ShowLogForApplicant = true,
+                                    ShowProcessingLogForApplicant = true,
+                                    Translations  = new List<WorkFlowStepEventTranslation>()
+                                    {
+                                        new WorkFlowStepEventTranslation()
+                                        {
+                                            LanguageCode = "ar-SA",
+                                            EventName = "إرسال طلب مشارطة",
+                                            LogMessage = "تم إرسال طلب مشارطة",
+                                        },
+                                        new WorkFlowStepEventTranslation()
+                                        {
+                                            LanguageCode = "en-US",
+                                            EventName = "Charter Request Sent",
+                                            LogMessage = "Agreement Request Has Been Sent",
+                                        }
+                                    }
+                                }
                             },
                             Translations = new List<WorkFlowStepTranslation>()
                             {

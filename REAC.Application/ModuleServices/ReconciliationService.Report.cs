@@ -1,6 +1,7 @@
 ﻿using Core.Shared.Responses;
 using Microsoft.EntityFrameworkCore;
 using REAC.Application.Contracts.Dtos.Reconciliation.Process;
+using REAC.Domain.Shared.Constants;
 using REAC.Domain.Shared.Enum;
 using REAC.EntityFrameworkCore.Entities.Litigation;
 using REAC.EntityFrameworkCore.Entities.Reconciliation;
@@ -70,7 +71,13 @@ namespace REAC.Application.ModuleServices
                     var repositorySaveResponse = await _repository.SaveChangesAsync(new CancellationToken());
                     if (!repositorySaveResponse.IsDone)
                         return repositorySaveResponse;
+                    string msg = (await _settingService.GetBySettingKey(SysSettingKeyConstants.Reconciliation_Report_Creation)).Data?.ToString();
 
+                    // Send Notification
+                    // تم إضافة محضر الصلح
+                    //_sMSService.SendSMS(new Contracts.Dtos.Integration.GEE.SMSRequestDto()
+                    //{ message_text = msg , })
+                    //_mailService.SendMail()
                 }
                 else
                 {
@@ -206,7 +213,9 @@ namespace REAC.Application.ModuleServices
                                       .Include(x => x.Contract.SecondPartyFacility)
                                       .Include(x => x.Contract.SecondPartyCitizen).Include(x => x.Contract.LitigationRequestContractType)
 
-                                      .Where(x => x.ReformerCitizenId == referenceId & x.RequestCode != null & x.LitigationRequestCategoryId != LitigationRequestCategory.Arbitration).ToList();
+                                      .Where(x => x.ReformerCitizenId == referenceId
+                                      & x.RequestCode != null & x.LitigationRequestCategoryId != LitigationRequestCategory.Arbitration).
+                                      OrderByDescending(x => x.CreatedOn).ToList();
 
             List<LitigationRequestMircoDto> litigationRequestMircoDtos = new List<LitigationRequestMircoDto>();
             if (litigationRequests != null)

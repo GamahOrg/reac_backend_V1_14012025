@@ -2,6 +2,7 @@
 using REAC.Application.Contracts.Dtos.Litigation.Create.Litigation;
 using REAC.Application.Contracts.Dtos.Litigation.CreateUpdate.Litigation;
 using REAC.Application.Contracts.Dtos.Litigation.List;
+using REAC.Domain.Shared.Enum;
 using REAC.EntityFrameworkCore.Entities.Litigation;
 
 namespace REAC.Application.Contracts.IAppServices.Litigation
@@ -9,6 +10,9 @@ namespace REAC.Application.Contracts.IAppServices.Litigation
     public interface ILitigationRequestService : IBasicService<LitigationRequest, Guid>
     {
 
+        Task<BaseResponse> GetCitizenLitigationRequestForAgreementRequestReply();
+        Task<BaseResponse> GetCitizenLitigationRequestForAgreementRequestReply(Guid requestId);
+        Task<BaseResponse> AddCitizenLitigationRequestForAgreementRequestReply(Guid requestId, ApproveRejectStatus agreementRequestStatus);
 
         Task<BaseResponse> Add(LitigationCreateUpdateDto model);
         Task<BaseResponse> List(int pageIndex, int pageSize, string? searchKey, LitigationListDto model);
@@ -16,6 +20,7 @@ namespace REAC.Application.Contracts.IAppServices.Litigation
 
         Task<BaseResponse> AuditngList(int pageIndex, int pageSize, string? searchKey, AuditingListDto model);
         Task<BaseResponse> Get(Guid litigationId);
+        Task<BaseResponse> GetLitigationAcceptanceOrRejectDocumentData(Guid litigationId, Guid requestId);
         Task<BaseResponse> GetLitigationPartiesDetails(Guid litigationId);
         Task<BaseResponse> GetLitigationDetails(Guid litigationId);
         Task<BaseResponse> AddLitigation(LitigationCreateUpdateDto model);

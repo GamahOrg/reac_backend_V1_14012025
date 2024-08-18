@@ -67,6 +67,9 @@ namespace REAC.Application.ModuleServices
                     if (!repositorySaveResponse.IsDone)
                         return repositorySaveResponse;
 
+                    // Send Notification
+                    // تم اضافة طلب مد مدة التحكيم
+
                 }
                 else
                 {
@@ -123,8 +126,19 @@ namespace REAC.Application.ModuleServices
                     if (!savePeriodResponse.IsDone)
                         return savePeriodResponse;
                 }
+                switch (requestPayload.LitigationRequestExtendPeriodRequestStatusId)
+                {
+                    case LitigationRequestExtendPeriodRequestStatus.Approve:
+                        // Send Notification
+                        // تم قبول طلب مد مدة التحكيم
+                        break;
+                    case LitigationRequestExtendPeriodRequestStatus.Reject:
+                        // Send Notification
+                        // تم رفض طلب مد مدة التحكيم
+                        break;
+                }
 
-                // Send Notification
+
 
                 return await GetLitigationRequestExtendPeriodForEmployee(requestPayload.LitigationRequestId, cancellationToken);
             }

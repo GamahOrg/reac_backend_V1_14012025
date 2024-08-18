@@ -359,9 +359,13 @@ namespace REAC.Application.ModuleServices
                         var litigationRequestArbitratorList = (await _repository.GetQueryable<LitigationRequestArbitratorList, Guid>())?
                              .Where(x => x.Id == assignRequestPayload.LitigationRequestArbitratorListId).Single();
                         _repository.Remove<LitigationRequestArbitratorList, Guid>(litigationRequestArbitratorList);
+                        // Send Notification
+                        // تم إلغاء تعيينك كمحكم على الدعوى رقم كذا
                         break;
                     case ArbitratorAssigningRequestType.ArbitratorsChairman:
                         litigationRequest.ArbitratorCitizenId = null;
+                        // Send Notification
+                        // تم إلغاء تعيينك كرئيس هيئة تحكيم على الدعوى رقم كذا
                         break;
                 }
 
@@ -372,6 +376,18 @@ namespace REAC.Application.ModuleServices
                 litigationRequestArbitratorAssigningRequest.ArbitratorAssigningRequestTypeId = assignRequestPayload.ArbitratorAssigningRequestTypeId;
                 litigationRequestArbitratorAssigningRequest.Response = LitigationRequestArbitratorAssigningRequestStatus.None;
                 await _repository.AddAsync<LitigationRequestArbitratorAssigningRequest, Guid>(litigationRequestArbitratorAssigningRequest);
+
+                switch (assignRequestPayload.ArbitratorAssigningRequestTypeId)
+                {
+                    case ArbitratorAssigningRequestType.Arbitrator:
+                        // Send Notification
+                        // تم تعيينك كمحكم على الدعوى رقم كذا
+                        break;
+                    case ArbitratorAssigningRequestType.ArbitratorsChairman:
+                        // Send Notification
+                        // تم تعيينك كرئيس هيئة تحكيم على الدعوى رقم كذا
+                        break;
+                }
 
                 var repositorySaveResponse = await _repository.SaveChangesAsync(new CancellationToken());
                 return repositorySaveResponse;

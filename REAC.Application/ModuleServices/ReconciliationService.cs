@@ -1,14 +1,19 @@
 ﻿using AutoMapper;
+using Core.Contracts;
 using Core.GenericRepository.BaseRepository;
 using Core.Shared.Responses;
+using Microsoft.AspNetCore.SignalR;
 using REAC.Application.Contracts.Dtos.Reconciliation.Process;
 using REAC.Application.Contracts.Dtos.Wpf.Business;
 using REAC.Application.Contracts.IAppServices;
+using REAC.Application.Contracts.IAppServices.Integration;
 using REAC.Application.Contracts.IAppServices.System;
 using REAC.Application.Contracts.IAppServices.Wpf.Business;
 using REAC.Domain.Shared.Enum;
 using REAC.EntityFrameworkCore.Entities.Litigation;
 using REAC.EntityFrameworkCore.Entities.System;
+using Wafi.Application.Hubs;
+using Wafi.Application.Hubs.Contracts;
 
 namespace REAC.Application.ModuleServices
 {
@@ -18,16 +23,26 @@ namespace REAC.Application.ModuleServices
         private readonly IEntityRepository _repository;
         private readonly IJwtReader _jwtReader;
         private readonly ISysSettingService _settingService;
+        private readonly ISMSService _sMSService;
+        private readonly IMailService _mailService;
+        private readonly IHubContext<NotificationHub, INotificationClient> _notificationHub;
 
         public ReconciliationService(IEntityRepository repository, ISysSettingService settingService,
                           IWorkFlowProcessingLogService workFlowProcessingLogService,
                           IMapper mapper,
-                          IJwtReader jwtReader)
+                          IJwtReader jwtReader,
+                          ISMSService sMSService,
+                          IMailService mailService,
+                          IHubContext<NotificationHub, INotificationClient> notificationHub)
+
         {
             _mapper = mapper;
             _repository = repository;
             _jwtReader = jwtReader;
             _settingService = settingService;
+            _sMSService = sMSService;
+            _mailService = mailService;
+            _notificationHub = notificationHub;
         }
 
         public async Task<BaseResponse> Assign(AssignRequestPayload assignRequestPayload, CancellationToken cancellationToken)
@@ -103,6 +118,9 @@ namespace REAC.Application.ModuleServices
                         var saveResponse = await _repository.SaveChangesAsync(new CancellationToken());
                         if (!saveResponse.IsDone)
                             return saveResponse;
+
+                        // Send Notification
+                        // تم إلغاء المهمة (دعوى صلح)
                     }
                 }
 
@@ -112,6 +130,9 @@ namespace REAC.Application.ModuleServices
                 litigationRequestReformerAssigningRequest.RequestOn = DateTime.Now;
                 litigationRequestReformerAssigningRequest.Response = LitigationRequestReformerAssigningRequestStatus.None;
                 await _repository.AddAsync<LitigationRequestReformerAssigningRequest, Guid>(litigationRequestReformerAssigningRequest);
+
+                // Send Notification
+                // تم إرسال مهمة مصلح لمصلح أخر
 
                 var repositorySaveResponse = await _repository.SaveChangesAsync(new CancellationToken());
                 return repositorySaveResponse;
@@ -146,6 +167,8 @@ namespace REAC.Application.ModuleServices
                     litigationRequests.FirstOrDefault().IsActive = false;
                     litigationRequests.FirstOrDefault().IsFinished = true;
                     litigationRequests.FirstOrDefault().LitigationRequestSubStage = LitigationRequestSubStage.LitigationRequestReformerDecisionAdded;
+                    // Send Notification
+                    // تم التنازل عن الحق
                     break;
                 case LitigationRequestDecision.ReconciliationWasMade:
                     litigationRequests.FirstOrDefault().InternalStatusId = RequestStatus.ReconciliationWasMade;
@@ -153,6 +176,8 @@ namespace REAC.Application.ModuleServices
                     litigationRequests.FirstOrDefault().IsActive = false;
                     litigationRequests.FirstOrDefault().IsFinished = true;
                     litigationRequests.FirstOrDefault().LitigationRequestSubStage = LitigationRequestSubStage.LitigationRequestReformerDecisionAdded;
+                    // Send Notification
+                    // تم الصلح
                     break;
                 case LitigationRequestDecision.WaiverOfTheLitigation:
                     litigationRequests.FirstOrDefault().InternalStatusId = RequestStatus.WaiverOfTheLitigation;
@@ -160,6 +185,8 @@ namespace REAC.Application.ModuleServices
                     litigationRequests.FirstOrDefault().IsActive = false;
                     litigationRequests.FirstOrDefault().IsFinished = true;
                     litigationRequests.FirstOrDefault().LitigationRequestSubStage = LitigationRequestSubStage.LitigationRequestReformerDecisionAdded;
+                    // Send Notification
+                    // تم التنازل عن الدعوى
                     break;
                 case LitigationRequestDecision.ReconciliationWasNotMade:
 
@@ -170,6 +197,8 @@ namespace REAC.Application.ModuleServices
                         litigationRequests.FirstOrDefault().StartArbitrationDate = DateTime.Now;
                         litigationRequests.FirstOrDefault().LitigationRequestStage = LitigationRequestStage.Arbitration;
                         litigationRequests.FirstOrDefault().LitigationRequestSubStage = LitigationRequestSubStage.ArbitratorSelectionPeriod;
+                        // Send Notification
+                        // عدم الصلح والانتقال للتحكيم
                     }
                     else
                     {
@@ -177,6 +206,8 @@ namespace REAC.Application.ModuleServices
                         litigationRequests.FirstOrDefault().ExternalStatusId = RequestStatus.ReconciliationWasNotMade;
                         litigationRequests.FirstOrDefault().IsActive = false;
                         litigationRequests.FirstOrDefault().IsFinished = true;
+                        // Send Notification
+                        // عدم الصلح
                     }
                     break;
             }

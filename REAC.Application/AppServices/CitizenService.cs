@@ -245,6 +245,7 @@ namespace REAC.Application.AppServices
         public async Task<BaseResponse> GetArbitratorsFullLookup(Guid? citizenId, Guid requestId)
         {
             var litigationRequest = (await _repository.GetQueryable<LitigationRequest, Guid>())
+                .Include(x => x.LitigationRequestArbitratorLists)
                 .Include(x => x.Contract)
                 .Where(x => x.Id == requestId).SingleOrDefault();
 
@@ -262,15 +263,21 @@ namespace REAC.Application.AppServices
             {
                 if (t.Id != litigationRequest.ApplicantCitizenId & t.Id != litigationRequest.Contract.FirstPartyCitizenId & t.Id != litigationRequest.Contract.SecondPartyCitizenId)
                 {
-                    citizenArbirators.Add(new CitizenFullLookupArbirator()
+                    if (t.Id != litigationRequest.ArbitratorCitizenId)
                     {
-                        ArbitratorClass = t.CitizenRequests?.FirstOrDefault()?.SysArbitratorClass?.ArbitratorClassName,
-                        AreaName = t.CitizenRequests?.FirstOrDefault()?.SysArea?.AreaName,
-                        Brief = t.CitizenRequests?.FirstOrDefault()?.Brief,
-                        FullName = t.FullName,
-                        Id = t.Id,
-                        RequestsCount = t.ArbitratorLitigationRequests.Where(x => x.IsFinished == false).Count() + t.LitigationRequestArbitratorLists.Count()
-                    });
+                        if (litigationRequest.LitigationRequestArbitratorLists?.Count(x => x.ArbitratorCitizenId == t.Id) == 0)
+                        {
+                            citizenArbirators.Add(new CitizenFullLookupArbirator()
+                            {
+                                ArbitratorClass = t.CitizenRequests?.FirstOrDefault()?.SysArbitratorClass?.ArbitratorClassName,
+                                AreaName = t.CitizenRequests?.FirstOrDefault()?.SysArea?.AreaName,
+                                Brief = t.CitizenRequests?.FirstOrDefault()?.Brief,
+                                FullName = t.FullName,
+                                Id = t.Id,
+                                RequestsCount = t.ArbitratorLitigationRequests.Where(x => x.IsFinished == false).Count() + t.LitigationRequestArbitratorLists.Count()
+                            });
+                        }
+                    }
                 }
             });
             return new DataResponse<List<CitizenFullLookupArbirator>>()
@@ -307,6 +314,10 @@ namespace REAC.Application.AppServices
                 var saveResponse = await _repository.SaveChangesAsync();
                 if (!saveResponse.IsDone)
                     return saveResponse;
+
+                // Send Notification
+                // تم إعادة تحرير المحكم
+
                 return await GetArbitratorsDecisions(arbitratorFreeUpDecisionCreateDto.CitizenId);
             }
             catch (Exception ex)
@@ -348,6 +359,10 @@ namespace REAC.Application.AppServices
                 if (!saveResponse.IsDone)
                     return saveResponse;
 
+                // Send Notification
+                // تم إقاف تحرير المحكم
+
+
                 return await GetArbitratorsDecisions(arbitratorStopDecisionCreateDto.CitizenId);
             }
             catch (Exception ex)
@@ -387,6 +402,11 @@ namespace REAC.Application.AppServices
                 var saveResponse = await _repository.SaveChangesAsync();
                 if (!saveResponse.IsDone)
                     return saveResponse;
+
+                // Send Notification
+                // تم إعادة تحرير المصلح
+
+
                 return await GetReformersDecisions(reformerFreeUpDecisionCreateDto.CitizenId);
             }
             catch (Exception ex)
@@ -426,6 +446,10 @@ namespace REAC.Application.AppServices
                 var saveResponse = await _repository.SaveChangesAsync();
                 if (!saveResponse.IsDone)
                     return saveResponse;
+
+                // Send Notification
+                // تم إيقاف المصلح
+
 
                 return await GetReformersDecisions(reformerStopDecisionCreateDto.CitizenId);
             }

@@ -89,11 +89,15 @@ namespace REAC.Application.ModuleServices
                         {
                             litigationRequest.InternalStatusId = RequestStatus.AsessionTimeHasBeenSet;
                             litigationRequest.ExternalStatusId = RequestStatus.AsessionTimeHasBeenSet;
+                            // Send Notification
+                            // تم تعيين جلسة الصلح
                         }
                         else
                         {
                             litigationRequest.InternalStatusId = RequestStatus.AsessionTimeHasBeenReset;
                             litigationRequest.ExternalStatusId = RequestStatus.AsessionTimeHasBeenReset;
+                            // Send Notification
+                            // تم إعادة تعيين جلسة الصلح
                         }
                     }
 
@@ -258,7 +262,8 @@ namespace REAC.Application.ModuleServices
                                       .Include(x => x.Contract.SecondPartyFacility)
                                       .Include(x => x.Contract.SecondPartyCitizen)
                                       .Include(x => x.Contract.LitigationRequestContractType)
-                                      .Where(x => x.ReformerCitizenId == referenceId & x.RequestCode != null & x.LitigationRequestCategoryId != LitigationRequestCategory.Arbitration).ToList();
+                                      .Where(x => x.ReformerCitizenId == referenceId & x.RequestCode != null
+                                      & x.LitigationRequestCategoryId != LitigationRequestCategory.Arbitration).OrderByDescending(x => x.CreatedOn).ToList();
 
             List<LitigationRequestMircoDto> litigationRequestMircoDtos = new List<LitigationRequestMircoDto>();
             if (litigationRequests != null)
@@ -400,8 +405,7 @@ namespace REAC.Application.ModuleServices
                 & x.RequestCode != null
                 & x.Contract.SecondPartyFacility.CitizenId == referenceId
                 & x.LitigationRequestCategoryId != LitigationRequestCategory.Arbitration)
-                                        .OrderByDescending(x => x.LitigationRequestSessions.OrderBy(x => x.CreatedOn)
-                                        .LastOrDefault().SessionDatetime)
+                                        .OrderByDescending(x => x.CreatedOn)
                                         .AsSplitQuery()
                                         .AsNoTracking()
                                         .GetPaged(pageIndex, pageSize);
@@ -469,9 +473,10 @@ namespace REAC.Application.ModuleServices
                                       .Include(x => x.Contract.SecondPartyCitizen)
                                       .Include(x => x.Contract.LitigationRequestContractType);
             litigationRequests = entitiesQuerable
-                .Where(x => x.ReformerCitizenId == referenceId & x.LitigationRequestCategoryId != LitigationRequestCategory.Arbitration & x.LitigationRequestSessions.Where(x => x.LitigationRequestSessionRequestTypeId == LitigationRequestSessionRequestType.Reconciliation).Count() > 0)
-                                        .OrderByDescending(x => x.LitigationRequestSessions.OrderBy(x => x.CreatedOn)
-                                        .LastOrDefault().SessionDatetime)
+                .Where(x => x.ReformerCitizenId == referenceId & x.LitigationRequestCategoryId != LitigationRequestCategory.Arbitration
+                & x.LitigationRequestSessions.Where(x => x.LitigationRequestSessionRequestTypeId == LitigationRequestSessionRequestType.Reconciliation)
+                .Count() > 0)
+                                        .OrderByDescending(x => x.CreatedOn)
                                         .AsSplitQuery()
                                         .AsNoTracking()
                                         .GetPaged(pageIndex, pageSize);
@@ -540,9 +545,9 @@ namespace REAC.Application.ModuleServices
                                       .Include(x => x.Contract.SecondPartyCitizen)
                                       .Include(x => x.Contract.LitigationRequestContractType);
             litigationRequests = entitiesQuerable.Where(x => x.LitigationRequestCategoryId != LitigationRequestCategory.Arbitration
-            & x.LitigationRequestSessions.Where(x => x.LitigationRequestSessionRequestTypeId == LitigationRequestSessionRequestType.Reconciliation).Count() > 0)
-                                        .OrderByDescending(x => x.LitigationRequestSessions.OrderBy(x => x.CreatedOn)
-                                        .LastOrDefault().SessionDatetime)
+            & x.LitigationRequestSessions.Where(x => x.LitigationRequestSessionRequestTypeId
+            == LitigationRequestSessionRequestType.Reconciliation).Count() > 0)
+                                        .OrderByDescending(x => x.CreatedOn)
                                         .AsSplitQuery()
                                         .AsNoTracking()
                                         .GetPaged(pageIndex, pageSize);
@@ -615,8 +620,7 @@ namespace REAC.Application.ModuleServices
                                       .Include(x => x.Contract.LitigationRequestContractType);
 
             litigationRequests = entitiesQuerable.Where(x => x.LitigationRequestCategoryId != LitigationRequestCategory.Arbitration & x.IsFinished != true & x.LitigationRequestStage == LitigationRequestStage.Reconciliation)
-              .OrderByDescending(x => x.LitigationRequestSessions.OrderBy(x => x.CreatedOn)
-              .LastOrDefault().SessionDatetime)
+                .OrderByDescending(x => x.CreatedOn)
               .AsSplitQuery()
               .AsNoTracking()
               .GetPaged(pageIndex, pageSize);

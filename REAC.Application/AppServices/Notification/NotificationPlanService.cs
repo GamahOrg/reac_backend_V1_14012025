@@ -225,15 +225,14 @@ namespace REAC.Application.AppServices.System
 
                 await _repository.AddAsync<SysNotification, Guid>(sysNotification);
                 await _repository.SaveChangesAsync();
-                if (notificationActorTypeId == NotificationActorType.Citizen)
-                {
-                    await _notificationHub.Clients.All.NotifyCitizen(_mapper.Map<SysNotificationDto>(sysNotification));
-                }
                 if (notificationActorTypeId == NotificationActorType.Employee)
                 {
                     await _notificationHub.Clients.All.NotifyEmployee(_mapper.Map<SysNotificationDto>(sysNotification));
                 }
-
+                else
+                {
+                    await _notificationHub.Clients.All.NotifyCitizen(_mapper.Map<SysNotificationDto>(sysNotification));
+                }
             }
             return new BaseResponse() { IsDone = true };
         }

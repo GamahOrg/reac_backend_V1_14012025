@@ -115,6 +115,9 @@ namespace REAC.Application.ModuleServices
                     var repositorySaveResponse = await _repository.SaveChangesAsync(new CancellationToken());
                     if (!repositorySaveResponse.IsDone)
                         return repositorySaveResponse;
+
+                    // Send Notification
+                    // تم إضافة جلسة التحكيم
                 }
                 else
                 {

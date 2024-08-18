@@ -10,9 +10,15 @@ namespace REAC.Application.Contracts.Dtos.Reconciliation.Process
     {
         public bool AllowAdd { get; set; }
         public bool AllowDecision { get; set; }
-
+        public ApproveRejectStatus ApproveRejectStatus { get; set; }
         public LitigationRequestShortDto? LitigationRequestShortDto { get; set; }
         public LitigationRequestReconciliationReportCreateUpdateDto? Report { get; set; }
+    }
+    public class LitigationRequestForAgreementRequestDto
+    {
+        public bool AllowAdd { get; set; }
+        public ApproveRejectStatus ApproveRejectStatus { get; set; }
+        public LitigationRequestShortDto? LitigationRequestShortDto { get; set; }
     }
     public class LitigationRequestForArbitrationReportDto
     {
@@ -55,6 +61,7 @@ namespace REAC.Application.Contracts.Dtos.Reconciliation.Process
     public class LitigationRequestForAllArbitratorCharmanNominationListDto
     {
         public bool AllowAdd { get; set; }
+        public bool AllowDecision { get; set; }
         public int? ListCount { get; set; }
 
         public List<CitizenArbitratorCharmanShortStatusDto> CitizenArbitratorCharmanShortStatusDtos { get; set; } = new List<CitizenArbitratorCharmanShortStatusDto>();

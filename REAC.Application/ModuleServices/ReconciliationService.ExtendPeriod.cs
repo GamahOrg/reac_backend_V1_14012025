@@ -68,6 +68,10 @@ namespace REAC.Application.ModuleServices
                     if (!repositorySaveResponse.IsDone)
                         return repositorySaveResponse;
 
+
+                    // Send Notification
+                    // تم إرسال طلب مد مدة الصلح
+
                 }
                 else
                 {
@@ -126,8 +130,18 @@ namespace REAC.Application.ModuleServices
                     if (!savePeriodResponse.IsDone)
                         return savePeriodResponse;
                 }
+                switch (requestPayload.LitigationRequestExtendPeriodRequestStatusId)
+                {
+                    case LitigationRequestExtendPeriodRequestStatus.Approve:
+                        // Send Notification
+                        // تم قبول طلب مد مدة الصلح
+                        break;
+                    case LitigationRequestExtendPeriodRequestStatus.Reject:
+                        // Send Notification
+                        // تم رفض طلب مد مدة الصلح
 
-                // Send Notification
+                        break;
+                }
 
                 return await GetLitigationRequestExtendPeriodForEmployee(requestPayload.LitigationRequestId, cancellationToken);
             }

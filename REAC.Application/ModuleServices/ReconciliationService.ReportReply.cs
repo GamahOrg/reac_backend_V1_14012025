@@ -39,7 +39,8 @@ namespace REAC.Application.ModuleServices
                                       | x.LitigationRequestReconciliationReports.Count > 0 & x.RequestCode != null & x.Contract.FirstPartyCitizenId == referenceId & x.LitigationRequestCategoryId != LitigationRequestCategory.Arbitration
                                       | x.LitigationRequestReconciliationReports.Count > 0 & x.RequestCode != null & x.Contract.SecondPartyCitizenId == referenceId & x.LitigationRequestCategoryId != LitigationRequestCategory.Arbitration
                                       | x.LitigationRequestReconciliationReports.Count > 0 & x.RequestCode != null & x.Contract.FirstPartyFacility.CitizenId == referenceId & x.LitigationRequestCategoryId != LitigationRequestCategory.Arbitration
-                                      | x.LitigationRequestReconciliationReports.Count > 0 & x.RequestCode != null & x.Contract.SecondPartyFacility.CitizenId == referenceId & x.LitigationRequestCategoryId != LitigationRequestCategory.Arbitration).ToList();
+                                      | x.LitigationRequestReconciliationReports.Count > 0 & x.RequestCode != null & x.Contract.SecondPartyFacility.CitizenId == referenceId & x.LitigationRequestCategoryId != LitigationRequestCategory.Arbitration).
+                                      OrderByDescending(x => x.CreatedOn).ToList();
 
             List<LitigationRequestMircoDto> litigationRequestMircoDtos = new List<LitigationRequestMircoDto>();
             if (litigationRequests != null)
@@ -353,6 +354,8 @@ namespace REAC.Application.ModuleServices
                 {
                     litigationRequest.InternalStatusId = RequestStatus.ReconciliationWasMade;
                     litigationRequest.ExternalStatusId = RequestStatus.ReconciliationWasMade;
+                    // Send Notification
+                    // تم قبول الصلح
                 }
                 else
                 {
@@ -362,7 +365,14 @@ namespace REAC.Application.ModuleServices
                     {
                         litigationRequest.LitigationRequestStage = LitigationRequestStage.Arbitration;
                         litigationRequest.LitigationRequestSubStage = LitigationRequestSubStage.ArbitratorSelectionDuration;
+                        // Send Notification
+                        // تم رفض الصلح والانتقال إلى التحكيم
 
+                    }
+                    else
+                    {
+                        // Send Notification
+                        // تم رفض الصلح
                     }
                 }
             }

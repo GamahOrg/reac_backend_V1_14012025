@@ -155,10 +155,7 @@ namespace Bpf.Application.ModuleServices
                     }
                 }
             }
-            else if (step.ProcessActorType == ProcessActorType.Reformer)
-            {
 
-            }
             #endregion
             #endregion
 

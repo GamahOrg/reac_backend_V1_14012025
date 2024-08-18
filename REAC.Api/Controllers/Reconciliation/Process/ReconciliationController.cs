@@ -26,7 +26,6 @@ public class ReconciliationController : ControllerBase
         _reconciliationService = reconciliationService;
     }
 
-
     #region Session
     [HttpGet(nameof(GetLitigationRequestForSession))]
     public async Task<IActionResult> GetLitigationRequestForSession(Guid litigationRequestId, CancellationToken cancellationToken)
@@ -156,6 +155,7 @@ public class ReconciliationController : ControllerBase
         return BadRequest();
     }
     #endregion
+
     [HttpPost(nameof(AddLitigationRequestDecision))]
     public async Task<IActionResult> AddLitigationRequestDecision([FromBody] LitigationRequestAction litigationRequestAction, CancellationToken cancellationToken)
     {
@@ -167,7 +167,6 @@ public class ReconciliationController : ControllerBase
 
         return BadRequest();
     }
-
 
     #region Citizen Replay
     [HttpGet(nameof(AddCitizenLitigationRequestForReportReply))]
@@ -276,4 +275,6 @@ public class ReconciliationController : ControllerBase
         return BadRequest();
     }
     #endregion
+
+
 }

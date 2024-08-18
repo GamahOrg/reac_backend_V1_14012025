@@ -429,6 +429,25 @@ public partial class LitigationRequestStatusSeedDataCreator
                                 LanguageCode = Constants.ArabicLanguage
                             }
                         }
+                    },
+                    new SysLitigationRequestStatus
+                    {
+                        Id = Domain.Shared.Enum.RequestStatus.AgreementRequestHasBeenRejected,
+                        RequestStatus = "تم رفض طلب المشارطة",
+                        CreatedOn = DateTime.Now,
+                        Translations=new List<SysLitigationRequestStatusTranslation>
+                        {
+                            new SysLitigationRequestStatusTranslation
+                            {
+                                RequestStatus = "Agreement Request Has Been Rejected",
+                                LanguageCode = Constants.EnglishLanguage
+                            },
+                            new SysLitigationRequestStatusTranslation
+                            {
+                                RequestStatus = "تم رفض طلب المشارطة",
+                                LanguageCode = Constants.ArabicLanguage
+                            }
+                        }
                     }
 
 

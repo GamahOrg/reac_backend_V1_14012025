@@ -12,7 +12,7 @@ using REAC.EntityFrameworkCore.Entities.System;
 namespace REAC.EntityFrameworkCore.Migrations
 {
     [DbContext(typeof(REACDBContext))]
-    [Migration("20240813192149_InitDatabaseMigration")]
+    [Migration("20240817204611_InitDatabaseMigration")]
     partial class InitDatabaseMigration
     {
         /// <inheritdoc />
@@ -901,6 +901,12 @@ namespace REAC.EntityFrameworkCore.Migrations
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime");
 
+                    b.Property<int?>("DefendantAgreementRequestResponse")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("DefendantAgreementRequestResponseOn")
+                        .HasColumnType("datetime2");
+
                     b.Property<int?>("DefendantRating")
                         .HasColumnType("int");
 
@@ -937,7 +943,13 @@ namespace REAC.EntityFrameworkCore.Migrations
                     b.Property<bool?>("IsActive")
                         .HasColumnType("bit");
 
+                    b.Property<bool?>("IsAgreementRequestRequired")
+                        .HasColumnType("bit");
+
                     b.Property<bool>("IsAllowEdit")
+                        .HasColumnType("bit");
+
+                    b.Property<bool?>("IsArbitratorsChairmanDecisionRequired")
                         .HasColumnType("bit");
 
                     b.Property<bool?>("IsDefendantArbitratorNominationListDone")
@@ -996,6 +1008,12 @@ namespace REAC.EntityFrameworkCore.Migrations
 
                     b.Property<DateTime?>("PaidOn")
                         .HasColumnType("datetime");
+
+                    b.Property<int?>("PlaintiffAgreementRequestResponse")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("PlaintiffAgreementRequestResponseOn")
+                        .HasColumnType("datetime2");
 
                     b.Property<int?>("PretenderRating")
                         .HasColumnType("int");
@@ -3165,9 +3183,6 @@ namespace REAC.EntityFrameworkCore.Migrations
                         .HasColumnType("bit");
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsEndOfWorkFlow")
                         .HasColumnType("bit");
 
                     b.Property<bool?>("IsFinishedValue")

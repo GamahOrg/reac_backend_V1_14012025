@@ -46,6 +46,9 @@ namespace REAC.Application.ModuleServices
                     var repositorySaveResponse = await _repository.SaveChangesAsync(new CancellationToken());
                     if (!repositorySaveResponse.IsDone)
                         return repositorySaveResponse;
+
+                    // Send Notification
+                    // تم الإنتهاء من تحديد عدد المحكمين النهائي
                 }
                 else
                 {
@@ -608,12 +611,21 @@ namespace REAC.Application.ModuleServices
 
             if (litigationRequest.FirstPartyArbitratorsCount.HasValue & litigationRequest.SecondPartyArbitratorsCount.HasValue)
             {
+
                 if (litigationRequest.FirstPartyArbitratorsCount.Value == litigationRequest.SecondPartyArbitratorsCount.Value)
                 {
                     litigationRequest.ArbitratorsCount = litigationRequest.FirstPartyArbitratorsCount;
                     litigationRequest.LitigationRequestSubStage = LitigationRequestSubStage.LitigationRequestAddArbitratorListNomination;
                     litigationRequest.ArbitratorsCountDateTime = DateTime.Now;
 
+                    // Send Notification
+                    // تم الإنتهاء من تحديد عدد المحكمين النهائي لاتفاق كلا المدعى والمدعى عليه على عدد المحكمين
+
+                }
+                else
+                {
+                    // Send Notification
+                    // تم الإنتهاء من تحديد عدد المحكمين من قبل المدعى والمدعى عليه
                 }
             }
 

@@ -36,9 +36,11 @@ namespace REAC.Application.AppServices.Litigation
             _jwtReader.GetReferenceId(ref referenceId);
 
             var litigationRequestArbitratorAssigningRequest = (await _repository.GetQueryable<LitigationRequestArbitratorAssigningRequest, Guid>())
+
                          .Where(x => x.Id == litigationRequestArbitratorAssigningRequestId).ToList().FirstOrDefault();
 
             var litigationRequest = (await _repository.GetQueryable<LitigationRequest, Guid>())?
+                        .Include(x => x.LitigationRequestArbitratorNominationLists)
                         .Include(x => x.LitigationRequestArbitratorLists)
                         .Where(x => x.Id == litigationRequestArbitratorAssigningRequest.LitigationRequestId)
                         .SingleOrDefault();
@@ -80,7 +82,12 @@ namespace REAC.Application.AppServices.Litigation
                                     });
                                 }
                                 if (litigationRequest.ArbitratorsCount == 1)
+                                {
                                     litigationRequest.ArbitratorCitizenId = referenceId;
+                                    litigationRequest.LitigationRequestStage = LitigationRequestStage.Arbitration;
+                                    litigationRequest.LitigationRequestSubStage = LitigationRequestSubStage.LitigationRequestAddArbitrationSession;
+
+                                }
                                 break;
                             case ArbitratorAssigningRequestType.ArbitratorsChairman:
                                 litigationRequest.ArbitratorCitizenId = referenceId;
@@ -91,9 +98,29 @@ namespace REAC.Application.AppServices.Litigation
                         }
 
                         // Send Notification
+                        // تم قبول طلب المهمة من المحكم
                         break;
                     case LitigationRequestArbitratorAssigningRequestStatus.Reject:
+                        var arbitratorsList = litigationRequest.LitigationRequestArbitratorNominationLists.Where(x => x.IsSent != true).OrderBy(x => x.TotalPriority).ThenBy(x => x.DefendantPriority).ToList();
+                        if (arbitratorsList != null)
+                        {
+                            if (arbitratorsList.Count > 0)
+                            {
+
+                                LitigationRequestArbitratorAssigningRequest nextLitigationRequestArbitratorAssigningRequest = new LitigationRequestArbitratorAssigningRequest();
+                                nextLitigationRequestArbitratorAssigningRequest.LitigationRequestId = litigationRequest.Id;
+                                nextLitigationRequestArbitratorAssigningRequest.RequestOn = DateTime.Now;
+                                nextLitigationRequestArbitratorAssigningRequest.ArbitratorAssigningRequestTypeId = ArbitratorAssigningRequestType.Arbitrator;
+                                nextLitigationRequestArbitratorAssigningRequest.LitigationRequestId = litigationRequest.Id;
+                                nextLitigationRequestArbitratorAssigningRequest.LitigationRequestArbitratorNominationListId = arbitratorsList.FirstOrDefault().Id;
+                                nextLitigationRequestArbitratorAssigningRequest.CitizenId = arbitratorsList.FirstOrDefault().ArbitratorCitizenId;
+                                nextLitigationRequestArbitratorAssigningRequest.Response = LitigationRequestArbitratorAssigningRequestStatus.None;
+                                await _repository.AddAsync<LitigationRequestArbitratorAssigningRequest, Guid>(nextLitigationRequestArbitratorAssigningRequest);
+                                arbitratorsList.FirstOrDefault().IsSent = true;
+                            }
+                        }
                         // Send Notification
+                        // تم رفض طلب المهمة من المحكم
                         break;
                 }
             }
@@ -240,13 +267,14 @@ namespace REAC.Application.AppServices.Litigation
                 {
                     CustomLitigationRequestMircoArbitratorAllDto litigationRequestMircoDto = new CustomLitigationRequestMircoArbitratorAllDto();
                     litigationRequestMircoDto.Id = litigationRequest.Id;
-                    litigationRequestMircoDto.RequestId = litigationRequest.Id;
+                    litigationRequestMircoDto.RequestId = litigationRequest.LitigationRequest.Id;
                     litigationRequestMircoDto.RequestDate = litigationRequest.LitigationRequest.CreatedOn;
                     litigationRequestMircoDto.RequestCode = litigationRequest.LitigationRequest.RequestCode;
                     litigationRequestMircoDto.ArbitratorAssigningRequestType = litigationRequest.ArbitratorAssigningRequestTypeId;
                     litigationRequestMircoDto.FirstPartyName = (litigationRequest.LitigationRequest.Contract.FirstPartyCitizen == null) ? litigationRequest.LitigationRequest.Contract.FirstPartyFacility.ArabicFacilityName : litigationRequest.LitigationRequest.Contract.FirstPartyCitizen.FullName;
                     litigationRequestMircoDto.SecondPartyName = (litigationRequest.LitigationRequest.Contract.SecondPartyCitizen == null) ? litigationRequest.LitigationRequest.Contract.SecondPartyFacility.ArabicFacilityName : litigationRequest.LitigationRequest.Contract.SecondPartyCitizen.FullName;
                     litigationRequestMircoDto.RequestTypeName = litigationRequest.LitigationRequest.Contract.LitigationRequestContractType.TypeName;
+                    litigationRequestMircoDto.RequestTypeId = litigationRequest.LitigationRequest.Contract.LitigationRequestContractType.Id.GetHashCode();
                     litigationRequestMircoDto.Response = litigationRequest.Response;
                     litigationRequestMircoDto.ResponseOn = litigationRequest.ResponseOn;
                     litigationRequestMircoDto.ArbitratorName =
@@ -289,7 +317,6 @@ namespace REAC.Application.AppServices.Litigation
                 IsDone = true
             };
         }
-
         public async Task<BaseResponse> GetLitigationRequestArbitratorAssigningRequests(Guid requestId, Guid LitigationRequestArbitratorAssigningRequestId, CancellationToken cancellationToken)
         {
             Guid referenceId = Guid.Empty;

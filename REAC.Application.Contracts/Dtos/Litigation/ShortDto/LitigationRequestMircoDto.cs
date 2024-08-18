@@ -10,6 +10,7 @@ public partial class LitigationRequestMircoDto : BaseEntity<Guid>
     public string FirstPartyName { get; set; } = null!;
     public string SecondPartyName { get; set; } = null!;
     public string RequestTypeName { get; set; } = null!;
+    public int RequestTypeId { get; set; }
     public string? Status { get; set; } = null!;
     public string IsDone { get; set; } = null!;
 

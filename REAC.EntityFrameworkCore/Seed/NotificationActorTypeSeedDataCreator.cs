@@ -10,18 +10,34 @@ namespace REAC.EntityFrameworkCore.Seed
         public static async Task SeedAsync(REACDBContext context)
         {
             if (await context.SysNotificationActorTypes.AnyAsync()) return;
-            await context.SysNotificationActorTypes.AddRangeAsync(new List<SysNotificationActorType> {
+            await context.SysNotificationActorTypes.AddRangeAsync(new List<SysNotificationActorType>
+            {
                 new SysNotificationActorType
                 {
-                    Id = NotificationActorType.Citizen,
+                    Id = NotificationActorType.Plaintiff,
+                    ActorType = "مدعي",
+                },
+                 new SysNotificationActorType
+                {
+                    Id = NotificationActorType.Defendant,
+                    ActorType = "مدعى عليه",
+                },
+                new SysNotificationActorType
+                {
+                    Id = NotificationActorType.Reformer,
                     ActorType = "مواطن",
+                },
+                new SysNotificationActorType
+                {
+                    Id = NotificationActorType.Arbitrator,
+                    ActorType = "محكم",
                 },
                 new SysNotificationActorType
                 {
                     Id = NotificationActorType.Employee,
                     ActorType = "موظف",
                 }
-        });
+            });
             context.SaveChanges();
         }
     }

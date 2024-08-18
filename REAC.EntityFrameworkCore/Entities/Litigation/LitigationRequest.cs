@@ -42,6 +42,13 @@ public partial class LitigationRequest : BaseEntity<Guid>
     public bool? IsPlaintiffArbitratorNominationListDone { get; set; }
     public bool? IsDefendantArbitratorNominationListDone { get; set; }
 
+    public bool? IsAgreementRequestRequired { get; set; }
+    public ApproveRejectStatus? PlaintiffAgreementRequestResponse { get; set; }
+    public DateTime? PlaintiffAgreementRequestResponseOn { get; set; }
+    public ApproveRejectStatus? DefendantAgreementRequestResponse { get; set; }
+    public DateTime? DefendantAgreementRequestResponseOn { get; set; }
+
+
     public ApproveRejectStatus? MintuesOfMeetingApprovalPlaintiffStatus { get; set; }
 
     public ApproveRejectStatus? MintuesOfMeetingApprovalDefendantStatus { get; set; }
@@ -108,6 +115,7 @@ public partial class LitigationRequest : BaseEntity<Guid>
     public DateTime? ArbitratorsChairmanNominationListSelectionDoneDateTime { get; set; }
     public DateTime? JudgmentDecisionIssuingDateTime { get; set; }
 
+    public bool? IsArbitratorsChairmanDecisionRequired { get; set; }
 
     public virtual Citizen? DelegatorCitizen { get; set; }
 
