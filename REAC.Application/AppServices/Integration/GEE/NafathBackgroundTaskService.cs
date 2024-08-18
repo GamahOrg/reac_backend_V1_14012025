@@ -1,13 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using REAC.Application.Contracts.IAppServices.Integration;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace REAC.Application.AppServices.Integration.GEE
 {
@@ -30,11 +23,11 @@ namespace REAC.Application.AppServices.Integration.GEE
                     using (var scope = _scopeFactory.CreateScope())
                     {
                         var nafathService = scope.ServiceProvider.GetRequiredService<INafathService>();
-                        if(nafathService is not null)
+                        if (nafathService is not null)
                             nafathService.CheckNafathStatus();
                     }
                 }
-                await Task.Delay(TimeSpan.FromSeconds(30), stoppingToken);
+                await Task.Delay(TimeSpan.FromSeconds(5), stoppingToken);
             }
         }
     }

@@ -842,31 +842,31 @@ namespace REAC.Application.ModuleServices
                 {
                     litigationRequest.ArbitratorsChairmanNominationListSelectionDoneDateTime = DateTime.Now;
 
-                    if (litigationRequest.LitigationRequestArbitratorsChairmanNominationLists.OrderBy(x => x.TotalPriority).ToList()[0].TotalPriority == litigationRequest.LitigationRequestArbitratorsChairmanNominationLists.OrderBy(x => x.TotalPriority).ToList()[1].TotalPriority)
-                    {
-                        litigationRequest.IsArbitratorsChairmanDecisionRequired = true;
-                        repositorySaveResponse = await _repository.SaveChangesAsync(new CancellationToken());
-                        if (!repositorySaveResponse.IsDone)
-                            return repositorySaveResponse;
-                    }
-                    else
-                    {
-                        LitigationRequestArbitratorAssigningRequest litigationRequestArbitratorAssigningRequest = new LitigationRequestArbitratorAssigningRequest();
-                        litigationRequestArbitratorAssigningRequest.RequestOn = DateTime.Now;
-                        litigationRequestArbitratorAssigningRequest.Id = Guid.NewGuid();
-                        litigationRequestArbitratorAssigningRequest.ArbitratorAssigningRequestTypeId = ArbitratorAssigningRequestType.ArbitratorsChairman;
-                        litigationRequestArbitratorAssigningRequest.LitigationRequestId = litigationRequest.Id;
-                        //litigationRequestArbitratorAssigningRequest.LitigationRequestArbitratorNominationListId =
-                        //    litigationRequest.LitigationRequestArbitratorsChairmanNominationLists.OrderBy(x => x.TotalPriority).ToList()[0].Id;
-                        litigationRequestArbitratorAssigningRequest.CitizenId =
-                            litigationRequest.LitigationRequestArbitratorsChairmanNominationLists.OrderBy(x => x.TotalPriority).ToList()[0].ArbitratorChairmanCitizenId;
-                        litigationRequestArbitratorAssigningRequest.Response = LitigationRequestArbitratorAssigningRequestStatus.None;
-                        await _repository.AddAsync<LitigationRequestArbitratorAssigningRequest, Guid>(litigationRequestArbitratorAssigningRequest);
-                        repositorySaveResponse = await _repository.SaveChangesAsync(new CancellationToken());
-                        if (!repositorySaveResponse.IsDone)
-                            return repositorySaveResponse;
+                    //if (litigationRequest.LitigationRequestArbitratorsChairmanNominationLists.OrderBy(x => x.TotalPriority).ToList()[0].TotalPriority == litigationRequest.LitigationRequestArbitratorsChairmanNominationLists.OrderBy(x => x.TotalPriority).ToList()[1].TotalPriority)
+                    //{
+                    //    litigationRequest.IsArbitratorsChairmanDecisionRequired = true;
+                    //    repositorySaveResponse = await _repository.SaveChangesAsync(new CancellationToken());
+                    //    if (!repositorySaveResponse.IsDone)
+                    //        return repositorySaveResponse;
+                    //}
+                    //else
+                    //{
+                    LitigationRequestArbitratorAssigningRequest litigationRequestArbitratorAssigningRequest = new LitigationRequestArbitratorAssigningRequest();
+                    litigationRequestArbitratorAssigningRequest.RequestOn = DateTime.Now;
+                    litigationRequestArbitratorAssigningRequest.Id = Guid.NewGuid();
+                    litigationRequestArbitratorAssigningRequest.ArbitratorAssigningRequestTypeId = ArbitratorAssigningRequestType.ArbitratorsChairman;
+                    litigationRequestArbitratorAssigningRequest.LitigationRequestId = litigationRequest.Id;
+                    //litigationRequestArbitratorAssigningRequest.LitigationRequestArbitratorNominationListId =
+                    //    litigationRequest.LitigationRequestArbitratorsChairmanNominationLists.OrderBy(x => x.TotalPriority).ToList()[0].Id;
+                    litigationRequestArbitratorAssigningRequest.CitizenId =
+                        litigationRequest.LitigationRequestArbitratorsChairmanNominationLists.OrderBy(x => x.TotalPriority).ToList()[0].ArbitratorChairmanCitizenId;
+                    litigationRequestArbitratorAssigningRequest.Response = LitigationRequestArbitratorAssigningRequestStatus.None;
+                    await _repository.AddAsync<LitigationRequestArbitratorAssigningRequest, Guid>(litigationRequestArbitratorAssigningRequest);
+                    repositorySaveResponse = await _repository.SaveChangesAsync(new CancellationToken());
+                    if (!repositorySaveResponse.IsDone)
+                        return repositorySaveResponse;
 
-                    }
+                    //}
                     // Send Notification
                     // تم الإنتهاء من تحديد اولوية الاختيار لرئيس هيئة التحكيم من قبل المحكمين
                 }

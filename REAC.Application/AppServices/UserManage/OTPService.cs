@@ -1,7 +1,5 @@
-﻿using Core.Contracts;
-using Core.GenericRepository.BaseRepository;
+﻿using Core.GenericRepository.BaseRepository;
 using Core.Shared.Responses;
-using REAC.Application.AppServices.Integration.GEE;
 using REAC.Application.Contracts.Dtos.Integration.GEE;
 using REAC.Application.Contracts.IAppServices.Common;
 using REAC.Application.Contracts.IAppServices.Integration;
@@ -10,12 +8,6 @@ using REAC.Application.Contracts.IAppServices.UserManage;
 using REAC.Domain.Shared.Constants;
 using REAC.Domain.Shared.Enum;
 using REAC.EntityFrameworkCore.Entities.System;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.NetworkInformation;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace REAC.Application.AppServices.UserManage
 {
@@ -95,7 +87,7 @@ namespace REAC.Application.AppServices.UserManage
                         notification_type = (await _settingService.GetBySettingKey(SysSettingKeyConstants.SMS_Notification_Type)).Data?.Value,
                     };
                     var sendSMSResponse = await _sMSService.SendSMS(sMSRequestDto);
-                    response.Data = otpObj.Code;
+                    //response.Data = otpObj.Code;
                     if (!sendSMSResponse.IsDone)
                     {
                         response.Message = await GetStatusMessageLocalization(OTPStatus.SMS_Sent_Failed);

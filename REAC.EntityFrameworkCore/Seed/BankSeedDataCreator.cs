@@ -14,12 +14,57 @@ namespace Ticketing.EntityFrameworkCore.SeedData
                     new SysBank
                     {
                         Id = Guid.NewGuid(),
-                        BankName = "بنك فيصل الإسلامي",
+                        BankName = "البنك الأهلي السعودي",
                     },
                     new SysBank
                     {
                         Id = Guid.NewGuid(),
-                        BankName = "بنك البركة",
+                        BankName = "بنك الراجحي",
+                    },
+                    new SysBank
+                    {
+                        Id = Guid.NewGuid(),
+                        BankName = "بنك الرياض",
+                    },
+                    new SysBank
+                    {
+                        Id = Guid.NewGuid(),
+                        BankName = "البنك السعودى الأول",
+                    },
+                    new SysBank
+                    {
+                        Id = Guid.NewGuid(),
+                        BankName = "البنك العربى الوطنى ",
+                    },
+                    new SysBank
+                    {
+                        Id = Guid.NewGuid(),
+                        BankName = "مصرف الإنماء",
+                    },
+                    new SysBank
+                    {
+                        Id = Guid.NewGuid(),
+                        BankName = "البنك السعودي الفرنسي",
+                    },
+                    new SysBank
+                    {
+                        Id = Guid.NewGuid(),
+                        BankName = "البنك السعودي للإستثمار",
+                    },
+                    new SysBank
+                    {
+                        Id = Guid.NewGuid(),
+                        BankName = "بنك الجزيرة",
+                    },
+                    new SysBank
+                    {
+                        Id = Guid.NewGuid(),
+                        BankName = "بنك البلاد",
+                    },
+                    new SysBank
+                    {
+                        Id = Guid.NewGuid(),
+                        BankName = "بنك ميم",
                     }
                 });
             context.SaveChanges();

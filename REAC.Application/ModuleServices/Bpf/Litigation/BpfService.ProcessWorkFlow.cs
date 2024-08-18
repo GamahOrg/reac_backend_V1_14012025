@@ -251,6 +251,10 @@ namespace Bpf.Application.ModuleServices
                         if (!response.IsDone)
                             return response;
 
+                        var repositorySaveResponse = await _repository.SaveChangesAsync(new CancellationToken());
+                        if (!repositorySaveResponse.IsDone)
+                            return repositorySaveResponse;
+
                         switch (litigationRequest.LitigationRequestCategoryId)
                         {
                             case LitigationRequestCategory.Arbitration:
@@ -307,9 +311,9 @@ namespace Bpf.Application.ModuleServices
 
                         litigationRequest.IsAgreementRequestRequired = true;
                         litigationRequest.LitigationRequestSubStage = LitigationRequestSubStage.LitigationRequestAgreementRequestRequired;
-                        var repositorySaveResponse = await _repository.SaveChangesAsync(new CancellationToken());
-                        if (!repositorySaveResponse.IsDone)
-                            return repositorySaveResponse;
+                        var repositorySaveRes = await _repository.SaveChangesAsync(new CancellationToken());
+                        if (!repositorySaveRes.IsDone)
+                            return repositorySaveRes;
 
                         // Send Notification
                         // تم إرسال طلب المشارطة
