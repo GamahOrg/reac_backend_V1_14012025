@@ -619,7 +619,7 @@ namespace REAC.Application.ModuleServices
                                       .Include(x => x.Contract.SecondPartyCitizen)
                                       .Include(x => x.Contract.LitigationRequestContractType);
 
-            litigationRequests = entitiesQuerable.Where(x => x.LitigationRequestCategoryId != LitigationRequestCategory.Arbitration & x.IsFinished != true & x.LitigationRequestStage == LitigationRequestStage.Reconciliation)
+            litigationRequests = entitiesQuerable.Where(x => x.LitigationRequestCategoryId != LitigationRequestCategory.Arbitration & x.LitigationRequestStage.HasValue)
                 .OrderByDescending(x => x.CreatedOn)
               .AsSplitQuery()
               .AsNoTracking()

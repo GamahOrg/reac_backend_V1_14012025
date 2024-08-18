@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Core.Contracts;
 using Core.GenericRepository.BaseRepository;
 using Core.GenericRepository.Shared.Pagging;
 using Core.Log.Application.Contracts.IAppServices;
@@ -6,8 +7,12 @@ using Core.Shared.Responses;
 using Microsoft.EntityFrameworkCore;
 using REAC.Application.Contracts.Dtos.CitizenRequests;
 using REAC.Application.Contracts.IAppServices;
+using REAC.Application.Contracts.IAppServices.Integration;
+using REAC.Application.Contracts.IAppServices.System;
+using REAC.Domain.Shared.Constants;
 using REAC.Domain.Shared.Enum;
 using REAC.EntityFrameworkCore.Entities.Actor;
+using REAC.EntityFrameworkCore.Entities.System;
 
 namespace REAC.Application.AppServices
 {
@@ -17,13 +22,19 @@ namespace REAC.Application.AppServices
         protected IMapper _mapper;
         protected ILoggerManager _loggerManager;
         private readonly IJwtReader _jwtReader;
+        private readonly ISysSettingService _sysSetting;
+        private readonly IMailService _emailService;
+        private readonly ISMSService _smsService;
         public CitizenRequestService(IEntityRepository repository,
-          IMapper mapper, ILoggerManager loggerManager, IJwtReader jwtReader)
+          IMapper mapper, ILoggerManager loggerManager, IJwtReader jwtReader, ISMSService smsService, IMailService emailService, ISysSettingService sysSetting)
         {
             _repository = repository;
             _mapper = mapper;
             _jwtReader = jwtReader;
             _loggerManager = loggerManager;
+            _smsService = smsService;
+            _emailService = emailService;
+            _sysSetting = sysSetting;
         }
 
         public async Task<BaseResponse> GetCitizenRequests(int pageIndex, int pageSize, bool isSend = false, CitizenRequestType? citizenRequestTypeId = null)
@@ -32,7 +43,9 @@ namespace REAC.Application.AppServices
             {
                 Guid referenceId = Guid.Empty;
                 _jwtReader.GetReferenceId(ref referenceId);
+
                 var citizenRequestsQuery = (await _repository.GetQueryable<CitizenRequest, Guid>())
+                        .Include(x => x.Citizen)
                         .Include(x => x.SysCitizenRequestType)
                         .Include(x => x.Status)
                         .Include(x => x.SysArbitratorClass)
@@ -47,10 +60,20 @@ namespace REAC.Application.AppServices
                         .ThenInclude(x => x.ExperienceCertificateFile)
                         .AsNoTracking();
 
+
+
+                var citizen = (await _repository.GetQueryable<Citizen, Guid>()).Where(x => x.Id == referenceId).SingleOrDefault();
+
+
+                if (citizen != null)
+                    citizenRequestsQuery = citizenRequestsQuery.Where(x => x.StatusId != CitizenRequestStatus.Draft
+                    & x.CitizenRequestTypeId == citizenRequestTypeId & x.CitizenId == referenceId);
+
                 if (isSend)
                 {
                     citizenRequestsQuery = citizenRequestsQuery.Where(x => x.StatusId != CitizenRequestStatus.Draft && x.CitizenRequestTypeId == citizenRequestTypeId);
                 }
+
 
                 var citizenRequests = citizenRequestsQuery.GetPaged(pageIndex, pageSize);
 
@@ -284,21 +307,52 @@ namespace REAC.Application.AppServices
                 return new BaseResponse() { IsDone = false, Message = "Not Found" };
 
             BaseResponse saveResponse = new BaseResponse() { IsDone = false, Message = "Not Found" };
+
+            var citizenInfo = (await _repository.GetQueryable<Citizen, Guid>())
+                            .Where(c => c.Id == referenceId)
+                            .Select(c => new { Email = c.Email, Mobile = c.Mobile, FullName = c.FullName })
+                            .FirstOrDefault();
+            var msg = "";
+
             switch (citizenRequestAction)
             {
                 case CitizenRequestAction.Send:
                     citizenRequests.StatusId = CitizenRequestStatus.WaitingForCertify;
                     saveResponse = await _repository.SaveChangesAsync();
                     if (!saveResponse.IsDone) return saveResponse;
+                    
+
                     switch (citizenRequests.CitizenRequestTypeId)
                     {
                         case CitizenRequestType.Arbitrator:
                             // Send Notification
                             // تم اضافة طلب جديد بالانضمام كمحكم
+                            msg = _sysSetting.GetBySettingKey(SysSettingKeyConstants.Arbitrator_JoiningRequest).Result.Data?.Value;
+
+                            var emailResultArbitrator = await _emailService.SendMail(new List<string>() { citizenInfo.Email }, "Arbitrator_JoiningRequest Added", msg);
+
+                            var smsResultArbitrator = _smsService.SendSMS(new Contracts.Dtos.Integration.GEE.SMSRequestDto()
+                            {
+                                message_text = msg,
+                                recipients = new List<string>() { citizenInfo.Mobile },
+                                notification_type = "SMS",
+
+                            });
                             break;
                         case CitizenRequestType.Reformer:
                             // Send Notification
                             // تم اضافة طلب جديد بالانضمام كمصلح
+                            msg = _sysSetting.GetBySettingKey(SysSettingKeyConstants.Reformer_JoiningRequest).Result.Data?.Value;
+
+                            var emailResultReformer = await _emailService.SendMail(new List<string>() { citizenInfo.Email }, "Reformer_JoiningRequest Added", msg);
+
+                            var smsResultReformer = _smsService.SendSMS(new Contracts.Dtos.Integration.GEE.SMSRequestDto()
+                            {
+                                message_text = msg,
+                                recipients = new List<string>() { citizenInfo.Mobile },
+                                notification_type = "SMS",
+
+                            });
                             break;
                     }
                     break;
@@ -320,10 +374,33 @@ namespace REAC.Application.AppServices
                         case CitizenRequestType.Arbitrator:
                             // Send Notification
                             // تم تعديل طلب بالانضمام كمحكم
+                            msg = _sysSetting.GetBySettingKey(SysSettingKeyConstants.Arbitrator_JoiningRequest_Updated).Result.Data?.Value;
+                            msg = msg.Replace("{ArbitratorName}", citizenInfo.FullName);
+                            var emailResultArbitrator = await _emailService.SendMail(new List<string>() { citizenInfo.Email }, "Arbitrator Joining Request Updated", msg);
+
+                            var smsResultArbitrator = _smsService.SendSMS(new Contracts.Dtos.Integration.GEE.SMSRequestDto()
+                            {
+                                message_text = msg,
+                                recipients = new List<string>() { citizenInfo.Mobile },
+                                notification_type = "SMS",
+
+                            });
                             break;
                         case CitizenRequestType.Reformer:
                             // Send Notification
                             // تم تعديل طلب بالانضمام كمصلح
+                            msg = _sysSetting.GetBySettingKey(SysSettingKeyConstants.Reformer_JoiningRequest_Updated).Result.Data?.Value;
+                            msg = msg.Replace("{ReformerName}", citizenInfo.FullName);
+
+                            var emailResultReformer = await _emailService.SendMail(new List<string>() { citizenInfo.Email }, "Reformer Joining Request Updated", msg);
+
+                            var smsResultReformer = _smsService.SendSMS(new Contracts.Dtos.Integration.GEE.SMSRequestDto()
+                            {
+                                message_text = msg,
+                                recipients = new List<string>() { citizenInfo.Mobile },
+                                notification_type = "SMS",
+
+                            });
                             break;
                     }
                     break;
@@ -336,10 +413,32 @@ namespace REAC.Application.AppServices
                         case CitizenRequestType.Arbitrator:
                             // Send Notification
                             // تم رفض طلب بالانضمام كمحكم
+                            msg = _sysSetting.GetBySettingKey(SysSettingKeyConstants.Arbitrator_RejectJoiningRequest).Result.Data?.Value;
+
+                            var emailResultArbitrator = await _emailService.SendMail(new List<string>() { citizenInfo.Email }, "Arbitrator Joining Request Rejected", msg);
+
+                            var smsResultArbitrator = _smsService.SendSMS(new Contracts.Dtos.Integration.GEE.SMSRequestDto()
+                            {
+                                message_text = msg,
+                                recipients = new List<string>() { citizenInfo.Mobile },
+                                notification_type = "SMS",
+
+                            });
                             break;
                         case CitizenRequestType.Reformer:
                             // Send Notification
                             // تم رفض طلب بالانضمام كمصلح
+                            msg = _sysSetting.GetBySettingKey(SysSettingKeyConstants.Reformer_RejectJoiningRequest).Result.Data?.Value;
+
+                            var emailResultReformer = await _emailService.SendMail(new List<string>() { citizenInfo.Email }, "Reformer Joining Request Rejected", msg);
+
+                            var smsResultReformer = _smsService.SendSMS(new Contracts.Dtos.Integration.GEE.SMSRequestDto()
+                            {
+                                message_text = msg,
+                                recipients = new List<string>() { citizenInfo.Mobile },
+                                notification_type = "SMS",
+
+                            });
                             break;
                     }
                     break;
@@ -352,10 +451,32 @@ namespace REAC.Application.AppServices
                         case CitizenRequestType.Arbitrator:
                             // Send Notification
                             // تم إعتماد طلب بالانضمام كمحكم مع وجود رسوم
+                            msg = _sysSetting.GetBySettingKey(SysSettingKeyConstants.Arbitrator_AcceptJoiningRequest_WaitingForFees).Result.Data?.Value;
+
+                            var emailResultArbitrator = await _emailService.SendMail(new List<string>() { citizenInfo.Email }, "Arbitrator AcceptJoiningRequest and WaitingForFees", msg);
+
+                            var smsResultArbitrator = _smsService.SendSMS(new Contracts.Dtos.Integration.GEE.SMSRequestDto()
+                            {
+                                message_text = msg,
+                                recipients = new List<string>() { citizenInfo.Mobile },
+                                notification_type = "SMS",
+
+                            });
                             break;
                         case CitizenRequestType.Reformer:
                             // Send Notification
                             // تم إعتماد طلب بالانضمام كمصلح مع وجود رسوم
+                            msg = _sysSetting.GetBySettingKey(SysSettingKeyConstants.Reformer_AcceptJoiningRequest_WaitingForFees).Result.Data?.Value;
+
+                            var emailResultReformer = await _emailService.SendMail(new List<string>() { citizenInfo.Email }, "Reformer AcceptJoiningRequest and WaitingForFees", msg);
+
+                            var smsResultReformer = _smsService.SendSMS(new Contracts.Dtos.Integration.GEE.SMSRequestDto()
+                            {
+                                message_text = msg,
+                                recipients = new List<string>() { citizenInfo.Mobile },
+                                notification_type = "SMS",
+
+                            });
                             break;
                     }
                     break;
@@ -386,10 +507,32 @@ namespace REAC.Application.AppServices
                         case CitizenRequestType.Arbitrator:
                             // Send Notification
                             // تم إعتماد طلب بالانضمام كمحكم مع عدم وجود رسوم
+                            msg = _sysSetting.GetBySettingKey(SysSettingKeyConstants.Arbitrator_AcceptJoiningRequest_NoFees).Result.Data?.Value;
+
+                            var emailResultArbitrator = await _emailService.SendMail(new List<string>() { citizenInfo.Email }, "Arbitrator AcceptJoiningRequest and No Fees", msg);
+
+                            var smsResultArbitrator = _smsService.SendSMS(new Contracts.Dtos.Integration.GEE.SMSRequestDto()
+                            {
+                                message_text = msg,
+                                recipients = new List<string>() { citizenInfo.Mobile },
+                                notification_type = "SMS",
+
+                            });
                             break;
                         case CitizenRequestType.Reformer:
                             // Send Notification
                             // تم إعتماد طلب بالانضمام كمصلح مع عدم وجود رسوم
+                            msg = _sysSetting.GetBySettingKey(SysSettingKeyConstants.Reformer_AcceptJoiningRequest_NoFees).Result.Data?.Value;
+
+                            var emailResultReformer = await _emailService.SendMail(new List<string>() { citizenInfo.Email }, "Reformer AcceptJoiningRequest and No Fees", msg);
+
+                            var smsResultReformer = _smsService.SendSMS(new Contracts.Dtos.Integration.GEE.SMSRequestDto()
+                            {
+                                message_text = msg,
+                                recipients = new List<string>() { citizenInfo.Mobile },
+                                notification_type = "SMS",
+
+                            });
                             break;
                     }
                     break;
@@ -412,10 +555,32 @@ namespace REAC.Application.AppServices
                         case CitizenRequestType.Arbitrator:
                             // Send Notification
                             // تم مراجعة طلب بالانضمام كمحكم مع وجود واعادته للتعديل لوجود ملاحظات
+                            msg = _sysSetting.GetBySettingKey(SysSettingKeyConstants.Arbitrator_UpdateJoiningRequest_WithFees).Result.Data?.Value;
+
+                            var emailResultArbitrator = await _emailService.SendMail(new List<string>() { citizenInfo.Email }, "Arbitrator Update Joining Request WithFees", msg);
+
+                            var smsResultArbitrator = _smsService.SendSMS(new Contracts.Dtos.Integration.GEE.SMSRequestDto()
+                            {
+                                message_text = msg,
+                                recipients = new List<string>() { citizenInfo.Mobile },
+                                notification_type = "SMS",
+
+                            });
                             break;
                         case CitizenRequestType.Reformer:
                             // Send Notification
                             // تم مراجعة طلب بالانضمام كمصلح مع وجود واعادته للتعديل لوجود ملاحظات
+                            msg = _sysSetting.GetBySettingKey(SysSettingKeyConstants.Reformer_UpdateJoiningRequest_WithFees).Result.Data?.Value;
+
+                            var emailResultReformer = await _emailService.SendMail(new List<string>() { citizenInfo.Email }, "Reformer Update Joining Request WithFees", msg);
+
+                            var smsResultReformer = _smsService.SendSMS(new Contracts.Dtos.Integration.GEE.SMSRequestDto()
+                            {
+                                message_text = msg,
+                                recipients = new List<string>() { citizenInfo.Mobile },
+                                notification_type = "SMS",
+
+                            });
                             break;
                     }
                     break;

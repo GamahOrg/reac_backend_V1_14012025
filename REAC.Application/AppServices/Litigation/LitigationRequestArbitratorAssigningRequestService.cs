@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Core.Contracts;
 using Core.GenericRepository.BaseRepository;
 using Core.GenericRepository.Shared.Pagging;
 using Core.Log.Application.Contracts.IAppServices;
@@ -6,8 +7,12 @@ using Core.Shared.Responses;
 using Microsoft.EntityFrameworkCore;
 using REAC.Application.Contracts.Dtos.Litigation;
 using REAC.Application.Contracts.IAppServices;
+using REAC.Application.Contracts.IAppServices.Integration;
 using REAC.Application.Contracts.IAppServices.Litigation;
+using REAC.Application.Contracts.IAppServices.System;
+using REAC.Domain.Shared.Constants;
 using REAC.Domain.Shared.Enum;
+using REAC.EntityFrameworkCore.Entities.Actor;
 using REAC.EntityFrameworkCore.Entities.Arbitration;
 using REAC.EntityFrameworkCore.Entities.Litigation;
 using REAC.EntityFrameworkCore.Entities.System;
@@ -21,14 +26,18 @@ namespace REAC.Application.AppServices.Litigation
         private readonly IMapper _mapper;
         private readonly IJwtReader _jwtReader;
         private readonly ICitizenService _citizen;
-
-        public LitigationRequestArbitratorAssigningRequestService(REACDBContext context, IEntityRepository repository, IMapper mapper, ILoggerManager loggerManager, IJwtReader jwtReader, ICitizenService citizen) : base(repository, mapper, loggerManager, jwtReader)
+        private readonly ISysSettingService _sysSetting;
+        private readonly IMailService _emailService;
+        private readonly ISMSService _smsService;
+        public LitigationRequestArbitratorAssigningRequestService(REACDBContext context, IEntityRepository repository, IMapper mapper, ILoggerManager loggerManager, IJwtReader jwtReader, ICitizenService citizen, ISysSettingService sysSetting, IMailService emailService, ISMSService smsService) : base(repository, mapper, loggerManager, jwtReader)
         {
             _context = context;
             _mapper = mapper;
             _jwtReader = jwtReader;
             _citizen = citizen;
-
+            _sysSetting = sysSetting;
+            _emailService = emailService;
+            _smsService = smsService;
         }
         public async Task<BaseResponse> AddLitigationRequestArbitratorAssigningRequestsResponse(Guid litigationRequestArbitratorAssigningRequestId, LitigationRequestArbitratorAssigningRequestStatus response, CancellationToken cancellationToken)
         {
@@ -54,6 +63,12 @@ namespace REAC.Application.AppServices.Litigation
 
             if (litigationRequest != null)
             {
+                var citizenInfo = (await _repository.GetQueryable<Citizen, Guid>())
+                    .Where(c => c.Id == referenceId)
+                    .Select(c => new { Email = c.Email, Mobile = c.Mobile })
+                    .FirstOrDefault();
+                var msg = "";
+
                 switch (response)
                 {
                     case LitigationRequestArbitratorAssigningRequestStatus.Approve:
@@ -99,6 +114,15 @@ namespace REAC.Application.AppServices.Litigation
 
                         // Send Notification
                         // تم قبول طلب المهمة من المحكم
+                        msg = _sysSetting.GetBySettingKey(SysSettingKeyConstants.Arbitration_Arbitraor_AcceptTask).Result.Data?.Value;
+                        var emailResult = await _emailService.SendMail(new List<string>() { citizenInfo.Email }, "Arbitraor Accept Task", msg);
+                        var smsResult = _smsService.SendSMS(new Contracts.Dtos.Integration.GEE.SMSRequestDto()
+                        {
+                            message_text = msg,
+                            recipients = new List<string>() { citizenInfo.Mobile },
+                            notification_type = "SMS",
+
+                        });
                         break;
                     case LitigationRequestArbitratorAssigningRequestStatus.Reject:
                         var arbitratorsList = litigationRequest.LitigationRequestArbitratorNominationLists.Where(x => x.IsSent != true).OrderBy(x => x.TotalPriority).ThenBy(x => x.DefendantPriority).ToList();

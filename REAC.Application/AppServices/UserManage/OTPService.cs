@@ -82,7 +82,7 @@ namespace REAC.Application.AppServices.UserManage
                 {
                     SMSRequestDto sMSRequestDto = new SMSRequestDto()
                     {
-                        message_text = _localization["OTPCode"] + otpGeneratedCode,
+                        message_text = "رمز التحقق " + otpGeneratedCode, // _localization["OTPCode"] + otpGeneratedCode,
                         recipients = new List<string> { mobileNumber },
                         notification_type = (await _settingService.GetBySettingKey(SysSettingKeyConstants.SMS_Notification_Type)).Data?.Value,
                     };

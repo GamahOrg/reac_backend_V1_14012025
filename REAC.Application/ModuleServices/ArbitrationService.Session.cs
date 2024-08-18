@@ -109,7 +109,7 @@ namespace REAC.Application.ModuleServices
                         LitigationRequestSessionRequestTypeId = LitigationRequestSessionRequestType.Arbitration
                     };
 
-
+                    litigationRequest.LitigationRequestSubStage = LitigationRequestSubStage.JudgmentDecisionIssuing;
                     await _repository.AddAsync<LitigationRequestSession, Guid>(litigationRequestSession);
 
                     var repositorySaveResponse = await _repository.SaveChangesAsync(new CancellationToken());

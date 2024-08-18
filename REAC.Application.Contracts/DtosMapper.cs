@@ -270,10 +270,17 @@ namespace REAC.Application.Contracts
                     .ReverseMap();
 
             CreateMap<CitizenRequest, CitizenRequestShortDataDto>()
+                                      .ForMember(dest => dest.CitizenName, opt => opt.MapFrom(src => src.Citizen.FullName))
+                                      .ForMember(dest => dest.IdentityNumber, opt => opt.MapFrom(src => src.Citizen.IdentityNumber))
+
                       .ForMember(dest => dest.AreaName, opt => opt.MapFrom(src => src.SysArea.AreaName))
                     .ForMember(dest => dest.StatusName, opt => opt.MapFrom(src => src.Status.RequestStatus))
                     .ForMember(dest => dest.ArbitratorClassName, opt => opt.MapFrom(src => src.SysArbitratorClass.ArbitratorClassName))
                     .ForMember(dest => dest.CitizenRequestType, opt => opt.MapFrom(src => src.SysCitizenRequestType.CitizenRequestTypeName))
+
+
+
+
                     .ReverseMap();
             CreateMap<SysCitizenRequestType, SysCitizenRequestTypeCreateUpdateDto>().ReverseMap();
             CreateMap<SysCitizenRequestTypeTranslation, SysCitizenRequestTypeTranslationCreateUpdateDto>().ReverseMap();

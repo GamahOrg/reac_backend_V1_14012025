@@ -4,16 +4,14 @@ using Core.Log.Application.Contracts.IAppServices;
 using Core.Shared.Responses;
 using Microsoft.EntityFrameworkCore;
 using REAC.Application.Contracts.Dtos.Delegator;
-using REAC.Application.Contracts.IAppServices;
-using REAC.Domain.Shared.Enum;
-using REAC.EntityFrameworkCore.Entities.System;
-using static REAC.Application.Contracts.IAppServices.Litigation.ILitigationRequestService;
-using REAC.Application.Contracts.IAppServices.Integration;
 using REAC.Application.Contracts.Dtos.Integration.GEE;
-using System.Globalization;
-using REAC.EntityFrameworkCore.Entities;
-using Azure;
+using REAC.Application.Contracts.IAppServices;
+using REAC.Application.Contracts.IAppServices.Integration;
+using REAC.Domain.Shared.Enum;
 using REAC.EntityFrameworkCore.Entities.Actor;
+using REAC.EntityFrameworkCore.Entities.System;
+using System.Globalization;
+using static REAC.Application.Contracts.IAppServices.Litigation.ILitigationRequestService;
 
 namespace REAC.Application.AppServices
 {
@@ -52,7 +50,7 @@ namespace REAC.Application.AppServices
                 var fullDelegators = _mapper.Map<List<DelegatorShortDataDto>>(delegators);
 
                 var result = await PaginatedList<DelegatorShortDataDto>.CreateAsync(fullDelegators, pageIndex, pageSize);
-                if (result.Items.Count == 0) return new BaseResponse() { IsDone = false, Message = "غير موجود" };
+                if (result.Items.Count == 0) return new BaseResponse() { IsDone = true, Message = "غير موجود" };
 
                 return new DataResponse<PaginatedList<DelegatorShortDataDto>>()
                 {

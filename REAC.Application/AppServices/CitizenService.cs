@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Core.Contracts;
 using Core.GenericRepository.BaseRepository;
 using Core.GenericRepository.Shared.Pagging;
 using Core.Log.Application.Contracts.IAppServices;
@@ -6,6 +7,9 @@ using Core.Shared.Responses;
 using Microsoft.EntityFrameworkCore;
 using REAC.Application.Contracts.Dtos.Citizen;
 using REAC.Application.Contracts.IAppServices;
+using REAC.Application.Contracts.IAppServices.Integration;
+using REAC.Application.Contracts.IAppServices.System;
+using REAC.Domain.Shared.Constants;
 using REAC.Domain.Shared.Enum;
 using REAC.EntityFrameworkCore.Entities;
 using REAC.EntityFrameworkCore.Entities.Actor;
@@ -19,11 +23,17 @@ namespace REAC.Application.AppServices
     public class CitizenService : BasicService<Citizen, Guid>, ICitizenService
     {
         private readonly IMapper _mapper;
-        private readonly IJwtReader _jwtReader;
-        public CitizenService(IEntityRepository repository, IMapper mapper, ILoggerManager loggerManager, IJwtReader jwtReader) : base(repository, mapper, loggerManager, jwtReader)
+        private readonly IJwtReader _jwtReader; 
+        private readonly ISysSettingService _sysSetting;
+        private readonly IMailService _emailService;
+        private readonly ISMSService _smsService;
+        public CitizenService(IEntityRepository repository, IMapper mapper, ILoggerManager loggerManager, IJwtReader jwtReader, ISysSettingService sysSetting, IMailService emailService, ISMSService smsService = null) : base(repository, mapper, loggerManager, jwtReader)
         {
             _mapper = mapper;
             _jwtReader = jwtReader;
+            _sysSetting = sysSetting;
+            _emailService = emailService;
+            _smsService = smsService;
         }
         public async Task<DateTime?> GetIdentityExpirationDate(Guid? userId)
         {
@@ -317,6 +327,15 @@ namespace REAC.Application.AppServices
 
                 // Send Notification
                 // تم إعادة تحرير المحكم
+                var msg = _sysSetting.GetBySettingKey(SysSettingKeyConstants.Arbitrator_Activate).Result.Data?.Value;
+                var emailResult = await _emailService.SendMail(new List<string>() { citizen.Email }, "Arbitrator Activated", msg);
+                var smsResult = _smsService.SendSMS(new Contracts.Dtos.Integration.GEE.SMSRequestDto()
+                {
+                    message_text = msg,
+                    recipients = new List<string>() { citizen.Mobile },
+                    notification_type = "SMS",
+
+                });
 
                 return await GetArbitratorsDecisions(arbitratorFreeUpDecisionCreateDto.CitizenId);
             }
@@ -361,6 +380,15 @@ namespace REAC.Application.AppServices
 
                 // Send Notification
                 // تم إقاف تحرير المحكم
+                var msg = _sysSetting.GetBySettingKey(SysSettingKeyConstants.Arbitrator_DeActivate).Result.Data?.Value;
+                var emailResult = await _emailService.SendMail(new List<string>() { citizen.Email }, "Arbitrator Deactivated", msg);
+                var smsResult = _smsService.SendSMS(new Contracts.Dtos.Integration.GEE.SMSRequestDto()
+                {
+                    message_text = msg,
+                    recipients = new List<string>() { citizen.Mobile },
+                    notification_type = "SMS",
+
+                });
 
 
                 return await GetArbitratorsDecisions(arbitratorStopDecisionCreateDto.CitizenId);
@@ -405,6 +433,15 @@ namespace REAC.Application.AppServices
 
                 // Send Notification
                 // تم إعادة تحرير المصلح
+                var msg = _sysSetting.GetBySettingKey(SysSettingKeyConstants.Reformer_Activate).Result.Data?.Value;
+                var emailResult = await _emailService.SendMail(new List<string>() { citizen.Email }, "Reformer Activated", msg);
+                var smsResult = _smsService.SendSMS(new Contracts.Dtos.Integration.GEE.SMSRequestDto()
+                {
+                    message_text = msg,
+                    recipients = new List<string>() { citizen.Mobile },
+                    notification_type = "SMS",
+
+                });
 
 
                 return await GetReformersDecisions(reformerFreeUpDecisionCreateDto.CitizenId);
@@ -449,6 +486,15 @@ namespace REAC.Application.AppServices
 
                 // Send Notification
                 // تم إيقاف المصلح
+                var msg = _sysSetting.GetBySettingKey(SysSettingKeyConstants.Reformer_DeActivate).Result.Data?.Value;
+                var emailResult = await _emailService.SendMail(new List<string>() { citizen.Email }, "Reformer Deactivated", msg);
+                var smsResult = _smsService.SendSMS(new Contracts.Dtos.Integration.GEE.SMSRequestDto()
+                {
+                    message_text = msg,
+                    recipients = new List<string>() { citizen.Mobile },
+                    notification_type = "SMS",
+
+                });
 
 
                 return await GetReformersDecisions(reformerStopDecisionCreateDto.CitizenId);

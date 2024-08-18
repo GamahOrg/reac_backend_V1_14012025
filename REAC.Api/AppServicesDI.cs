@@ -103,7 +103,7 @@ namespace REAC.Api
             services.AddScoped<DbLogger>();
             services.AddScoped<FileLogger>();
             services.AddScoped<MailLogger>();
-            services.AddScoped<IMailService, EmailService>();
+            services.AddScoped<IMailService, MailService>();
             services.AddScoped<IMOJService, MOJService>();
             services.AddScoped<IGEELoginService, GEELoginService>();
             services.AddScoped<INafathService, NafathService>();

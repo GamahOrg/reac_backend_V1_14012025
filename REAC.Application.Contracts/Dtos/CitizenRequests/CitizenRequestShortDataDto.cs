@@ -7,7 +7,9 @@ namespace REAC.Application.Contracts.Dtos.CitizenRequests
     {
         //توع الطلب
         public CitizenRequestType CitizenRequestTypeId { get; set; }
+        public string CitizenName { get; set; }
 
+        public string IdentityNumber { get; set; }
         public string CitizenRequestType { get; set; }
 
         public string? AreaName { get; set; }

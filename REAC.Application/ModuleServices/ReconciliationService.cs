@@ -82,7 +82,14 @@ namespace REAC.Application.ModuleServices
                     return new BaseResponse()
                     {
                         IsDone = false,
-                        Message = "طلب غير موجود"
+                        Message = "طلب دعوى غير موجود"
+                    };
+
+                if (litigationRequest.IsFinished == true)
+                    return new BaseResponse()
+                    {
+                        IsDone = false,
+                        Message = "طلب دعوى منتهى"
                     };
 
                 if (litigationRequest.ReformerCitizenId.HasValue)

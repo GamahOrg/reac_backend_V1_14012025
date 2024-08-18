@@ -462,7 +462,7 @@ namespace REAC.Application.ModuleServices
                             .Include(x => x.Contract.SecondPartyCitizen)
                             .Include(x => x.Contract.LitigationRequestContractType);
 
-            litigationRequests = entitiesQuerable.Where(x => x.RequestCode != null & x.ArbitratorsCount != 1
+            litigationRequests = entitiesQuerable.Where(x => x.RequestCode != null & x.ArbitratorsCount != 1 & x.LitigationRequestArbitratorLists.Count > 0
             & x.LitigationRequestCategoryId != LitigationRequestCategory.Reconciliation & x.LitigationRequestStage == LitigationRequestStage.Arbitration)
                                        .OrderByDescending(x => x.CreatedOn)
                                        .AsSplitQuery()
@@ -582,7 +582,7 @@ namespace REAC.Application.ModuleServices
 
 
             litigationRequests = entitiesQuerable.Where(
-                                      x => x.RequestCode != null
+                                      x => x.RequestCode != null & x.LitigationRequestArbitratorLists.Count > 0
                                       & x.ArbitratorsCount != 1
                                       & x.LitigationRequestArbitratorLists.Where(t => t.ArbitratorCitizenId == referenceId).Count() > 0
                                       & x.LitigationRequestStage == LitigationRequestStage.Arbitration
