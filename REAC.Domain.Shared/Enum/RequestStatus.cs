@@ -47,6 +47,7 @@ public enum RequestStatus
     ExplanationResponsed = 22,
     ///<summary>رفض طلب المشارطة</summary>
     AgreementRequestHasBeenRejected = 23,
-
+    ///<summary>ملغاة</summary>
+    Cancelled = 24,
 }
 

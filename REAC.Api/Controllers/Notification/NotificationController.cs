@@ -2,7 +2,6 @@
 using REAC.Application.Contracts.IAppServices;
 using REAC.Application.Contracts.IAppServices.Notification;
 using REAC.Domain.Shared.Constants;
-using REAC.Domain.Shared.Enum;
 
 namespace REAC.Api.Controllers.Notification
 {
@@ -24,24 +23,15 @@ namespace REAC.Api.Controllers.Notification
         [Route(nameof(GetNotificationListForPortal))]
         public async Task<IActionResult> GetNotificationListForPortal()
         {
-            Guid citizenId = Guid.NewGuid();
-            if (_jwtReader.GetCitizenId(ref citizenId))
-            {
-                return Ok(await _notificationService.GetNotificationListForPortal(citizenId, NotificationActorType.Employee));
-            }
-            return BadRequest();
+
+            return Ok(await _notificationService.GetNotificationListForPortal());
         }
 
         [HttpGet]
         [Route(nameof(GetNotificationListForBackOffice))]
         public async Task<IActionResult> GetNotificationListForBackOffice()
         {
-            Guid citizenId = Guid.NewGuid();
-            if (_jwtReader.GetCitizenId(ref citizenId))
-            {
-                return Ok(await _notificationService.GetNotificationListForBackOffice(citizenId, NotificationActorType.Employee));
-            }
-            return BadRequest();
+            return Ok(await _notificationService.GetNotificationListForBackOffice());
         }
 
         [HttpGet]
@@ -52,27 +42,17 @@ namespace REAC.Api.Controllers.Notification
         }
 
         [HttpGet]
-        [Route(nameof(GetNotificationListForPortal))]
-        public async Task<IActionResult> GetNotificationListForPortal(int pageIndex, int pageSize)
+        [Route(nameof(GetNotificationListForPortalPaged))]
+        public async Task<IActionResult> GetNotificationListForPortalPaged(int pageIndex, int pageSize)
         {
-            Guid referenceId = Guid.NewGuid();
-            if (_jwtReader.GetReferenceId(ref referenceId))
-            {
-                return Ok(await _notificationService.GetNotificationListForPortal(pageIndex, pageSize, referenceId, NotificationActorType.Employee));
-            }
-            return BadRequest();
+            return Ok(await _notificationService.GetNotificationListForPortal(pageIndex, pageSize));
         }
 
         [HttpGet]
-        [Route(nameof(GetNotificationListForBackOffice))]
-        public async Task<IActionResult> GetNotificationListForBackOffice(int pageIndex, int pageSize)
+        [Route(nameof(GetNotificationListForBackOfficePaged))]
+        public async Task<IActionResult> GetNotificationListForBackOfficePaged(int pageIndex, int pageSize)
         {
-            Guid referenceId = Guid.NewGuid();
-            if (_jwtReader.GetReferenceId(ref referenceId))
-            {
-                return Ok(await _notificationService.GetNotificationListForBackOffice(pageIndex, pageSize, referenceId, NotificationActorType.Employee));
-            }
-            return BadRequest();
+            return Ok(await _notificationService.GetNotificationListForBackOffice(pageIndex, pageSize));
         }
     }
 }

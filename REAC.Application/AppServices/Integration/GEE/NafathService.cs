@@ -1,16 +1,22 @@
 ﻿using Core.Dtos;
 using Core.GenericRepository.BaseRepository;
+using Core.Log.Application.Contracts.Dto;
+using Core.Log.Application.Contracts.IAppServices;
 using Core.Security.Contracts;
+using Core.Security.Entities;
 using Core.Shared.Responses;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.SignalR;
 using Newtonsoft.Json;
 using REAC.Application.AppServices.Integration.Hubs;
 using REAC.Application.Contracts.Dtos.Integration.GEE;
 using REAC.Application.Contracts.Dtos.Integration.Nafath;
+using REAC.Application.Contracts.Dtos.UserManage;
 using REAC.Application.Contracts.IAppServices.Integration;
 using REAC.Application.Contracts.IAppServices.Integration.Hubs.Contracts;
 using REAC.Application.Contracts.IAppServices.System;
 using REAC.Domain.Shared.Constants;
+using REAC.EntityFrameworkCore.Entities.Actor;
 using REAC.EntityFrameworkCore.Entities.Integration;
 using REAC.EntityFrameworkCore.Entities.System;
 using System.IdentityModel.Tokens.Jwt;
@@ -30,26 +36,48 @@ namespace REAC.Application.AppServices.Integration.GEE
         private readonly IGEELoginService _gEELoginService;
         private readonly IHubContext<IdentityHub, IIdentityClient> _identityHub;
         private readonly INafathTransactionService _nafathTransactionService;
-        public NafathService(ISysSettingService sysSetting, IEntityRepository repository, IGEELoginService gEELoginService
-            , IHubContext<IdentityHub, IIdentityClient> identityHub, IAccountService accountService, INafathTransactionService nafathTransactionService)
+        private readonly UserManager<User> _userManager;
+        private readonly ILoggerManager _loggerManager;
+
+        public NafathService(ISysSettingService sysSetting, IAccountService accountService, IEntityRepository repository, IGEELoginService gEELoginService, IHubContext<IdentityHub, IIdentityClient> identityHub, 
+            INafathTransactionService nafathTransactionService, UserManager<User> userManager, ILoggerManager loggerManager)
         {
             _sysSetting = sysSetting;
+            _accountService = accountService;
             _repository = repository;
             _gEELoginService = gEELoginService;
             _identityHub = identityHub;
-            _accountService = accountService;
             _nafathTransactionService = nafathTransactionService;
+            _userManager = userManager;
+            _loggerManager = loggerManager;
         }
+
         public async Task<DataResponse<NafathResponseDto>> Nafath(NafathRequestDto nafathRequestDto, CancellationToken cancellationToken)
         {
             try
             {
                 if (nafathRequestDto is null)
                     return new DataResponse<NafathResponseDto> { IsDone = false, Message = "" };
+
                 string? accessToken = null;
                 string? refreshToken = null;
+                bool isDraftAccount = false;
+                bool isArbitrator = false;
+                bool isReformer = false;
+                bool isLawyer = false;
 
-                if (!nafathRequestDto.IsRegister)
+                var existCitizen = (await _repository.GetQueryable<Citizen, Guid>())
+                    .FirstOrDefault(x => x.IdentityNumber == nafathRequestDto.NationalId);
+
+                if (existCitizen is not null)
+                {
+                    isArbitrator = existCitizen.IsArbitrator ?? false;
+                    isReformer = existCitizen.IsReformer ?? false;
+                    isLawyer = existCitizen.IsLawyer ?? false;
+                    isDraftAccount = existCitizen.IsDraftAccount ?? false;
+                }
+
+                if (!nafathRequestDto.IsRegister && (existCitizen is not null && !isDraftAccount))
                 {
                     UserLoginDto UserLogin = new UserLoginDto()
                     { UserName = nafathRequestDto.NationalId, Password = "123456" };
@@ -59,6 +87,16 @@ namespace REAC.Application.AppServices.Integration.GEE
 
                     accessToken = login.Data.AccessToken;
                     refreshToken = login.Data.RefreshToken;
+                }
+               
+                if(!nafathRequestDto.IsRegister && existCitizen is null && !isDraftAccount)
+                    return new DataResponse<NafathResponseDto> { IsDone = false, Message = "هذا المستخدم غير مسجل بالنظام" };
+
+                if (nafathRequestDto.IsRegister)
+                {
+                    var isExistUser = _userManager.Users.Any(x => x.UserName == nafathRequestDto.NationalId);
+                    if(!isDraftAccount && isExistUser)
+                        return new DataResponse<NafathResponseDto> { IsDone = false, Message = "المستخدم موجود بالفعل" };
                 }
 
                 var token = (await _gEELoginService.Login()).Data?.Access_token;
@@ -86,7 +124,7 @@ namespace REAC.Application.AppServices.Integration.GEE
                 if (response.IsSuccessStatusCode)
                 {
                     nafathResponse.Data = await response.Content.ReadFromJsonAsync<NafathResponseDataDto>();
-
+                    nafathResponse.IsDraftAccount = isDraftAccount;
                     //if(nafathResponse.Data is null || nafathResponse.Data.TransId is null || nafathResponse.Data.Random is null)
                     //{
                     //    var nafathTransaction = _nafathTransactionService.GettAll().FirstOrDefault(x => x.NationalId == nafathRequestDto.NationalId);
@@ -109,6 +147,10 @@ namespace REAC.Application.AppServices.Integration.GEE
                             RandomNumber = nafathResponse.Data.Random,
                             TransactionId = nafathResponse.Data.TransId,
                             RequestExpired = DateTime.Now.AddMinutes(2),
+                            IsDraftAccount = isDraftAccount,
+                            IsReformer = isReformer,
+                            IsArbitrator = isArbitrator,
+                            IsLawye = isLawyer,
                         };
                         _nafathTransactionService.Add(nafathTransaction);
                     }
@@ -117,6 +159,7 @@ namespace REAC.Application.AppServices.Integration.GEE
                 else
                 {
                     nafathResponse.Error = await response.Content.ReadFromJsonAsync<NafathResponseErrorDto>();
+                    nafathResponse.IsDraftAccount = isDraftAccount;
                     return new DataResponse<NafathResponseDto> { IsDone = false, Message = nafathResponse.Error?.Message ?? nafathResponse.Error?.Code ?? "", Data = nafathResponse };
                 }
             }
@@ -127,80 +170,137 @@ namespace REAC.Application.AppServices.Integration.GEE
         }
         
         
-        public async Task<DataResponse<UserInfoUpdatedDto>> CheckNafathStatus()
+        public async Task CheckNafathStatus()
         {
-            if (_nafathTransactionService.GettAll() is null || !_nafathTransactionService.GettAll().Any())
-                return new DataResponse<UserInfoUpdatedDto> { IsDone = false, Message = "" };
-
-            var token = (await _gEELoginService.Login()).Data?.Access_token;
-            if (token is null)
-                return new DataResponse<UserInfoUpdatedDto> { IsDone = false, Message = "" };
-
-            foreach (var nafathTransaction in _nafathTransactionService.GettAll())
+            try
             {
-                if (nafathTransaction.RequestExpired < DateTime.Now)
-                {
-                    _nafathTransactionService.Remove(nafathTransaction);
+                var token = (await _gEELoginService.Login()).Data?.Access_token;
+                if (token is null)
+                    _loggerManager.Log(Core.Log.Domain.Shared.Enums.LoggerType.Database
+                       , new LogDto()
+                       {
+                           Type = Core.Log.Domain.Shared.Enums.LogType.Error,
+                           Message = "get access token from API GEE error"
+                       });
 
-                    IdentityStatus identityStatus = new IdentityStatus()
+                var nafathCheckList = _nafathTransactionService.GettAll();
+                var removeList = new List<NafathTransaction>();
+                if (nafathCheckList is not null && nafathCheckList.Any())
+                {
+                    foreach (var nafathTransaction in nafathCheckList)
                     {
-                        TransactionId = nafathTransaction.TransactionId,
-                        IsValid = false,
-                        Token = null,
-                        UserInfoUpdated = null,
-                    };
-                    await _identityHub.Clients.Group(identityStatus.TransactionId).ReceivedIdentityStatus(identityStatus);
-                    continue;
-                }
-
-                NafathCheckRequestDto nafathCheckRequestDto = new NafathCheckRequestDto()
-                {
-                    Id = nafathTransaction.NationalId,
-                    Random = nafathTransaction.RandomNumber,
-                    TransId = nafathTransaction.TransactionId,
-                    Token = token
-                };
-
-                var nafathCheckStatusResponse = (await NafathCheckStatus(nafathCheckRequestDto));
-                if (nafathCheckStatusResponse is not null && nafathCheckStatusResponse.Data is not null)
-                {
-                    if (nafathCheckStatusResponse.Data?.Data?.Status == SysSettingKeyConstants.NafathStatus_COMPLETED
-                        && nafathCheckStatusResponse.Data?.Data?.AccessToken is not null)
-                    {
-                        var userInfo = await NafathGetUserInfo(nafathCheckStatusResponse.Data.Data.AccessToken);
-                        if (!userInfo.IsDone)
-                            return new DataResponse<UserInfoUpdatedDto> { IsDone = false, Message = "" };
-
-                        IdentityStatus identityStatus = new IdentityStatus()
+                        if (nafathTransaction.RequestExpired < DateTime.Now)
                         {
-                            TransactionId = nafathTransaction.TransactionId,
-                            IsValid = true,
-                            Token = nafathTransaction.AccessToken,
-                            RefreshToken = nafathTransaction.RefreshToken,
-                            UserInfoUpdated = userInfo.Data,
-                        };
-                        await _identityHub.Clients.Group(identityStatus.TransactionId).ReceivedIdentityStatus(identityStatus);
+                            IdentityStatus identityStatus = new IdentityStatus()
+                            {
+                                TransactionId = nafathTransaction.TransactionId,
+                                IsValid = false,
+                                Token = null,
+                                UserInfoUpdated = null,
+                            };
+                            removeList.Add(nafathTransaction);
+                            await _identityHub.Clients.Group(identityStatus.TransactionId).ReceivedIdentityStatus(identityStatus);
+                            continue;
+                        }
 
-                        _nafathTransactionService.Remove(nafathTransaction); ;
+                        NafathCheckRequestDto nafathCheckRequestDto = new NafathCheckRequestDto()
+                        {
+                            Id = nafathTransaction.NationalId,
+                            Random = nafathTransaction.RandomNumber,
+                            TransId = nafathTransaction.TransactionId,
+                            Token = token
+                        };
+
+                        var nafathCheckStatusResponse = (await NafathCheckStatus(nafathCheckRequestDto));
+                        if (nafathCheckStatusResponse is not null && nafathCheckStatusResponse.Data is not null)
+                        {
+                            if (nafathCheckStatusResponse.Data?.Data?.Status == SysSettingKeyConstants.NafathStatus_COMPLETED
+                                && nafathCheckStatusResponse.Data?.Data?.AccessToken is not null)
+                            {
+                                if (nafathTransaction.AccessToken is not null && nafathTransaction.RefreshToken is not null)
+                                {
+                                    IdentityStatus identityStatusWithToken = new IdentityStatus()
+                                    {
+                                        TransactionId = nafathTransaction.TransactionId,
+                                        IsValid = true,
+                                        Token = nafathTransaction.AccessToken,
+                                        RefreshToken = nafathTransaction.RefreshToken,
+                                        UserInfoUpdated = new UserInfoUpdatedDto()
+                                        {
+                                            IsDraftAccount = nafathTransaction.IsDraftAccount,
+                                            IsLawye = nafathTransaction.IsLawye,
+                                            IsArbitrator = nafathTransaction.IsArbitrator,
+                                            IsReformer = nafathTransaction.IsReformer,
+                                        }
+                                    };
+                                    await _identityHub.Clients.Group(identityStatusWithToken.TransactionId).ReceivedIdentityStatus(identityStatusWithToken);
+
+                                    removeList.Add(nafathTransaction);
+                                    continue;
+                                }
+
+                                var userInfo = await NafathGetUserInfo(nafathCheckStatusResponse.Data.Data.AccessToken);
+                                if (userInfo.IsDone)
+                                {
+                                    IdentityStatus identityStatus = new IdentityStatus()
+                                    {
+                                        TransactionId = nafathTransaction.TransactionId,
+                                        IsValid = true,
+                                        Token = nafathTransaction.AccessToken,
+                                        RefreshToken = nafathTransaction.RefreshToken,
+                                        UserInfoUpdated = new UserInfoUpdatedDto()
+                                        {
+                                            IsDraftAccount = nafathTransaction.IsDraftAccount,
+                                            IsLawye = nafathTransaction.IsLawye,
+                                            IsArbitrator = nafathTransaction.IsArbitrator,
+                                            IsReformer = nafathTransaction.IsReformer,
+                                            DateOfBirth = userInfo.Data?.DateOfBirth,
+                                            FirstName = userInfo.Data?.FirstName,
+                                            FullName = userInfo.Data?.FullName,
+                                            Gender = userInfo.Data?.Gender,
+                                            NationalId = userInfo.Data?.NationalId,
+                                            NationalIdExpiryDate = userInfo.Data?.NationalIdExpiryDate,
+                                            Nationality = userInfo.Data?.Nationality,
+                                            NationalityId = userInfo.Data?.NationalityId,
+                                        },
+                                    };
+                                    await _identityHub.Clients.Group(identityStatus.TransactionId).ReceivedIdentityStatus(identityStatus);
+
+                                    removeList.Add(nafathTransaction);
+                                    continue;
+                                }
+                            }
+
+                            if (nafathCheckStatusResponse.Data?.Data?.Status == SysSettingKeyConstants.NafathStatus_REJECTED
+                            || nafathCheckStatusResponse.Data?.Data?.Status == SysSettingKeyConstants.NafathStatus_EXPIRED)
+                            {
+                                IdentityStatus identityStatus = new IdentityStatus()
+                                {
+                                    TransactionId = nafathTransaction.TransactionId,
+                                    IsValid = false,
+                                };
+                                await _identityHub.Clients.Group(identityStatus.TransactionId).ReceivedIdentityStatus(identityStatus);
+
+                                removeList.Add(nafathTransaction);
+                                continue;
+                            }
+                        }
                     }
 
-                    if (nafathCheckStatusResponse.Data?.Data?.Status == SysSettingKeyConstants.NafathStatus_REJECTED
-                    || nafathCheckStatusResponse.Data?.Data?.Status == SysSettingKeyConstants.NafathStatus_EXPIRED)
+                    if (removeList.Any())
                     {
-                        IdentityStatus identityStatus = new IdentityStatus()
+                        foreach (var nafathTransaction in removeList)
                         {
-                            TransactionId = nafathTransaction.TransactionId,
-                            IsValid = false,
-                            Token = null,
-                            UserInfoUpdated = null,
-                        };
-                        await _identityHub.Clients.Group(identityStatus.TransactionId).ReceivedIdentityStatus(identityStatus);
-
-                        _nafathTransactionService.Remove(nafathTransaction);
+                            _nafathTransactionService.Remove(nafathTransaction);
+                        }
                     }
                 }
+
             }
-            return new DataResponse<UserInfoUpdatedDto> { IsDone = false, Message = "" };
+            catch (Exception)
+            {
+            }
+            
         }
         
         
@@ -274,7 +374,8 @@ namespace REAC.Application.AppServices.Integration.GEE
                     FirstName = nafathUserInfoDto.user_info.first_name_ar,
                     NationalId = nafathUserInfoDto.user_info.id,
                     DateOfBirth = DateTime.Parse(nafathUserInfoDto.user_info.dob_g),
-                    NationalIdExpiryDate = DateTime.Parse(nafathUserInfoDto.user_info.id_expiry_date_g),
+                    NationalIdExpiryDate = nafathUserInfoDto.user_info.id_expiry_date_g is not null ? 
+                        DateTime.Parse(nafathUserInfoDto.user_info.id_expiry_date_g) : null,
                     Gender = nafathUserInfoDto.user_info.gender == "M" ? Domain.Shared.Enum.Gender.Male : Domain.Shared.Enum.Gender.Female,
                     NationalityId = nationality?.Id ?? nationalityId,
                     Nationality = nationality?.NationalityName ?? nafathUserInfoDto.user_info.nationality_ar,
@@ -328,6 +429,7 @@ namespace REAC.Application.AppServices.Integration.GEE
                 return new DataResponse<NafathCheckResponseDto>() { IsDone = false, Message = e.Message + e.InnerException };
             }
         }
+
         private async Task<DataResponse<NafathRequestBodyDto>> GetNafathSettingsData(string nationalId)
         {
             var settings = await _sysSetting.GetByIntegrationKey(SysSettingKeyConstants.Nafath_Key);

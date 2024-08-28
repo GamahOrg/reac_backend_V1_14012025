@@ -1,4 +1,5 @@
 ﻿using Core.GenericRepository.Shared.BaseEntities;
+using REAC.Domain.Shared.Enum;
 
 namespace REAC.Application.Contracts.Dtos.Notification;
 
@@ -8,7 +9,7 @@ public class NotificationDto : BaseEntity<Guid>
 
     public Guid RequestId { get; set; }
 
-    public int ActorTypeId { get; set; }
+    public NotificationActorType NotificationActorTypeId { get; set; }
 
     public Guid ActorId { get; set; }
 

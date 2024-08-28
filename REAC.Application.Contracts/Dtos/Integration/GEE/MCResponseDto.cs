@@ -126,6 +126,65 @@
     }
     #endregion
 
+    #region Test CR Information By CR Owners
+
+    public class TestMCCRInformationByCROwnersResponseDto
+    {
+        public TestCRInformationByCROwnersResponseDataDto? Data { get; set; }
+        public GeneralGEEErrorDto? Error { get; set; }
+        public UnauthorizedErrorDto? UnauthorizedError { get; set; }
+    }
+
+    public class TestCRInformationByCROwnersResponseDataDto
+    {
+        public TestGetCROwnersByCRNumberResponseDto GetCROwnersByCRNumberResponse { get; set; }
+    }
+
+    public class TestGetCROwnersByCRNumberResponseDto
+    {
+        public TestGetCROwnersByCRNumberResultDto GetCROwnersByCRNumberResult { get; set; }
+    }
+
+    public class TestGetCROwnersByCRNumberResultDto
+    {
+        public TestGetCROwnersByCRNumberResponseDetailObjectDto getCROwnersByCRNumberResponseDetailObject { get; set; }
+    }
+
+    public class TestGetCROwnersByCRNumberResponseDetailObjectDto
+    {
+        public TestCROwnersListDto CROwnersList { get; set; }
+    }
+
+    public class TestCROwnersListDto
+    {
+        public CROwnerDto CROwner { get; set; }
+    }
+
+    public class TestCROwnerDto
+    {
+        public OwnerIDDto OwnerID { get; set; }
+    }
+
+    public class TestOwnerIDDto
+    {
+        public TestPersonIdentifierDto PersonIdentifier { get; set; }
+    }
+
+    public class TestPersonIdentifierDto
+    {
+        public string NationalID { get; set; }
+    }
+
+
+    public class TestCRInformationByCROwnersUpdatedDto
+    {
+        //أرقام هوية مُلاك السجل التجاري
+        public List<string>? Data { get; set; } = new List<string>();
+        public GeneralGEEErrorDto? Error { get; set; }
+        public UnauthorizedErrorDto? UnauthorizedError { get; set; }
+    }
+    #endregion
+
 
     public class UnauthorizedErrorDto
     {

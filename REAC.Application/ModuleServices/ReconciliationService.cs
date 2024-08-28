@@ -1,19 +1,21 @@
 ﻿using AutoMapper;
-using Core.Contracts;
 using Core.GenericRepository.BaseRepository;
 using Core.Shared.Responses;
-using Microsoft.AspNetCore.SignalR;
+using Microsoft.EntityFrameworkCore;
+using REAC.Application.Contracts.Dtos.Notification;
 using REAC.Application.Contracts.Dtos.Reconciliation.Process;
 using REAC.Application.Contracts.Dtos.Wpf.Business;
 using REAC.Application.Contracts.IAppServices;
-using REAC.Application.Contracts.IAppServices.Integration;
+using REAC.Application.Contracts.IAppServices.Notification;
 using REAC.Application.Contracts.IAppServices.System;
 using REAC.Application.Contracts.IAppServices.Wpf.Business;
+using REAC.Domain.Shared.Constants;
 using REAC.Domain.Shared.Enum;
+using REAC.EntityFrameworkCore.Entities.Actor;
 using REAC.EntityFrameworkCore.Entities.Litigation;
 using REAC.EntityFrameworkCore.Entities.System;
-using Wafi.Application.Hubs;
-using Wafi.Application.Hubs.Contracts;
+using REAC.EntityFrameworkCore.Entities.Wpf.Business;
+
 
 namespace REAC.Application.ModuleServices
 {
@@ -22,31 +24,37 @@ namespace REAC.Application.ModuleServices
         private readonly IMapper _mapper;
         private readonly IEntityRepository _repository;
         private readonly IJwtReader _jwtReader;
-        private readonly ISysSettingService _settingService;
-        private readonly ISMSService _sMSService;
-        private readonly IMailService _mailService;
-        private readonly IHubContext<NotificationHub, INotificationClient> _notificationHub;
+        private readonly ISysEmployeeService _employeeService;
+        private readonly INotificationService _notificationService;
+        private readonly ISysSettingService _sysSettingService;
 
-        public ReconciliationService(IEntityRepository repository, ISysSettingService settingService,
+        public ReconciliationService(IEntityRepository repository, ISysSettingService sysSettingService,
                           IWorkFlowProcessingLogService workFlowProcessingLogService,
                           IMapper mapper,
-                          IJwtReader jwtReader,
-                          ISMSService sMSService,
-                          IMailService mailService,
-                          IHubContext<NotificationHub, INotificationClient> notificationHub)
+                          IJwtReader jwtReader
+, INotificationService notificationService, ISysEmployeeService employeeService)
 
         {
             _mapper = mapper;
             _repository = repository;
             _jwtReader = jwtReader;
-            _settingService = settingService;
-            _sMSService = sMSService;
-            _mailService = mailService;
-            _notificationHub = notificationHub;
+            _notificationService = notificationService;
+            _sysSettingService = sysSettingService;
+            _employeeService = employeeService;
         }
 
         public async Task<BaseResponse> Assign(AssignRequestPayload assignRequestPayload, CancellationToken cancellationToken)
         {
+            var msg = "";
+            var litigationRequest = (await _repository.GetQueryable<LitigationRequest, Guid>()).Include(x => x.Area).Include(x => x.City)
+                          .Include(x => x.ApplicantCitizen)
+                          .Include(x => x.Contract)
+                          .Include(x => x.Contract.FirstPartyFacility)
+                          .Include(x => x.Contract.FirstPartyCitizen)
+                          .Include(x => x.Contract.SecondPartyFacility)
+                          .Include(x => x.Contract.SecondPartyCitizen)
+                          .Where(x => x.Id == assignRequestPayload.RequestId).ToList().FirstOrDefault();
+            var deptAdminInfoReconciliation = await _employeeService.GetAdminsByDepartmentType(DepartmentType.Reconciliation);
             try
             {
                 Guid referenceId = Guid.Empty;
@@ -59,7 +67,7 @@ namespace REAC.Application.ModuleServices
                         Message = "موظف غير معروف"
                     };
                 var employee = (await _repository.GetQueryable<SysEmployee, Guid>())?
-                        .Where(x => x.Id == referenceId).Single();
+                        .Where(x => x.Id == Guid.Parse("D4430015-C883-413D-B57A-29B5FC6C07C8")).SingleOrDefault();
 
                 if (employee == null)
                     return new BaseResponse()
@@ -75,8 +83,8 @@ namespace REAC.Application.ModuleServices
                         Message = "موظف غير مسموح له"
                     };
 
-                var litigationRequest = (await _repository.GetQueryable<LitigationRequest, Guid>())?
-                       .Where(x => x.Id == assignRequestPayload.RequestId).Single();
+                litigationRequest = (await _repository.GetQueryable<LitigationRequest, Guid>())?
+                      .Where(x => x.Id == assignRequestPayload.RequestId).Single();
 
                 if (litigationRequest == null)
                     return new BaseResponse()
@@ -113,23 +121,87 @@ namespace REAC.Application.ModuleServices
                     };
                 }
 
-                litigationRequestReformerAssigningRequests = (await _repository.GetQueryable<LitigationRequestReformerAssigningRequest, Guid>())?
-                   .Where(x => x.LitigationRequestId == assignRequestPayload.RequestId & x.Response == 0);
+                litigationRequestReformerAssigningRequests = (await _repository.GetQueryable<LitigationRequestReformerAssigningRequest, Guid>()).Include(x => x.ReformerCitizen)?
 
+
+                   .Where(x => x.LitigationRequestId == assignRequestPayload.RequestId & x.Response == 0);
 
                 if (litigationRequestReformerAssigningRequests.Any())
                 {
+
                     foreach (var request in litigationRequestReformerAssigningRequests.ToList())
                     {
+
                         request.Response = LitigationRequestReformerAssigningRequestStatus.Cancelled;
                         var saveResponse = await _repository.SaveChangesAsync(new CancellationToken());
                         if (!saveResponse.IsDone)
                             return saveResponse;
 
+                        await _repository.AddAsync<WorkFlowLog, Guid>(new WorkFlowLog()
+                        {
+                            Id = Guid.NewGuid(),
+                            CreatedOn = DateTime.Now,
+                            RequestId = litigationRequest.Id,
+                            ShowForApplicant = false,
+                            LogMessage = "تم إلغاء تعيين المصلح " + request.ReformerCitizen?.FullName
+                        });
                         // Send Notification
                         // تم إلغاء المهمة (دعوى صلح)
+                        try
+                        {
+                            msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.Reconciliation_Cancelled).Result.Data?.Value;
+                            msg = msg?.Replace("{LitigationCode}", litigationRequest?.RequestCode);
+
+                            var notificationResponse = await _notificationService.SendNotifications(
+                           new Contracts.Dtos.Notification.SendEmailDto()
+                           {
+                               To = new List<string>() { litigationRequest.ReformerCitizen.Email, deptAdminInfoReconciliation.Data.Email },
+                               Subject = "Reconciliation cancelled",
+                               Body = msg
+                           },
+                           new Contracts.Dtos.Integration.GEE.SMSRequestDto()
+                           {
+                               message_text = msg,
+                               recipients = new List<string>() { litigationRequest.ReformerCitizen.Mobile, deptAdminInfoReconciliation.Data.Mobile },
+                               notification_type = "SMS",
+                           },
+                           new List<SysNotificationDto>()
+                           {
+                               new SysNotificationDto()
+                               {
+                                    ActorId = litigationRequest.ReformerCitizen.Id,
+                                    CreatedOn = DateTime.Now,
+                                    ActorTypeId = NotificationActorType.Reformer,
+                                    IsViewed = false,
+                                    ViewedOn = null,
+                                    RequestId = request.Id,
+                                    RequestTypeId = RequestType.ReformerTaskrequests,
+                                    Message = msg,
+                               },
+                               new SysNotificationDto()
+                               {
+                                    ActorId = deptAdminInfoReconciliation.Data.Id,
+                                    CreatedOn = DateTime.Now,
+                                    ActorTypeId = NotificationActorType.Employee,
+                                    IsViewed = false,
+                                    ViewedOn = null,
+                                    RequestId = request.Id,
+                                    RequestTypeId = RequestType.ReformerTaskrequests,
+                                    Message = msg,
+                               }
+                           }
+                           );
+                        }
+                        catch (Exception ex)
+                        {
+
+                        }
+
                     }
                 }
+
+                var citizen = (await _repository.GetQueryable<Citizen, Guid>()).Where(x => x.Id == assignRequestPayload.ReformerId).FirstOrDefault();
+
 
                 LitigationRequestReformerAssigningRequest litigationRequestReformerAssigningRequest = new LitigationRequestReformerAssigningRequest();
                 litigationRequestReformerAssigningRequest.CitizenId = assignRequestPayload.ReformerId;
@@ -140,6 +212,56 @@ namespace REAC.Application.ModuleServices
 
                 // Send Notification
                 // تم إرسال مهمة مصلح لمصلح أخر
+                try
+                {
+                    msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.Reconciliation_ReAssigned).Result.Data?.Value;
+                    msg = msg?.Replace("{LitigationCode}", litigationRequest?.RequestCode);
+                    msg = msg?.Replace("{ReformerName}", citizen?.FullName);
+
+                    var notificationResponse = await _notificationService.SendNotifications(
+                           new Contracts.Dtos.Notification.SendEmailDto()
+                           {
+                               To = new List<string>() { deptAdminInfoReconciliation.Data.Email },
+                               Subject = "Reconciliation ReAssigned",
+                               Body = msg
+                           },
+                           new Contracts.Dtos.Integration.GEE.SMSRequestDto()
+                           {
+                               message_text = msg,
+                               recipients = new List<string>() { deptAdminInfoReconciliation.Data.Mobile },
+                               notification_type = "SMS",
+                           },
+                           new List<SysNotificationDto>()
+                           {
+
+                               new SysNotificationDto()
+                               {
+                                    ActorId = deptAdminInfoReconciliation.Data.Id,
+                                    CreatedOn = DateTime.Now,
+                                    ActorTypeId = NotificationActorType.Employee,
+                                    IsViewed = false,
+                                    ViewedOn = null,
+                                    RequestId = litigationRequestReformerAssigningRequest.Id,
+                                    RequestTypeId = RequestType.ReformerTaskrequests,
+                                    Message = msg,
+                               }
+                           }
+                           );
+                }
+                catch (Exception ex)
+                {
+
+                }
+
+
+                await _repository.AddAsync<WorkFlowLog, Guid>(new WorkFlowLog()
+                {
+                    Id = Guid.NewGuid(),
+                    CreatedOn = DateTime.Now,
+                    RequestId = litigationRequest.Id,
+                    ShowForApplicant = false,
+                    LogMessage = "تم إرسال طلب مهمة  للمصلح " + citizen.FullName
+                });
 
                 var repositorySaveResponse = await _repository.SaveChangesAsync(new CancellationToken());
                 return repositorySaveResponse;
@@ -155,10 +277,18 @@ namespace REAC.Application.ModuleServices
 
         #region Decision
         public async Task<BaseResponse> AddLitigationRequestDecision(LitigationRequestAction requestPayload, CancellationToken cancellationToken)
-
         {
             Guid referenceId = Guid.Empty;
             _jwtReader.GetReferenceId(ref referenceId);
+            var msg = "";
+            var litigationRequest = (await _repository.GetQueryable<LitigationRequest, Guid>()).Include(x => x.Area).Include(x => x.City)
+                          .Include(x => x.ApplicantCitizen)
+                          .Include(x => x.Contract)
+                          .Include(x => x.Contract.FirstPartyFacility)
+                          .Include(x => x.Contract.FirstPartyCitizen)
+                          .Include(x => x.Contract.SecondPartyFacility)
+                          .Include(x => x.Contract.SecondPartyCitizen)
+                          .Where(x => x.Id == requestPayload.RequestId).ToList().FirstOrDefault();
 
             var litigationRequests = (await _repository.GetQueryable<LitigationRequest, Guid>())
                                       .Where(x => x.Id == requestPayload.RequestId & x.ReformerCitizenId == referenceId).ToList();
@@ -168,6 +298,7 @@ namespace REAC.Application.ModuleServices
 
             switch (requestPayload.LitigationRequestDecision)
             {
+
                 case LitigationRequestDecision.WaiverOfRight:
                     litigationRequests.FirstOrDefault().InternalStatusId = RequestStatus.WaiverOfRight;
                     litigationRequests.FirstOrDefault().ExternalStatusId = RequestStatus.WaiverOfRight;
@@ -176,6 +307,14 @@ namespace REAC.Application.ModuleServices
                     litigationRequests.FirstOrDefault().LitigationRequestSubStage = LitigationRequestSubStage.LitigationRequestReformerDecisionAdded;
                     // Send Notification
                     // تم التنازل عن الحق
+                    try
+                    {
+                        msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.LitigationRequest_Decision_WaiverOfRight).Result.Data?.Value;
+                        msg = msg.Replace("{LitigationCode}", litigationRequest.RequestCode);
+                        sendNotificationMSWithAllTypes(msg, litigationRequest, "Citizen Litigation Request For Report Reply Added");
+                    }
+                    catch (Exception e)
+                    { }
                     break;
                 case LitigationRequestDecision.ReconciliationWasMade:
                     litigationRequests.FirstOrDefault().InternalStatusId = RequestStatus.ReconciliationWasMade;
@@ -185,6 +324,14 @@ namespace REAC.Application.ModuleServices
                     litigationRequests.FirstOrDefault().LitigationRequestSubStage = LitigationRequestSubStage.LitigationRequestReformerDecisionAdded;
                     // Send Notification
                     // تم الصلح
+                    try
+                    {
+                        msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.LitigationRequest_Decision_ReconciliationWasMade).Result.Data?.Value;
+                        msg = msg.Replace("{LitigationCode}", litigationRequest.RequestCode);
+                        sendNotificationMSWithAllTypes(msg, litigationRequest, "Citizen Litigation Request For Report Reply Added");
+                    }
+                    catch (Exception e)
+                    { }
                     break;
                 case LitigationRequestDecision.WaiverOfTheLitigation:
                     litigationRequests.FirstOrDefault().InternalStatusId = RequestStatus.WaiverOfTheLitigation;
@@ -194,18 +341,35 @@ namespace REAC.Application.ModuleServices
                     litigationRequests.FirstOrDefault().LitigationRequestSubStage = LitigationRequestSubStage.LitigationRequestReformerDecisionAdded;
                     // Send Notification
                     // تم التنازل عن الدعوى
+                    try
+                    {
+                        msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.LitigationRequest_Decision_WaiverOfTheLitigation).Result.Data?.Value;
+                        msg = msg.Replace("{LitigationCode}", litigationRequest.RequestCode);
+                        sendNotificationMSWithAllTypes(msg, litigationRequest, "Decision of reconciliation was added");
+                    }
+                    catch (Exception e)
+                    { }
                     break;
                 case LitigationRequestDecision.ReconciliationWasNotMade:
-
                     if (litigationRequests.FirstOrDefault().LitigationRequestCategoryId == LitigationRequestCategory.ReconciliationAndArbitration)
                     {
                         litigationRequests.FirstOrDefault().InternalStatusId = RequestStatus.ReconciliationWasNotMadeAndMoveToArbitration;
                         litigationRequests.FirstOrDefault().ExternalStatusId = RequestStatus.ReconciliationWasNotMadeAndMoveToArbitration;
-                        litigationRequests.FirstOrDefault().StartArbitrationDate = DateTime.Now;
                         litigationRequests.FirstOrDefault().LitigationRequestStage = LitigationRequestStage.Arbitration;
                         litigationRequests.FirstOrDefault().LitigationRequestSubStage = LitigationRequestSubStage.ArbitratorSelectionPeriod;
                         // Send Notification
                         // عدم الصلح والانتقال للتحكيم
+                        try
+                        {
+                            msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.LitigationRequest_Decision_ReconciliationWasNotMadeAndMoveToArbitration).Result.Data?.Value;
+                            msg = msg.Replace("{LitigationCode}", litigationRequest.RequestCode);
+                            sendNotificationMSWithAllTypes(msg, litigationRequest, "Citizen Litigation Request For Report Reply Added");
+                        }
+                        catch (Exception e)
+                        {
+
+
+                        }
                     }
                     else
                     {
@@ -213,8 +377,18 @@ namespace REAC.Application.ModuleServices
                         litigationRequests.FirstOrDefault().ExternalStatusId = RequestStatus.ReconciliationWasNotMade;
                         litigationRequests.FirstOrDefault().IsActive = false;
                         litigationRequests.FirstOrDefault().IsFinished = true;
+
                         // Send Notification
                         // عدم الصلح
+
+                        try
+                        {
+                            msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.LitigationRequest_Decision_ReconciliationWasNotMade).Result.Data?.Value;
+                            msg = msg.Replace("{LitigationCode}", litigationRequest.RequestCode);
+                            sendNotificationMSWithAllTypes(msg, litigationRequest, "Citizen Litigation Request For Report Reply Added");
+                        }
+                        catch (Exception e)
+                        { }
                     }
                     break;
             }
@@ -228,6 +402,8 @@ namespace REAC.Application.ModuleServices
             return await GetLitigationRequestForReport(requestPayload.RequestId, cancellationToken);
 
         }
+
+
         #endregion
     }
 }

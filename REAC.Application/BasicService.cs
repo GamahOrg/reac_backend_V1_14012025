@@ -17,6 +17,7 @@ namespace REAC.Application
         protected ILoggerManager _loggerManager;
         private readonly IJwtReader _jwtReader;
 
+
         public BasicService(IEntityRepository repository,
             IMapper mapper, ILoggerManager loggerManager, IJwtReader jwtReader)
         {
@@ -30,6 +31,7 @@ namespace REAC.Application
             _repository.AfterDeleteEvent += _repository_AfterDeleteEvent;
             _jwtReader = jwtReader;
             _loggerManager = loggerManager;
+
         }
 
         private BaseResponse _repository_AfterDeleteEvent(DbContext dbContext, object baseEntity)

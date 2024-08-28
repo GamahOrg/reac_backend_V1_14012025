@@ -8,27 +8,50 @@ namespace REAC.Application.AppServices.Integration.GEE
     {
         private readonly IServiceScopeFactory _scopeFactory;
         private static readonly object _lock = new();
+        private Timer? _timer = null;
+        bool canExecute = true;
 
         public NafathBackgroundTaskService(IServiceScopeFactory scopeFactory)
         {
             _scopeFactory = scopeFactory;
         }
 
+
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            while (!stoppingToken.IsCancellationRequested)
+
+            _timer = new Timer(async t =>
             {
-                lock (_lock)
+                await DoWork(stoppingToken);
+            }
+           , null, TimeSpan.FromMinutes(1), TimeSpan.FromSeconds(10));
+
+        }
+
+        public async Task DoWork(CancellationToken stoppingToken)
+        {
+            if (canExecute)
+            {
+                canExecute = false;
+                try
                 {
-                    using (var scope = _scopeFactory.CreateScope())
+                    using (var scope1 = _scopeFactory.CreateScope())
                     {
-                        var nafathService = scope.ServiceProvider.GetRequiredService<INafathService>();
-                        if (nafathService is not null)
-                            nafathService.CheckNafathStatus();
+                        using (var scope = _scopeFactory.CreateScope())
+                        {
+                            var nafathService = scope.ServiceProvider.GetRequiredService<INafathService>();
+                            if (nafathService is not null)
+                                await nafathService.CheckNafathStatus();
+                            canExecute = true;
+                        }
                     }
                 }
-                await Task.Delay(TimeSpan.FromSeconds(5), stoppingToken);
+                catch (Exception)
+                {
+                    canExecute = true;
+                }
             }
         }
+
     }
 }

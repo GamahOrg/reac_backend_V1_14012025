@@ -850,6 +850,9 @@ namespace REAC.EntityFrameworkCore.Migrations
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<DateTime?>("AgreementRequestRequiredOn")
+                        .HasColumnType("datetime2");
+
                     b.Property<Guid>("ApplicantCitizenId")
                         .HasColumnType("uniqueidentifier");
 
@@ -961,6 +964,12 @@ namespace REAC.EntityFrameworkCore.Migrations
                     b.Property<bool?>("IsFinished")
                         .HasColumnType("bit");
 
+                    b.Property<bool?>("IsLitigationRequestReconciliationReportResponsePeriodSent")
+                        .HasColumnType("bit");
+
+                    b.Property<bool?>("IsLitigationRequestReformerAssigningRequestResponsePeriodSent")
+                        .HasColumnType("bit");
+
                     b.Property<bool?>("IsMinutesOfMeetingApprovalRequired")
                         .HasColumnType("bit");
 
@@ -968,6 +977,21 @@ namespace REAC.EntityFrameworkCore.Migrations
                         .HasColumnType("bit");
 
                     b.Property<bool?>("IsPlaintiffArbitratorNominationListDone")
+                        .HasColumnType("bit");
+
+                    b.Property<bool?>("IsReformerReminderForReconciliationFirstPeriodSent")
+                        .HasColumnType("bit");
+
+                    b.Property<bool?>("IsReminderForAgreementRequestForRequestSent")
+                        .HasColumnType("bit");
+
+                    b.Property<bool?>("IsReminderForApplicantSent")
+                        .HasColumnType("bit");
+
+                    b.Property<bool?>("IsReminderForReviewerManagerSent")
+                        .HasColumnType("bit");
+
+                    b.Property<bool?>("IsReminderForReviewerSent")
                         .HasColumnType("bit");
 
                     b.Property<bool>("IsSent")

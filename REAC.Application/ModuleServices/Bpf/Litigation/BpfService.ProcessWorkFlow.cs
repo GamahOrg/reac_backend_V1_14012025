@@ -1,8 +1,11 @@
 ﻿using Core.Shared.Responses;
 using Microsoft.EntityFrameworkCore;
+using REAC.Application.Contracts.Dtos.Integration.GEE;
+using REAC.Application.Contracts.Dtos.Notification;
 using REAC.Application.Contracts.Dtos.Wpf.Business;
 using REAC.Application.Contracts.Dtos.Wpf.Business.WorkFlowLog;
 using REAC.Application.Contracts.Dtos.Wpf.System;
+using REAC.Domain.Shared.Constants;
 using REAC.Domain.Shared.Enum;
 using REAC.Domain.Shared.Enum.Wpf;
 using REAC.EntityFrameworkCore.Entities.Actor;
@@ -20,8 +23,8 @@ namespace Bpf.Application.ModuleServices
             ResponseWorkFlowDto responseWorkFlowDto = new ResponseWorkFlowDto();
             try
             {
-                Guid employeeId = Guid.Empty;
-                _jwtReader.GetReferenceId(ref employeeId);
+                Guid referenceId = Guid.Empty;
+                _jwtReader.GetReferenceId(ref referenceId);
 
                 var processingLog = (await _repository.GetQueryable<WorkFlowProcessingLog, Guid>())?
                         .Where(x => x.Id == requestPayload.ProcessingLogId)
@@ -33,9 +36,19 @@ namespace Bpf.Application.ModuleServices
 
 
                 var litigationRequest = (await _repository.GetQueryable<LitigationRequest, Guid>())?
+                    .Include(x => x.WorkFlowProcessingLogs)
+                    .ThenInclude(x => x.Employee)
                     .Include(x => x.Contract)
+                        .ThenInclude(x => x.FirstPartyCitizen)
+                        .Include(x => x.Contract)
+                         .ThenInclude(x => x.SecondPartyCitizen)
+                        .Include(x => x.Contract).ThenInclude(x => x.FirstPartyFacility).ThenInclude(x => x.Citizen)
+                        .Include(x => x.Contract).ThenInclude(x => x.SecondPartyFacility).ThenInclude(x => x.Citizen)
+                        .Include(x => x.ApplicantCitizen)
                         .Where(x => x.Id == requestPayload.RequestId)
                         .Single();
+
+                 Guid? employeeId = litigationRequest.WorkFlowProcessingLogs.Where(w => w.EmployeeId != null).OrderBy(x => x.CreatedOn).LastOrDefault()?.EmployeeId;
 
                 #region Validate Employee
 
@@ -145,7 +158,7 @@ namespace Bpf.Application.ModuleServices
                     {
                         CreatedOn = DateTime.UtcNow,
                         ShowForApplicant = processingLog.WorkFlowStep.WorkFlowStepEvents.Single().ShowLogForApplicant,
-                        LogMessage = processingLog.WorkFlowStep.WorkFlowStepEvents.Single().LogMessage,
+                        LogMessage = processingLog.WorkFlowStep.WorkFlowStepEvents.Single().LogMessage + ((requestPayload.Notes != null) ? " - " + requestPayload.Notes : ""),
                         RequestId = requestPayload.RequestId
                     };
                     processingLog.WorkFlowStep.WorkFlowStepEvents.Single().Translations?.ToList().ForEach(x =>
@@ -221,17 +234,45 @@ namespace Bpf.Application.ModuleServices
                 }
                 #endregion
 
-
+                var deptAdminInfoArbitration = await _employeeService.GetAdminsByDepartmentType(DepartmentType.Arbitration);
+                var deptAdminInfoReconciliation = await _employeeService.GetAdminsByDepartmentType(DepartmentType.Reconciliation);
+                var msg = "";
 
                 switch (litigationRequest.InternalStatusId)
                 {
                     case RequestStatus.Rejected:
                         // Send Notification
                         // تم رفض الطلب
+                        try
+                        {
+                            msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.LitigationRequest_Creation_Reject).Result.Data?.Value;
+                            msg = msg.Replace("{LitigationCode}", litigationRequest.RequestCode);
+                            await sendNotificationMSPlaintiff(msg, litigationRequest, RequestType.LitigationRequest, "Litigation Request Rejected");
+                        }
+                        catch (Exception e)
+                        {
+
+                        }
+
+
+
                         break;
                     case RequestStatus.SentBackForEdit:
                         // Send Notification
                         // تم إعادة الطلب لوجود بعض الملاحظات
+                        try
+                        {
+                            msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.LitigationRequest_Creation_Resent).Result.Data?.Value;
+                            msg = msg.Replace("{LitigationCode}", litigationRequest.RequestCode);
+                            msg = msg.Replace("{ExpirationDate}", "5");
+                            await sendNotificationMSPlaintiff(msg, litigationRequest, RequestType.LitigationRequest, "Litigation Request Resent");
+                        }
+                        catch (Exception)
+                        {
+
+                        }
+
+
                         break;
                     case RequestStatus.Received:
 
@@ -288,6 +329,15 @@ namespace Bpf.Application.ModuleServices
                                                     litigationRequestReformerAssigningRequest.LitigationRequestId = litigationRequest.Id;
                                                     litigationRequestReformerAssigningRequest.Response = LitigationRequestReformerAssigningRequestStatus.None;
                                                     await _repository.AddAsync<LitigationRequestReformerAssigningRequest, Guid>(litigationRequestReformerAssigningRequest);
+
+                                                    await _repository.AddAsync<WorkFlowLog, Guid>(new WorkFlowLog()
+                                                    {
+                                                        Id = Guid.NewGuid(),
+                                                        CreatedOn = DateTime.Now,
+                                                        RequestId = litigationRequest.Id,
+                                                        ShowForApplicant = false,
+                                                        LogMessage = "تم إرسال طلب مهمة للمصلح " + reformers.FirstOrDefault()?.FullName
+                                                    });
                                                 }
                                                 var approveSaveResponse = await _repository.SaveChangesAsync(new CancellationToken());
                                                 if (!approveSaveResponse.IsDone)
@@ -300,16 +350,40 @@ namespace Bpf.Application.ModuleServices
                         }
                         // Send Notification
                         // تم قبول الدعوى واستلامها
+                        try
+                        {
+                            msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.LitigationRequest_Creation_Accept).Result.Data?.Value;
+                            msg = msg.Replace("{LitigationCode}", litigationRequest.RequestCode);
+                            await sendNotificationMSPlaintiff(msg, litigationRequest, RequestType.LitigationRequest, "Litigation Request Accepted");
+                        }
+                        catch (Exception)
+                        {
+
+                        }
+
+
                         break;
                     case RequestStatus.Edited:
                         // Send Notification
                         // تم تعديل الدعوى وإرسالها مرة أخرى
+                        try
+                        {
+                            msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.ProcessWorkflow_Edited).Result.Data?.Value;
+                            msg = msg.Replace("{LitigationCode}", litigationRequest.RequestCode);
+                            await sendNotificationMSPlaintiff(msg, litigationRequest, RequestType.LitigationRequest, "Litigation Request Updated and Resent");
+                        }
+                        catch (Exception e)
+                        {
+
+                        }
+
                         break;
                     case RequestStatus.AgreementRequestHasBeenSent:
                         if (litigationRequest.IsAgreementRequestRequired.HasValue)
                             return new BaseResponse() { IsDone = false, Message = "تم طلب المشارطة من قبل" };
 
                         litigationRequest.IsAgreementRequestRequired = true;
+                        litigationRequest.AgreementRequestRequiredOn = DateTime.Now;
                         litigationRequest.LitigationRequestSubStage = LitigationRequestSubStage.LitigationRequestAgreementRequestRequired;
                         var repositorySaveRes = await _repository.SaveChangesAsync(new CancellationToken());
                         if (!repositorySaveRes.IsDone)
@@ -317,8 +391,23 @@ namespace Bpf.Application.ModuleServices
 
                         // Send Notification
                         // تم إرسال طلب المشارطة
+                        try
+                        {
+                            msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.WorkFlow_Condition).Result.Data?.Value;
+                            msg = msg.Replace("{LitigationCode}", litigationRequest.RequestCode);
+                            string msgReview = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.WorkFlow_Condition_Review).Result.Data?.Value;
+                            msgReview = msgReview.Replace("{LitigationCode}", litigationRequest.RequestCode);
+                            await sendNotificationMSWithDefendant(msg, msgReview, litigationRequest, RequestType.LitigationRequest, "Litigation Request Resent");
+                        }
+                        catch (Exception e)
+                        {
+
+                        }
+
                         break;
                 }
+
+
 
 
             }
@@ -335,6 +424,245 @@ namespace Bpf.Application.ModuleServices
                 IsDone = true,
                 Data = responseWorkFlowDto
             };
+        }
+        //المدعى -مدير ادارة التدقيق
+        private async Task sendNotificationMSPlaintiff(string msg, LitigationRequest litigationRequest, RequestType requestTypeId, string subject)
+        {
+            var deptAdminInfoReview = await _employeeService.GetAdminsByDepartmentType(DepartmentType.Review);
+            var employee = litigationRequest.WorkFlowProcessingLogs.Where(w => w.EmployeeId != null).OrderBy(x => x.CreatedOn).LastOrDefault()?.Employee;
+
+            //ApplicantCitizen
+            var objEmail = new SendEmailDto()
+            {
+                Body = msg,
+                Subject = subject,
+                To = new List<string>() { litigationRequest.ApplicantCitizen?.Email }
+
+            };
+            var objSms = new SMSRequestDto()
+            {
+                message_text = msg,
+                recipients = new List<string>() { litigationRequest.ApplicantCitizen.Mobile },
+                notification_type = "SMS",
+            };
+            var lstNotification = new List<SysNotificationDto>();
+            lstNotification.Add(new SysNotificationDto()
+            {
+                ActorId = litigationRequest.ApplicantCitizen.Id,
+                CreatedOn = DateTime.Now,
+                ActorTypeId = NotificationActorType.Plaintiff,
+                IsViewed = false,
+                ViewedOn = null,
+                RequestId = litigationRequest.Id,
+                RequestTypeId = requestTypeId,
+                Message = msg,
+            });
+
+            //مدير ادارة التدقيق
+            if (deptAdminInfoReview is not null)
+            {
+                objEmail.To.Add(deptAdminInfoReview?.Data?.Email);
+                objSms.recipients.Add(deptAdminInfoReview?.Data?.Mobile);
+
+                lstNotification.Add(new SysNotificationDto()
+                {
+                    ActorId = deptAdminInfoReview.Data.Id,
+                    CreatedOn = DateTime.Now,
+                    ActorTypeId = NotificationActorType.Employee,
+                    IsViewed = false,
+                    ViewedOn = null,
+                    RequestId = litigationRequest.Id,
+                    RequestTypeId = requestTypeId,
+                    Message = msg,
+                });
+            }
+
+            // الموظف المعين علي الدعوي
+            if (employee is not null)
+            {
+                objEmail.To.Add(employee?.Email);
+                objSms.recipients.Add(employee?.Mobile);
+
+                lstNotification.Add(new SysNotificationDto()
+                {
+                    ActorId = employee.Id,
+                    CreatedOn = DateTime.Now,
+                    ActorTypeId = NotificationActorType.Employee,
+                    IsViewed = false,
+                    ViewedOn = null,
+                    RequestId = litigationRequest.Id,
+                    RequestTypeId = requestTypeId,
+                    Message = msg,
+                });
+            }
+
+
+            if (litigationRequest?.Contract?.FirstPartyCitizen != null && litigationRequest?.Contract?.FirstPartyCitizen.Id != litigationRequest.ApplicantCitizen.Id)
+            {
+                objEmail.To.Add(litigationRequest?.Contract?.FirstPartyCitizen.Email);
+                lstNotification.Add(new SysNotificationDto()
+                {
+                    ActorId = litigationRequest.Contract.FirstPartyCitizen.Id,
+                    CreatedOn = DateTime.Now,
+                    ActorTypeId = NotificationActorType.Plaintiff,
+                    IsViewed = false,
+                    ViewedOn = null,
+                    RequestId = litigationRequest.Id,
+                    RequestTypeId = requestTypeId,
+                    Message = msg,
+                });
+                objSms.recipients.Add(litigationRequest?.Contract?.FirstPartyCitizen.Mobile);
+
+
+            }
+            if (litigationRequest?.Contract?.FirstPartyFacility != null && litigationRequest?.Contract?.FirstPartyFacility?.Citizen.Id != litigationRequest.ApplicantCitizen.Id)
+            {
+                objEmail.To.Add(litigationRequest?.Contract?.FirstPartyFacility.Email);
+                lstNotification.Add(new SysNotificationDto()
+                {
+                    ActorId = (Guid)litigationRequest?.Contract?.FirstPartyFacility?.Citizen.Id,
+                    CreatedOn = DateTime.Now,
+                    ActorTypeId = NotificationActorType.Plaintiff,
+                    IsViewed = false,
+                    ViewedOn = null,
+                    RequestId = litigationRequest.Id,
+                    RequestTypeId = requestTypeId,
+                    Message = msg,
+                });
+                objSms.recipients.Add(litigationRequest?.Contract?.FirstPartyFacility?.Citizen?.Mobile);
+
+
+            }
+            await _notificationService.SendNotifications(objEmail, objSms, lstNotification);
+
+        }
+        //المدعى -مدير ادارة التدقيق -المدعى عليه
+        private async Task sendNotificationMSWithDefendant(string msg, string msgReview, LitigationRequest litigationRequest, RequestType requestTypeId, string subject)
+        {
+            var deptAdminInfoReview = await _employeeService.GetAdminsByDepartmentType(DepartmentType.Review);
+            //ApplicantCitizen
+            var objEmail = new SendEmailDto()
+            {
+                Body = msg,
+                Subject = subject,
+                To = new List<string>() { litigationRequest.ApplicantCitizen?.Email }
+
+            };
+            var objSms = new SMSRequestDto()
+            {
+                message_text = msg,
+                recipients = new List<string>() { litigationRequest.ApplicantCitizen.Mobile },
+                notification_type = "SMS",
+            };
+            var lstNotification = new List<SysNotificationDto>();
+            lstNotification.Add(new SysNotificationDto()
+            {
+                ActorId = litigationRequest.ApplicantCitizen.Id,
+                CreatedOn = DateTime.Now,
+                ActorTypeId = NotificationActorType.Plaintiff,
+                IsViewed = false,
+                ViewedOn = null,
+                RequestId = litigationRequest.Id,
+                RequestTypeId = requestTypeId,
+                Message = msg,
+            });
+
+            //مدير ادارة التدقيق
+            if (deptAdminInfoReview is not null)
+            {
+                objEmail.To.Add(deptAdminInfoReview?.Data?.Email);
+                objSms.recipients.Add(deptAdminInfoReview?.Data?.Mobile);
+
+                lstNotification.Add(new SysNotificationDto()
+                {
+                    ActorId = deptAdminInfoReview.Data.Id,
+                    CreatedOn = DateTime.Now,
+                    ActorTypeId = NotificationActorType.Employee,
+                    IsViewed = false,
+                    ViewedOn = null,
+                    RequestId = litigationRequest.Id,
+                    RequestTypeId = requestTypeId,
+                    Message = msgReview,
+                });
+            }
+            //المدعين
+            if (litigationRequest?.Contract?.FirstPartyCitizen != null && litigationRequest?.Contract?.FirstPartyCitizen.Id != litigationRequest.ApplicantCitizen.Id)
+            {
+                objEmail.To.Add(litigationRequest?.Contract?.FirstPartyCitizen.Email);
+                lstNotification.Add(new SysNotificationDto()
+                {
+                    ActorId = litigationRequest.Contract.FirstPartyCitizen.Id,
+                    CreatedOn = DateTime.Now,
+                    ActorTypeId = NotificationActorType.Plaintiff,
+                    IsViewed = false,
+                    ViewedOn = null,
+                    RequestId = litigationRequest.Id,
+                    RequestTypeId = requestTypeId,
+                    Message = msg,
+                });
+                objSms.recipients.Add(litigationRequest?.Contract?.FirstPartyCitizen.Mobile);
+
+
+            }
+            if (litigationRequest?.Contract?.FirstPartyFacility != null && litigationRequest?.Contract?.FirstPartyFacility?.Citizen.Id != litigationRequest.ApplicantCitizen.Id)
+            {
+                objEmail.To.Add(litigationRequest?.Contract?.FirstPartyFacility.Email);
+                lstNotification.Add(new SysNotificationDto()
+                {
+                    ActorId = (Guid)litigationRequest?.Contract?.FirstPartyFacility?.Citizen.Id,
+                    CreatedOn = DateTime.Now,
+                    ActorTypeId = NotificationActorType.Plaintiff,
+                    IsViewed = false,
+                    ViewedOn = null,
+                    RequestId = litigationRequest.Id,
+                    RequestTypeId = requestTypeId,
+                    Message = msg,
+                });
+                objSms.recipients.Add(litigationRequest?.Contract?.FirstPartyFacility?.Citizen?.Mobile);
+
+
+            }
+
+            //المدعى عليه
+            if (litigationRequest?.Contract?.SecondPartyCitizen != null)
+            {
+                objEmail.To.Add(litigationRequest?.Contract?.SecondPartyCitizen.Email);
+                lstNotification.Add(new SysNotificationDto()
+                {
+                    ActorId = litigationRequest.Contract.SecondPartyCitizen.Id,
+                    CreatedOn = DateTime.Now,
+                    ActorTypeId = NotificationActorType.Defendant,
+                    IsViewed = false,
+                    ViewedOn = null,
+                    RequestId = litigationRequest.Id,
+                    RequestTypeId = requestTypeId,
+                    Message = msg,
+                });
+                objSms.recipients.Add(litigationRequest?.Contract?.SecondPartyCitizen.Mobile);
+
+            }
+
+
+            if (litigationRequest?.Contract?.SecondPartyFacility != null)
+            {
+                objEmail.To.Add(litigationRequest?.Contract?.SecondPartyFacility.Email);
+                lstNotification.Add(new SysNotificationDto()
+                {
+                    ActorId = (Guid)litigationRequest.Contract.SecondPartyFacility?.Citizen.Id,
+                    CreatedOn = DateTime.Now,
+                    ActorTypeId = NotificationActorType.Defendant,
+                    IsViewed = false,
+                    ViewedOn = null,
+                    RequestId = litigationRequest.Id,
+                    RequestTypeId = requestTypeId,
+                    Message = msg,
+                });
+                objSms.recipients.Add(litigationRequest?.Contract?.SecondPartyFacility?.Citizen?.Mobile);
+
+            }
+
+            await _notificationService.SendNotifications(objEmail, objSms, lstNotification);
+
         }
     }
 }

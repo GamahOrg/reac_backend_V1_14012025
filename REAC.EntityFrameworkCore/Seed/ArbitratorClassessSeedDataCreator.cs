@@ -58,8 +58,8 @@ namespace REAC.EntityFrameworkCore.Seed
                 {
                     Id = new Guid("bae17b94-28ea-442d-89b5-2b99cb957feb"),
                     ArbitratorClassName = "ج",
-                    YearsFrom = 4,
-                    YearsTo = 8,
+                    YearsFrom = 9,
+                    YearsTo = 15,
                     Translations=new List<SysArbitratorClassTranslation>
                     {
                         new SysArbitratorClassTranslation

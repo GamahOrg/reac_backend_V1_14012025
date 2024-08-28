@@ -205,8 +205,13 @@ namespace REAC.Application.Contracts
             CreateMap<CitizenBankAccount, CitizenBankAccountCreateUpdateDto>().ReverseMap();
             CreateMap<LitigationRequestContract, LitigationRequestContractShortDto>().ReverseMap();
             CreateMap<SysNotification, SysNotificationCreateUpdateDto>().ReverseMap();
-            CreateMap<SysNotificationDto, SysNotification>().ForMember(x => x.CreatedOn, src => src.MapFrom(x => DateTime.Now)).ReverseMap();
-            CreateMap<SysNotification, SysNotificationDto>().ReverseMap();
+            CreateMap<SysNotificationDto, SysNotification>()
+                .ForMember(x => x.CreatedOn, src => src.MapFrom(x => DateTime.Now))
+                .ForMember(x => x.NotificationActorTypeId, src => src.MapFrom(x => x.ActorTypeId)) 
+                .ReverseMap();
+            
+            CreateMap<SysNotification, SysNotificationDto>()
+                .ReverseMap();
 
             CreateMap<LitigationRequestArbitrationReport, LitigationRequestArbitrationReportCreateUpdateDto>()
                                 .ForMember(x => x.MeetingLocationName, src => src.MapFrom(x => x.MeetingLocation.MeetingLocationName)).ReverseMap();

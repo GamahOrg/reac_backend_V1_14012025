@@ -179,6 +179,14 @@ namespace Ticketing.EntityFrameworkCore.SeedData
                     #endregion
 
                     #region
+                    
+
+                     new SysSetting
+                    {
+                        Id = Guid.NewGuid(),
+                        Key = "Arbitration.ExpirationDateHours",
+                        Value = "5",
+                    },
                     new SysSetting
                     {
                         Id = Guid.NewGuid(),
@@ -223,122 +231,122 @@ namespace Ticketing.EntityFrameworkCore.SeedData
                     {
                         Id = Guid.NewGuid(),
                         Key = "Citizen.AddBankAccount",
-                        Value = "تم اضافة بيانات الحساب البنكي الخاصه بحسابك",
+                        Value = "تم اضافة بيانات الحساب البنكي الخاص ب {CitizenName} ",
                     },new SysSetting
                     {
                         Id = Guid.NewGuid(),
                         Key = "Citizen.EditBankAccount",
-                        Value = "تم تعديل بيانات الحساب البنكي الخاص بك",
+                        Value = "تم تعديل بيانات الحساب البنكي الخاص ب {CitizenName} ",
                     },new SysSetting
                     {
                         Id = Guid.NewGuid(),
-                        Key = " Reformer.JoiningRequest",
-                        Value = "تم اضافة طلب جديد بالانضمام كمصلح وبأنتظار الاعتماد",
+                        Key = "Reformer.JoiningRequest",
+                        Value = "تم اضافة طلب جديد بالانضمام كمصلح بأسم {CitizenName} وبأنتظار الاعتماد",
                     },new SysSetting
                     {
                         Id = Guid.NewGuid(),
-                        Key = " Arbitrator.JoiningRequest",
-                        Value = "تم اضافة طلب جديد بالانضمام كمحكم وبأنتظار الاعتماد",
+                        Key = "Arbitrator.JoiningRequest",
+                        Value = "تم اضافة طلب جديد بالانضمام كمحكم بأسم {CitizenName} وبأنتظار الاعتماد",
                     },new SysSetting
                     {
                         Id = Guid.NewGuid(),
-                        Key = " Reformer.AcceptJoiningRequest",
-                        Value = " تم اعتماد طلبكم بالانضمام كمصلح ",
+                        Key = "Reformer.AcceptJoiningRequest",
+                        Value = " تم اعتماد طلب {CitizenName} بالانضمام كمصلح ",
                     },new SysSetting
                     {
                         Id = Guid.NewGuid(),
-                        Key = " Arbitrator.AcceptJoiningRequest",
-                        Value = "تم اعتماد طلبكم بالانضمام كمحكم ",
+                        Key = "Arbitrator.AcceptJoiningRequest",
+                        Value = "تم اعتماد طلب {CitizenName} بالانضمام كمحكم ",
                     },new SysSetting
                     {
                         Id = Guid.NewGuid(),
-                        Key = " Reformer.AcceptJoiningRequest.WaitingForFees",
-                        Value = "تم اعتماد طلبكم للانضمام كمصلح و انتظار دفع رسوم العضوية.",
+                        Key = "Reformer.AcceptJoiningRequest.WaitingForFees",
+                        Value = "تم اعتماد طلب {CitizenName} للانضمام كمصلح و انتظار دفع رسوم العضوية.",
                     },new SysSetting
                     {
                         Id = Guid.NewGuid(),
-                        Key = " Arbitrator.AcceptJoiningRequest.WaitingForFees",
-                        Value = "تم اعتماد طلبكم للانضمام كمحكم و انتظار دفع رسوم العضوية.",
+                        Key = "Arbitrator.AcceptJoiningRequest.WaitingForFees",
+                        Value = "تم اعتماد طلب {CitizenName} للانضمام كمحكم و انتظار دفع رسوم العضوية.",
                     },new SysSetting
                     {
                         Id = Guid.NewGuid(),
                         Key = "Reformer.AcceptJoiningRequest.NoFees",
-                        Value = "تم اعتماد طلبكم للانضمام كمصلح مع عدم وجود رسوم.",
+                        Value = "تم اعتماد طلب {CitizenName} للانضمام كمصلح مع عدم وجود رسوم.",
                     },new SysSetting
                     {
                         Id = Guid.NewGuid(),
                         Key = "Arbitrator.AcceptJoiningRequest.NoFees",
-                        Value = "تم اعتماد طلبكم للانضمام كمحكم مع عدم وجود رسوم.",
+                        Value = "تم اعتماد طلب {CitizenName} للانضمام كمحكم مع عدم وجود رسوم.",
                     },new SysSetting
                     {
                         Id = Guid.NewGuid(),
                         Key = "Arbitrator.JoiningRequest.Updated",
-                        Value = "تم تعديل طلب بالانضمام كمحكم للمحكم {ArbitratorName}",
+                        Value = "تم تعديل طلب بالانضمام كمحكم للمحكم {CitizenName}",
                     },new SysSetting
                     {
                         Id = Guid.NewGuid(),
                         Key = "Reformer.JoiningRequest.Updated",
-                        Value = "تم تعديل طلب بالانضمام كمصلح للمصلح {ReformerName}",
+                        Value = "تم تعديل طلب بالانضمام كمصلح للمصلح {CitizenName}",
                     },new SysSetting
                     {
                         Id = Guid.NewGuid(),
                         Key = "Arbitrator.UpdateJoiningRequest.WithFees",
-                        Value = "تنويه بانه تم إعادة طلبكم للانضمام كمحكم مع وجود رسوم للتعديل لوجود ملاحظات",
+                        Value = "تنويه بانه تم إعادة طلب {CitizenName} للانضمام كمحكم مع وجود رسوم للتعديل لوجود ملاحظات",
                     },new SysSetting
                     {
                         Id = Guid.NewGuid(),
                         Key = "Reformer.UpdateJoiningRequest.WithFees",
-                        Value = "تنويه بانه تم إعادة طلبكم للانضمام كمصلح مع وجود رسوم للتعديل لوجود ملاحظات",
+                        Value = "تنويه بانه تم إعادة طلب {CitizenName} للانضمام كمصلح مع وجود رسوم للتعديل لوجود ملاحظات",
                     },new SysSetting
                     {
                         Id = Guid.NewGuid(),
                         Key = "Reformer.UpdateJoiningRequest.NoFees",
-                        Value = "تنويه بانه تم إعادة طلبكم للانضمام كمصلح مع عدم وجود رسوم للتعديل لوجود ملاحظات",
+                        Value = "تنويه بانه تم إعادة طلب {CitizenName} للانضمام كمصلح مع عدم وجود رسوم للتعديل لوجود ملاحظات",
                     },new SysSetting
                     {
                         Id = Guid.NewGuid(),
                         Key = "Arbitrator.UpdateJoiningRequest.NoFees",
-                        Value = "تنويه بانه تم إعادة طلبكم للانضمام كمحكم مع عدم وجود رسوم للتعديل لوجود ملاحظات",
+                        Value = "تنويه بانه تم إعادة طلب {CitizenName} للانضمام كمحكم مع عدم وجود رسوم للتعديل لوجود ملاحظات",
                     },new SysSetting
                     {
                         Id = Guid.NewGuid(),
                         Key = "Reformer.RejectJoiningRequest",
-                        Value = "تنويه بانه تم رفض طلبكم للانضمام كمصلح",
+                        Value = "تنويه بانه تم رفض طلب {CitizenName} للانضمام كمصلح",
                     },new SysSetting
                     {
                         Id = Guid.NewGuid(),
                         Key = "Arbitrator.RejectJoiningRequest",
-                        Value = "تنويه بانه تم رفض طلبكم للانضمام كمحكم",
+                        Value = "تنويه بانه تم رفض طلب {CitizenName} للانضمام كمحكم",
                     },new SysSetting
                     {
                         Id = Guid.NewGuid(),
                         Key = "Reformer.Activate",
-                        Value = "تم تفعيل حسابك كمصلح معتمد",
+                        Value = "تم تفعيل حساب {CitizenName} كمصلح معتمد",
                     },new SysSetting
                     {
                         Id = Guid.NewGuid(),
                         Key = "Arbitrator.Activate",
-                        Value = "تم تفعيل حسابك كمحكم معتمد",
+                        Value = "تم تفعيل حساب {CitizenName} كمحكم معتمد",
                     },new SysSetting
                     {
                         Id = Guid.NewGuid(),
                         Key = "Reformer.DeActivate",
-                        Value = "تم إيقاف حسابك",
+                        Value = "تم إيقاف حساب {CitizenName} كمصلح معتمد",
                     },new SysSetting
                     {
                         Id = Guid.NewGuid(),
                         Key = "Arbitrator.DeActivate",
-                        Value = "تم إيقاف حسابك",
+                        Value = "تم إيقاف حساب {CitizenName} كمحكم معتمد",
                     },new SysSetting
                     {
                        Id = Guid.NewGuid(),
                         Key = "Arbitration.Arbitraor.Assigned",
-                        Value = "تم تعيينك كمحكم على الدعوى رقم {LitigationCode}",
+                        Value = "يوجد طلب مهمه جديد كمحكم على الدعوى رقم {LitigationCode}",
                     },new SysSetting
                     {
                        Id = Guid.NewGuid(),
                         Key = "Arbitration.ArbitraorChairman.Assigned",
-                        Value = "تم تعيينك كرئيس هيئة تحكيم على الدعوى رقم {LitigationCode}",
+                        Value = "تم قبول طلبك كرئيس هيئة تحكيم على الدعوى رقم {LitigationCode}",
                     },new SysSetting
                     {
                        Id = Guid.NewGuid(),
@@ -358,7 +366,7 @@ namespace Ticketing.EntityFrameworkCore.SeedData
                     {
                         Id = Guid.NewGuid(),
                         Key = "Reconciliation.Reconciliator.RejectTask",
-                        Value = "تم رفض طلب المهمة لدعوى رقم {LitigationCode} من قبل المصلح {ArbitratorName}",
+                        Value = "تم رفض طلب المهمة لدعوى رقم {LitigationCode} من قبل المصلح {ReconciliatorName}",
                     },new SysSetting
                     {
                        Id = Guid.NewGuid(),
@@ -388,33 +396,62 @@ namespace Ticketing.EntityFrameworkCore.SeedData
                     {
                        Id = Guid.NewGuid(),
                         Key = "ArbitraorRecusal.InformArbitrator.Reject",
-                        Value = "تم إلغاء تعيينك كمحكم على الدعوى رقم {LitigationCode}",
+                        Value = "تم إلغاء مهمتك كمحكم على الدعوى رقم {LitigationCode}",
                     },new SysSetting
                     {
                        Id = Guid.NewGuid(),
                         Key = "ArbitraorRecusal.InformArbitratorChairman.Rejected",
-                        Value = "تم إلغاء تعيينك كرئيس هيئة تحكيم على الدعوى رقم {LitigationCode}",
+                        Value = "تم إلغاء مهمتك كرئيس هيئة تحكيم على الدعوى رقم {LitigationCode}",
                     },new SysSetting
                     {
+
                        Id = Guid.NewGuid(),
-                        Key = "ArbitratorsChairmanNominationList.Added",
+                        Key = "ArbitratorsChairmanNominationList.MakeDecision",
+                        Value = "تم الإنتهاء من تحديد اولوية الاختيار لرئيس هيئة التحكيم من قبل المحكمين  في الدعوي المسجلة  برقم {LitigationCode} ولابد من اتخاذ القرار ",
+                    }
+                    // 
+                     ,new SysSetting
+                    {
+
+                       Id = Guid.NewGuid(),
+                        Key = "ArbitratorsChairmanNominationList.TaskSubmitedToArbitrator",
+                        Value = "يوجد طلب مهمه جديد كرئيس هية التحكيم لدعوي رقم {LitigationCode}",
+                    }
+                    ,new SysSetting
+                    {
+
+                       Id = Guid.NewGuid(),
+                        Key = "ArbitratorsChairmanNominationList.TaskSubmited",
+                        Value = "تم الإنتهاء من تحديد اولوية الاختيار لرئيس هيئة التحكيم من قبل المحكمين و ارسال طلب المهمة للمحكم {ArbitratorName} في الدعوي المسجلة برقم {LitigationCode} ",
+                    }
+                    ,new SysSetting
+                    {
+
+                       Id = Guid.NewGuid(),
+                        Key ="ArbitratorsChairmanNominationList.Added" ,
                         Value = "تم إضافة قائمة مرشحى رئيس هيئة التحكيم لدعوي رقم {LitigationCode}",
-                    },new SysSetting
+                    }
+                    ,new SysSetting
+                    {
+
+
+                       Id = Guid.NewGuid(),
+                        Key = "ArbitratorsNominationList.AddedForAdmin",
+                        Value = "تم إضافة قائمة تعيين هيئة التحكيم في الدعوي المسجلة برقم {LitigationCode} ",
+                    }
+                    ,new SysSetting
                     {
                        Id = Guid.NewGuid(),
-                        Key = "ArbitratorsNominationList.Added.FirstParty",
-                        Value = "عزيزي {FirstPartyName} تم أحالة طلبكم للتحكيم, لاختيار المحكم يمكنك الدخول الي حسابك في منصة التحكيم العقاري واختيار المحكم المرشح,علما بأنه سيتم انتهاء صلاحية ترشيح محكم في خلال {ExpirationDate}",
-                    },new SysSetting
-                    {
-                       Id = Guid.NewGuid(),
-                        Key = "ArbitratorsNominationList.Added.SecondParty",
-                        Value = "عزيزي {SecondPartyName} تم أحالة طلبكم للتحكيم, لاختيار المحكم يمكنك الدخول الي حسابك في منصة التحكيم العقاري واختيار المحكم المرشح,علما بأنه سيتم انتهاء صلاحية ترشيح محكم في خلال {ExpirationDate}",
+                        Key = "ArbitratorsNominationList.Added",
+                        Value = " تم أحالة طلبكم للتحكيم في الدعوة {LitigationCode}, لاختيار المحكم يمكنك الدخول الي حسابك في منصة التحكيم العقاري واختيار المحكم المرشح,علما بأنه سيتم انتهاء صلاحية ترشيح محكم في خلال {ExpirationDate}",
                     },new SysSetting
                     {
                        Id = Guid.NewGuid(),
                         Key = "ArbitratorsNominationList.AssignedAndSent",
                         Value = "تم تعيين هيئة التحكيم وإرسال طلبات المهام لدعوي رقم {LitigationCode}",
-                    },new SysSetting
+                    },
+
+                    new SysSetting
                     {
                        Id = Guid.NewGuid(),
                         Key = "ArbitratorsChairmanNominationListReply.Added",
@@ -474,17 +511,22 @@ namespace Ticketing.EntityFrameworkCore.SeedData
                         Id = Guid.NewGuid(),
                         Key = "ArbitrationReport.Added.SecondParty",
                         Value = "عزيزي {SecondPartyName}\r\n نود إبلاغكم بانه تم إصدار حكم التحكيم علي الدعوى رقم {LitigationCode}\r\n",
-                    },new SysSetting
+                    },
+
+                     new SysSetting
                     {
                         Id = Guid.NewGuid(),
-                        Key = "ArbitrationSession.Added.FirstParty",
-                        Value = "عزيزي {FirstPartyName}\r\n نود إبلاغكم بأن الدعوى رقم {LitigationCode}\r\n قد تم تحديد موعد جلسة التحكيم لها بتاريخ {LitigationDateTime}\r\nبرجاء الحضور في الموعد المحدد.\r\n",
-                    },new SysSetting
+                        Key = "ArbitrationService.JudgmentAdded",
+                        Value = "تم اضافةالحكم في الدعوي المسجلة برقم {LitigationCode} }",
+                    }
+                    ,new SysSetting
                     {
+
                         Id = Guid.NewGuid(),
-                        Key = "ArbitrationSession.Added.SecondParty",
-                        Value = "عزيزي {SecondPartyName}\r\n نود إبلاغكم بأن الدعوى رقم {LitigationCode}\r\n قد تم تحديد موعد جلسة التحكيم لها بتاريخ {LitigationDateTime}\r\nبرجاء الحضور في الموعد المحدد.\r\n",
-                    },new SysSetting
+                        Key = "ArbitrationSession.Added",
+                        Value = "تم اضافة موعد لجلسة الحكم في الدعوي المسجلة برقم {LitigationCode} ",
+                    },
+                   new SysSetting
                     {
                         Id = Guid.NewGuid(),
                         Key = "ExcuteWorkflow",
@@ -513,12 +555,32 @@ namespace Ticketing.EntityFrameworkCore.SeedData
                     {
                         Id = Guid.NewGuid(),
                         Key = "Reconciliation.Cancelled",
-                        Value = "تم إلغاء المهمة (دعوى صلح) رقم {LitigationCode}",
+                        Value = "تم إلغاء المهمة (دعوى صلح)  رقم {LitigationCode}",
                     },new SysSetting
                     {
                         Id = Guid.NewGuid(),
                         Key = "Reconciliation.ReAssigned",
-                        Value = "تم إرسال مهمة مصلح لمصلح أخر لدعوي رقم {LitigationCode}",
+                        Value = "تم إرسال مهمة مصلح لمصلح أخر بأسم {ReformerName} لدعوي رقم {LitigationCode}",
+                    },new SysSetting
+                    {
+                        Id = Guid.NewGuid(),
+                        Key = "Reconciliation.Assign",
+                        Value = "تم ارسال طلب مهمة كمصلح على الدعوى رقم {LitigationCode}",
+                    },new SysSetting
+                    {
+                        Id = Guid.NewGuid(),
+                        Key = "LitigationRequest.Creation.Reject",
+                        Value = "تم رفض الطلب لدعوي رقم {LitigationCode}",
+                    },new SysSetting
+                    {
+                        Id = Guid.NewGuid(),
+                        Key = "LitigationRequest.Creation.Resent",
+                        Value = "تم تحويل الدعوي رقم {LitigationCode} الي معاده للتعديل لوجود ملاحظات, برجاء تعديل الدعوى علما بأنه سيتم انتهاء صلاحية التعديل في خلال {ExpirationDate} ايام",
+                    },new SysSetting
+                    {
+                        Id = Guid.NewGuid(),
+                        Key = "LitigationRequest.Creation.Accept",
+                        Value = "تم قبول واستلام الطلب لدعوي رقم {LitigationCode}",
                     },new SysSetting
                     {
                         Id = Guid.NewGuid(),
@@ -538,12 +600,12 @@ namespace Ticketing.EntityFrameworkCore.SeedData
                     {
                         Id = Guid.NewGuid(),
                         Key = "LitigationRequest.Decision.ReconciliationWasNotMadeAndMoveToArbitration",
-                        Value = "عدم الصلح والانتقال للتحكيم لدعوي رقم {LitigationCode}",
+                        Value = "تم رفض الصلح والانتقال للتحكيم لدعوي رقم {LitigationCode}",
                     },new SysSetting
                     {
                         Id = Guid.NewGuid(),
                         Key = "LitigationRequest.Decision.ReconciliationWasNotMade",
-                        Value = " عدم الصلح لدعوي رقم {LitigationCode}",
+                        Value = " رفض الصلح لدعوي رقم {LitigationCode}",
                     },new SysSetting
                     {
                         Id = Guid.NewGuid(),
@@ -571,8 +633,198 @@ namespace Ticketing.EntityFrameworkCore.SeedData
                         Key = "ReconciliationSession.Reset",
                         Value = "تم أعادة تعيين جلسة الصلح\r\nترقم الدعوى: {LitigationCode}\r\nنوع الدعوى: {LitigationType}\r\nتاريت الجلسة: {LitigationDate}\r\nالتوقيت: {LitigationDateTime}\r\n \r\nبرجاء التواجد ف الموعد المحدد",
 
+                    },
+                    new SysSetting
+                    {
+                        Id = Guid.NewGuid(),
+                        Key = "Workflow.Condition",
+                        Value = "يوجد طلب مشارطة الدعوى رقم {LitigationCode}",
                     }
+                    ,
+                    new SysSetting
+                    {
+                        Id = Guid.NewGuid(),
+                        Key = "Workflow.Condition.Review",
+                        Value = "تم ارسال طلب مشارطة الدعوى رقم {LitigationCode}",
+                    }, new SysSetting
+                    {
+                        Id = Guid.NewGuid(),
+                        Key = "Reconciliation.NewRequest",
+                        Value = "يوجد طلب مهمة جديدة كمصلح على الدعوى رقم {LitigationCode}",
+
+                    },new SysSetting
+                    {
+                        Id = Guid.NewGuid(),
+                        Key = "Reconciliation.Request.Added",
+                        Value = "تم إضافة محضر الصلح لدعوى رقم {LitigationCode}"
+                    },
 	                #endregion
+                  
+
+                    #region Email Setting Configuration
+                        new SysSetting
+                        {
+                            Id = Guid.NewGuid(),
+                            Key = "EmailConfiguration_SendEmail",
+                            Value = "true"
+                          
+                        },
+                         new SysSetting
+                        {
+                            Id = Guid.NewGuid(),
+                            Key = "EmailConfiguration_Host",
+                            Value = "smtp.office365.com",
+                            
+                        },
+                          new SysSetting
+                        {
+                            Id = Guid.NewGuid(),
+                            Key = "EmailConfiguration_Port",
+                            Value = "587",
+
+                        },
+                        new SysSetting
+                        {
+                            Id = Guid.NewGuid(),
+                            Key = "EmailConfiguration_FromEmail",
+                            Value = "asgatech.test1@outlook.com",
+                           
+                        },
+                        new SysSetting
+                        {
+                            Id = Guid.NewGuid(),
+                            Key = "EmailConfiguration_DisplayNameFromEmail",
+                            Value = "Off plan Report",
+
+                        },
+                        new SysSetting
+                        {
+                            Id = Guid.NewGuid(),
+                            Key = "EmailConfiguration_Passowrd",
+                            Value = "asgatechmailtest2024",
+                           
+                        },
+                            new SysSetting
+                        {
+                            Id = Guid.NewGuid(),
+                            Key = "EmailConfiguration_UseDefaultCredentials",
+                            Value = "false",
+
+                        },
+                            new SysSetting
+                        {
+                            Id = Guid.NewGuid(),
+                            Key = "EmailConfirmation_URL",
+                            Value = "https://wafiservices.rega.gov.sa/wafi/confirmemail?token={0}&email={1}",
+
+                        },
+                    #endregion
+
+                    #region SLA
+                    #region Review 
+                    new SysSetting
+                        {
+                            Id = Guid.NewGuid(),
+                            Key = "SLA.ReminderForReviewer",
+                            Value = "72"
+
+                        },
+                    new SysSetting
+                        {
+                            Id = Guid.NewGuid(),
+                            Key = "SLA.ReminderForReviewerManager",
+                            Value = "144"
+
+                        },
+                    new SysSetting
+                        {
+                            Id = Guid.NewGuid(),
+                            Key = "SLA.FirstEditReminderForRequestApplicant",
+                            Value = "24"
+
+                        },
+                    new SysSetting
+                        {
+                            Id = Guid.NewGuid(),
+                            Key = "SLA.SecondEditReminderForForRequestApplicant",
+                            Value = "72"
+
+                        },
+                    new SysSetting
+                        {
+                            Id = Guid.NewGuid(),
+                            Key = "SLA.FirstAgreementRequestForRequest",
+                            Value = "24"
+
+                        },
+                    new SysSetting
+                        {
+                            Id = Guid.NewGuid(),
+                            Key = "SLA.SecondAgreementRequestForForRequest",
+                            Value = "72"
+
+                        },
+                    #endregion
+                    #region Reconciliation
+                    new SysSetting
+                        {
+                            Id = Guid.NewGuid(),
+                            Key = "SLA.ReformerReminderForReconciliationFirstPeriod",
+                            Value = "72"
+
+                        },
+                    new SysSetting
+                        {
+                            Id = Guid.NewGuid(),
+                            Key = "SLA.ReformerReminderForReconciliationSecondPeriod",
+                            Value = "144"
+
+                        },
+                    new SysSetting
+                        {
+                            Id = Guid.NewGuid(),
+                            Key = "SLA.LitigationRequestReconciliationReportResponsePeriod",
+                            Value = "24"
+
+                        },
+                    new SysSetting
+                        {
+                            Id = Guid.NewGuid(),
+                            Key = "SLA.LitigationRequestReconciliationReportDecisionPeriod",
+                            Value = "72"
+
+                        },
+                    new SysSetting
+                        {
+                            Id = Guid.NewGuid(),
+                            Key = "SLA.LitigationRequestReformerAssigningRequestResponsePeriod",
+                            Value = "24"
+
+                        },
+                    new SysSetting
+                        {
+                            Id = Guid.NewGuid(),
+                            Key = "SLA.LitigationRequestReformerAssigningRequestDecisionPeriod",
+                            Value = "72"
+
+                        },
+                    #endregion
+                    #endregion
+
+                    new SysSetting
+                        {
+                            Id = Guid.NewGuid(),
+                            Key = "Reconciliation.ReformerMaxSessionsCountPerDay",
+                            Value = "3"
+
+                        },
+                        new SysSetting
+                        {
+                            Id = Guid.NewGuid(),
+                            Key = "Arbitration.ArbitratorMaxSessionsCountPerDay",
+                            Value = "3"
+
+                        },
                 });
             context.SaveChanges();
         }

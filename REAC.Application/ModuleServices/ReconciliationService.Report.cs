@@ -5,6 +5,7 @@ using REAC.Domain.Shared.Constants;
 using REAC.Domain.Shared.Enum;
 using REAC.EntityFrameworkCore.Entities.Litigation;
 using REAC.EntityFrameworkCore.Entities.Reconciliation;
+using REAC.EntityFrameworkCore.Entities.Wpf.Business;
 
 namespace REAC.Application.ModuleServices
 {
@@ -20,6 +21,14 @@ namespace REAC.Application.ModuleServices
 
                 var litigationRequest = (await _repository.GetQueryable<LitigationRequest, Guid>())?
                         .Include(x => x.LitigationRequestReconciliationReports)
+                        .Include(x => x.ArbitratorCitizen)
+                        .Include(x => x.ReformerCitizen)
+                        .Include(x => x.ApplicantCitizen)
+                        .Include(x => x.Contract)
+                        .Include(x => x.Contract.FirstPartyFacility).ThenInclude(x => x.Citizen)
+                        .Include(x => x.Contract.FirstPartyCitizen)
+                        .Include(x => x.Contract.SecondPartyFacility).ThenInclude(x => x.Citizen)
+                        .Include(x => x.Contract.SecondPartyCitizen)
                         .Where(x => x.Id == requestPayload.RequestId & x.ReformerCitizenId == referenceId)
                         .Single();
 
@@ -68,16 +77,34 @@ namespace REAC.Application.ModuleServices
 
                     await _repository.AddAsync<LitigationRequestReconciliationReport, Guid>(litigationRequestReconciliationReport);
 
+                    await _repository.AddAsync<WorkFlowLog, Guid>(new WorkFlowLog()
+                    {
+                        Id = Guid.NewGuid(),
+                        CreatedOn = DateTime.Now,
+                        RequestId = litigationRequest.Id,
+                        ShowForApplicant = false,
+                        LogMessage = "تم إضافة محصر الصلح"
+                    });
+
+
                     var repositorySaveResponse = await _repository.SaveChangesAsync(new CancellationToken());
                     if (!repositorySaveResponse.IsDone)
                         return repositorySaveResponse;
-                    string msg = (await _settingService.GetBySettingKey(SysSettingKeyConstants.Reconciliation_Report_Creation)).Data?.ToString();
+                    string msg = (await _sysSettingService.GetBySettingKey(SysSettingKeyConstants.Reconciliation_Report_Creation)).Data?.ToString();
 
                     // Send Notification
                     // تم إضافة محضر الصلح
-                    //_sMSService.SendSMS(new Contracts.Dtos.Integration.GEE.SMSRequestDto()
-                    //{ message_text = msg , })
-                    //_mailService.SendMail()
+                    try
+                    {
+                        msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.Reconciliation_Request_Added).Result.Data?.Value;
+                        msg = msg.Replace("{LitigationCode}", litigationRequest.RequestCode);
+                        sendNotificationMSWithAllTypes(msg, litigationRequest, "Reconciliation Request Added");
+                    }
+                    catch (Exception e)
+                    {
+
+
+                    }
                 }
                 else
                 {
@@ -174,6 +201,18 @@ namespace REAC.Application.ModuleServices
                 allowDecision = false;
             }
 
+            try
+            {
+                int LitigationRequestReconciliationReportDecisionPeriod = int.Parse(_sysSettingService.GetBySettingKey(SysSettingKeyConstants.SLA_LitigationRequestReconciliationReportDecisionPeriod).Result.Data?.Value);
+                double totalHours = 0;
+                totalHours += (DateTime.Now - litigationRequest.LitigationRequestReconciliationReports.FirstOrDefault().ReportDate).TotalHours;
+                if (totalHours >= LitigationRequestReconciliationReportDecisionPeriod)
+                {
+                    allowDecision = true;
+                }
+            }
+            catch { }
+
             return new DataResponse<LitigationRequestForReportDto>()
             {
                 Data = new LitigationRequestForReportDto()
@@ -214,7 +253,10 @@ namespace REAC.Application.ModuleServices
                                       .Include(x => x.Contract.SecondPartyCitizen).Include(x => x.Contract.LitigationRequestContractType)
 
                                       .Where(x => x.ReformerCitizenId == referenceId
-                                      & x.RequestCode != null & x.LitigationRequestCategoryId != LitigationRequestCategory.Arbitration).
+                                      & x.LitigationRequestSessions.Where(t => t.LitigationRequestSessionRequestTypeId == LitigationRequestSessionRequestType.Reconciliation).Count() > 0
+                                      & x.RequestCode != null
+                                      & x.InternalStatusId != RequestStatus.Rejected
+                                      & x.LitigationRequestCategoryId != LitigationRequestCategory.Arbitration).
                                       OrderByDescending(x => x.CreatedOn).ToList();
 
             List<LitigationRequestMircoDto> litigationRequestMircoDtos = new List<LitigationRequestMircoDto>();
@@ -261,6 +303,18 @@ namespace REAC.Application.ModuleServices
                             }
                         }
                     }
+                    try
+                    {
+                        int LitigationRequestReconciliationReportDecisionPeriod = int.Parse(_sysSettingService.GetBySettingKey(SysSettingKeyConstants.SLA_LitigationRequestReconciliationReportDecisionPeriod).Result.Data?.Value);
+                        double totalHours = 0;
+                        totalHours += (DateTime.Now - litigationRequest.LitigationRequestReconciliationReports.FirstOrDefault().ReportDate).TotalHours;
+                        if (totalHours >= LitigationRequestReconciliationReportDecisionPeriod)
+                        {
+                            allowAdd = true;
+                        }
+                    }
+                    catch { }
+
                     if (allowAdd)
                         litigationRequestMircoDto.IsDone = "--";
                     else

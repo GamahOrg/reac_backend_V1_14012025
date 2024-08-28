@@ -69,6 +69,8 @@ namespace Core.Security.Services
             bool? IsReformer = false;
             bool? IsArbitrator = false;
             bool? IsAdmin = false;
+            int? DepartmentType = 0;
+            bool? IsDraftAccount = false;
             try
             {
 
@@ -81,12 +83,31 @@ namespace Core.Security.Services
                     var citizen = db.Query<dynamic?>($@"SELECT * FROM Citizen where Id = '{user.ReferenceId}'").FirstOrDefault();
                     if (citizen != null)
                     {
-                        claimsValues.Add(new Claim("IsLawyer", citizen.IsLawyer.ToString()));
-                        claimsValues.Add(new Claim("IsReformer", citizen.IsReformer.ToString()));
-                        claimsValues.Add(new Claim("IsArbitrator", citizen.IsArbitrator.ToString()));
+                        try
+                        {
+                            claimsValues.Add(new Claim("IsLawyer", (citizen.IsLawyer != null) ? citizen.IsLawyer.ToString() : null));
+                        }
+                        catch { claimsValues.Add(new Claim("IsLawyer", "")); }
+                        try
+                        {
+                            claimsValues.Add(new Claim("IsReformer", (citizen.IsReformer != null) ? citizen.IsReformer.ToString() : null));
+                        }
+                        catch { claimsValues.Add(new Claim("IsReformer", "")); }
+                        try
+                        {
+                            claimsValues.Add(new Claim("IsArbitrator", (citizen.IsArbitrator != null) ? citizen.IsArbitrator.ToString() : null));
+                        }
+                        catch { claimsValues.Add(new Claim("IsArbitrator", "")); }
+                        try
+                        {
+                            claimsValues.Add(new Claim("IsDraftAccount", (citizen.IsDraftAccount != null) ? citizen.IsDraftAccount.ToString() : null));
+                        }
+                        catch { claimsValues.Add(new Claim("IsDraftAccount", "")); }
+
                         IsLawyer = citizen.IsLawyer;
                         IsReformer = citizen.IsReformer;
                         IsArbitrator = citizen.IsArbitrator;
+                        IsDraftAccount = citizen.IsDraftAccount;
                     }
                     else
                     {
@@ -96,12 +117,24 @@ namespace Core.Security.Services
                         var employee = db.Query<dynamic?>($@"SELECT * FROM SysEmployee where Id = '{user.ReferenceId}'").FirstOrDefault();
                         if (employee != null)
                         {
-                            claimsValues.Add(new Claim("IsAdmin", citizen?.IsAdmin.ToString()));
-                            IsAdmin = citizen?.IsAdmin;
+                            claimsValues.Add(new Claim("IsAdmin", (employee.IsAdmin != null) ? employee.IsAdmin.ToString() : null));
+
+
+                            IsAdmin = employee.IsAdmin;
+
+                            var department = db.Query<dynamic?>($@"SELECT * FROM SysDepartment where Id = '{employee.DepartmentId}'").FirstOrDefault();
+                            if (department != null)
+                            {
+                                claimsValues.Add(new Claim("DepartmentType", (department.DepartmentType != null) ? department.DepartmentType.ToString() : null));
+                                DepartmentType = (int)department?.DepartmentType;
+
+                            }
                         }
                         else
                         {
                             claimsValues.Add(new Claim("IsAdmin", ""));
+                            claimsValues.Add(new Claim("DepartmentType", ""));
+
                         }
                         db.Close();
                     }
@@ -129,7 +162,10 @@ namespace Core.Security.Services
                 IsAdmin = IsAdmin,
                 IsArbitrator = IsArbitrator,
                 IsReformer = IsReformer,
-                IsLawyer = IsLawyer
+                IsLawyer = IsLawyer,
+                DepartmentType = DepartmentType,
+                IsDraftAccount = IsDraftAccount
+
             };
             authDto.RefreshTokenExpiration = DateTime.Now.AddHours(_jwtOptions.RefreshTokenDurationInHoures);
             return authDto;

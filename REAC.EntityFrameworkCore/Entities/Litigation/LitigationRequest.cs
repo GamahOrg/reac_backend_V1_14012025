@@ -24,6 +24,17 @@ public partial class LitigationRequest : BaseEntity<Guid>
     public Guid ApplicantCitizenId { get; set; }
 
     public Guid? DelegatorCitizenId { get; set; }
+    public bool? IsReminderForReviewerSent { get; set; }
+
+    public bool? IsReformerReminderForReconciliationFirstPeriodSent { get; set; }
+
+    public bool? IsLitigationRequestReconciliationReportResponsePeriodSent { get; set; }
+
+    public bool? IsLitigationRequestReformerAssigningRequestResponsePeriodSent { get; set; }
+    public bool? IsReminderForReviewerManagerSent { get; set; }
+
+    public bool? IsReminderForApplicantSent { get; set; }
+    public bool? IsReminderForAgreementRequestForRequestSent { get; set; }
 
     public bool IsAllowEdit { get; set; }
 
@@ -43,6 +54,8 @@ public partial class LitigationRequest : BaseEntity<Guid>
     public bool? IsDefendantArbitratorNominationListDone { get; set; }
 
     public bool? IsAgreementRequestRequired { get; set; }
+    public DateTime? AgreementRequestRequiredOn { get; set; }
+
     public ApproveRejectStatus? PlaintiffAgreementRequestResponse { get; set; }
     public DateTime? PlaintiffAgreementRequestResponseOn { get; set; }
     public ApproveRejectStatus? DefendantAgreementRequestResponse { get; set; }

@@ -12,5 +12,7 @@
         Plaintiff = 4,
         ///<summary>المدعى عليه</summary>
         Defendant = 5,
+        ///<summary>مقدم الطلب</summary>
+        Applicant = 6,
     }
 }

@@ -13,5 +13,7 @@ namespace REAC.Application.Contracts.IAppServices
         Task<BaseResponse> SaveDelegator(DelegatorDto citizenDelegatorCreateUpdateDto);
         Task<BaseResponse> ValidateDelegator(ValidateDelegatorDto validateDelegatorDto);
         Task<DataResponse<PartiesDto>> GetDelegatorCitizenData(GetDeligatorCitizenData getDelegatorDataDto);
+
+        Task<string> GenerateCitizenCode();
     }
 }

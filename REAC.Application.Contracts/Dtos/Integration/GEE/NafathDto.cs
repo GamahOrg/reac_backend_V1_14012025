@@ -27,6 +27,7 @@ namespace REAC.Application.Contracts.Dtos.Integration.GEE
 
     public class NafathResponseDto
     {
+        public bool IsDraftAccount { get; set; }
         public NafathResponseDataDto? Data { get; set; }
         public NafathResponseErrorDto? Error { get; set; }
     }
@@ -106,20 +107,24 @@ namespace REAC.Application.Contracts.Dtos.Integration.GEE
     public class UserInfoUpdatedDto
     {
         //رقم الهوية
-        public string NationalId { get; set; }
+        public string? NationalId { get; set; }
         //الاسم بالكامل
-        public string FullName { get; set; }
+        public string? FullName { get; set; }
         // الاسم الأول
-        public string FirstName { get; set; }
+        public string? FirstName { get; set; }
         // تاريخ انتهاء الهوية الوطنية
-        public DateTime NationalIdExpiryDate { get; set; }
-        public Guid NationalityId { get; set; }
+        public DateTime? NationalIdExpiryDate { get; set; }
+        public Guid? NationalityId { get; set; }
         //الجنسية
-        public string Nationality { get; set; }
+        public string? Nationality { get; set; }
         //تاريخ الميلاد
-        public DateTime DateOfBirth { get; set; }
+        public DateTime? DateOfBirth { get; set; }
         //الجنس
-        public Gender Gender { get; set; }
+        public Gender? Gender { get; set; }
+        public bool IsDraftAccount { get; set; } = false;
+        public bool IsArbitrator { get; set; } = false;
+        public bool IsReformer { get; set; } = false;
+        public bool IsLawye { get; set; } = false;
     }
 
     #endregion

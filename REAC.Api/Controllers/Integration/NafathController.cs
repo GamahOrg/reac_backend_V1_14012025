@@ -32,10 +32,10 @@ namespace REAC.Api.Controllers.Integration
         //  => Ok(await _nafathService.Nafath(nafathRequestDto, cancellationToken));
 
 
-        [HttpPost(nameof(NafathCheckStatus))]
-        public async Task<IActionResult> NafathCheckStatus()
-        => Ok(await _nafathService.CheckNafathStatus());
-
-
+        //[HttpPost(nameof(NafathCheckStatus))]
+        //public async Task<IActionResult> NafathCheckStatus()
+        //{
+        //    await _nafathService.CheckNafathStatus();
+        //}
     }
 }

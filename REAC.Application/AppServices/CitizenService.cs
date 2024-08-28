@@ -6,8 +6,11 @@ using Core.Log.Application.Contracts.IAppServices;
 using Core.Shared.Responses;
 using Microsoft.EntityFrameworkCore;
 using REAC.Application.Contracts.Dtos.Citizen;
+using REAC.Application.Contracts.Dtos.Integration.GEE;
+using REAC.Application.Contracts.Dtos.Notification;
 using REAC.Application.Contracts.IAppServices;
 using REAC.Application.Contracts.IAppServices.Integration;
+using REAC.Application.Contracts.IAppServices.Notification;
 using REAC.Application.Contracts.IAppServices.System;
 using REAC.Domain.Shared.Constants;
 using REAC.Domain.Shared.Enum;
@@ -23,17 +26,18 @@ namespace REAC.Application.AppServices
     public class CitizenService : BasicService<Citizen, Guid>, ICitizenService
     {
         private readonly IMapper _mapper;
-        private readonly IJwtReader _jwtReader; 
-        private readonly ISysSettingService _sysSetting;
-        private readonly IMailService _emailService;
-        private readonly ISMSService _smsService;
-        public CitizenService(IEntityRepository repository, IMapper mapper, ILoggerManager loggerManager, IJwtReader jwtReader, ISysSettingService sysSetting, IMailService emailService, ISMSService smsService = null) : base(repository, mapper, loggerManager, jwtReader)
+        private readonly IJwtReader _jwtReader;
+        private readonly ISysEmployeeService _employeeService;
+        private readonly INotificationService _notificationService;
+        private readonly ISysSettingService _sysSettingService;
+
+        public CitizenService(IEntityRepository repository, IMapper mapper, ILoggerManager loggerManager, IJwtReader jwtReader, ISysSettingService sysSetting, ISysEmployeeService employeeService, INotificationService notificationService, ISysSettingService sysSettingService) : base(repository, mapper, loggerManager, jwtReader)
         {
             _mapper = mapper;
             _jwtReader = jwtReader;
-            _sysSetting = sysSetting;
-            _emailService = emailService;
-            _smsService = smsService;
+            _employeeService = employeeService;
+            _notificationService = notificationService;
+            _sysSettingService = sysSettingService;
         }
         public async Task<DateTime?> GetIdentityExpirationDate(Guid? userId)
         {
@@ -306,6 +310,9 @@ namespace REAC.Application.AppServices
                 var citizen = (await _repository.GetQueryable<Citizen, Guid>())?
                      .Where(x => x.Id == arbitratorFreeUpDecisionCreateDto.CitizenId)
                      .SingleOrDefault();
+                var deptAdminInfoArbitration = await _employeeService.GetAdminsByDepartmentType(DepartmentType.Arbitration);
+                var msg = "";
+                var applicationNotifications = new List<SysNotificationDto>();
 
                 if (citizen == null)
                     return new BaseResponse()
@@ -327,15 +334,56 @@ namespace REAC.Application.AppServices
 
                 // Send Notification
                 // تم إعادة تحرير المحكم
-                var msg = _sysSetting.GetBySettingKey(SysSettingKeyConstants.Arbitrator_Activate).Result.Data?.Value;
-                var emailResult = await _emailService.SendMail(new List<string>() { citizen.Email }, "Arbitrator Activated", msg);
-                var smsResult = _smsService.SendSMS(new Contracts.Dtos.Integration.GEE.SMSRequestDto()
-                {
-                    message_text = msg,
-                    recipients = new List<string>() { citizen.Mobile },
-                    notification_type = "SMS",
 
-                });
+                try
+                {
+                    msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.Arbitrator_Activate).Result.Data?.Value;
+                    msg = msg.Replace("{CitizenName}", citizen.FullName);
+                    applicationNotifications.Add(new SysNotificationDto()
+                    {
+                        ActorId = citizen.Id,
+                        CreatedOn = DateTime.Now,
+                        ActorTypeId = NotificationActorType.Arbitrator,
+                        IsViewed = false,
+                        ViewedOn = null,
+                        RequestId = citizen.Id,
+                        RequestTypeId = RequestType.StopFreeUpArbitrator,
+                        Message = msg
+                    });
+
+                    applicationNotifications.Add(new SysNotificationDto()
+                    {
+                        ActorId = deptAdminInfoArbitration.Data.Id,
+                        CreatedOn = DateTime.Now,
+                        ActorTypeId = NotificationActorType.Employee,
+                        IsViewed = false,
+                        ViewedOn = null,
+                        RequestId = citizen.Id,
+                        RequestTypeId = RequestType.StopFreeUpArbitrator,
+                        Message = msg
+                    });
+
+                    var notificationResultUpdatedArbitrator = _notificationService.SendNotifications(
+                        new SendEmailDto()
+                        {
+                            To = new List<string>() { citizen.Email, deptAdminInfoArbitration.Data.Email },
+                            Subject = "Arbitrator Activated",
+                            Body = msg
+                        },
+                        new SMSRequestDto()
+                        {
+                            message_text = msg,
+                            recipients = new List<string>() { citizen.Mobile, deptAdminInfoArbitration.Data.Mobile },
+                            notification_type = "SMS",
+
+                        },
+                        applicationNotifications
+                        );
+                }
+                catch (Exception ex)
+                {
+
+                }
 
                 return await GetArbitratorsDecisions(arbitratorFreeUpDecisionCreateDto.CitizenId);
             }
@@ -356,7 +404,9 @@ namespace REAC.Application.AppServices
                 var citizen = (await _repository.GetQueryable<Citizen, Guid>())?
                       .Where(x => x.Id == arbitratorStopDecisionCreateDto.CitizenId)
                       .SingleOrDefault();
-
+                var deptAdminInfoArbitration = await _employeeService.GetAdminsByDepartmentType(DepartmentType.Arbitration);
+                var msg = "";
+                var applicationNotifications = new List<SysNotificationDto>();
                 if (citizen == null)
                     return new BaseResponse()
                     {
@@ -380,15 +430,56 @@ namespace REAC.Application.AppServices
 
                 // Send Notification
                 // تم إقاف تحرير المحكم
-                var msg = _sysSetting.GetBySettingKey(SysSettingKeyConstants.Arbitrator_DeActivate).Result.Data?.Value;
-                var emailResult = await _emailService.SendMail(new List<string>() { citizen.Email }, "Arbitrator Deactivated", msg);
-                var smsResult = _smsService.SendSMS(new Contracts.Dtos.Integration.GEE.SMSRequestDto()
-                {
-                    message_text = msg,
-                    recipients = new List<string>() { citizen.Mobile },
-                    notification_type = "SMS",
 
-                });
+                try
+                {
+                    msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.Arbitrator_DeActivate).Result.Data?.Value;
+                    msg = msg.Replace("{CitizenName}", citizen.FullName);
+                    applicationNotifications.Add(new SysNotificationDto()
+                    {
+                        ActorId = citizen.Id,
+                        CreatedOn = DateTime.Now,
+                        ActorTypeId = NotificationActorType.Arbitrator,
+                        IsViewed = false,
+                        ViewedOn = null,
+                        RequestId = citizen.Id,
+                        RequestTypeId = RequestType.StopFreeUpArbitrator,
+                        Message = msg
+                    });
+
+                    applicationNotifications.Add(new SysNotificationDto()
+                    {
+                        ActorId = deptAdminInfoArbitration.Data.Id,
+                        CreatedOn = DateTime.Now,
+                        ActorTypeId = NotificationActorType.Employee,
+                        IsViewed = false,
+                        ViewedOn = null,
+                        RequestId = citizen.Id,
+                        RequestTypeId = RequestType.StopFreeUpArbitrator,
+                        Message = msg
+                    });
+
+                    var notificationResultUpdatedArbitrator = _notificationService.SendNotifications(
+                        new SendEmailDto()
+                        {
+                            To = new List<string>() { citizen.Email, deptAdminInfoArbitration.Data.Email },
+                            Subject = "Arbitrator DeActivated",
+                            Body = msg
+                        },
+                        new SMSRequestDto()
+                        {
+                            message_text = msg,
+                            recipients = new List<string>() { citizen.Mobile, deptAdminInfoArbitration.Data.Mobile },
+                            notification_type = "SMS",
+
+                        },
+                        applicationNotifications
+                        );
+                }
+                catch (Exception ex)
+                {
+
+                }
 
 
                 return await GetArbitratorsDecisions(arbitratorStopDecisionCreateDto.CitizenId);
@@ -412,7 +503,9 @@ namespace REAC.Application.AppServices
                 var citizen = (await _repository.GetQueryable<Citizen, Guid>())?
                     .Where(x => x.Id == reformerFreeUpDecisionCreateDto.CitizenId)
                     .SingleOrDefault();
-
+                var deptAdminInfoReconciliation = await _employeeService.GetAdminsByDepartmentType(DepartmentType.Reconciliation);
+                var msg = "";
+                var applicationNotifications = new List<SysNotificationDto>();
                 if (citizen == null)
                     return new BaseResponse()
                     {
@@ -433,16 +526,56 @@ namespace REAC.Application.AppServices
 
                 // Send Notification
                 // تم إعادة تحرير المصلح
-                var msg = _sysSetting.GetBySettingKey(SysSettingKeyConstants.Reformer_Activate).Result.Data?.Value;
-                var emailResult = await _emailService.SendMail(new List<string>() { citizen.Email }, "Reformer Activated", msg);
-                var smsResult = _smsService.SendSMS(new Contracts.Dtos.Integration.GEE.SMSRequestDto()
+
+                try
                 {
-                    message_text = msg,
-                    recipients = new List<string>() { citizen.Mobile },
-                    notification_type = "SMS",
+                    msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.Reformer_Activate).Result.Data?.Value;
+                    msg = msg.Replace("{CitizenName}", citizen.FullName);
+                    applicationNotifications.Add(new SysNotificationDto()
+                    {
+                        ActorId = citizen.Id,
+                        CreatedOn = DateTime.Now,
+                        ActorTypeId = NotificationActorType.Reformer,
+                        IsViewed = false,
+                        ViewedOn = null,
+                        RequestId = citizen.Id,
+                        RequestTypeId = RequestType.StopFreeUpReformer,
+                        Message = msg
+                    });
 
-                });
+                    applicationNotifications.Add(new SysNotificationDto()
+                    {
+                        ActorId = deptAdminInfoReconciliation.Data.Id,
+                        CreatedOn = DateTime.Now,
+                        ActorTypeId = NotificationActorType.Employee,
+                        IsViewed = false,
+                        ViewedOn = null,
+                        RequestId = citizen.Id,
+                        RequestTypeId = RequestType.StopFreeUpReformer,
+                        Message = msg
+                    });
 
+                    var notificationResultUpdatedArbitrator = _notificationService.SendNotifications(
+                        new SendEmailDto()
+                        {
+                            To = new List<string>() { citizen.Email, deptAdminInfoReconciliation.Data.Email },
+                            Subject = "Reformer Activated",
+                            Body = msg
+                        },
+                        new SMSRequestDto()
+                        {
+                            message_text = msg,
+                            recipients = new List<string>() { citizen.Mobile, deptAdminInfoReconciliation.Data.Mobile },
+                            notification_type = "SMS",
+
+                        },
+                        applicationNotifications
+                        );
+                }
+                catch (Exception ex)
+                {
+
+                }
 
                 return await GetReformersDecisions(reformerFreeUpDecisionCreateDto.CitizenId);
             }
@@ -463,7 +596,9 @@ namespace REAC.Application.AppServices
                 var citizen = (await _repository.GetQueryable<Citizen, Guid>())?
                     .Where(x => x.Id == reformerStopDecisionCreateDto.CitizenId)
                     .SingleOrDefault();
-
+                var deptAdminInfoReconciliation = await _employeeService.GetAdminsByDepartmentType(DepartmentType.Reconciliation);
+                var msg = "";
+                var applicationNotifications = new List<SysNotificationDto>();
                 if (citizen == null)
                     return new BaseResponse()
                     {
@@ -486,16 +621,56 @@ namespace REAC.Application.AppServices
 
                 // Send Notification
                 // تم إيقاف المصلح
-                var msg = _sysSetting.GetBySettingKey(SysSettingKeyConstants.Reformer_DeActivate).Result.Data?.Value;
-                var emailResult = await _emailService.SendMail(new List<string>() { citizen.Email }, "Reformer Deactivated", msg);
-                var smsResult = _smsService.SendSMS(new Contracts.Dtos.Integration.GEE.SMSRequestDto()
+
+                try
                 {
-                    message_text = msg,
-                    recipients = new List<string>() { citizen.Mobile },
-                    notification_type = "SMS",
+                    msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.Reformer_DeActivate).Result.Data?.Value;
+                    msg = msg.Replace("{CitizenName}", citizen.FullName);
+                    applicationNotifications.Add(new SysNotificationDto()
+                    {
+                        ActorId = citizen.Id,
+                        CreatedOn = DateTime.Now,
+                        ActorTypeId = NotificationActorType.Reformer,
+                        IsViewed = false,
+                        ViewedOn = null,
+                        RequestId = citizen.Id,
+                        RequestTypeId = RequestType.StopFreeUpReformer,
+                        Message = msg
+                    });
 
-                });
+                    applicationNotifications.Add(new SysNotificationDto()
+                    {
+                        ActorId = deptAdminInfoReconciliation.Data.Id,
+                        CreatedOn = DateTime.Now,
+                        ActorTypeId = NotificationActorType.Employee,
+                        IsViewed = false,
+                        ViewedOn = null,
+                        RequestId = citizen.Id,
+                        RequestTypeId = RequestType.StopFreeUpArbitrator,
+                        Message = msg
+                    });
 
+                    var notificationResultUpdatedArbitrator = _notificationService.SendNotifications(
+                        new SendEmailDto()
+                        {
+                            To = new List<string>() { citizen.Email, deptAdminInfoReconciliation.Data.Email },
+                            Subject = "Reformer DeActivated",
+                            Body = msg
+                        },
+                        new SMSRequestDto()
+                        {
+                            message_text = msg,
+                            recipients = new List<string>() { citizen.Mobile, deptAdminInfoReconciliation.Data.Mobile },
+                            notification_type = "SMS",
+
+                        },
+                        applicationNotifications
+                        );
+                }
+                catch (Exception ex)
+                {
+
+                }
 
                 return await GetReformersDecisions(reformerStopDecisionCreateDto.CitizenId);
             }

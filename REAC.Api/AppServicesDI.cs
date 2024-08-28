@@ -8,10 +8,11 @@ using Core.Security.Contracts;
 using Core.Security.Services;
 using Core.Services;
 using REAC.Application.AppServices;
-using REAC.Application.AppServices.Integration;
 using REAC.Application.AppServices.Integration.GEE;
 using REAC.Application.AppServices.Litigation;
+using REAC.Application.AppServices.Notification;
 using REAC.Application.AppServices.Reconciliation;
+using REAC.Application.AppServices.SLA;
 using REAC.Application.AppServices.System;
 using REAC.Application.AppServices.UserManage;
 using REAC.Application.AppServices.Wpf.Business;
@@ -19,7 +20,9 @@ using REAC.Application.AppServices.Wpf.System;
 using REAC.Application.Contracts.IAppServices;
 using REAC.Application.Contracts.IAppServices.Integration;
 using REAC.Application.Contracts.IAppServices.Litigation;
+using REAC.Application.Contracts.IAppServices.Notification;
 using REAC.Application.Contracts.IAppServices.Reconciliation;
+using REAC.Application.Contracts.IAppServices.SLA;
 using REAC.Application.Contracts.IAppServices.System;
 using REAC.Application.Contracts.IAppServices.UserManage;
 using REAC.Application.Contracts.IAppServices.Wpf.Business;
@@ -34,6 +37,7 @@ namespace REAC.Api
         public static void AddAppServices(this IServiceCollection services)
         {
             services.AddScoped<ILoggerManager, LoggerManager>();
+            services.AddScoped<INotificationService, NotificationService>();
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddScoped<DbLogger>();
             services.AddScoped<FileLogger>();
@@ -48,6 +52,8 @@ namespace REAC.Api
             services.AddScoped<ILitigationRequestArbitratorAssigningRequestService, LitigationRequestArbitratorAssigningRequestService>();
             services.AddScoped<ISysMeetingLocationService, SysMeetingLocationService>();
             services.AddScoped<ISysArbitratorCountService, SysArbitratorCountService>();
+            services.AddScoped<IReviewSlaService, ReviewSlaService>();
+            services.AddScoped<IReconciliationSlaService, ReconciliationSlaService>();
 
 
             services.AddScoped<ICitizenRequestService, CitizenRequestService>();
@@ -103,7 +109,7 @@ namespace REAC.Api
             services.AddScoped<DbLogger>();
             services.AddScoped<FileLogger>();
             services.AddScoped<MailLogger>();
-            services.AddScoped<IMailService, MailService>();
+            services.AddScoped<IMailService, REAC.Application.AppServices.Email.MailService>();
             services.AddScoped<IMOJService, MOJService>();
             services.AddScoped<IGEELoginService, GEELoginService>();
             services.AddScoped<INafathService, NafathService>();

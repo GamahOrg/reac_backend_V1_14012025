@@ -1,7 +1,9 @@
 ﻿using Core.Contracts;
 using Core.Dtos;
+using Core.GenericRepository.BaseRepository;
 using Core.Shared.Responses;
 using Microsoft.Extensions.Options;
+using REAC.Domain.Shared.Constants;
 using System.Net.Mail;
 
 namespace Core.Services
@@ -9,15 +11,19 @@ namespace Core.Services
     public class MailService : IMailService
     {
         private readonly SendEmailOptions options;
-        public MailService(IOptions<SendEmailOptions> options)
+        private readonly IEntityRepository _repository;
+
+        public MailService(IOptions<SendEmailOptions> options, IEntityRepository repository)
         {
             this.options = options.Value;
+            _repository = repository;
         }
         public async Task<BaseResponse> SendMail(List<string> toAddressList, string subject, string body)
         {
             if (options.SendEmail)
             {
                 MailMessage mail = new MailMessage();
+
                 SmtpClient client = new SmtpClient
                 {
                     Port = options.Port,
@@ -49,6 +55,12 @@ namespace Core.Services
             {
                 return new BaseResponse { IsDone = true };
             }
+
+
         }
+
+
+
+
     }
 }

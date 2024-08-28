@@ -36,6 +36,11 @@ namespace REAC.EntityFrameworkCore.Seed
                 {
                     Id = NotificationActorType.Employee,
                     ActorType = "موظف",
+                },
+                   new SysNotificationActorType
+                {
+                    Id = NotificationActorType.Applicant,
+                    ActorType = "مقدم دعوي",
                 }
             });
             context.SaveChanges();

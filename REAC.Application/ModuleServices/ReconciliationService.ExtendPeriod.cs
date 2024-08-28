@@ -3,9 +3,11 @@ using Core.Shared.Responses;
 using Microsoft.EntityFrameworkCore;
 using REAC.Application.Contracts.Dtos.Reconciliation;
 using REAC.Application.Contracts.Dtos.Reconciliation.Process;
+using REAC.Domain.Shared.Constants;
 using REAC.Domain.Shared.Enum;
 using REAC.EntityFrameworkCore.Entities.Litigation;
 using REAC.EntityFrameworkCore.Entities.Reconciliation;
+using REAC.EntityFrameworkCore.Entities.Wpf.Business;
 
 namespace REAC.Application.ModuleServices
 {
@@ -15,15 +17,24 @@ namespace REAC.Application.ModuleServices
         #region Extend Period Request
         public async Task<BaseResponse> AddReconciliationExtendPeriod(LitigationRequestExtendPeriodRequestCreateUpdateDto requestPayload, CancellationToken cancellationToken)
         {
+            var msg = "";
+            var litigationRequest = (await _repository.GetQueryable<LitigationRequest, Guid>()).Include(x => x.Area).Include(x => x.City)
+                          .Include(x => x.ApplicantCitizen)
+                          .Include(x => x.Contract)
+                          .Include(x => x.Contract.FirstPartyFacility)
+                          .Include(x => x.Contract.FirstPartyCitizen)
+                          .Include(x => x.Contract.SecondPartyFacility)
+                          .Include(x => x.Contract.SecondPartyCitizen)
+                          .Where(x => x.Id == requestPayload.LitigationRequestId).ToList().FirstOrDefault();
             try
             {
                 Guid referenceId = Guid.Empty;
                 _jwtReader.GetReferenceId(ref referenceId);
 
-                var litigationRequest = (await _repository.GetQueryable<LitigationRequest, Guid>())?
-                        .Include(x => x.LitigationRequestExtendPeriodRequests.Where(x => x.LitigationRequestExtendPeriodRequestTypeId == LitigationRequestExtendPeriodRequestType.Reconciliation))
-                        .Where(x => x.Id == requestPayload.LitigationRequestId & x.ReformerCitizenId == referenceId)
-                        .Single();
+                litigationRequest = (await _repository.GetQueryable<LitigationRequest, Guid>())?
+                       .Include(x => x.LitigationRequestExtendPeriodRequests.Where(x => x.LitigationRequestExtendPeriodRequestTypeId == LitigationRequestExtendPeriodRequestType.Reconciliation))
+                       .Where(x => x.Id == requestPayload.LitigationRequestId & x.ReformerCitizenId == referenceId)
+                       .Single();
 
                 if (litigationRequest == null)
                     return new BaseResponse()
@@ -64,6 +75,15 @@ namespace REAC.Application.ModuleServices
 
                     await _repository.AddAsync<LitigationRequestExtendPeriodRequest, Guid>(litigationRequestExtendPeriodRequest);
 
+                    await _repository.AddAsync<WorkFlowLog, Guid>(new WorkFlowLog()
+                    {
+                        Id = Guid.NewGuid(),
+                        CreatedOn = DateTime.Now,
+                        RequestId = litigationRequest.Id,
+                        ShowForApplicant = false,
+                        LogMessage = "تم إضافة طلب مد مدة الصلح"
+                    });
+
                     var repositorySaveResponse = await _repository.SaveChangesAsync(new CancellationToken());
                     if (!repositorySaveResponse.IsDone)
                         return repositorySaveResponse;
@@ -71,6 +91,17 @@ namespace REAC.Application.ModuleServices
 
                     // Send Notification
                     // تم إرسال طلب مد مدة الصلح
+                    try
+                    {
+                        msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.Arbitration_ExtendRequest_Added).Result.Data?.Value;
+                        msg = msg.Replace("{LitigationCode}", litigationRequest.RequestCode);
+                        sendNotificationMSWithAllTypes(msg, litigationRequest, "Citizen Litigation Request For Report Reply Added");
+                    }
+                    catch (Exception e)
+                    {
+
+
+                    }
 
                 }
                 else
@@ -95,9 +126,19 @@ namespace REAC.Application.ModuleServices
         }
         public async Task<BaseResponse> AddReconciliationExtendPeriodForEmployee(LitigationRequestExtendPeriodRequestCreateUpdateEmployeeDto requestPayload, CancellationToken cancellationToken)
         {
+            var msg = "";
+            var litigationRequest = (await _repository.GetQueryable<LitigationRequest, Guid>()).Include(x => x.Area).Include(x => x.City)
+                          .Include(x => x.ApplicantCitizen)
+                          .Include(x => x.Contract)
+                          .Include(x => x.Contract.FirstPartyFacility)
+                          .Include(x => x.Contract.FirstPartyCitizen)
+                          .Include(x => x.Contract.SecondPartyFacility)
+                          .Include(x => x.Contract.SecondPartyCitizen)
+                          .Where(x => x.Id == requestPayload.LitigationRequestId).ToList().FirstOrDefault();
             try
             {
                 var litigationRequestExtendPeriodRequest = (await _repository.GetQueryable<LitigationRequestExtendPeriodRequest, Guid>())?
+                    .Include(x => x.LitigationRequest)
                         .Where(x => x.LitigationRequestId == requestPayload.LitigationRequestId & x.LitigationRequestExtendPeriodRequestTypeId == LitigationRequestExtendPeriodRequestType.Reconciliation)
                         .SingleOrDefault();
 
@@ -120,9 +161,9 @@ namespace REAC.Application.ModuleServices
 
                 if (requestPayload.LitigationRequestExtendPeriodRequestStatusId == LitigationRequestExtendPeriodRequestStatus.Approve)
                 {
-                    var litigationRequest = (await _repository.GetQueryable<LitigationRequest, Guid>())?
-                       .Where(x => x.Id == requestPayload.LitigationRequestId)
-                       .SingleOrDefault();
+                    litigationRequest = (await _repository.GetQueryable<LitigationRequest, Guid>())?
+                      .Where(x => x.Id == requestPayload.LitigationRequestId)
+                      .SingleOrDefault();
 
                     litigationRequest.ReconciliationPeriod += litigationRequestExtendPeriodRequest.RequiredDays;
 
@@ -133,15 +174,56 @@ namespace REAC.Application.ModuleServices
                 switch (requestPayload.LitigationRequestExtendPeriodRequestStatusId)
                 {
                     case LitigationRequestExtendPeriodRequestStatus.Approve:
+                        await _repository.AddAsync<WorkFlowLog, Guid>(new WorkFlowLog()
+                        {
+                            Id = Guid.NewGuid(),
+                            CreatedOn = DateTime.Now,
+                            RequestId = litigationRequestExtendPeriodRequest.LitigationRequest.Id,
+                            ShowForApplicant = false,
+                            LogMessage = "تم قبول طلب مد مدة الصلح"
+                        });
                         // Send Notification
                         // تم قبول طلب مد مدة الصلح
+                        try
+                        {
+                            msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.Reconciliation_ExtendRequest_Accepted).Result.Data?.Value;
+                            msg = msg.Replace("{LitigationCode}", litigationRequest.RequestCode);
+                            sendNotificationMSWithAllTypes(msg, litigationRequest, "Citizen Litigation Request For Report Reply Added");
+                        }
+                        catch (Exception e)
+                        {
+
+
+                        }
                         break;
                     case LitigationRequestExtendPeriodRequestStatus.Reject:
+
+                        await _repository.AddAsync<WorkFlowLog, Guid>(new WorkFlowLog()
+                        {
+                            Id = Guid.NewGuid(),
+                            CreatedOn = DateTime.Now,
+                            RequestId = litigationRequestExtendPeriodRequest.LitigationRequest.Id,
+                            ShowForApplicant = false,
+                            LogMessage = "تم رفض طلب مد مدة الصلح"
+                        });
+
                         // Send Notification
                         // تم رفض طلب مد مدة الصلح
-
+                        try
+                        {
+                            msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.Arbitration_ExtendRequest_Rejected).Result.Data?.Value;
+                            msg = msg.Replace("{LitigationCode}", litigationRequest.RequestCode);
+                            sendNotificationMSWithAllTypes(msg, litigationRequest, "Citizen Litigation Request For Report Reply Added");
+                        }
+                        catch (Exception e)
+                        {
+                        }
                         break;
                 }
+
+                savePeriodResponse = await _repository.SaveChangesAsync();
+                if (!savePeriodResponse.IsDone)
+                    return savePeriodResponse;
 
                 return await GetLitigationRequestExtendPeriodForEmployee(requestPayload.LitigationRequestId, cancellationToken);
             }
@@ -323,7 +405,7 @@ namespace REAC.Application.ModuleServices
                                       .Include(x => x.Contract.SecondPartyFacility)
                                       .Include(x => x.Contract.SecondPartyCitizen).Include(x => x.Contract.LitigationRequestContractType)
 
-                                      .Where(x => x.ReformerCitizenId == referenceId & x.RequestCode != null & x.LitigationRequestCategoryId != LitigationRequestCategory.Arbitration).ToList();
+                                      .Where(x => x.ReformerCitizenId == referenceId & x.RequestCode != null & x.InternalStatusId != RequestStatus.Rejected & x.LitigationRequestCategoryId != LitigationRequestCategory.Arbitration).ToList();
 
             List<LitigationRequestMircoDto> litigationRequestMircoDtos = new List<LitigationRequestMircoDto>();
             if (litigationRequests != null)
@@ -406,7 +488,7 @@ namespace REAC.Application.ModuleServices
                                       .Include(x => x.Contract.SecondPartyCitizen).Include(x => x.Contract.LitigationRequestContractType);
 
 
-            litigationRequests = entitiesQuerable.Where(x => x.RequestCode != null & x.LitigationRequestExtendPeriodRequests.Count() > 0)
+            litigationRequests = entitiesQuerable.Where(x => x.RequestCode != null & x.InternalStatusId != RequestStatus.Rejected & x.LitigationRequestExtendPeriodRequests.Count() > 0)
                                        .OrderByDescending(x => x.CreatedOn)
                                        .AsSplitQuery()
                                        .AsNoTracking()

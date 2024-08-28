@@ -2,10 +2,17 @@
 using Core.Shared.Responses;
 using Microsoft.EntityFrameworkCore;
 using REAC.Application.Contracts.Dtos.Arbitration;
+using REAC.Application.Contracts.Dtos.Litigation.CreateUpdate.Litigation;
+using REAC.Application.Contracts.Dtos.Notification;
 using REAC.Application.Contracts.Dtos.Reconciliation.Process;
+using REAC.Domain.Shared.Constants;
 using REAC.Domain.Shared.Enum;
+using REAC.EntityFrameworkCore.Entities.Actor;
 using REAC.EntityFrameworkCore.Entities.Arbitration;
 using REAC.EntityFrameworkCore.Entities.Litigation;
+using REAC.EntityFrameworkCore.Entities.Wpf.Business;
+using REAC.EntityFrameworkCore.Entities.System;
+using Azure.Core;
 
 namespace REAC.Application.ModuleServices
 {
@@ -21,7 +28,11 @@ namespace REAC.Application.ModuleServices
                 Guid referenceId = Guid.Empty;
                 _jwtReader.GetReferenceId(ref referenceId);
 
+                
+
                 var litigationRequest = (await _repository.GetQueryable<LitigationRequest, Guid>()).Include(x => x.Area).Include(x => x.City)
+                                      .Include(x => x.LitigationRequestArbitratorLists)
+                                      .ThenInclude(x => x.ArbitratorCitizen)
                                       .Include(x => x.LitigationRequestArbitratorRecusalRequests)
                                       .ThenInclude(x => x.LitigationRequestArbitratorRecusalRequestFiles)
                                       .Include(x => x.LitigationRequestArbitrationReports)
@@ -117,6 +128,17 @@ namespace REAC.Application.ModuleServices
                         LitigationRequestId = requestPayload.LitigationRequestId
                     };
 
+                    var citizen = (await _repository.GetQueryable<Citizen, Guid>()).Where(x => x.Id == requestPayload.ArbitratorCitizenId).FirstOrDefault();
+
+                    await _repository.AddAsync<WorkFlowLog, Guid>(new WorkFlowLog()
+                    {
+                        Id = Guid.NewGuid(),
+                        CreatedOn = DateTime.Now,
+                        RequestId = litigationRequest.Id,
+                        ShowForApplicant = false,
+                        LogMessage = "تم إرسال طلب رد المحكم " + citizen.FullName + " من قبل " + ((litigationRequestArbitrationReportExplanationRequestParty == LitigationRequestParty.Plaintiff) ? "المدعى" : "المدعى عليه")
+                    });
+
                     var recusalRequest = await _repository.AddAsync<LitigationRequestArbitratorRecusalRequest, Guid>(litigationRequestArbitratorRecusalRequest);
 
                     var saveResponse = await _repository.SaveChangesAsync();
@@ -126,6 +148,55 @@ namespace REAC.Application.ModuleServices
 
                     // Send Notification
                     // تم أضافة طلب رد محكم
+                    try
+                    {
+                        var applicantInfo = (await _repository.GetQueryable<Citizen, Guid>()).FirstOrDefault(c => c.Id == referenceId);
+                        var arbitratorInfo = (await _repository.GetQueryable<Citizen, Guid>()).FirstOrDefault(c => c.Id == litigationRequestArbitratorRecusalRequest.ArbitratorCitizenId);
+                        var arbitrationAdmin = await _sysEmployeeService.GetAdminsByDepartmentType(DepartmentType.Arbitration);
+                       
+
+                            var msg = "";
+                        msg = _settingService.GetBySettingKey(SysSettingKeyConstants.ArbitraorRecusal_AddRequest).Result.Data?.Value;
+                        msg = msg?.Replace("{ArbitratorName}", arbitratorInfo?.FullName);
+                        msg = msg?.Replace("{LitigationCode}", litigationRequest?.RequestCode);
+
+                        List<SysNotificationDto> notifications = new List<SysNotificationDto>() {
+                        new SysNotificationDto{
+                        ActorId = applicantInfo.Id,
+                        RequestId=litigationRequest.Id,
+                        CreatedOn= DateTime.Now,
+                        RequestTypeId=RequestType.LitigationRequest,
+                        ActorTypeId=NotificationActorType.Applicant,
+                        Message=msg
+                        },
+                           new SysNotificationDto{
+                        ActorId = (Guid)arbitrationAdmin.Data?.Id,
+                        RequestId=litigationRequest.Id,
+                        CreatedOn= DateTime.Now,
+                        RequestTypeId=RequestType.LitigationRequest,
+                        ActorTypeId=NotificationActorType.Employee,
+                        Message=msg
+                        }
+
+                        };
+                        await _notificationService.SendNotifications( new Contracts.Dtos.Notification.SendEmailDto()
+                         {
+                             To = new List<string>() { applicantInfo.Email, arbitrationAdmin.Data?.Email },
+                             Subject = "أضافة طلب رد محكم",
+                             Body = msg
+                         },null, notifications);
+                        
+                    }
+                    catch (Exception e)
+                    {
+
+                       
+                    }
+                   
+
+                   
+             
+
 
                     requestPayload.LitigationRequestArbitrationArbitratorRecusalRequestFiles.ForEach(t =>
                     {
@@ -806,9 +877,16 @@ namespace REAC.Application.ModuleServices
             {
                 Guid referenceId = Guid.Empty;
                 _jwtReader.GetReferenceId(ref referenceId);
-
+              
                 var arbitrationReportExplanationRequest = (await _repository.GetQueryable<LitigationRequestArbitratorRecusalRequest, Guid>())
-                                      .Where(x => x.Id == requestPayload.Id).SingleOrDefault();
+                     .Include(x=> x.LitigationRequest)
+                     .Include(x => x.LitigationRequest.ApplicantCitizen)
+                    .Include(x => x.LitigationRequest.Contract)
+                    .Include(x => x.LitigationRequest.Contract.FirstPartyCitizen)
+                    .Include(x => x.LitigationRequest.Contract.SecondPartyCitizen)
+                    .Include(x => x.LitigationRequest.Contract.FirstPartyFacility).ThenInclude(x => x.Citizen)
+                    .Include(x => x.LitigationRequest.Contract.SecondPartyFacility).ThenInclude(x => x.Citizen)
+                     .FirstOrDefault(x => x.Id == requestPayload.Id);
 
                 if (arbitrationReportExplanationRequest == null)
                     return new BaseResponse()
@@ -823,18 +901,170 @@ namespace REAC.Application.ModuleServices
                 var saveResponse = await _repository.SaveChangesAsync();
                 if (!saveResponse.IsDone)
                     return saveResponse;
-
-                switch (requestPayload.Response)
+                try
                 {
-                    case ApproveRejectStatus.Approve:
-                        // Send Notification
-                        // تم الموافقة على طلب رد محكم
-                        break;
-                    case ApproveRejectStatus.Reject:
-                        // Send Notification
-                        // تم رفض طلب رد محكم
-                        break;
+                    var arbitrationAdmin = await _sysEmployeeService.GetAdminsByDepartmentType(DepartmentType.Arbitration);
+                    if (arbitrationAdmin.IsDone)
+                    {
+
+                        var msg = "";
+                        var arbitratorInfo = (await _repository.GetQueryable<Citizen, Guid>()).FirstOrDefault(c => c.Id == arbitrationReportExplanationRequest.ArbitratorCitizenId);
+                        var litigationRequest = arbitrationReportExplanationRequest.LitigationRequest;
+                        switch (requestPayload.Response)
+                        {
+
+                            case ApproveRejectStatus.Approve:
+                                // Send Notification
+                                // تم الموافقة على طلب رد محكم
+                                msg = _settingService.GetBySettingKey(SysSettingKeyConstants.ArbitraorRecusal_AddRequest_Approve).Result.Data?.Value;
+                                break;
+                            case ApproveRejectStatus.Reject:
+                                // Send Notification
+                                // تم رفض طلب رد محكم
+                                msg = _settingService.GetBySettingKey(SysSettingKeyConstants.ArbitraorRecusal_AddRequest_Reject).Result.Data?.Value;
+                                break;
+                        }
+                        msg = msg?.Replace("{ArbitratorName}", arbitratorInfo?.FullName);
+                        msg = msg?.Replace("{LitigationCode}", arbitrationReportExplanationRequest.LitigationRequest?.RequestCode);
+                        List<SysNotificationDto> notifications = new List<SysNotificationDto>() {
+                        new SysNotificationDto{
+                        ActorId = litigationRequest.ApplicantCitizen.Id,
+                        RequestId=litigationRequest.Id,
+                        CreatedOn= DateTime.Now,
+                        RequestTypeId=RequestType.LitigationRequest,
+                        ActorTypeId=NotificationActorType.Plaintiff,
+                        Message=msg
+                        },
+                           new SysNotificationDto{
+                        ActorId = (Guid)arbitrationAdmin.Data?.Id,
+                        RequestId=litigationRequest.Id,
+                        CreatedOn= DateTime.Now,
+                        RequestTypeId=RequestType.LitigationRequest,
+                        ActorTypeId=NotificationActorType.Employee,
+                        Message=msg
+                        }
+
+                        };
+                        List<string> emails = new List<string>() {
+                                litigationRequest.ApplicantCitizen.Email,
+                                  arbitrationAdmin.Data?.Email
+                                };
+                        if (litigationRequest?.Contract?.FirstPartyCitizenId != null && litigationRequest?.Contract?.FirstPartyCitizenId != litigationRequest.ApplicantCitizenId)
+                        {
+                            notifications.Add(new SysNotificationDto
+                            {
+                                ActorId = (Guid)litigationRequest.Contract.FirstPartyCitizenId,
+                                RequestId = litigationRequest.Id,
+                                CreatedOn = DateTime.Now,
+                                RequestTypeId = RequestType.LitigationRequest,
+                                ActorTypeId = NotificationActorType.Plaintiff,
+                                Message = msg
+                            });
+                            emails.Add(litigationRequest.Contract.FirstPartyCitizen.Email);
+
+
+                        };
+                        if (litigationRequest?.Contract?.FirstPartyFacility != null && litigationRequest?.Contract?.FirstPartyFacility.CitizenId != litigationRequest.ApplicantCitizenId)
+                        {
+                            notifications.Add(new SysNotificationDto
+                            {
+                                ActorId = (Guid)litigationRequest.Contract.FirstPartyFacility.CitizenId,
+                                RequestId = litigationRequest.Id,
+                                CreatedOn = DateTime.Now,
+                                RequestTypeId = RequestType.LitigationRequest,
+                                ActorTypeId = NotificationActorType.Plaintiff,
+                                Message = msg
+                            });
+                            emails.Add(litigationRequest.Contract.FirstPartyFacility.Citizen.Email);
+                        };
+                        if (litigationRequest?.Contract?.SecondPartyCitizenId != null)
+                        {
+                            notifications.Add(new SysNotificationDto
+                            {
+                                ActorId = (Guid)litigationRequest.Contract.SecondPartyCitizenId,
+                                RequestId = litigationRequest.Id,
+                                CreatedOn = DateTime.Now,
+                                RequestTypeId = RequestType.LitigationRequest,
+                                ActorTypeId = NotificationActorType.Defendant,
+                                Message = msg
+                            });
+                            emails.Add(litigationRequest.Contract.SecondPartyCitizen.Email);
+                        };
+                        if (litigationRequest?.Contract?.SecondPartyFacilityId != null)
+                        {
+                            notifications.Add(new SysNotificationDto
+                            {
+                                ActorId = (Guid)litigationRequest.Contract.SecondPartyFacility.CitizenId,
+                                RequestId = litigationRequest.Id,
+                                CreatedOn = DateTime.Now,
+                                RequestTypeId = RequestType.LitigationRequest,
+                                ActorTypeId = NotificationActorType.Defendant,
+                                Message = msg
+                            });
+                            emails.Add(litigationRequest.Contract.SecondPartyFacility.Citizen.Email);
+                        };
+                        await _notificationService.SendNotifications(new Contracts.Dtos.Notification.SendEmailDto()
+                        {
+                            To = emails,
+                            Subject = "طلب رد محكم",
+                            Body = msg
+                        }, null, notifications);
+
+                    }
                 }
+                catch (Exception e)
+                {
+
+                   
+                }
+              
+
+
+
+                   
+                
+              
+
+
+                var citizen = (await _repository.GetQueryable<Citizen, Guid>()).Where(x => x.Id == arbitrationReportExplanationRequest.ArbitratorCitizenId).FirstOrDefault();
+                try
+                {
+                    switch (requestPayload.Response)
+                    {
+                        case ApproveRejectStatus.Approve:
+                            // تم الموافقة على طلب رد محكم
+                            await _repository.AddAsync<WorkFlowLog, Guid>(new WorkFlowLog()
+                            {
+                                Id = Guid.NewGuid(),
+                                CreatedOn = DateTime.Now,
+                                RequestId = arbitrationReportExplanationRequest.LitigationRequest.Id,
+                                ShowForApplicant = false,
+                                LogMessage = "تم فبول طلب رد المحكم " + citizen.FullName + " من قبل " + ((arbitrationReportExplanationRequest.RequestParty == LitigationRequestParty.Plaintiff) ? "المدعى" : "المدعى عليه")
+                            });
+                            break;
+                        case ApproveRejectStatus.Reject:
+                            // تم رفض طلب رد محكم
+                            await _repository.AddAsync<WorkFlowLog, Guid>(new WorkFlowLog()
+                            {
+                                Id = Guid.NewGuid(),
+                                CreatedOn = DateTime.Now,
+                                RequestId = arbitrationReportExplanationRequest.LitigationRequest.Id,
+                                ShowForApplicant = false,
+                                LogMessage = "تم رفض طلب رد المحكم " + citizen.FullName + " من قبل " + ((arbitrationReportExplanationRequest.RequestParty == LitigationRequestParty.Plaintiff) ? "المدعى" : "المدعى عليه")
+                            });
+                            break;
+                    }
+                }
+                catch (Exception)
+                {
+
+                    throw;
+                }
+
+               
+                saveResponse = await _repository.SaveChangesAsync();
+                if (!saveResponse.IsDone)
+                    return saveResponse;
 
             }
             catch (Exception ex)

@@ -1,9 +1,13 @@
 ﻿using Core.Shared.Responses;
 using Microsoft.EntityFrameworkCore;
+using REAC.Application.Contracts.Dtos.Litigation.CreateUpdate.Litigation;
+using REAC.Application.Contracts.Dtos.Notification;
 using REAC.Application.Contracts.Dtos.Reconciliation.Process;
+using REAC.Domain.Shared.Constants;
 using REAC.Domain.Shared.Enum;
 using REAC.EntityFrameworkCore.Entities.Litigation;
 using REAC.EntityFrameworkCore.Entities.Reconciliation;
+using REAC.EntityFrameworkCore.Entities.Wpf.Business;
 
 namespace REAC.Application.ModuleServices
 {
@@ -35,11 +39,32 @@ namespace REAC.Application.ModuleServices
                                       .Include(x => x.Contract.FirstPartyCitizen)
                                       .Include(x => x.Contract.SecondPartyFacility)
                                       .Include(x => x.Contract.SecondPartyCitizen).Include(x => x.Contract.LitigationRequestContractType)
-                                      .Where(x => x.RequestCode != null & x.ApplicantCitizenId == referenceId & x.LitigationRequestReconciliationReports.Count > 0
-                                      | x.LitigationRequestReconciliationReports.Count > 0 & x.RequestCode != null & x.Contract.FirstPartyCitizenId == referenceId & x.LitigationRequestCategoryId != LitigationRequestCategory.Arbitration
-                                      | x.LitigationRequestReconciliationReports.Count > 0 & x.RequestCode != null & x.Contract.SecondPartyCitizenId == referenceId & x.LitigationRequestCategoryId != LitigationRequestCategory.Arbitration
-                                      | x.LitigationRequestReconciliationReports.Count > 0 & x.RequestCode != null & x.Contract.FirstPartyFacility.CitizenId == referenceId & x.LitigationRequestCategoryId != LitigationRequestCategory.Arbitration
-                                      | x.LitigationRequestReconciliationReports.Count > 0 & x.RequestCode != null & x.Contract.SecondPartyFacility.CitizenId == referenceId & x.LitigationRequestCategoryId != LitigationRequestCategory.Arbitration).
+                                      .Where(x => x.RequestCode != null
+                                      & x.ApplicantCitizenId == referenceId & x.LitigationRequestReconciliationReports.Count > 0
+
+                                      |
+
+                                      x.LitigationRequestReconciliationReports.Count > 0
+                                      & x.RequestCode != null & x.Contract.FirstPartyCitizenId == referenceId
+                                      & x.LitigationRequestCategoryId != LitigationRequestCategory.Arbitration
+
+                                      |
+
+                                      x.LitigationRequestReconciliationReports.Count > 0
+                                      & x.RequestCode != null & x.Contract.SecondPartyCitizenId == referenceId
+                                      & x.LitigationRequestCategoryId != LitigationRequestCategory.Arbitration
+
+                                      |
+
+                                      x.LitigationRequestReconciliationReports.Count > 0
+                                      & x.RequestCode != null & x.Contract.FirstPartyFacility.CitizenId == referenceId
+                                      & x.LitigationRequestCategoryId != LitigationRequestCategory.Arbitration
+
+                                      |
+
+                                      x.LitigationRequestReconciliationReports.Count > 0
+                                      & x.RequestCode != null & x.Contract.SecondPartyFacility.CitizenId == referenceId
+                                      & x.LitigationRequestCategoryId != LitigationRequestCategory.Arbitration).
                                       OrderByDescending(x => x.CreatedOn).ToList();
 
             List<LitigationRequestMircoDto> litigationRequestMircoDtos = new List<LitigationRequestMircoDto>();
@@ -256,9 +281,10 @@ namespace REAC.Application.ModuleServices
         {
             Guid referenceId = Guid.Empty;
             _jwtReader.GetReferenceId(ref referenceId);
-
+            var msg = "";
             var litigationRequest = (await _repository.GetQueryable<LitigationRequest, Guid>()).Include(x => x.Area).Include(x => x.City)
                           .Include(x => x.ApplicantCitizen)
+                          .Include(x => x.ReformerCitizen)
                           .Include(x => x.Contract)
                           .Include(x => x.Contract.FirstPartyFacility)
                           .Include(x => x.Contract.FirstPartyCitizen)
@@ -278,6 +304,29 @@ namespace REAC.Application.ModuleServices
                             litigationRequest.MintuesOfMeetingApprovalPlaintiffStatus = requestMinutesOfMeetingApprovalStatus;
                             litigationRequest.MintuesOfMeetingApprovalPlaintiffStatusOn = DateTime.Now;
                             isDone = true;
+
+                            if (requestMinutesOfMeetingApprovalStatus == ApproveRejectStatus.Approve)
+                            {
+                                await _repository.AddAsync<WorkFlowLog, Guid>(new WorkFlowLog()
+                                {
+                                    Id = Guid.NewGuid(),
+                                    CreatedOn = DateTime.Now,
+                                    RequestId = litigationRequest.Id,
+                                    ShowForApplicant = false,
+                                    LogMessage = "تم قبول محضر الصلح من قبل المدعى"
+                                });
+                            }
+                            else
+                            {
+                                await _repository.AddAsync<WorkFlowLog, Guid>(new WorkFlowLog()
+                                {
+                                    Id = Guid.NewGuid(),
+                                    CreatedOn = DateTime.Now,
+                                    RequestId = litigationRequest.Id,
+                                    ShowForApplicant = false,
+                                    LogMessage = "تم رفض محضر الصلح من قبل المدعى"
+                                });
+                            }
                         }
                     }
                 }
@@ -293,6 +342,28 @@ namespace REAC.Application.ModuleServices
                                 litigationRequest.MintuesOfMeetingApprovalPlaintiffStatus = requestMinutesOfMeetingApprovalStatus;
                                 litigationRequest.MintuesOfMeetingApprovalPlaintiffStatusOn = DateTime.Now;
                                 isDone = true;
+                                if (requestMinutesOfMeetingApprovalStatus == ApproveRejectStatus.Approve)
+                                {
+                                    await _repository.AddAsync<WorkFlowLog, Guid>(new WorkFlowLog()
+                                    {
+                                        Id = Guid.NewGuid(),
+                                        CreatedOn = DateTime.Now,
+                                        RequestId = litigationRequest.Id,
+                                        ShowForApplicant = false,
+                                        LogMessage = "تم قبول محضر الصلح من قبل المدعى"
+                                    });
+                                }
+                                else
+                                {
+                                    await _repository.AddAsync<WorkFlowLog, Guid>(new WorkFlowLog()
+                                    {
+                                        Id = Guid.NewGuid(),
+                                        CreatedOn = DateTime.Now,
+                                        RequestId = litigationRequest.Id,
+                                        ShowForApplicant = false,
+                                        LogMessage = "تم رفض محضر الصلح من قبل المدعى"
+                                    });
+                                }
                             }
                         }
                     }
@@ -309,6 +380,28 @@ namespace REAC.Application.ModuleServices
                                 litigationRequest.MintuesOfMeetingApprovalDefendantStatus = requestMinutesOfMeetingApprovalStatus;
                                 litigationRequest.MintuesOfMeetingApprovalDefendantStatusOn = DateTime.Now;
                                 isDone = true;
+                                if (requestMinutesOfMeetingApprovalStatus == ApproveRejectStatus.Approve)
+                                {
+                                    await _repository.AddAsync<WorkFlowLog, Guid>(new WorkFlowLog()
+                                    {
+                                        Id = Guid.NewGuid(),
+                                        CreatedOn = DateTime.Now,
+                                        RequestId = litigationRequest.Id,
+                                        ShowForApplicant = false,
+                                        LogMessage = "تم قبول محضر الصلح من قبل المدعى عليه"
+                                    });
+                                }
+                                else
+                                {
+                                    await _repository.AddAsync<WorkFlowLog, Guid>(new WorkFlowLog()
+                                    {
+                                        Id = Guid.NewGuid(),
+                                        CreatedOn = DateTime.Now,
+                                        RequestId = litigationRequest.Id,
+                                        ShowForApplicant = false,
+                                        LogMessage = "تم رفض محضر الصلح من قبل المدعى عليه"
+                                    });
+                                }
                             }
                         }
                     }
@@ -325,6 +418,28 @@ namespace REAC.Application.ModuleServices
                                 litigationRequest.MintuesOfMeetingApprovalPlaintiffStatus = requestMinutesOfMeetingApprovalStatus;
                                 litigationRequest.MintuesOfMeetingApprovalPlaintiffStatusOn = DateTime.Now;
                                 isDone = true;
+                                if (requestMinutesOfMeetingApprovalStatus == ApproveRejectStatus.Approve)
+                                {
+                                    await _repository.AddAsync<WorkFlowLog, Guid>(new WorkFlowLog()
+                                    {
+                                        Id = Guid.NewGuid(),
+                                        CreatedOn = DateTime.Now,
+                                        RequestId = litigationRequest.Id,
+                                        ShowForApplicant = false,
+                                        LogMessage = "تم قبول محضر الصلح من قبل المدعى"
+                                    });
+                                }
+                                else
+                                {
+                                    await _repository.AddAsync<WorkFlowLog, Guid>(new WorkFlowLog()
+                                    {
+                                        Id = Guid.NewGuid(),
+                                        CreatedOn = DateTime.Now,
+                                        RequestId = litigationRequest.Id,
+                                        ShowForApplicant = false,
+                                        LogMessage = "تم رفض محضر الصلح من قبل المدعى"
+                                    });
+                                }
                             }
                         }
                     }
@@ -341,6 +456,28 @@ namespace REAC.Application.ModuleServices
                                 litigationRequest.MintuesOfMeetingApprovalDefendantStatus = requestMinutesOfMeetingApprovalStatus;
                                 litigationRequest.MintuesOfMeetingApprovalDefendantStatusOn = DateTime.Now;
                                 isDone = true;
+                                if (requestMinutesOfMeetingApprovalStatus == ApproveRejectStatus.Approve)
+                                {
+                                    await _repository.AddAsync<WorkFlowLog, Guid>(new WorkFlowLog()
+                                    {
+                                        Id = Guid.NewGuid(),
+                                        CreatedOn = DateTime.Now,
+                                        RequestId = litigationRequest.Id,
+                                        ShowForApplicant = false,
+                                        LogMessage = "تم قبول محضر الصلح من قبل المدعى عليه"
+                                    });
+                                }
+                                else
+                                {
+                                    await _repository.AddAsync<WorkFlowLog, Guid>(new WorkFlowLog()
+                                    {
+                                        Id = Guid.NewGuid(),
+                                        CreatedOn = DateTime.Now,
+                                        RequestId = litigationRequest.Id,
+                                        ShowForApplicant = false,
+                                        LogMessage = "تم رفض محضر الصلح من قبل المدعى عليه"
+                                    });
+                                }
                             }
                         }
                     }
@@ -354,8 +491,31 @@ namespace REAC.Application.ModuleServices
                 {
                     litigationRequest.InternalStatusId = RequestStatus.ReconciliationWasMade;
                     litigationRequest.ExternalStatusId = RequestStatus.ReconciliationWasMade;
+                   
+                    await _repository.AddAsync<WorkFlowLog, Guid>(new WorkFlowLog()
+                    {
+                        Id = Guid.NewGuid(),
+                        CreatedOn = DateTime.Now,
+                        RequestId = litigationRequest.Id,
+                        ShowForApplicant = false,
+                        LogMessage = "تم قبول محصر الصلح"
+                    });
+
                     // Send Notification
                     // تم قبول الصلح
+                    try
+                    {
+                        msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.LitigationRequest_Decision_ReconciliationWasMade).Result.Data?.Value;
+                        msg = msg.Replace("{LitigationCode}", litigationRequest.RequestCode);
+                        sendNotificationMSWithAllTypes(msg, litigationRequest, "Citizen Litigation Request For Report Reply Added");
+                    }
+                    catch (Exception e)
+                    {
+
+
+                    }
+
+
                 }
                 else
                 {
@@ -365,14 +525,55 @@ namespace REAC.Application.ModuleServices
                     {
                         litigationRequest.LitigationRequestStage = LitigationRequestStage.Arbitration;
                         litigationRequest.LitigationRequestSubStage = LitigationRequestSubStage.ArbitratorSelectionDuration;
+                        
+                        await _repository.AddAsync<WorkFlowLog, Guid>(new WorkFlowLog()
+                        {
+                            Id = Guid.NewGuid(),
+                            CreatedOn = DateTime.Now,
+                            RequestId = litigationRequest.Id,
+                            ShowForApplicant = false,
+                            LogMessage = "تم رفض الصلح والانتقال إلى التحكيم"
+                        });
+
                         // Send Notification
                         // تم رفض الصلح والانتقال إلى التحكيم
+                        try
+                        {
+                            msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.LitigationRequest_Decision_ReconciliationWasNotMadeAndMoveToArbitration).Result.Data?.Value;
+                            msg = msg.Replace("{LitigationCode}", litigationRequest.RequestCode);
+                            await sendNotificationMSWithAllTypes(msg, litigationRequest, "Citizen Litigation Request For Report Reply Refused");
+                        }
+                        catch (Exception e)
+                        {
+
+                        }
 
                     }
                     else
                     {
                         // Send Notification
                         // تم رفض الصلح
+                        await _repository.AddAsync<WorkFlowLog, Guid>(new WorkFlowLog()
+                        {
+                            Id = Guid.NewGuid(),
+                            CreatedOn = DateTime.Now,
+                            RequestId = litigationRequest.Id,
+                            ShowForApplicant = false,
+                            LogMessage = "تم رفض الصلح"
+                        });
+
+                        try
+                        {
+                            msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.LitigationRequest_Decision_ReconciliationWasNotMade).Result.Data?.Value;
+                            msg = msg.Replace("{LitigationCode}", litigationRequest.RequestCode);
+                            await sendNotificationMSWithAllTypes(msg, litigationRequest, "Citizen Litigation Request For Report Reply Refused");
+
+                        }
+                        catch (Exception e)
+                        {
+
+
+                        }
                     }
                 }
             }
@@ -384,6 +585,147 @@ namespace REAC.Application.ModuleServices
             return await GetCitizenLitigationRequestForReportReply(requestId, cancellationToken);
 
         }
+
+        private async Task sendNotificationMSWithAllTypes(string msg, LitigationRequest litigationRequest, string Subject)
+        {
+            var deptAdminInfoReconciliation = await _employeeService.GetAdminsByDepartmentType(DepartmentType.Reconciliation);
+
+            //ApplicantCitizen
+            var objEmail = new SendEmailDto()
+            {
+                Body = msg,
+                Subject = Subject,
+                To = new List<string>() { litigationRequest.ApplicantCitizen.Email }
+
+            };
+            var objSms = new Contracts.Dtos.Integration.GEE.SMSRequestDto()
+            {
+                message_text = msg,
+                recipients = new List<string>() { litigationRequest.ApplicantCitizen.Mobile },
+                notification_type = "SMS",
+            };
+            var lstNotification = new List<SysNotificationDto>();
+            lstNotification.Add(new Contracts.Dtos.Notification.SysNotificationDto()
+            {
+                ActorId = litigationRequest.ApplicantCitizen.Id,
+                CreatedOn = DateTime.Now,
+                ActorTypeId = NotificationActorType.Applicant,
+                IsViewed = false,
+                ViewedOn = null,
+                RequestId = litigationRequest.Id,
+                RequestTypeId = RequestType.ReformationReport,
+                Message = msg,
+            });
+            //المصلح اللى على الدعوة
+            if (litigationRequest.ReformerCitizenId.HasValue)
+            {
+                objEmail.To.Add(litigationRequest?.ReformerCitizen.Email);
+                lstNotification.Add(new Contracts.Dtos.Notification.SysNotificationDto()
+                {
+                    ActorId = litigationRequest.ReformerCitizenId.Value,
+                    CreatedOn = DateTime.Now,
+                    ActorTypeId = NotificationActorType.Reformer,
+                    IsViewed = false,
+                    ViewedOn = null,
+                    RequestId = litigationRequest.Id,
+                    RequestTypeId = RequestType.ReformationReport,
+                    Message = msg,
+                });
+                objSms.recipients.Add(litigationRequest?.ReformerCitizen.Mobile);
+
+            }
+            //مدير ادارة الصلح
+            if (deptAdminInfoReconciliation is not null)
+            {
+                objEmail.To.Add(deptAdminInfoReconciliation?.Data?.Email);
+                objSms.recipients.Add(deptAdminInfoReconciliation?.Data?.Mobile);
+
+                lstNotification.Add(new Contracts.Dtos.Notification.SysNotificationDto()
+                {
+                    ActorId = deptAdminInfoReconciliation.Data.Id,
+                    CreatedOn = DateTime.Now,
+                    ActorTypeId = NotificationActorType.Employee,
+                    IsViewed = false,
+                    ViewedOn = null,
+                    RequestId = litigationRequest.Id,
+                    RequestTypeId = RequestType.ReformationReport,
+                    Message = msg,
+                });
+            }
+            if (litigationRequest?.Contract?.FirstPartyCitizen != null && litigationRequest?.Contract?.FirstPartyCitizen.Id != litigationRequest.ApplicantCitizen.Id)
+            {
+                objEmail.To.Add(litigationRequest?.Contract?.FirstPartyCitizen.Email);
+                objSms.recipients.Add(litigationRequest?.Contract?.FirstPartyCitizen.Mobile);
+
+                lstNotification.Add(new Contracts.Dtos.Notification.SysNotificationDto()
+                {
+                    ActorId = litigationRequest.Contract.FirstPartyCitizen.Id,
+                    CreatedOn = DateTime.Now,
+                    ActorTypeId = NotificationActorType.Plaintiff,
+                    IsViewed = false,
+                    ViewedOn = null,
+                    RequestId = litigationRequest.Id,
+                    RequestTypeId = RequestType.ReformationReport,
+                    Message = msg,
+                });
+            }
+            if (litigationRequest?.Contract?.SecondPartyCitizen != null)
+            {
+                objEmail.To.Add(litigationRequest?.Contract?.SecondPartyCitizen.Email);
+                objSms.recipients.Add(litigationRequest?.Contract?.SecondPartyCitizen.Mobile);
+
+                lstNotification.Add(new Contracts.Dtos.Notification.SysNotificationDto()
+                {
+                    ActorId = litigationRequest.Contract.SecondPartyCitizen.Id,
+                    CreatedOn = DateTime.Now,
+                    ActorTypeId = NotificationActorType.Defendant,
+                    IsViewed = false,
+                    ViewedOn = null,
+                    RequestId = litigationRequest.Id,
+                    RequestTypeId = RequestType.ReformationReport,
+                    Message = msg,
+                });
+            }
+            //litigationRequest.Contract.FirstPartyFacility.Citizen
+            if (litigationRequest?.Contract?.FirstPartyFacility != null && litigationRequest?.Contract?.FirstPartyFacility?.Citizen.Id != litigationRequest.ApplicantCitizen.Id)
+            {
+                objEmail.To.Add(litigationRequest?.Contract?.FirstPartyFacility.Email);
+                objSms.recipients.Add(litigationRequest.Contract.FirstPartyFacility?.Citizen.Mobile);
+
+                lstNotification.Add(new Contracts.Dtos.Notification.SysNotificationDto()
+                {
+                    ActorId = (Guid)litigationRequest?.Contract?.FirstPartyFacility?.Citizen.Id,
+                    CreatedOn = DateTime.Now,
+                    ActorTypeId = NotificationActorType.Plaintiff,
+                    IsViewed = false,
+                    ViewedOn = null,
+                    RequestId = litigationRequest.Id,
+                    RequestTypeId = RequestType.ReformationReport,
+                    Message = msg,
+                });
+            }
+            if (litigationRequest?.Contract?.SecondPartyFacility != null)
+            {
+                objEmail.To.Add(litigationRequest?.Contract?.SecondPartyFacility.Email);
+                objSms.recipients.Add(litigationRequest.Contract.SecondPartyFacility.Citizen.Mobile);
+
+                lstNotification.Add(new SysNotificationDto()
+                {
+                    ActorId = (Guid)litigationRequest.Contract.SecondPartyFacility?.Citizen.Id,
+                    CreatedOn = DateTime.Now,
+                    ActorTypeId = NotificationActorType.Defendant,
+                    IsViewed = false,
+                    ViewedOn = null,
+                    RequestId = litigationRequest.Id,
+                    RequestTypeId = RequestType.ReformationReport,
+                    Message = msg,
+                });
+
+            }
+
+            var notificationResult = _notificationService.SendNotifications(objEmail,objSms, lstNotification);
+        }
+
         #endregion
 
     }

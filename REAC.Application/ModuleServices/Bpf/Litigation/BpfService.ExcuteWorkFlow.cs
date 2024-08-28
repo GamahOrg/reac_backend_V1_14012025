@@ -2,7 +2,10 @@
 using Core.Shared.Responses;
 using Microsoft.EntityFrameworkCore;
 using REAC.Application.Contracts.Dtos.Wpf.System;
+using REAC.Domain.Shared.Constants;
+using REAC.Domain.Shared.Enum;
 using REAC.EntityFrameworkCore.Entities.Litigation;
+using REAC.EntityFrameworkCore.Entities.Wpf.Business;
 
 namespace Bpf.Application.ModuleServices
 {
@@ -13,7 +16,14 @@ namespace Bpf.Application.ModuleServices
             try
             {
                 var litigationRequest = (await _repository.GetQueryable<LitigationRequest, Guid>())
+                    .Include(x => x.WorkFlowProcessingLogs)
+                    .ThenInclude(x => x.Employee)
+                            .Include(x => x.ApplicantCitizen)
                           .Include(x => x.LitigationRequestCategory)
+                          .Include(x => x.Contract)
+                         .ThenInclude(x => x.FirstPartyCitizen)
+                         .Include(x => x.Contract)
+                         .ThenInclude(x => x.FirstPartyFacility).ThenInclude(x => x.Citizen)
                           .AsNoTracking()
                           .Where(x => x.Id == requestId).ToList().FirstOrDefault();
 
@@ -32,9 +42,27 @@ namespace Bpf.Application.ModuleServices
                 var repositorySaveResponse = await _repository.SaveChangesAsync(new CancellationToken());
                 if (!repositorySaveResponse.IsDone)
                     return repositorySaveResponse;
+                try
+                {
+                    // Send Notification
+                    // تم إرسال الدعوى
 
-                // Send Notification
-                // تم إرسال الدعوى
+                    string msg = "";
+                    msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.ExcuteWorkflow).Result.Data?.Value;
+                    msg = msg.Replace("{LitigationCode}", litigationRequest.RequestCode);
+
+                    litigationRequest.WorkFlowProcessingLogs = (await _repository.GetQueryable<WorkFlowProcessingLog, Guid>())
+                    .Include(x => x.Employee).ToList();
+
+                    await sendNotificationMSPlaintiff(msg, litigationRequest, RequestType.LitigationRequest, "Litigation Request Sent");
+                }
+                catch (Exception e)
+                {
+
+                }
+
+
+               
 
                 return response;
             }

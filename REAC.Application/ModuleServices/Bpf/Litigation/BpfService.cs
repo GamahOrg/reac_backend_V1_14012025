@@ -7,6 +7,8 @@ using REAC.Application.Contracts.Dtos.Wpf.Business.WorkFlowProcessingLog;
 using REAC.Application.Contracts.Dtos.Wpf.System;
 using REAC.Application.Contracts.IAppServices;
 using REAC.Application.Contracts.IAppServices.Litigation;
+using REAC.Application.Contracts.IAppServices.Notification;
+using REAC.Application.Contracts.IAppServices.System;
 using REAC.Application.Contracts.IAppServices.Wpf.Business;
 using REAC.Application.Contracts.IModuleServices;
 using REAC.Domain.Shared.Enum;
@@ -25,11 +27,15 @@ namespace Bpf.Application.ModuleServices
         private readonly IWorkFlowLogService _workFlowLogService;
         private readonly ILitigationWorkFlowService _litigationWorkFlowService;
         private readonly IJwtReader _jwtReader;
+        private readonly INotificationService _notificationService;
+        private readonly ISysSettingService _sysSettingService;
+        private readonly ISysEmployeeService _employeeService;
+
         public BpfService(IEntityRepository repository,
                           IWorkFlowProcessingLogService workFlowProcessingLogService,
                           IMapper mapper,
                           IJwtReader jwtReader,
-                          IWorkFlowLogService workFlowLogService, ILitigationWorkFlowService litigationWorkFlowServic)
+                          IWorkFlowLogService workFlowLogService, ILitigationWorkFlowService litigationWorkFlowServic, ISysSettingService sysSettingService, INotificationService notificationService, ISysEmployeeService employeeService)
         {
             _mapper = mapper;
             _repository = repository;
@@ -37,6 +43,9 @@ namespace Bpf.Application.ModuleServices
             _workFlowLogService = workFlowLogService;
             _litigationWorkFlowService = litigationWorkFlowServic;
             _jwtReader = jwtReader;
+            _sysSettingService = sysSettingService;
+            _notificationService = notificationService;
+            _employeeService = employeeService;
         }
 
 

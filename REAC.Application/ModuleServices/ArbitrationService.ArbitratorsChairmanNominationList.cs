@@ -1,10 +1,15 @@
-﻿using Core.GenericRepository.Shared.Pagging;
+﻿using Azure.Core;
+using Core.GenericRepository.Shared.Pagging;
 using Core.Shared.Responses;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using REAC.Application.Contracts.Dtos.Arbitration;
 using REAC.Application.Contracts.Dtos.Citizen;
+using REAC.Application.Contracts.Dtos.Notification;
 using REAC.Application.Contracts.Dtos.Reconciliation.Process;
+using REAC.Domain.Shared.Constants;
 using REAC.Domain.Shared.Enum;
+using REAC.EntityFrameworkCore.Entities.Actor;
 using REAC.EntityFrameworkCore.Entities.Arbitration;
 using REAC.EntityFrameworkCore.Entities.Litigation;
 using REAC.EntityFrameworkCore.Entities.System;
@@ -29,7 +34,9 @@ namespace REAC.Application.ModuleServices
                 _jwtReader.GetReferenceId(ref referenceId);
 
                 var litigationRequest = (await _repository.GetQueryable<LitigationRequest, Guid>())?
-                        .Include(x => x.LitigationRequestArbitratorNominationLists)
+                        .Include(x => x.LitigationRequestArbitratorNominationLists).ThenInclude(x=> x.ArbitratorCitizen)
+                        .Include(x => x.LitigationRequestArbitratorLists)
+                        .ThenInclude(x => x.ArbitratorCitizen)
                         .Where(x => x.Id == arbitratorNominationListRequestPayload.RequestId)
                         .SingleOrDefault();
 
@@ -87,6 +94,65 @@ namespace REAC.Application.ModuleServices
 
                     // Send Notification
                     // تم إضافة قائمة مرشحى رئيس هيئة التحكيم 
+                    try
+                    {
+                        var arbitrationAdmin = await _sysEmployeeService.GetAdminsByDepartmentType(DepartmentType.Arbitration);
+                        if (arbitrationAdmin.IsDone)
+                        {
+
+                            var msg = "";
+                            msg = _settingService.GetBySettingKey(SysSettingKeyConstants.ArbitratorsChairmanNominationList_Added).Result.Data?.Value;
+
+
+
+                            msg = msg?.Replace("{LitigationCode}", litigationRequest.RequestCode);
+                            List<SysNotificationDto> notifications = new List<SysNotificationDto>() {
+                           new SysNotificationDto{
+                        ActorId = (Guid)arbitrationAdmin.Data?.Id,
+                        RequestId=litigationRequest.Id,
+                        CreatedOn= DateTime.Now,
+                        RequestTypeId=RequestType.LitigationRequest,
+                        ActorTypeId=NotificationActorType.Employee,
+                        Message=msg
+                        }
+
+                        };
+                            List<string> emails = new List<string>() {
+                                  arbitrationAdmin.Data?.Email
+                                };
+
+                            foreach (var arbitrator in litigationRequest.LitigationRequestArbitratorLists)
+                            {
+                                notifications.Add(new SysNotificationDto
+                                {
+
+                                    ActorId = arbitrator.ArbitratorCitizenId,
+                                    RequestId = litigationRequest.Id,
+                                    CreatedOn = DateTime.Now,
+                                    RequestTypeId = RequestType.LitigationRequest,
+                                    ActorTypeId = NotificationActorType.Arbitrator,
+                                    Message = msg
+                                });
+                                emails.Add(arbitrator.ArbitratorCitizen.Email);
+                            }
+                            await _notificationService.SendNotifications(new Contracts.Dtos.Notification.SendEmailDto()
+                            {
+                                To = emails,
+                                Subject = "تم إضافة قائمة مرشحى رئيس هيئة التحكيم ",
+                                Body = msg
+                            }, null, notifications);
+
+
+                        }
+                    }
+                    catch (Exception e)
+                    {
+
+                       
+                    }
+                  
+
+
                 }
                 else
                 {
@@ -127,7 +193,7 @@ namespace REAC.Application.ModuleServices
                     };
 
                 var litigationRequest = (await _repository.GetQueryable<LitigationRequest, Guid>())?
-                        .Include(x => x.LitigationRequestArbitratorNominationLists)
+                        .Include(x => x.LitigationRequestArbitratorsChairmanNominationLists)
                         .Where(x => x.Id == requestId)
                         .SingleOrDefault();
 
@@ -162,7 +228,13 @@ namespace REAC.Application.ModuleServices
                 //    litigationRequest.LitigationRequestArbitratorsChairmanNominationLists.OrderBy(x => x.TotalPriority).ToList()[0].Id;
                 litigationRequestArbitratorAssigningRequest.CitizenId = arbitratorChairmanId;
                 litigationRequestArbitratorAssigningRequest.Response = LitigationRequestArbitratorAssigningRequestStatus.None;
+
                 await _repository.AddAsync<LitigationRequestArbitratorAssigningRequest, Guid>(litigationRequestArbitratorAssigningRequest);
+
+                litigationRequest.LitigationRequestArbitratorsChairmanNominationLists.Where(x => x.ArbitratorChairmanCitizenId == arbitratorChairmanId).FirstOrDefault().IsSent = true;
+
+                _repository.Update<LitigationRequest, Guid>(litigationRequest);
+
                 var repositorySaveResponse = await _repository.SaveChangesAsync(new CancellationToken());
                 if (!repositorySaveResponse.IsDone)
                     return repositorySaveResponse;
@@ -250,6 +322,7 @@ namespace REAC.Application.ModuleServices
                 }
             }
             LitigationRequestForAllArbitratorCharmanNominationListDto litigationRequestForAllArbitratorNominationListDto = new LitigationRequestForAllArbitratorCharmanNominationListDto();
+            litigationRequestForAllArbitratorNominationListDto.AllowAdd = allowAdd;
             litigationRequestForAllArbitratorNominationListDto.LitigationRequestShortDto = request;
             litigationRequestForAllArbitratorNominationListDto.CitizenArbitratorCharmanShortStatusDtos = new List<CitizenArbitratorCharmanShortStatusDto>();
 
@@ -259,11 +332,13 @@ namespace REAC.Application.ModuleServices
                     litigationRequest.LitigationRequestArbitratorAssigningRequests?.Where(x => x.ArbitratorAssigningRequestTypeId
                                  == ArbitratorAssigningRequestType.ArbitratorsChairman).Count() == 0)
                 {
-                    AllowDecision = true;
-                    allowAdd = false;
+                    litigationRequestForAllArbitratorNominationListDto.AllowDecision = true;
+                    litigationRequestForAllArbitratorNominationListDto.AllowAdd = false;
                     for (int record = 0; record <= 1; record++)
                     {
                         CitizenArbitratorCharmanShortStatusDto citizenArbitratorShortStatusChairmanDto = new CitizenArbitratorCharmanShortStatusDto();
+                        citizenArbitratorShortStatusChairmanDto.Id = litigationRequest.LitigationRequestArbitratorsChairmanNominationLists
+                            .OrderBy(x => x.TotalPriority).ToList()[record].ArbitratorChairmanCitizenId;
                         citizenArbitratorShortStatusChairmanDto.FullName = litigationRequest.LitigationRequestArbitratorsChairmanNominationLists
                             .OrderBy(x => x.TotalPriority).ToList()[record].ArbitratorChairmanCitizen.FullName;
 
@@ -312,10 +387,12 @@ namespace REAC.Application.ModuleServices
                 }
                 else
                 {
-                    allowAdd = false;
+                    litigationRequestForAllArbitratorNominationListDto.AllowDecision = true;
+                    litigationRequestForAllArbitratorNominationListDto.AllowAdd = false;
                     foreach (var litigationRequestArbitratorNominationList in litigationRequest.LitigationRequestArbitratorsChairmanNominationLists)
                     {
                         CitizenArbitratorCharmanShortStatusDto citizenArbitratorShortStatusChairmanDto = new CitizenArbitratorCharmanShortStatusDto();
+                        citizenArbitratorShortStatusChairmanDto.Id = litigationRequestArbitratorNominationList.ArbitratorChairmanCitizenId;
                         citizenArbitratorShortStatusChairmanDto.FullName = litigationRequestArbitratorNominationList.ArbitratorChairmanCitizen.FullName;
                         citizenArbitratorShortStatusChairmanDto.Mobile = litigationRequestArbitratorNominationList.ArbitratorChairmanCitizen.Mobile;
                         citizenArbitratorShortStatusChairmanDto.Email = litigationRequestArbitratorNominationList.ArbitratorChairmanCitizen.Email;
@@ -348,7 +425,10 @@ namespace REAC.Application.ModuleServices
                             if (assingingRequest.Any())
                             {
                                 if (assingingRequest.LastOrDefault()?.Response == LitigationRequestArbitratorAssigningRequestStatus.Approve)
+                                {
                                     citizenArbitratorShortStatusChairmanDto.Status = "تم الموافقة";
+                                    litigationRequestForAllArbitratorNominationListDto.AllowDecision = false;
+                                }
                                 else
                                 {
                                     if (assingingRequest.LastOrDefault()?.Response == LitigationRequestArbitratorAssigningRequestStatus.Reject)
@@ -378,7 +458,8 @@ namespace REAC.Application.ModuleServices
             {
                 if (litigationRequest.ArbitratorCitizenId.HasValue)
                 {
-                    allowAdd = false;
+                    litigationRequestForAllArbitratorNominationListDto.AllowDecision = false;
+                    litigationRequestForAllArbitratorNominationListDto.AllowAdd = false;
                     CitizenArbitratorCharmanShortStatusDto citizenArbitratorShortStatusChairmanDto = new CitizenArbitratorCharmanShortStatusDto();
                     citizenArbitratorShortStatusChairmanDto.FullName = litigationRequest.ArbitratorCitizen?.FullName;
                     citizenArbitratorShortStatusChairmanDto.Mobile = litigationRequest.ArbitratorCitizen.Mobile;
@@ -783,10 +864,10 @@ namespace REAC.Application.ModuleServices
             _jwtReader.GetReferenceId(ref referenceId);
 
             var litigationRequest = (await _repository.GetQueryable<LitigationRequest, Guid>()).Include(x => x.Area).Include(x => x.City)
-                                          .Include(x => x.LitigationRequestArbitratorNominationLists)
+                          .Include(x => x.LitigationRequestArbitratorNominationLists)
                           .Include(x => x.LitigationRequestArbitratorsChairmanNominationLists)
-                                                    .Include(x => x.LitigationRequestArbitratorLists)
-
+                          .ThenInclude(x => x.ArbitratorChairmanCitizen)
+                           .Include(x => x.LitigationRequestArbitratorLists)
                           .Include(x => x.ApplicantCitizen)
                           .Include(x => x.Contract)
                           .Include(x => x.Contract.FirstPartyFacility)
@@ -842,35 +923,169 @@ namespace REAC.Application.ModuleServices
                 {
                     litigationRequest.ArbitratorsChairmanNominationListSelectionDoneDateTime = DateTime.Now;
 
-                    //if (litigationRequest.LitigationRequestArbitratorsChairmanNominationLists.OrderBy(x => x.TotalPriority).ToList()[0].TotalPriority == litigationRequest.LitigationRequestArbitratorsChairmanNominationLists.OrderBy(x => x.TotalPriority).ToList()[1].TotalPriority)
-                    //{
-                    //    litigationRequest.IsArbitratorsChairmanDecisionRequired = true;
-                    //    repositorySaveResponse = await _repository.SaveChangesAsync(new CancellationToken());
-                    //    if (!repositorySaveResponse.IsDone)
-                    //        return repositorySaveResponse;
-                    //}
-                    //else
-                    //{
-                    LitigationRequestArbitratorAssigningRequest litigationRequestArbitratorAssigningRequest = new LitigationRequestArbitratorAssigningRequest();
-                    litigationRequestArbitratorAssigningRequest.RequestOn = DateTime.Now;
-                    litigationRequestArbitratorAssigningRequest.Id = Guid.NewGuid();
-                    litigationRequestArbitratorAssigningRequest.ArbitratorAssigningRequestTypeId = ArbitratorAssigningRequestType.ArbitratorsChairman;
-                    litigationRequestArbitratorAssigningRequest.LitigationRequestId = litigationRequest.Id;
-                    //litigationRequestArbitratorAssigningRequest.LitigationRequestArbitratorNominationListId =
-                    //    litigationRequest.LitigationRequestArbitratorsChairmanNominationLists.OrderBy(x => x.TotalPriority).ToList()[0].Id;
-                    litigationRequestArbitratorAssigningRequest.CitizenId =
-                        litigationRequest.LitigationRequestArbitratorsChairmanNominationLists.OrderBy(x => x.TotalPriority).ToList()[0].ArbitratorChairmanCitizenId;
-                    litigationRequestArbitratorAssigningRequest.Response = LitigationRequestArbitratorAssigningRequestStatus.None;
-                    await _repository.AddAsync<LitigationRequestArbitratorAssigningRequest, Guid>(litigationRequestArbitratorAssigningRequest);
-                    repositorySaveResponse = await _repository.SaveChangesAsync(new CancellationToken());
-                    if (!repositorySaveResponse.IsDone)
-                        return repositorySaveResponse;
+                    if (litigationRequest.LitigationRequestArbitratorsChairmanNominationLists.OrderBy(x => x.TotalPriority).ToList()[0].TotalPriority == litigationRequest.LitigationRequestArbitratorsChairmanNominationLists.OrderBy(x => x.TotalPriority).ToList()[1].TotalPriority)
+                    {
+                        litigationRequest.IsArbitratorsChairmanDecisionRequired = true;
+                        repositorySaveResponse = await _repository.SaveChangesAsync(new CancellationToken());
+                        if (!repositorySaveResponse.IsDone)
+                            return repositorySaveResponse;
 
-                    //}
-                    // Send Notification
-                    // تم الإنتهاء من تحديد اولوية الاختيار لرئيس هيئة التحكيم من قبل المحكمين
+                        // Send Notification
+                        // تم الإنتهاء من تحديد اولوية الاختيار لرئيس هيئة التحكيم من قبل المحكمين ولابد من اتخاذ القرار 
+
+                        try
+                        {
+                            var arbitrationAdmin = await _sysEmployeeService.GetAdminsByDepartmentType(DepartmentType.Arbitration);
+                            if (arbitrationAdmin.IsDone)
+                            {
+
+                                var msg = "";
+                                msg = _settingService.GetBySettingKey(SysSettingKeyConstants.ArbitratorsChairmanNominationList_MakeDecision).Result.Data?.Value;
+
+
+
+                                msg = msg?.Replace("{LitigationCode}", litigationRequest.RequestCode);
+                                List<SysNotificationDto> notifications = new List<SysNotificationDto>() {
+                           new SysNotificationDto{
+                        ActorId = (Guid)arbitrationAdmin.Data?.Id,
+                        RequestId=litigationRequest.Id,
+                        CreatedOn= DateTime.Now,
+                        RequestTypeId=RequestType.LitigationRequest,
+                        ActorTypeId=NotificationActorType.Employee,
+                        Message=msg
+                        }
+
+                        };
+                                List<string> emails = new List<string>() {
+                                  arbitrationAdmin.Data?.Email
+                                };
+
+                               
+                                await _notificationService.SendNotifications(new Contracts.Dtos.Notification.SendEmailDto()
+                                {
+                                    To = emails,
+                                    Subject = "اتخاذ قرار",
+                                    Body = msg
+                                }, null, notifications);
+
+
+                            }
+                        }
+                        catch (Exception e)
+                        {
+
+                           
+                        }
+                    }
+                    else
+                    {
+                        LitigationRequestArbitratorAssigningRequest litigationRequestArbitratorAssigningRequest = new LitigationRequestArbitratorAssigningRequest();
+                        litigationRequestArbitratorAssigningRequest.RequestOn = DateTime.Now;
+                        litigationRequestArbitratorAssigningRequest.Id = Guid.NewGuid();
+                        litigationRequestArbitratorAssigningRequest.ArbitratorAssigningRequestTypeId = ArbitratorAssigningRequestType.ArbitratorsChairman;
+                        litigationRequestArbitratorAssigningRequest.LitigationRequestId = litigationRequest.Id;
+                        //litigationRequestArbitratorAssigningRequest.LitigationRequestArbitratorNominationListId =
+                        //    litigationRequest.LitigationRequestArbitratorsChairmanNominationLists.OrderBy(x => x.TotalPriority).ToList()[0].Id;
+                        litigationRequestArbitratorAssigningRequest.CitizenId =
+                            litigationRequest.LitigationRequestArbitratorsChairmanNominationLists.OrderBy(x => x.TotalPriority).ToList()[0].ArbitratorChairmanCitizenId;
+                        litigationRequestArbitratorAssigningRequest.Response = LitigationRequestArbitratorAssigningRequestStatus.None;
+                        await _repository.AddAsync<LitigationRequestArbitratorAssigningRequest, Guid>(litigationRequestArbitratorAssigningRequest);
+                        repositorySaveResponse = await _repository.SaveChangesAsync(new CancellationToken());
+                        if (!repositorySaveResponse.IsDone)
+                            return repositorySaveResponse;
+
+                        // Send Notification
+                        //  تم الإنتهاء من تحديد اولوية الاختيار لرئيس هيئة التحكيم من قبل المحكمين و ارسال طلب المهمة للمحكم
+
+
+                        try
+                        {
+                            var arbitrationAdmin = await _sysEmployeeService.GetAdminsByDepartmentType(DepartmentType.Arbitration);
+                            if (arbitrationAdmin.IsDone)
+                            {
+
+                                var msg = "";
+                                msg = _settingService.GetBySettingKey(SysSettingKeyConstants.ArbitratorsChairmanNominationList_TaskSubmited).Result.Data?.Value;
+                                msg = msg?.Replace("{LitigationCode}", litigationRequest.RequestCode);
+                                msg = msg?.Replace("{ArbitratorName}", litigationRequest.LitigationRequestArbitratorsChairmanNominationLists.OrderBy(x => x.TotalPriority).ToList()[0].ArbitratorChairmanCitizen.FullName);
+
+
+
+                                List<SysNotificationDto> notifications = new List<SysNotificationDto>() {
+                           new SysNotificationDto{
+                        ActorId = (Guid)arbitrationAdmin.Data?.Id,
+                        RequestId=litigationRequest.Id,
+                        CreatedOn= DateTime.Now,
+                        RequestTypeId=RequestType.LitigationRequest,
+                        ActorTypeId=NotificationActorType.Employee,
+                        Message=msg
+                        }
+
+                        };
+                                List<string> emails = new List<string>() {
+                                  arbitrationAdmin.Data?.Email
+                                };
+
+
+                                await _notificationService.SendNotifications(new Contracts.Dtos.Notification.SendEmailDto()
+                                {
+                                    To = emails,
+                                    Subject = "إعلام بأرسال طلب مهمة",
+                                    Body = msg
+                                }, null, notifications);
+
+
+                            }
+                        }
+                        catch (Exception e)
+                        {
+
+                            
+                        }
+                        // Send Notification
+                        //  يوجد طلب مهمه جديد كرئيس هية التحكيم لدعوي رقم
+
+                        try
+                        {
+                            
+                            var arbitratorInfo = (await _repository.GetQueryable<Citizen, Guid>()).FirstOrDefault(c => c.Id == litigationRequestArbitratorAssigningRequest.CitizenId);
+
+
+                            var msg = "";
+                            msg = _settingService.GetBySettingKey(SysSettingKeyConstants.ArbitratorsChairmanNominationList_TaskSubmitedToArbitrator).Result.Data?.Value;
+                            msg = msg?.Replace("{LitigationCode}", litigationRequest?.RequestCode);
+
+                            List<SysNotificationDto> notifications = new List<SysNotificationDto>() {
+                        new SysNotificationDto{
+                        ActorId = arbitratorInfo.Id,
+                        RequestId=litigationRequest.Id,
+                        CreatedOn= DateTime.Now,
+                        RequestTypeId=RequestType.LitigationRequest,
+                        ActorTypeId=NotificationActorType.Arbitrator,
+                        Message=msg
+                        },
+                          
+
+                        };
+                            await _notificationService.SendNotifications(new Contracts.Dtos.Notification.SendEmailDto()
+                            {
+                                To = new List<string>() { arbitratorInfo.Email},
+                                Subject = "طلب مهمة جديدة",
+                                Body = msg
+                            }, null, notifications);
+
+                        }
+                        catch (Exception e)
+                        {
+
+                          
+                        }
+                    }
+
+
                 }
             }
+
             return await GetCitizenLitigationRequestForArbitratorsChairmanNominationListReply(arbitratorNominationListRequestReplyPayload.RequestId);
         }
         #endregion

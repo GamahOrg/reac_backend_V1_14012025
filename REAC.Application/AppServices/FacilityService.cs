@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using REAC.Application.Contracts.Dtos.Facility;
 using REAC.Application.Contracts.IAppServices;
 using REAC.Application.Contracts.IAppServices.Integration;
+using REAC.Application.Contracts.IAppServices.System;
 using REAC.Domain.Shared.Enum;
 using REAC.EntityFrameworkCore.Entities;
 using REAC.EntityFrameworkCore.Entities.Actor;
@@ -30,6 +31,7 @@ namespace REAC.Application.AppServices
         {
             try
             {
+                
                 Guid referenceId = Guid.Empty;
                 _jwtReader.GetReferenceId(ref referenceId);
 

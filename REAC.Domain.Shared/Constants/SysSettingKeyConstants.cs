@@ -82,7 +82,7 @@
 
 
 
-
+        public const string Arbitration_ExpirationDateHours = "Arbitration.ExpirationDateHours";
         public const string Reconciliation_Period = "Reconciliation.Period";
         public const string Reconciliation_Request_Study_Period = "Reconciliation.Request.Study.Period";
         public const string Reconciliation_Request_Process_Notes_Period = "Reconciliation.Request.Process.Notes.Period";
@@ -95,78 +95,118 @@
 
 
         public const string Citizen_AddBankAccount = "Citizen.AddBankAccount";
-        public const string Citizen_EditBankAccount ="Citizen.EditBankAccount";
-        public const string Reformer_JoiningRequest ="Reformer.JoiningRequest";
-        public const string Arbitrator_JoiningRequest ="Arbitrator.JoiningRequest";
-        public const string Reformer_AcceptJoiningRequest ="Reformer.AcceptJoiningRequest";
-        public const string Arbitrator_AcceptJoiningRequest ="Arbitrator.AcceptJoiningRequest";
+        public const string Citizen_EditBankAccount = "Citizen.EditBankAccount";
+        public const string Reformer_JoiningRequest = "Reformer.JoiningRequest";
+        public const string Arbitrator_JoiningRequest = "Arbitrator.JoiningRequest";
+        public const string Reformer_AcceptJoiningRequest = "Reformer.AcceptJoiningRequest";
+        public const string Arbitrator_AcceptJoiningRequest = "Arbitrator.AcceptJoiningRequest";
         public const string Arbitrator_JoiningRequest_Updated = "Arbitrator.JoiningRequest.Updated";
         public const string Reformer_JoiningRequest_Updated = "Reformer.JoiningRequest.Updated";
         public const string Arbitrator_UpdateJoiningRequest_WithFees = "Arbitrator.UpdateJoiningRequest.WithFees";
         public const string Reformer_UpdateJoiningRequest_WithFees = "Reformer.UpdateJoiningRequest.WithFees";
         public const string Arbitrator_UpdateJoiningRequest = "Arbitrator.UpdateJoiningRequest.NoFees";
         public const string Reformer_UpdateJoiningRequest = "Reformer.UpdateJoiningRequest.NoFees";
-        public const string Reformer_AcceptJoiningRequest_NoFees ="Reformer.AcceptJoiningRequest.NoFees";
-        public const string Arbitrator_AcceptJoiningRequest_NoFees ="Arbitrator.AcceptJoiningRequest.NoFees";
-        public const string Reformer_AcceptJoiningRequest_WaitingForFees ="Reformer.AcceptJoiningRequest.WaitingForFees";
-        public const string Arbitrator_AcceptJoiningRequest_WaitingForFees ="Arbitrator.AcceptJoiningRequest.WaitingForFees";
-        public const string Reformer_RejectJoiningRequest ="Reformer.RejectJoiningRequest";
-        public const string Arbitrator_RejectJoiningRequest ="Arbitrator.RejectJoiningRequest";
-        public const string Reformer_Activate ="Reformer.Activate";
-        public const string Arbitrator_Activate ="Arbitrator.Activate";
-        public const string Reformer_DeActivate ="Reformer.DeActivate";
-        public const string Arbitrator_DeActivate ="Arbitrator.DeActivate";
-        public const string Arbitration_Arbitraor_Assigned ="Arbitration.Arbitraor.Assigned";
-        public const string Arbitration_ArbitraorChairman_Assigned ="Arbitration.ArbitraorChairman.Assigned";
-        public const string Arbitration_ArbitraorAssigned_SendToChairman ="Arbitration.ArbitraorAssigned.SendToChairman";
-        public const string Reconciliation_Reconciliator_AcceptTask ="Reconciliation.Reconciliator.AcceptTask";
-        public const string Arbitration_Arbitraor_AcceptTask ="Arbitration.Arbitraor.AcceptTask";
+        public const string Reformer_AcceptJoiningRequest_NoFees = "Reformer.AcceptJoiningRequest.NoFees";
+        public const string Arbitrator_AcceptJoiningRequest_NoFees = "Arbitrator.AcceptJoiningRequest.NoFees";
+        public const string Reformer_AcceptJoiningRequest_WaitingForFees = "Reformer.AcceptJoiningRequest.WaitingForFees";
+        public const string Arbitrator_AcceptJoiningRequest_WaitingForFees = "Arbitrator.AcceptJoiningRequest.WaitingForFees";
+        public const string Reformer_RejectJoiningRequest = "Reformer.RejectJoiningRequest";
+        public const string Arbitrator_RejectJoiningRequest = "Arbitrator.RejectJoiningRequest";
+        public const string Reformer_Activate = "Reformer.Activate";
+        public const string Arbitrator_Activate = "Arbitrator.Activate";
+        public const string Reformer_DeActivate = "Reformer.DeActivate";
+        public const string Arbitrator_DeActivate = "Arbitrator.DeActivate";
+        public const string Arbitration_Arbitraor_Assigned = "Arbitration.Arbitraor.Assigned";
+        public const string Arbitration_ArbitraorChairman_Assigned = "Arbitration.ArbitraorChairman.Assigned";
+        public const string Arbitration_ArbitraorAssigned_SendToChairman = "Arbitration.ArbitraorAssigned.SendToChairman";
+        public const string Reconciliation_Reconciliator_AcceptTask = "Reconciliation.Reconciliator.AcceptTask";
+        public const string Arbitration_Arbitraor_AcceptTask = "Arbitration.Arbitraor.AcceptTask";
         public const string Reconciliation_Reconciliator_RejectTask = "Reconciliation.Reconciliator.RejectTask";
-        public const string Arbitration_Arbitraor_RejectTask ="Arbitration.Arbitraor.RejectTask";
-        public const string Reconciliation_ReSendTask ="Reconciliation.ReSendTask";
-        public const string ArbitraorRecusal_AddRequest ="ArbitraorRecusal.AddRequest";
-        public const string ArbitraorRecusal_AddRequest_Approve ="ArbitraorRecusal.AddRequest.Approve";
-        public const string ArbitraorRecusal_AddRequest_Reject ="ArbitraorRecusal.AddRequest.Reject";
-        public const string ArbitraorRecusal_InformArbitrator_Reject ="ArbitraorRecusal.InformArbitrator.Reject";
-        public const string ArbitraorRecusal_InformArbitratorChairman_Rejected ="ArbitraorRecusal.InformArbitratorChairman.Rejected";
-        public const string ArbitratorsChairmanNominationList_Added ="ArbitratorsChairmanNominationList.Added";
-        public const string ArbitratorsNominationList_Added_FirstParty ="ArbitratorsNominationList.Added.FirstParty";
-        public const string ArbitratorsNominationList_Added_SecondParty ="ArbitratorsNominationList.Added.SecondParty";
-        public const string ArbitratorsNominationList_AssignedAndSent ="ArbitratorsNominationList.AssignedAndSent";
-        public const string ArbitratorsChairmanNominationListReply_Added ="ArbitratorsChairmanNominationListReply.Added";
-        public const string Arbitration_ExplanationReport_Added ="Arbitration.ExplanationReport.Added";
-        public const string Arbitration_ExplanationReport_RepliedOn ="Arbitration.ExplanationReport.RepliedOn";
-        public const string Arbitration_ExtendRequest_Added ="Arbitration.ExtendRequest.Added";
-        public const string Arbitration_ExtendRequest_Accepted ="Arbitration.ExtendRequest.Accepted";
-        public const string Arbitration_ExtendRequest_Rejected ="Arbitration.ExtendRequest.Rejected";
-        public const string Arbitrators_Count_Added ="Arbitrators.Count.Added";
-        public const string Arbitrators_Count_Added_AfterAgreement ="Arbitrators.Count.Added.AfterAgreement";
-        public const string Arbitrators_Count_FromBothSides ="Arbitrators.Count.FromBothSides";
-        public const string ArbitratorSelectionDuration_Added ="ArbitratorSelectionDuration.Added";
-        public const string ArbitrationReport_Added_FirstParty ="ArbitrationReport.Added.FirstParty";
-        public const string ArbitrationReport_Added_SecondParty ="ArbitrationReport.Added.SecondParty";
-        public const string ArbitrationSession_Added_FirstParty ="ArbitrationSession.Added.FirstParty";
-        public const string ArbitrationSession_Added_SecondParty ="ArbitrationSession.Added.SecondParty";
+        public const string Arbitration_Arbitraor_RejectTask = "Arbitration.Arbitraor.RejectTask";
+        public const string Reconciliation_ReSendTask = "Reconciliation.ReSendTask";
+        public const string ArbitraorRecusal_AddRequest = "ArbitraorRecusal.AddRequest";
+        public const string ArbitraorRecusal_AddRequest_Approve = "ArbitraorRecusal.AddRequest.Approve";
+        public const string ArbitraorRecusal_AddRequest_Reject = "ArbitraorRecusal.AddRequest.Reject";
+        public const string ArbitraorRecusal_InformArbitrator_Reject = "ArbitraorRecusal.InformArbitrator.Reject";
+        public const string ArbitraorRecusal_InformArbitratorChairman_Rejected = "ArbitraorRecusal.InformArbitratorChairman.Rejected";
+        public const string ArbitratorsChairmanNominationList_MakeDecision = "ArbitratorsChairmanNominationList.MakeDecision";
+        public const string ArbitratorsChairmanNominationList_TaskSubmited = "ArbitratorsChairmanNominationList.TaskSubmited";
+        public const string ArbitratorsChairmanNominationList_TaskSubmitedToArbitrator = "ArbitratorsChairmanNominationList.TaskSubmitedToArbitrator";
+        public const string ArbitratorsChairmanNominationList_Added = "ArbitratorsChairmanNominationList.Added";
+        public const string ArbitratorsNominationList_Added = "ArbitratorsNominationList.Added";
+        public const string ArbitratorsNominationList_AddedForAdmin = "ArbitratorsNominationList.AddedForAdmin";
+        public const string ArbitratorsNominationList_AssignedAndSent = "ArbitratorsNominationList.AssignedAndSent";
+        public const string ArbitratorsChairmanNominationListReply_Added = "ArbitratorsChairmanNominationListReply.Added";
+        public const string Arbitration_ExplanationReport_Added = "Arbitration.ExplanationReport.Added";
+        public const string Arbitration_ExplanationReport_RepliedOn = "Arbitration.ExplanationReport.RepliedOn";
+        public const string Arbitration_ExtendRequest_Added = "Arbitration.ExtendRequest.Added";
+        public const string Arbitration_ExtendRequest_Accepted = "Arbitration.ExtendRequest.Accepted";
+        public const string Arbitration_ExtendRequest_Rejected = "Arbitration.ExtendRequest.Rejected";
+        public const string Arbitrators_Count_Added = "Arbitrators.Count.Added";
+        public const string Arbitrators_Count_Added_AfterAgreement = "Arbitrators.Count.Added.AfterAgreement";
+        public const string Arbitrators_Count_FromBothSides = "Arbitrators.Count.FromBothSides";
+        public const string ArbitratorSelectionDuration_Added = "ArbitratorSelectionDuration.Added";
+        public const string ArbitrationReport_Added_FirstParty = "ArbitrationReport.Added.FirstParty";
+        public const string ArbitrationReport_Added_SecondParty = "ArbitrationReport.Added.SecondParty";
+        public const string ArbitrationSession_Added = "ArbitrationSession.Added";
+        public const string ArbitrationService_JudgmentAdded = "ArbitrationService.JudgmentAdded";
         public const string ExcuteWorkflow = "ExcuteWorkflow";
-        public const string ProcessWorkflow_Accepted ="ProcessWorkflow.Accepted";
-        public const string ProcessWorkflow_Reject ="ProcessWorkflow.Reject";
-        public const string ProcessWorkflow_SentBackForEdit ="ProcessWorkflow.SentBackForEdit";
-        public const string ProcessWorkflow_Edited ="ProcessWorkflow.Edited";
-        public const string Reconciliation_Cancelled ="Reconciliation.Cancelled";
-        public const string Reconciliation_ReAssigned ="Reconciliation.ReAssigned";
-        public const string LitigationRequest_Decision_WaiverOfRight ="LitigationRequest.Decision.WaiverOfRight";
-        public const string LitigationRequest_Decision_ReconciliationWasMade ="LitigationRequest.Decision.ReconciliationWasMade";
-        public const string LitigationRequest_Decision_WaiverOfTheLitigation ="LitigationRequest.Decision.WaiverOfTheLitigation";
-        public const string LitigationRequest_Decision_ReconciliationWasNotMadeAndMoveToArbitration ="LitigationRequest.Decision.ReconciliationWasNotMadeAndMoveToArbitration";
-        public const string LitigationRequest_Decision_ReconciliationWasNotMade ="LitigationRequest.Decision.ReconciliationWasNotMade";
-        public const string Reconciliation_ExtendRequest_Added ="Reconciliation.ExtendRequest.Added";
-        public const string Reconciliation_ExtendRequest_Accepted ="Reconciliation.ExtendRequest.Accepted";
-        public const string Reconciliation_ExtendRequest_Rejected ="Reconciliation.ExtendRequest.Rejected";
-        public const string ReconciliationSession_set ="ReconciliationSession.set";
-        public const string ReconciliationSession_Reset ="ReconciliationSession.Reset";
+        public const string ProcessWorkflow_Accepted = "ProcessWorkflow.Accepted";
+        public const string ProcessWorkflow_Reject = "ProcessWorkflow.Reject";
+        public const string ProcessWorkflow_SentBackForEdit = "ProcessWorkflow.SentBackForEdit";
+        public const string ProcessWorkflow_Edited = "ProcessWorkflow.Edited";
+        public const string Reconciliation_Cancelled = "Reconciliation.Cancelled";
+        public const string Reconciliation_ReAssigned = "Reconciliation.ReAssigned";
+        public const string Reconciliation_Assign = "Reconciliation.Assign";
+        public const string LitigationRequest_Creation_Reject = "LitigationRequest.Creation.Reject";
+        public const string LitigationRequest_Creation_Resent = "LitigationRequest.Creation.Resent";
+        public const string LitigationRequest_Creation_Accept = "LitigationRequest.Creation.Accept";
+        public const string LitigationRequest_Decision_WaiverOfRight = "LitigationRequest.Decision.WaiverOfRight";
+        public const string LitigationRequest_Decision_ReconciliationWasMade = "LitigationRequest.Decision.ReconciliationWasMade";
+        public const string LitigationRequest_Decision_WaiverOfTheLitigation = "LitigationRequest.Decision.WaiverOfTheLitigation";
+        public const string LitigationRequest_Decision_ReconciliationWasNotMadeAndMoveToArbitration = "LitigationRequest.Decision.ReconciliationWasNotMadeAndMoveToArbitration";
+        public const string LitigationRequest_Decision_ReconciliationWasNotMade = "LitigationRequest.Decision.ReconciliationWasNotMade";
+        public const string Reconciliation_ExtendRequest_Added = "Reconciliation.ExtendRequest.Added";
+        public const string Reconciliation_ExtendRequest_Accepted = "Reconciliation.ExtendRequest.Accepted";
+        public const string Reconciliation_ExtendRequest_Rejected = "Reconciliation.ExtendRequest.Rejected";
+        public const string ReconciliationSession_set = "ReconciliationSession.set";
+        public const string ReconciliationSession_Reset = "ReconciliationSession.Reset";
+        public const string WorkFlow_Condition = "Workflow.Condition";
+        public const string WorkFlow_Condition_Review = "Workflow.Condition.Review";
+        public const string Reconciliation_Request_Added = "Reconciliation.Request.Added";
+
+        public const string SLA_ReminderForReviewer = "SLA.ReminderForReviewer";
+        public const string SLA_ReminderForReviewerManager = "SLA.ReminderForReviewerManager";
+        public const string SLA_FirstEditReminderForRequestApplicant = "SLA.FirstEditReminderForRequestApplicant";
+        public const string SLA_SecondEditReminderForForRequestApplicant = "SLA.SecondEditReminderForForRequestApplicant";
+        public const string SLA_FirstAgreementRequestForRequest = "SLA.FirstAgreementRequestForRequest";
+        public const string SLA_SecondAgreementRequestForForRequest = "SLA.SecondAgreementRequestForForRequest";
+
+        public const string SLA_ReformerReminderForReconciliationFirstPeriod = "SLA.ReformerReminderForReconciliationFirstPeriod";
+        public const string SLA_ReformerReminderForReconciliationSecondPeriod = "SLA.ReformerReminderForReconciliationSecondPeriod";
+        public const string SLA_LitigationRequestReconciliationReportResponsePeriod = "SLA.LitigationRequestReconciliationReportResponsePeriod";
+        public const string SLA_LitigationRequestReconciliationReportDecisionPeriod = "SLA.LitigationRequestReconciliationReportDecisionPeriod";
+        public const string SLA_LitigationRequestReformerAssigningRequestResponsePeriod = "SLA.LitigationRequestReformerAssigningRequestResponsePeriod";
+        public const string SLA_LitigationRequestReformerAssigningRequestDecisionPeriod = "SLA.LitigationRequestReformerAssigningRequestDecisionPeriod";
+
+        #endregion
+        #region
+
+
 
         #endregion
 
+        #region Email
+        public const string PrefexEmailConfiguration = "EmailConfiguration_";
+        public const string EmailConfiguration_SendEmail = "EmailConfiguration_SendEmail";
+        public const string EmailFromAddress = "EmailConfiguration_FromEmail";
+        public const string DisplayNameFromEmailAddress = "EmailConfiguration_DisplayNameFromEmail";
+        public const string EmailPassword = "EmailConfiguration_Passowrd";
+        public const string UseDefaultCredentials = "EmailConfiguration_UseDefaultCredentials";
+        public const string EmailHost = "EmailConfiguration_Host";
+        public const string EmailPort = "EmailConfiguration_Port";
+        public const string EmailConfirmationURL = "EmailConfirmation_URL";
+        #endregion
 
     }
 }

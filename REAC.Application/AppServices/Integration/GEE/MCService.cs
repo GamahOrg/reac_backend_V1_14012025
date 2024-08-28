@@ -7,6 +7,7 @@ using System.Net.Http.Json;
 using System.Net;
 using System.Globalization;
 using AutoMapper.Internal;
+using Newtonsoft.Json;
 
 namespace REAC.Application.AppServices.Integration.GEE
 {
@@ -85,12 +86,14 @@ namespace REAC.Application.AppServices.Integration.GEE
                 var request = new HttpRequestMessage(HttpMethod.Get, url);
                 request.Headers.Add("Authorization", $"Bearer {token}");
                 var response = await client.SendAsync(request);
+                var x = await response.Content.ReadAsStringAsync();
 
                 MCCRInformationByCROwnersResponseDto responseDto = new MCCRInformationByCROwnersResponseDto();
                 CRInformationByCROwnersUpdatedDto cRInformationByCROwnersUpdatedDto = new CRInformationByCROwnersUpdatedDto();
                 if (response.IsSuccessStatusCode)
                 {
-                    responseDto.Data = await response.Content.ReadFromJsonAsync<CRInformationByCROwnersResponseDataDto>();
+                    responseDto.Data = await MapResponseData(await response.Content.ReadAsStringAsync());
+                    //responseDto.Data = await response.Content.ReadFromJsonAsync<CRInformationByCROwnersResponseDataDto>();
                     if(responseDto.Data != null)
                     {
                         foreach (var item in responseDto.Data.GetCROwnersByCRNumberResponse.GetCROwnersByCRNumberResult.getCROwnersByCRNumberResponseDetailObject.CROwnersList.CROwner)
@@ -117,7 +120,54 @@ namespace REAC.Application.AppServices.Integration.GEE
             }
         }
 
+        private async Task<CRInformationByCROwnersResponseDataDto> MapResponseData(string response)
+        {
+            CRInformationByCROwnersResponseDataDto responseData = new CRInformationByCROwnersResponseDataDto();
+            try
+            {
+                responseData = JsonConvert.DeserializeObject<CRInformationByCROwnersResponseDataDto>(response);
+                return responseData;
+            }
+            catch (Exception)
+            {
+                TestCRInformationByCROwnersResponseDataDto testResponse = new TestCRInformationByCROwnersResponseDataDto();
+                testResponse = JsonConvert.DeserializeObject<TestCRInformationByCROwnersResponseDataDto>(response);
 
+
+                var cROwnerList = new List<CROwnerDto>();
+                var cROwner = new CROwnerDto()
+                {
+                    OwnerID = new OwnerIDDto()
+                    {
+                        PersonIdentifier = new PersonIdentifierDto()
+                        {
+                            NationalID = testResponse.GetCROwnersByCRNumberResponse.GetCROwnersByCRNumberResult
+                            .getCROwnersByCRNumberResponseDetailObject.CROwnersList.CROwner.OwnerID.PersonIdentifier.NationalID,
+                        },
+                    },
+                };
+                cROwnerList.Add(cROwner);
+
+                responseData = new CRInformationByCROwnersResponseDataDto()
+                {
+                    GetCROwnersByCRNumberResponse = new GetCROwnersByCRNumberResponseDto()
+                    {
+                        GetCROwnersByCRNumberResult = new GetCROwnersByCRNumberResultDto()
+                        {
+                            getCROwnersByCRNumberResponseDetailObject = new GetCROwnersByCRNumberResponseDetailObjectDto()
+                            {
+                                CROwnersList = new CROwnersListDto()
+                                {
+                                    CROwner = cROwnerList,
+                                }
+                            }
+                        },
+                    },
+                        //testResponse.TestGetCROwnersByCRNumberResponse
+                };
+                return responseData;
+            }
+        }
 
         private async Task<CRInformationByCRNumberDto> MapCRInformationByCRNumber(MCCRInformationByCRNumberResponseDto mCResponseDto)
         {

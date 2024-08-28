@@ -302,7 +302,7 @@ namespace REAC.Application.AppServices
 
         }
 
-        private async Task<string> GenerateCitizenCode()
+        public async Task<string> GenerateCitizenCode()
         {
             var citizenRequestList = (await _repository.GetQueryable<Citizen, Guid>()).Where(x => x.Code != null).ToList();
 

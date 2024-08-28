@@ -600,10 +600,13 @@ namespace REAC.EntityFrameworkCore.Seed
                             Id = Guid.Parse("15154695-a36b-4fda-8572-4874f661000e"),
                             Order = 1,
                             ActorTypeId = StepActorType.Department,
-                            CreationLogMessage = "تم إنشاء الدعوى وجارى تدقيقها",
+                            CreationLogMessage = "تم إنشاء الدعوى وجارى تدقيقها 1",
                             CreatedOn = DateTime.Now,
                             CreatedBy = Guid.NewGuid(),
                             IsDeleted = false,
+                            InternalStatusId = RequestStatus.New,
+                            ExternalStatusId = RequestStatus.New,
+
                            
                             //CreationNotificationPlanId = Guid.Parse("f7c76133-2b18-4238-9081-d1fefbefb7cb"),
                             DepartmentId = Guid.Parse("657004f4-57e1-4715-addc-0e5ff0b00938"),

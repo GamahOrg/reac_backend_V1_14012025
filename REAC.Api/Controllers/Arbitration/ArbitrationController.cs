@@ -12,6 +12,13 @@ using REAC.EntityFrameworkCore.Entities.Reconciliation;
 
 namespace REAC.Api.Controllers.Arbitration.Process;
 
+public class AddChairmainRequestPayload
+{
+    public Guid RequestId { get; set; }
+
+    public Guid ArbitratorChairmanId { get; set; }
+}
+
 [Route("api/[controller]")]
 [ApiController]
 [ApiExplorerSettings(GroupName = APISections.Arbitration)]
@@ -406,6 +413,18 @@ public class ArbitrationController : ControllerBase
         if (ModelState.IsValid)
         {
             var returnValue = await _arbitrationService.AddLitigationRequestArbitratorsChairmanNominationList(arbitratorNominationListRequestPayload);
+            return Ok(returnValue);
+        }
+
+        return BadRequest();
+    }
+
+    [HttpPost(nameof(AddLitigationRequestArbitratorsChairmandecision))]
+    public async Task<IActionResult> AddLitigationRequestArbitratorsChairmandecision([FromBody] AddChairmainRequestPayload addChairmainRequestPayload)
+    {
+        if (ModelState.IsValid)
+        {
+            var returnValue = await _arbitrationService.AddLitigationRequestArbitratorsChairmandecision(addChairmainRequestPayload.RequestId, addChairmainRequestPayload.ArbitratorChairmanId);
             return Ok(returnValue);
         }
 

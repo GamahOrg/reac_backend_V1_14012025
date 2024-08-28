@@ -34,12 +34,36 @@ namespace REAC.Application.AppServices.System
 
         public async Task<BaseResponse> GetArbitratorClass(int experienceYears)
         {
-            var sysArbitratorClasses = (await _repository.GetQueryable<SysArbitratorClass, Guid>()).FirstOrDefault(x => experienceYears >= x.YearsFrom && experienceYears <= x.YearsTo);
-            if (sysArbitratorClasses != null)
-                return new DataResponse<SysArbitratorClassDto> { IsDone = true, Data = _mapper.Map<SysArbitratorClassDto>(sysArbitratorClasses) };
+            var sysArbitratorClasses = (await _repository.GetQueryable<SysArbitratorClass, Guid>()).Where(x => experienceYears >= x.YearsFrom && experienceYears <= x.YearsTo);
+            if (sysArbitratorClasses.Any())
+                return new DataResponse<SysArbitratorClassDto>
+                {
+                    IsDone = true,
+                    Data = new SysArbitratorClassDto()
+                    {
+                        Id = sysArbitratorClasses.FirstOrDefault().Id,
+                        ArbitratorClassName = sysArbitratorClasses.FirstOrDefault().ArbitratorClassName
+                    }
+                };
 
-            return new BaseResponse();
+            else
+            {
+                var item = (await _repository.GetQueryable<SysArbitratorClass, Guid>()).ToList().OrderBy(x => x.YearsTo).LastOrDefault();
+                if (item != null)
+                {
+                    return new DataResponse<SysArbitratorClassDto>
+                    {
+                        IsDone = true,
+                        Data = new SysArbitratorClassDto()
+                        {
+                            Id = item.Id,
+                            ArbitratorClassName = item.ArbitratorClassName
+                        }
+                    };
+                }
+            }
+            return new DataResponse<List<SysArbitratorClassDto>> { IsDone = true, Data = new List<SysArbitratorClassDto>() };
+
         }
-
     }
 }

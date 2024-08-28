@@ -13,6 +13,7 @@ namespace REAC.Application.Contracts.Dtos.UserManage
         public string UnitNumber { get; set; }
         public string MobileNumber { get; set; }
         public string Email { get; set; }
+        public string PostalCode { get; set; }
         public UserInfoUpdatedDto UserInfo { get; set; }
     }
 }
