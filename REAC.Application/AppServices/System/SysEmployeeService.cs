@@ -29,5 +29,17 @@ namespace REAC.Application.AppServices.System
                 return new DataResponse<SysEmployee> { Data = null, IsDone = false };
 
         }
+
+        public async Task<DataResponse<SysEmployee>> GetEmployeeByDepartmentType(DepartmentType deptType)
+        {
+            var DeptObj = (await _repository.GetQueryable<SysEmployee, Guid>())
+                             .Include(e => e.Department)
+                             .Where(x => x.Department.DepartmentType == deptType & x.IsAdmin == false & x.IsActive == true & x.IsDeleted != true)
+                             .FirstOrDefault();
+            if (DeptObj != null)
+                return new DataResponse<SysEmployee> { Data = DeptObj, IsDone = true };
+            else
+                return new DataResponse<SysEmployee> { Data = null, IsDone = false };
+        }
     }
 }

@@ -2,6 +2,8 @@
 using Core.GenericRepository.BaseRepository;
 using Core.Shared.Responses;
 using Microsoft.EntityFrameworkCore;
+using REAC.Application.Contracts.Dtos.Notification;
+using REAC.Application.Contracts.IAppServices.Notification;
 using REAC.Application.Contracts.IAppServices.SLA;
 using REAC.Application.Contracts.IAppServices.System;
 using REAC.Domain.Shared.Constants;
@@ -18,17 +20,30 @@ namespace REAC.Application.AppServices.SLA
         protected IEntityRepository _repository;
         protected IMapper _mapper;
         protected ISysSettingService _sysSettingService;
-        public ReviewSlaService(ISysSettingService sysSettingService, IMapper mapper, IEntityRepository repository)
+        private readonly INotificationService _notificationService;
+        private readonly ISysEmployeeService _employeeService;
+
+        public ReviewSlaService(ISysSettingService sysSettingService, IMapper mapper, IEntityRepository repository, INotificationService notificationService, ISysEmployeeService employeeService)
         {
             _mapper = mapper;
             _repository = repository;
             _sysSettingService = sysSettingService;
+            _notificationService = notificationService;
+            _employeeService = employeeService;
         }
         public async Task<BaseResponse> Execute()
         {
             var litigationRequests = (await _repository.GetQueryable<LitigationRequest, Guid>())?
+                             .Include(x => x.ApplicantCitizen)
                              .Include(x => x.WorkFlowProcessingLogs)
                              .ThenInclude(x => x.WorkFlowStep)
+                             .Include(x => x.WorkFlowProcessingLogs)
+                             .ThenInclude(x => x.Employee)
+                             .Include(x => x.Contract)
+                             .Include(x => x.Contract.FirstPartyFacility).ThenInclude(x => x.Citizen)
+                             .Include(x => x.Contract.FirstPartyCitizen)
+                             .Include(x => x.Contract.SecondPartyFacility).ThenInclude(x => x.Citizen)
+                             .Include(x => x.Contract.SecondPartyCitizen)
                              .Where(x => x.InternalStatusId == RequestStatus.New & x.IsFinished != true)
                              .ToList();
 
@@ -70,9 +85,53 @@ namespace REAC.Application.AppServices.SLA
                                     {
                                         litigationRequest.IsReminderForReviewerSent = true;
 
-                                        //Send Notification for reviewer employee
-                                        // Mail - Sms - Application Notification
-                                        //يرجى اتمام مراجعة الرعوى رقم .....  
+                                        foreach (var employeeWorkFlowProcessingLog in employeeWorkFlowProcessingLogs)
+                                        {
+                                            //Send Notification for reviewer employee
+                                            // Mail - Sms - Application Notification
+                                            //يرجى اتمام مراجعة الدعوى رقم .....
+                                            try
+                                            {
+                                                var msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.SLA_FinishLitigation_ReviewerEmployee).Result.Data?.Value;
+                                                msg = msg.Replace("{LitigationCode}", litigationRequest.RequestCode);
+
+                                                var applicationNotifications = new List<SysNotificationDto>();
+
+                                                applicationNotifications.Add(new SysNotificationDto()
+                                                {
+                                                    ActorId = (Guid)employeeWorkFlowProcessingLog.EmployeeId,
+                                                    CreatedOn = DateTime.Now,
+                                                    ActorTypeId = NotificationActorType.Employee,
+                                                    IsViewed = false,
+                                                    ViewedOn = null,
+                                                    RequestId = litigationRequest.Id,
+                                                    RequestTypeId = RequestType.LitigationRequest,
+                                                    Message = msg
+                                                });
+
+                                                var notificationResult = _notificationService.SendNotifications(
+                                                    new SendEmailDto()
+                                                    {
+                                                        Body = msg,
+                                                        Subject = "يرجي اتمام مراجعة الدعوي",
+                                                        To = new List<string>() { employeeWorkFlowProcessingLog.Employee.Email }
+
+                                                    },
+                                                    new Contracts.Dtos.Integration.GEE.SMSRequestDto()
+                                                    {
+                                                        message_text = msg,
+                                                        notification_type = "SMS",
+                                                        recipients = new List<string>() { employeeWorkFlowProcessingLog.Employee.Mobile }
+                                                    }, applicationNotifications
+                                                    );
+                                            }
+                                            catch (Exception ex)
+                                            {
+
+                                            }
+
+                                        }
+
                                     }
                                 }
 
@@ -145,22 +204,195 @@ namespace REAC.Application.AppServices.SLA
                                                     //Send Notification for old reviewer
                                                     // Mail - Sms - Application Notification
                                                     //تم سحب دعوى جديدة رقم ..... لتخطى مدة التدقيق الفصوى
+                                                    try
+                                                    {
+                                                        var msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.SLA_WithdrewLitigation_OldReviewerEmployee).Result.Data?.Value;
+                                                        msg = msg.Replace("{LitigationCode}", litigationRequest.RequestCode);
+
+                                                        var applicationNotifications = new List<SysNotificationDto>();
+
+                                                        applicationNotifications.Add(new SysNotificationDto()
+                                                        {
+                                                            ActorId = employee.Id,
+                                                            CreatedOn = DateTime.Now,
+                                                            ActorTypeId = NotificationActorType.Employee,
+                                                            IsViewed = false,
+                                                            ViewedOn = null,
+                                                            RequestId = litigationRequest.Id,
+                                                            RequestTypeId = RequestType.LitigationRequest,
+                                                            Message = msg
+                                                        });
+
+                                                        var notificationResult = _notificationService.SendNotifications(
+                                                            new SendEmailDto()
+                                                            {
+                                                                Body = msg,
+                                                                Subject = "تم سحب دعوى جديدة لتخطى مدة التدقيق الفصوى",
+                                                                To = new List<string>() { employee.Email }
+
+                                                            },
+                                                            new Contracts.Dtos.Integration.GEE.SMSRequestDto()
+                                                            {
+                                                                message_text = msg,
+                                                                notification_type = "SMS",
+                                                                recipients = new List<string>() { employee.Mobile }
+                                                            }, applicationNotifications
+                                                            );
+                                                    }
+                                                    catch (Exception ex)
+                                                    {
+
+                                                    }
+
+
+
 
                                                     //Send Notification for new reviewer
                                                     // Mail - Sms - Application Notification
                                                     //تم ارسال دعوى جديدة رقم ..... للتدقيق
+                                                    try
+                                                    {
+                                                        var msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.SLA_AssignLitigation_NewReviewerEmployee).Result.Data?.Value;
+                                                        msg = msg.Replace("{LitigationCode}", litigationRequest.RequestCode);
+
+                                                        var employeeInfo = (await _repository.GetQueryable<SysEmployee, Guid>()).Where(e => e.Id == newEmployeeId).FirstOrDefault();
+
+                                                        var applicationNotifications = new List<SysNotificationDto>();
+
+                                                        applicationNotifications.Add(new SysNotificationDto()
+                                                        {
+                                                            ActorId = (Guid)newEmployeeId,
+                                                            CreatedOn = DateTime.Now,
+                                                            ActorTypeId = NotificationActorType.Employee,
+                                                            IsViewed = false,
+                                                            ViewedOn = null,
+                                                            RequestId = litigationRequest.Id,
+                                                            RequestTypeId = RequestType.LitigationRequest,
+                                                            Message = msg
+                                                        });
+
+                                                        var notificationResult = _notificationService.SendNotifications(
+                                                            new SendEmailDto()
+                                                            {
+                                                                Body = msg,
+                                                                Subject = "تم ارسال دعوى جديدة  للتدقيق",
+                                                                To = new List<string>() { employeeInfo.Email }
+
+                                                            },
+                                                            new Contracts.Dtos.Integration.GEE.SMSRequestDto()
+                                                            {
+                                                                message_text = msg,
+                                                                notification_type = "SMS",
+                                                                recipients = new List<string>() { employeeInfo.Mobile }
+                                                            }, applicationNotifications
+                                                            );
+                                                    }
+                                                    catch (Exception ex)
+                                                    {
+
+                                                    }
+
+
 
                                                     //Send Notification for review department admin
                                                     // Mail - Sms - Application Notification
                                                     //تم ارسال الدعوى رقم .... إلى مدقق جديد لتخطى المدقق السابق مدة التدقيق الفصوى
+
+                                                    try
+                                                    {
+                                                        var msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.SLA_AssignLitigation_ReviewerAdmin).Result.Data?.Value;
+                                                        msg = msg.Replace("{LitigationCode}", litigationRequest.RequestCode);
+
+                                                        var employeeInfo = (await _repository.GetQueryable<SysEmployee, Guid>()).Where(e => e.Id == newEmployeeId).FirstOrDefault();
+
+                                                        var applicationNotifications = new List<SysNotificationDto>();
+
+                                                        applicationNotifications.Add(new SysNotificationDto()
+                                                        {
+                                                            ActorId = (Guid)newEmployeeId,
+                                                            CreatedOn = DateTime.Now,
+                                                            ActorTypeId = NotificationActorType.Employee,
+                                                            IsViewed = false,
+                                                            ViewedOn = null,
+                                                            RequestId = litigationRequest.Id,
+                                                            RequestTypeId = RequestType.LitigationRequest,
+                                                            Message = msg
+                                                        });
+
+                                                        var notificationResult = _notificationService.SendNotifications(
+                                                            new SendEmailDto()
+                                                            {
+                                                                Body = msg,
+                                                                Subject = "تم ارسال دعوى  إلى مدقق جديد لتخطى المدقق السابق مدة التدقيق الفصوى",
+                                                                To = new List<string>() { employeeInfo.Email }
+
+                                                            },
+                                                            new Contracts.Dtos.Integration.GEE.SMSRequestDto()
+                                                            {
+                                                                message_text = msg,
+                                                                notification_type = "SMS",
+                                                                recipients = new List<string>() { employeeInfo.Mobile }
+                                                            }, applicationNotifications
+                                                            );
+                                                    }
+                                                    catch (Exception ex)
+                                                    {
+
+                                                    }
+
                                                 }
                                             }
                                         }
                                         else
                                         {
+
+
                                             // Send Notification for review department admin
                                             // Mail - Sms - Application Notification
                                             // يوجد تأخير تجاوز المده المسموح بها للتدقيق على الدعوى رقم .....
+
+
+                                            try
+                                            {
+                                                var msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.SLA_AssignLitigation_ReviewerAdmin).Result.Data?.Value;
+                                                msg = msg.Replace("{LitigationCode}", litigationRequest.RequestCode);
+
+                                                var deptAdminInfoReview = await _employeeService.GetAdminsByDepartmentType(DepartmentType.Review);
+
+                                                var applicationNotifications = new List<SysNotificationDto>();
+
+                                                applicationNotifications.Add(new SysNotificationDto()
+                                                {
+                                                    ActorId = (Guid)deptAdminInfoReview.Data.Id,
+                                                    CreatedOn = DateTime.Now,
+                                                    ActorTypeId = NotificationActorType.Employee,
+                                                    IsViewed = false,
+                                                    ViewedOn = null,
+                                                    RequestId = litigationRequest.Id,
+                                                    RequestTypeId = RequestType.LitigationRequest,
+                                                    Message = msg
+                                                });
+
+                                                var notificationResult = _notificationService.SendNotifications(
+                                                    new SendEmailDto()
+                                                    {
+                                                        Body = msg,
+                                                        Subject = "تم ارسال دعوى  إلى مدقق جديد لتخطى المدقق السابق مدة التدقيق الفصوى",
+                                                        To = new List<string>() { deptAdminInfoReview.Data.Email }
+
+                                                    },
+                                                    new Contracts.Dtos.Integration.GEE.SMSRequestDto()
+                                                    {
+                                                        message_text = msg,
+                                                        notification_type = "SMS",
+                                                        recipients = new List<string>() { deptAdminInfoReview.Data.Mobile }
+                                                    }, applicationNotifications
+                                                    );
+                                            }
+                                            catch (Exception ex)
+                                            {
+
+                                            }
                                         }
                                     }
                                 }
@@ -177,6 +409,8 @@ namespace REAC.Application.AppServices.SLA
             litigationRequests = (await _repository.GetQueryable<LitigationRequest, Guid>())?
                              .Include(x => x.WorkFlowProcessingLogs)
                              .ThenInclude(x => x.WorkFlowStep)
+                             .Include(x => x.WorkFlowProcessingLogs)
+                             .ThenInclude(x => x.Employee)
                              .Where(x => x.InternalStatusId == RequestStatus.SentBackForEdit & x.IsFinished != true)
                              .ToList();
 
@@ -210,6 +444,88 @@ namespace REAC.Application.AppServices.SLA
                                         //Send Notification for applicant and plaintiff
                                         // Mail - Sms - Application Notification
                                         //يرجى سرعة معالجة كافة الملاحظات على الدعوى رقم ........
+
+                                        try
+                                        {
+                                            var msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.SLA_FinishNotes).Result.Data?.Value;
+                                            msg = msg.Replace("{LitigationCode}", litigationRequest.RequestCode);
+
+
+                                            List<SysNotificationDto> notifications = new List<SysNotificationDto>()
+                                            {
+                                                new SysNotificationDto{
+                                                ActorId = litigationRequest.ApplicantCitizen.Id,
+                                                RequestId=litigationRequest.Id,
+                                                CreatedOn= DateTime.Now,
+                                                RequestTypeId=RequestType.LitigationRequest,
+                                                ActorTypeId=NotificationActorType.Plaintiff,
+                                                Message=msg
+                                                }
+                                            };
+
+                                            List<string> emails = new List<string>() 
+                                            {
+                                                litigationRequest.ApplicantCitizen.Email,
+                                            };
+
+                                            List<string> recipients = new List<string>()
+                                            {
+                                                litigationRequest.ApplicantCitizen.Mobile,
+                                            };
+
+
+                                            if (litigationRequest?.Contract?.FirstPartyCitizenId != null && litigationRequest?.Contract?.FirstPartyCitizenId != litigationRequest.ApplicantCitizenId)
+                                            {
+                                                notifications.Add(new SysNotificationDto
+                                                {
+                                                    ActorId = (Guid)litigationRequest.Contract.FirstPartyCitizenId,
+                                                    RequestId = litigationRequest.Id,
+                                                    CreatedOn = DateTime.Now,
+                                                    RequestTypeId = RequestType.LitigationRequest,
+                                                    ActorTypeId = NotificationActorType.Plaintiff,
+                                                    Message = msg
+                                                });
+                                                emails.Add(litigationRequest.Contract.FirstPartyCitizen.Email);
+                                                recipients.Add(litigationRequest.Contract.FirstPartyCitizen.Mobile);
+
+
+                                            };
+                                            if (litigationRequest?.Contract?.FirstPartyFacility != null && litigationRequest?.Contract?.FirstPartyFacility.CitizenId != litigationRequest.ApplicantCitizenId)
+                                            {
+                                                notifications.Add(new SysNotificationDto
+                                                {
+                                                    ActorId = (Guid)litigationRequest.Contract.FirstPartyFacility.CitizenId,
+                                                    RequestId = litigationRequest.Id,
+                                                    CreatedOn = DateTime.Now,
+                                                    RequestTypeId = RequestType.LitigationRequest,
+                                                    ActorTypeId = NotificationActorType.Plaintiff,
+                                                    Message = msg
+                                                });
+                                                emails.Add(litigationRequest.Contract.FirstPartyFacility.Citizen.Email);
+                                                recipients.Add(litigationRequest.Contract.FirstPartyFacility.Citizen.Mobile);
+                                            };
+                                            
+
+                                            var notificationResult = _notificationService.SendNotifications(
+                                                new SendEmailDto()
+                                                {
+                                                    Body = msg,
+                                                    Subject = "يرجى سرعة معالجة كافة الملاحظات على الدعوى",
+                                                    To = emails
+
+                                                },
+                                                new Contracts.Dtos.Integration.GEE.SMSRequestDto()
+                                                {
+                                                    message_text = msg,
+                                                    notification_type = "SMS",
+                                                    recipients = recipients
+                                                }, notifications
+                                                );
+                                        }
+                                        catch (Exception ex)
+                                        {
+
+                                        }
                                     }
                                 }
                             }
@@ -227,6 +543,110 @@ namespace REAC.Application.AppServices.SLA
                                     //Send Notification for applicant and plaintiff and review department admin and reviewer
                                     // Mail - Sms - Application Notification
                                     //تم إلفاء الدعوى رقم ........ لعدم الرد على الملاحظات المرسلة
+                                    try
+                                    {
+                                        var msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.SLA_LitigationCancelled).Result.Data?.Value;
+                                        msg = msg.Replace("{LitigationCode}", litigationRequest.RequestCode);
+
+                                        var deptAdminInfoReview = await _employeeService.GetAdminsByDepartmentType(DepartmentType.Review);
+                                        var deptEmployeeInfoReview = litigationRequest.WorkFlowProcessingLogs.Where(w => w.EmployeeId != null).OrderBy(x => x.CreatedOn).LastOrDefault()?.Employee;
+
+
+                                        List<SysNotificationDto> notifications = new List<SysNotificationDto>()
+                                            {
+                                                new SysNotificationDto{
+                                                ActorId = litigationRequest.ApplicantCitizen.Id,
+                                                RequestId=litigationRequest.Id,
+                                                CreatedOn= DateTime.Now,
+                                                RequestTypeId=RequestType.LitigationRequest,
+                                                ActorTypeId=NotificationActorType.Plaintiff,
+                                                Message=msg
+                                                },
+                                                new SysNotificationDto{
+                                                ActorId = deptAdminInfoReview.Data.Id,
+                                                RequestId=litigationRequest.Id,
+                                                CreatedOn= DateTime.Now,
+                                                RequestTypeId=RequestType.LitigationRequest,
+                                                ActorTypeId=NotificationActorType.Employee,
+                                                Message=msg
+                                                },
+                                                new SysNotificationDto{
+                                                ActorId = deptEmployeeInfoReview.Id,
+                                                RequestId=litigationRequest.Id,
+                                                CreatedOn= DateTime.Now,
+                                                RequestTypeId=RequestType.LitigationRequest,
+                                                ActorTypeId=NotificationActorType.Employee,
+                                                Message=msg
+                                                }
+                                            };
+
+                                        List<string> emails = new List<string>()
+                                            {
+                                                litigationRequest.ApplicantCitizen.Email,
+                                                deptEmployeeInfoReview.Email,
+                                                deptAdminInfoReview.Data.Email
+                                            };
+
+                                        List<string> recipients = new List<string>()
+                                            {
+                                                litigationRequest.ApplicantCitizen.Mobile,
+                                                deptEmployeeInfoReview.Mobile,
+                                                deptAdminInfoReview.Data.Mobile
+                                            };
+
+
+                                        if (litigationRequest?.Contract?.FirstPartyCitizenId != null && litigationRequest?.Contract?.FirstPartyCitizenId != litigationRequest.ApplicantCitizenId)
+                                        {
+                                            notifications.Add(new SysNotificationDto
+                                            {
+                                                ActorId = (Guid)litigationRequest.Contract.FirstPartyCitizenId,
+                                                RequestId = litigationRequest.Id,
+                                                CreatedOn = DateTime.Now,
+                                                RequestTypeId = RequestType.LitigationRequest,
+                                                ActorTypeId = NotificationActorType.Plaintiff,
+                                                Message = msg
+                                            });
+                                            emails.Add(litigationRequest.Contract.FirstPartyCitizen.Email);
+                                            recipients.Add(litigationRequest.Contract.FirstPartyCitizen.Mobile);
+
+
+                                        };
+                                        if (litigationRequest?.Contract?.FirstPartyFacility != null && litigationRequest?.Contract?.FirstPartyFacility.CitizenId != litigationRequest.ApplicantCitizenId)
+                                        {
+                                            notifications.Add(new SysNotificationDto
+                                            {
+                                                ActorId = (Guid)litigationRequest.Contract.FirstPartyFacility.CitizenId,
+                                                RequestId = litigationRequest.Id,
+                                                CreatedOn = DateTime.Now,
+                                                RequestTypeId = RequestType.LitigationRequest,
+                                                ActorTypeId = NotificationActorType.Plaintiff,
+                                                Message = msg
+                                            });
+                                            emails.Add(litigationRequest.Contract.FirstPartyFacility.Citizen.Email);
+                                            recipients.Add(litigationRequest.Contract.FirstPartyFacility.Citizen.Mobile);
+                                        };
+                                        
+
+                                        var notificationResult = _notificationService.SendNotifications(
+                                            new SendEmailDto()
+                                            {
+                                                Body = msg,
+                                                Subject = "تم إلفاء الدعوى لعدم الرد على الملاحظات المرسلة",
+                                                To = emails
+
+                                            },
+                                            new Contracts.Dtos.Integration.GEE.SMSRequestDto()
+                                            {
+                                                message_text = msg,
+                                                notification_type = "SMS",
+                                                recipients = recipients
+                                            }, notifications
+                                            );
+                                    }
+                                    catch (Exception ex)
+                                    {
+
+                                    }
                                 }
                             }
                         }
@@ -241,6 +661,8 @@ namespace REAC.Application.AppServices.SLA
             litigationRequests = (await _repository.GetQueryable<LitigationRequest, Guid>())?
                              .Include(x => x.WorkFlowProcessingLogs)
                              .ThenInclude(x => x.WorkFlowStep)
+                             .Include(x => x.WorkFlowProcessingLogs)
+                             .ThenInclude(x => x.Employee)
                              .Where(x => x.InternalStatusId == RequestStatus.AgreementRequestHasBeenSent & x.IsFinished != true)
                              .ToList();
 
@@ -272,12 +694,184 @@ namespace REAC.Application.AppServices.SLA
                                         //Send Notification for Defendant
                                         // Mail - Sms - Application Notification
                                         //يرجى سرعة على طلب المشارطة المرسل على الدعوى رقم ........
+                                        try
+                                        {
+                                            var msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.SLA_FinishAgreementRequest).Result.Data?.Value;
+                                            msg = msg.Replace("{LitigationCode}", litigationRequest.RequestCode);
+
+                                            List<SysNotificationDto> notifications = new List<SysNotificationDto>();
+                                            List<string> emails = new List<string>();
+                                            List<string> recipients = new List<string>();
+
+
+                                            if (litigationRequest?.Contract?.SecondPartyCitizenId != null)
+                                            {
+                                                notifications.Add(new SysNotificationDto
+                                                {
+                                                    ActorId = (Guid)litigationRequest.Contract.SecondPartyCitizenId,
+                                                    RequestId = litigationRequest.Id,
+                                                    CreatedOn = DateTime.Now,
+                                                    RequestTypeId = RequestType.LitigationRequest,
+                                                    ActorTypeId = NotificationActorType.Defendant,
+                                                    Message = msg
+                                                });
+                                                emails.Add(litigationRequest.Contract.SecondPartyCitizen.Email);
+                                                recipients.Add(litigationRequest.Contract.SecondPartyCitizen.Mobile);
+                                            };
+                                            if (litigationRequest?.Contract?.SecondPartyFacilityId != null)
+                                            {
+                                                notifications.Add(new SysNotificationDto
+                                                {
+                                                    ActorId = (Guid)litigationRequest.Contract.SecondPartyFacility.CitizenId,
+                                                    RequestId = litigationRequest.Id,
+                                                    CreatedOn = DateTime.Now,
+                                                    RequestTypeId = RequestType.LitigationRequest,
+                                                    ActorTypeId = NotificationActorType.Defendant,
+                                                    Message = msg
+                                                });
+                                                emails.Add(litigationRequest.Contract.SecondPartyFacility.Citizen.Email);
+                                                recipients.Add(litigationRequest.Contract.SecondPartyFacility.Citizen.Mobile);
+                                            };
+
+
+                                            var notificationResult = _notificationService.SendNotifications(
+                                                new SendEmailDto()
+                                                {
+                                                    Body = msg,
+                                                    Subject = "يرجى سرعة الرد على طلب المشارطة المرسل على الدعوى",
+                                                    To = emails
+
+                                                },
+                                                new Contracts.Dtos.Integration.GEE.SMSRequestDto()
+                                                {
+                                                    message_text = msg,
+                                                    notification_type = "SMS",
+                                                    recipients = recipients
+                                                }, notifications
+                                                );
+                                        }
+                                        catch (Exception ex)
+                                        {
+
+                                        }
+
+
                                     }
                                     if (!litigationRequest.PlaintiffAgreementRequestResponse.HasValue)
                                     {
                                         //Send Notification for applicant and plaintiff
                                         // Mail - Sms - Application Notification
                                         //يرجى سرعة على طلب المشارطة المرسل على الدعوى رقم ........
+
+                                        try
+                                        {
+                                            var msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.SLA_FinishAgreementRequest).Result.Data?.Value;
+                                            msg = msg.Replace("{LitigationCode}", litigationRequest.RequestCode);
+
+
+                                            List<SysNotificationDto> notifications = new List<SysNotificationDto>()
+                                            {
+                                                new SysNotificationDto{
+                                                ActorId = litigationRequest.ApplicantCitizen.Id,
+                                                RequestId=litigationRequest.Id,
+                                                CreatedOn= DateTime.Now,
+                                                RequestTypeId=RequestType.LitigationRequest,
+                                                ActorTypeId=NotificationActorType.Plaintiff,
+                                                Message=msg
+                                                }
+                                            };
+
+                                            List<string> emails = new List<string>()
+                                            {
+                                                litigationRequest.ApplicantCitizen.Email,
+                                            };
+
+                                            List<string> recipients = new List<string>()
+                                            {
+                                                litigationRequest.ApplicantCitizen.Mobile,
+                                            };
+
+
+                                            if (litigationRequest?.Contract?.FirstPartyCitizenId != null && litigationRequest?.Contract?.FirstPartyCitizenId != litigationRequest.ApplicantCitizenId)
+                                            {
+                                                notifications.Add(new SysNotificationDto
+                                                {
+                                                    ActorId = (Guid)litigationRequest.Contract.FirstPartyCitizenId,
+                                                    RequestId = litigationRequest.Id,
+                                                    CreatedOn = DateTime.Now,
+                                                    RequestTypeId = RequestType.LitigationRequest,
+                                                    ActorTypeId = NotificationActorType.Plaintiff,
+                                                    Message = msg
+                                                });
+                                                emails.Add(litigationRequest.Contract.FirstPartyCitizen.Email);
+                                                recipients.Add(litigationRequest.Contract.FirstPartyCitizen.Mobile);
+
+
+                                            };
+                                            if (litigationRequest?.Contract?.FirstPartyFacility != null && litigationRequest?.Contract?.FirstPartyFacility.CitizenId != litigationRequest.ApplicantCitizenId)
+                                            {
+                                                notifications.Add(new SysNotificationDto
+                                                {
+                                                    ActorId = (Guid)litigationRequest.Contract.FirstPartyFacility.CitizenId,
+                                                    RequestId = litigationRequest.Id,
+                                                    CreatedOn = DateTime.Now,
+                                                    RequestTypeId = RequestType.LitigationRequest,
+                                                    ActorTypeId = NotificationActorType.Plaintiff,
+                                                    Message = msg
+                                                });
+                                                emails.Add(litigationRequest.Contract.FirstPartyFacility.Citizen.Email);
+                                                recipients.Add(litigationRequest.Contract.FirstPartyFacility.Citizen.Mobile);
+                                            };
+                                            if (litigationRequest?.Contract?.SecondPartyCitizenId != null)
+                                            {
+                                                notifications.Add(new SysNotificationDto
+                                                {
+                                                    ActorId = (Guid)litigationRequest.Contract.SecondPartyCitizenId,
+                                                    RequestId = litigationRequest.Id,
+                                                    CreatedOn = DateTime.Now,
+                                                    RequestTypeId = RequestType.LitigationRequest,
+                                                    ActorTypeId = NotificationActorType.Defendant,
+                                                    Message = msg
+                                                });
+                                                emails.Add(litigationRequest.Contract.SecondPartyCitizen.Email);
+                                                recipients.Add(litigationRequest.Contract.SecondPartyCitizen.Mobile);
+                                            };
+                                            if (litigationRequest?.Contract?.SecondPartyFacilityId != null)
+                                            {
+                                                notifications.Add(new SysNotificationDto
+                                                {
+                                                    ActorId = (Guid)litigationRequest.Contract.SecondPartyFacility.CitizenId,
+                                                    RequestId = litigationRequest.Id,
+                                                    CreatedOn = DateTime.Now,
+                                                    RequestTypeId = RequestType.LitigationRequest,
+                                                    ActorTypeId = NotificationActorType.Defendant,
+                                                    Message = msg
+                                                });
+                                                emails.Add(litigationRequest.Contract.SecondPartyFacility.Citizen.Email);
+                                                recipients.Add(litigationRequest.Contract.SecondPartyFacility.Citizen.Mobile);
+                                            };
+
+
+                                            var notificationResult = _notificationService.SendNotifications(
+                                                new SendEmailDto()
+                                                {
+                                                    Body = msg,
+                                                    Subject = "يرجى سرعة الرد على طلب المشارطة المرسل على الدعوى",
+                                                    To = emails
+
+                                                },
+                                                new Contracts.Dtos.Integration.GEE.SMSRequestDto()
+                                                {
+                                                    message_text = msg,
+                                                    notification_type = "SMS",
+                                                    recipients = recipients
+                                                }, notifications
+                                                );
+                                        }
+                                        catch (Exception ex)
+                                        {
+
+                                        }
                                     }
                                 }
                             }
@@ -297,6 +891,101 @@ namespace REAC.Application.AppServices.SLA
                                 //Send Notification for applicant and plaintiff and Defendant and review department admin
                                 // Mail - Sms - Application Notification
                                 //تم إلفاء الدعوى رقم ........ لعدم الرد على طلب المشارطة
+
+                                try
+                                {
+                                    var msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.SLA_AgreementCancelled).Result.Data?.Value;
+                                    msg = msg.Replace("{LitigationCode}", litigationRequest.RequestCode);
+
+                                    var deptAdminInfoReview = await _employeeService.GetAdminsByDepartmentType(DepartmentType.Review);
+
+
+                                    List<SysNotificationDto> notifications = new List<SysNotificationDto>()
+                                            {
+                                                new SysNotificationDto{
+                                                ActorId = litigationRequest.ApplicantCitizen.Id,
+                                                RequestId=litigationRequest.Id,
+                                                CreatedOn= DateTime.Now,
+                                                RequestTypeId=RequestType.LitigationRequest,
+                                                ActorTypeId=NotificationActorType.Plaintiff,
+                                                Message=msg
+                                                },
+                                                new SysNotificationDto{
+                                                ActorId = deptAdminInfoReview.Data.Id,
+                                                RequestId=litigationRequest.Id,
+                                                CreatedOn= DateTime.Now,
+                                                RequestTypeId=RequestType.LitigationRequest,
+                                                ActorTypeId=NotificationActorType.Employee,
+                                                Message=msg
+                                                }
+                                            };
+
+                                    List<string> emails = new List<string>()
+                                            {
+                                                litigationRequest.ApplicantCitizen.Email,
+                                                deptAdminInfoReview.Data.Email
+                                            };
+
+                                    List<string> recipients = new List<string>()
+                                            {
+                                                litigationRequest.ApplicantCitizen.Mobile,
+                                                deptAdminInfoReview.Data.Mobile
+                                            };
+
+
+                                    if (litigationRequest?.Contract?.FirstPartyCitizenId != null && litigationRequest?.Contract?.FirstPartyCitizenId != litigationRequest.ApplicantCitizenId)
+                                    {
+                                        notifications.Add(new SysNotificationDto
+                                        {
+                                            ActorId = (Guid)litigationRequest.Contract.FirstPartyCitizenId,
+                                            RequestId = litigationRequest.Id,
+                                            CreatedOn = DateTime.Now,
+                                            RequestTypeId = RequestType.LitigationRequest,
+                                            ActorTypeId = NotificationActorType.Plaintiff,
+                                            Message = msg
+                                        });
+                                        emails.Add(litigationRequest.Contract.FirstPartyCitizen.Email);
+                                        recipients.Add(litigationRequest.Contract.FirstPartyCitizen.Mobile);
+
+
+                                    };
+                                    if (litigationRequest?.Contract?.FirstPartyFacility != null && litigationRequest?.Contract?.FirstPartyFacility.CitizenId != litigationRequest.ApplicantCitizenId)
+                                    {
+                                        notifications.Add(new SysNotificationDto
+                                        {
+                                            ActorId = (Guid)litigationRequest.Contract.FirstPartyFacility.CitizenId,
+                                            RequestId = litigationRequest.Id,
+                                            CreatedOn = DateTime.Now,
+                                            RequestTypeId = RequestType.LitigationRequest,
+                                            ActorTypeId = NotificationActorType.Plaintiff,
+                                            Message = msg
+                                        });
+                                        emails.Add(litigationRequest.Contract.FirstPartyFacility.Citizen.Email);
+                                        recipients.Add(litigationRequest.Contract.FirstPartyFacility.Citizen.Mobile);
+                                    };
+
+
+                                    var notificationResult = _notificationService.SendNotifications(
+                                        new SendEmailDto()
+                                        {
+                                            Body = msg,
+                                            Subject = "تم إلفاء الدعوى لعدم الرد على الملاحظات المرسلة",
+                                            To = emails
+
+                                        },
+                                        new Contracts.Dtos.Integration.GEE.SMSRequestDto()
+                                        {
+                                            message_text = msg,
+                                            notification_type = "SMS",
+                                            recipients = recipients
+                                        }, notifications
+                                        );
+                                }
+                                catch (Exception ex)
+                                {
+
+                                }
+
                             }
                         }
 

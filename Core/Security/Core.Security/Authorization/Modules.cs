@@ -71,7 +71,7 @@
         public const string ArbitratorClass = "ArbitratorClass";
         public const string Area = "Area";
         public const string City = "City";
-
+        public const string OtherCategory = "OtherCategory";
 
 
     }

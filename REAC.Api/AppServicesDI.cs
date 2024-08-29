@@ -54,6 +54,7 @@ namespace REAC.Api
             services.AddScoped<ISysArbitratorCountService, SysArbitratorCountService>();
             services.AddScoped<IReviewSlaService, ReviewSlaService>();
             services.AddScoped<IReconciliationSlaService, ReconciliationSlaService>();
+            services.AddScoped<IArbitrationSlaService, ArbitrationSlaService>();
 
 
             services.AddScoped<ICitizenRequestService, CitizenRequestService>();
@@ -91,6 +92,7 @@ namespace REAC.Api
             services.AddScoped<ISysEmployeeService, SysEmployeeService>();
             services.AddScoped<ISysFileManagerService, SysFileManagerService>();
             services.AddScoped<ISysGenderService, SysGenderService>();
+            services.AddScoped<ISysOtherCategoryService, SysOtherCategoryService>();
             services.AddScoped<ISysIdentityTypeService, SysIdentityTypeService>();
             services.AddScoped<ISysLitigationRequestAmountService, SysLitigationRequestAmountService>();
             services.AddScoped<ISysLitigationRequestCategoryService, SysLitigationRequestCategoryService>();

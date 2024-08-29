@@ -1188,6 +1188,10 @@ public partial class REACDBContext : DbContext
               .HasForeignKey(d => d.ExemptionReductionCategoryId)
               .OnDelete(DeleteBehavior.ClientSetNull)
               .HasConstraintName("FKExemptionReductionCategory580725");
+            entity.HasOne(d => d.OtherCategory).WithMany(p => p.LitigationRequests)
+             .HasForeignKey(d => d.OtherCategories)
+             .OnDelete(DeleteBehavior.ClientSetNull)
+             .HasConstraintName("FKOtherCategory580725");
 
         });
 
@@ -2038,6 +2042,8 @@ public partial class REACDBContext : DbContext
         {
             entity.HasKey(e => e.Id);
             entity.Property(e => e.Id).HasColumnType("uniqueidentifier");
+            entity.OwnsMany(d => d.Translations, ownedNavigationBuilder => { ownedNavigationBuilder.ToJson(); });
+
         });
 
 

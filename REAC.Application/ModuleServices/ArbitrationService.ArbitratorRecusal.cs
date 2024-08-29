@@ -2,7 +2,6 @@
 using Core.Shared.Responses;
 using Microsoft.EntityFrameworkCore;
 using REAC.Application.Contracts.Dtos.Arbitration;
-using REAC.Application.Contracts.Dtos.Litigation.CreateUpdate.Litigation;
 using REAC.Application.Contracts.Dtos.Notification;
 using REAC.Application.Contracts.Dtos.Reconciliation.Process;
 using REAC.Domain.Shared.Constants;
@@ -11,8 +10,6 @@ using REAC.EntityFrameworkCore.Entities.Actor;
 using REAC.EntityFrameworkCore.Entities.Arbitration;
 using REAC.EntityFrameworkCore.Entities.Litigation;
 using REAC.EntityFrameworkCore.Entities.Wpf.Business;
-using REAC.EntityFrameworkCore.Entities.System;
-using Azure.Core;
 
 namespace REAC.Application.ModuleServices
 {
@@ -27,8 +24,6 @@ namespace REAC.Application.ModuleServices
             {
                 Guid referenceId = Guid.Empty;
                 _jwtReader.GetReferenceId(ref referenceId);
-
-                
 
                 var litigationRequest = (await _repository.GetQueryable<LitigationRequest, Guid>()).Include(x => x.Area).Include(x => x.City)
                                       .Include(x => x.LitigationRequestArbitratorLists)
@@ -118,6 +113,20 @@ namespace REAC.Application.ModuleServices
                             Message = "غير متاح"
                         };
                     }
+
+                    int LitigationRequestArbitratorRecusalRequestPeriod = 0;
+                    int.TryParse(_settingService.GetBySettingKey(SysSettingKeyConstants.SLA_Arbitration_LitigationRequestArbitratorRecusalRequestPeriod).Result.Data?.Value, out LitigationRequestArbitratorRecusalRequestPeriod);
+                    if (LitigationRequestArbitratorRecusalRequestPeriod > 0)
+                    {
+                        if (litigationRequest.ArbitratorsNominationListSelectionDoneDateTime.HasValue)
+                        {
+                            if ((DateTime.Now - litigationRequest.ArbitratorsNominationListSelectionDoneDateTime.Value).TotalHours >= LitigationRequestArbitratorRecusalRequestPeriod)
+                            {
+                                return new BaseResponse() { IsDone = false, Message = "لا يمكن إضافة طلب رد المحكم لتجاوز الفترة المتاحة لإضافة الطلب" };
+                            }
+                        }
+                    }
+
                     LitigationRequestArbitratorRecusalRequest litigationRequestArbitratorRecusalRequest = new LitigationRequestArbitratorRecusalRequest()
                     {
                         Id = Guid.NewGuid(),
@@ -153,9 +162,9 @@ namespace REAC.Application.ModuleServices
                         var applicantInfo = (await _repository.GetQueryable<Citizen, Guid>()).FirstOrDefault(c => c.Id == referenceId);
                         var arbitratorInfo = (await _repository.GetQueryable<Citizen, Guid>()).FirstOrDefault(c => c.Id == litigationRequestArbitratorRecusalRequest.ArbitratorCitizenId);
                         var arbitrationAdmin = await _sysEmployeeService.GetAdminsByDepartmentType(DepartmentType.Arbitration);
-                       
 
-                            var msg = "";
+
+                        var msg = "";
                         msg = _settingService.GetBySettingKey(SysSettingKeyConstants.ArbitraorRecusal_AddRequest).Result.Data?.Value;
                         msg = msg?.Replace("{ArbitratorName}", arbitratorInfo?.FullName);
                         msg = msg?.Replace("{LitigationCode}", litigationRequest?.RequestCode);
@@ -179,23 +188,23 @@ namespace REAC.Application.ModuleServices
                         }
 
                         };
-                        await _notificationService.SendNotifications( new Contracts.Dtos.Notification.SendEmailDto()
-                         {
-                             To = new List<string>() { applicantInfo.Email, arbitrationAdmin.Data?.Email },
-                             Subject = "أضافة طلب رد محكم",
-                             Body = msg
-                         },null, notifications);
-                        
+                        await _notificationService.SendNotifications(new Contracts.Dtos.Notification.SendEmailDto()
+                        {
+                            To = new List<string>() { applicantInfo.Email, arbitrationAdmin.Data?.Email },
+                            Subject = "أضافة طلب رد محكم",
+                            Body = msg
+                        }, null, notifications);
+
                     }
                     catch (Exception e)
                     {
 
-                       
-                    }
-                   
 
-                   
-             
+                    }
+
+
+
+
 
 
                     requestPayload.LitigationRequestArbitrationArbitratorRecusalRequestFiles.ForEach(t =>
@@ -877,9 +886,9 @@ namespace REAC.Application.ModuleServices
             {
                 Guid referenceId = Guid.Empty;
                 _jwtReader.GetReferenceId(ref referenceId);
-              
+
                 var arbitrationReportExplanationRequest = (await _repository.GetQueryable<LitigationRequestArbitratorRecusalRequest, Guid>())
-                     .Include(x=> x.LitigationRequest)
+                     .Include(x => x.LitigationRequest)
                      .Include(x => x.LitigationRequest.ApplicantCitizen)
                     .Include(x => x.LitigationRequest.Contract)
                     .Include(x => x.LitigationRequest.Contract.FirstPartyCitizen)
@@ -1015,15 +1024,15 @@ namespace REAC.Application.ModuleServices
                 catch (Exception e)
                 {
 
-                   
+
                 }
-              
 
 
 
-                   
-                
-              
+
+
+
+
 
 
                 var citizen = (await _repository.GetQueryable<Citizen, Guid>()).Where(x => x.Id == arbitrationReportExplanationRequest.ArbitratorCitizenId).FirstOrDefault();
@@ -1061,7 +1070,7 @@ namespace REAC.Application.ModuleServices
                     throw;
                 }
 
-               
+
                 saveResponse = await _repository.SaveChangesAsync();
                 if (!saveResponse.IsDone)
                     return saveResponse;

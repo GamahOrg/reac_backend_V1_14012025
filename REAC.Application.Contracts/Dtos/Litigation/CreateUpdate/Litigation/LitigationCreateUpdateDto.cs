@@ -29,8 +29,12 @@ namespace REAC.Application.Contracts.Dtos.Litigation.Create.Litigation
         public Guid? CityId { get; set; }
         public Guid? AreaId { get; set; }
         public string? ContractAddress { get; set; } // العنوان 
+        public Guid? OtherCategories { get; set; }
+
         //public bool isAgreedOnAcknowledgment { get; set; }
         //public bool isAgreedOnTermsAndConditions { get; set; }
+
+
 
     }
 

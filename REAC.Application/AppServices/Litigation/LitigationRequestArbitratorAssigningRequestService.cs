@@ -231,7 +231,7 @@ namespace REAC.Application.AppServices.Litigation
                                             CreatedOn = DateTime.Now,
                                             RequestId = litigationRequest.Id,
                                             ShowForApplicant = false,
-                                            LogMessage = "تم رفض المهمة من المحكم " + arbitratorsList.FirstOrDefault()?.ArbitratorCitizen.FullName
+                                            LogMessage = "تم إرسال طلب مهمة تحكيم للمحكم " + arbitratorsList.FirstOrDefault()?.ArbitratorCitizen.FullName + " كمحكم"
                                         });
                                     }
                                 }
@@ -253,9 +253,9 @@ namespace REAC.Application.AppServices.Litigation
                                         LitigationRequestArbitratorAssigningRequest nextLitigationRequestArbitratorAssigningRequest = new LitigationRequestArbitratorAssigningRequest();
                                         nextLitigationRequestArbitratorAssigningRequest.LitigationRequestId = litigationRequest.Id;
                                         nextLitigationRequestArbitratorAssigningRequest.RequestOn = DateTime.Now;
-                                        nextLitigationRequestArbitratorAssigningRequest.ArbitratorAssigningRequestTypeId = ArbitratorAssigningRequestType.Arbitrator;
+                                        nextLitigationRequestArbitratorAssigningRequest.ArbitratorAssigningRequestTypeId = ArbitratorAssigningRequestType.ArbitratorsChairman;
                                         nextLitigationRequestArbitratorAssigningRequest.LitigationRequestId = litigationRequest.Id;
-                                        nextLitigationRequestArbitratorAssigningRequest.LitigationRequestArbitratorNominationListId = chairmanArbitratorsList.FirstOrDefault().Id;
+                                        //nextLitigationRequestArbitratorAssigningRequest.LitigationRequestArbitratorNominationListId = chairmanArbitratorsList.FirstOrDefault().Id;
                                         nextLitigationRequestArbitratorAssigningRequest.CitizenId = chairmanArbitratorsList.FirstOrDefault().ArbitratorChairmanCitizenId;
                                         nextLitigationRequestArbitratorAssigningRequest.Response = LitigationRequestArbitratorAssigningRequestStatus.None;
                                         await _repository.AddAsync<LitigationRequestArbitratorAssigningRequest, Guid>(nextLitigationRequestArbitratorAssigningRequest);

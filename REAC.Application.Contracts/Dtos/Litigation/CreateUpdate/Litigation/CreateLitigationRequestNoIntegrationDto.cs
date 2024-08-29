@@ -17,6 +17,7 @@ namespace REAC.Application.Contracts.Dtos.Litigation.CreateUpdate.Litigation
         public string? SecondPartyPhone { get; set; }
         public string? SecondPartyName { get; set; }
         public string? SecondPartyFacilityCommercialRegistrationNo { get; set; }
+        public Guid? OtherCategories { get; set; }
     }
 
 }

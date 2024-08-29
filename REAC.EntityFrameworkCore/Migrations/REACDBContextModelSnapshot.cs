@@ -949,6 +949,30 @@ namespace REAC.EntityFrameworkCore.Migrations
                     b.Property<bool>("IsAllowEdit")
                         .HasColumnType("bit");
 
+                    b.Property<bool?>("IsArbitratorAssigningRequestResponseFirstPeriodSent")
+                        .HasColumnType("bit");
+
+                    b.Property<bool?>("IsArbitratorAssigningRequestResponseSecondPeriodSent")
+                        .HasColumnType("bit");
+
+                    b.Property<bool?>("IsArbitratorChairmanNominationListDecisionPeriodSent")
+                        .HasColumnType("bit");
+
+                    b.Property<bool?>("IsArbitratorChairmanNominationListResponsePeriodSent")
+                        .HasColumnType("bit");
+
+                    b.Property<bool?>("IsArbitratorCountSelectionDecisionPeriodSent")
+                        .HasColumnType("bit");
+
+                    b.Property<bool?>("IsArbitratorCountSelectionResponsePeriodSent")
+                        .HasColumnType("bit");
+
+                    b.Property<bool?>("IsArbitratorNominationListDecisionPeriodSent")
+                        .HasColumnType("bit");
+
+                    b.Property<bool?>("IsArbitratorNominationListResponsePeriodSent")
+                        .HasColumnType("bit");
+
                     b.Property<bool?>("IsArbitratorsChairmanDecisionRequired")
                         .HasColumnType("bit");
 
@@ -1027,6 +1051,9 @@ namespace REAC.EntityFrameworkCore.Migrations
                     b.Property<DateTime?>("MintuesOfMeetingApprovalPlaintiffStatusOn")
                         .HasColumnType("datetime2");
 
+                    b.Property<Guid?>("OtherCategories")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<DateTime?>("PaidOn")
                         .HasColumnType("datetime");
 
@@ -1093,6 +1120,8 @@ namespace REAC.EntityFrameworkCore.Migrations
                     b.HasIndex("LitigationRequestCategoryId");
 
                     b.HasIndex("LitigationRequestOwnerTypeId");
+
+                    b.HasIndex("OtherCategories");
 
                     b.HasIndex("ReformerCitizenId");
 
@@ -3978,6 +4007,11 @@ namespace REAC.EntityFrameworkCore.Migrations
                         .IsRequired()
                         .HasConstraintName("FKLitigation580725");
 
+                    b.HasOne("REAC.EntityFrameworkCore.Entities.Litigation.OtherCategory", "OtherCategory")
+                        .WithMany("LitigationRequests")
+                        .HasForeignKey("OtherCategories")
+                        .HasConstraintName("FKOtherCategory580725");
+
                     b.HasOne("REAC.EntityFrameworkCore.Entities.Actor.Citizen", "ReformerCitizen")
                         .WithMany("ArbitratorLitigationRequests")
                         .HasForeignKey("ReformerCitizenId")
@@ -4006,6 +4040,8 @@ namespace REAC.EntityFrameworkCore.Migrations
                     b.Navigation("LitigationRequestCategory");
 
                     b.Navigation("LitigationRequestOwnerType");
+
+                    b.Navigation("OtherCategory");
 
                     b.Navigation("ReformerCitizen");
 
@@ -4246,6 +4282,38 @@ namespace REAC.EntityFrameworkCore.Migrations
                         .HasConstraintName("FKLitigationLitigationRequestSessions535233");
 
                     b.Navigation("LitigationRequest");
+                });
+
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Litigation.OtherCategory", b =>
+                {
+                    b.OwnsMany("REAC.EntityFrameworkCore.Entities.System.SysOtherCategoryTranslation", "Translations", b1 =>
+                        {
+                            b1.Property<Guid>("OtherCategoryId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<int>("Id")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("int");
+
+                            b1.Property<string>("CategoryName")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.Property<string>("LanguageCode")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.HasKey("OtherCategoryId", "Id");
+
+                            b1.ToTable("OtherCategories");
+
+                            b1.ToJson("Translations");
+
+                            b1.WithOwner()
+                                .HasForeignKey("OtherCategoryId");
+                        });
+
+                    b.Navigation("Translations");
                 });
 
             modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Notification.SysNotification", b =>
@@ -5966,6 +6034,11 @@ namespace REAC.EntityFrameworkCore.Migrations
             modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Litigation.LitigationRequestRequest", b =>
                 {
                     b.Navigation("LitigationRequestRequestFiles");
+                });
+
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Litigation.OtherCategory", b =>
+                {
+                    b.Navigation("LitigationRequests");
                 });
 
             modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Notification.SysNotificationActorType", b =>

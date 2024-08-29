@@ -24,9 +24,23 @@ public partial class LitigationRequest : BaseEntity<Guid>
     public Guid ApplicantCitizenId { get; set; }
 
     public Guid? DelegatorCitizenId { get; set; }
+    public Guid? OtherCategories { get; set; }
     public bool? IsReminderForReviewerSent { get; set; }
 
     public bool? IsReformerReminderForReconciliationFirstPeriodSent { get; set; }
+
+    public bool? IsArbitratorCountSelectionResponsePeriodSent { get; set; }
+    public bool? IsArbitratorCountSelectionDecisionPeriodSent { get; set; }
+
+    public bool? IsArbitratorNominationListResponsePeriodSent { get; set; }
+    public bool? IsArbitratorNominationListDecisionPeriodSent { get; set; }
+
+    public bool? IsArbitratorChairmanNominationListResponsePeriodSent { get; set; }
+    public bool? IsArbitratorChairmanNominationListDecisionPeriodSent { get; set; }
+
+
+    public bool? IsArbitratorAssigningRequestResponseFirstPeriodSent { get; set; }
+    public bool? IsArbitratorAssigningRequestResponseSecondPeriodSent { get; set; }
 
     public bool? IsLitigationRequestReconciliationReportResponsePeriodSent { get; set; }
 
@@ -128,6 +142,8 @@ public partial class LitigationRequest : BaseEntity<Guid>
     public DateTime? ArbitratorsChairmanNominationListSelectionDoneDateTime { get; set; }
     public DateTime? JudgmentDecisionIssuingDateTime { get; set; }
 
+
+
     public bool? IsArbitratorsChairmanDecisionRequired { get; set; }
 
     public virtual Citizen? DelegatorCitizen { get; set; }
@@ -149,7 +165,7 @@ public partial class LitigationRequest : BaseEntity<Guid>
     public virtual SysLitigationRequestCategory? LitigationRequestCategory { get; set; }
 
     public virtual SysExemptionReductionCategory? SysExemptionReductionCategory { get; set; }
-
+    public virtual OtherCategory? OtherCategory { get; set; }
     public virtual ICollection<LitigationRequestSession> LitigationRequestSessions { get; set; } = new List<LitigationRequestSession>();
 
     public virtual ICollection<LitigationRequestReformerAssigningRequest> LitigationRequestReformerAssigningRequests { get; set; } = new List<LitigationRequestReformerAssigningRequest>();

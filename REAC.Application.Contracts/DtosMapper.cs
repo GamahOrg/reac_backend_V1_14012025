@@ -25,6 +25,7 @@ using REAC.Application.Contracts.Dtos.System.LitigationRequestExtendPeriodReques
 using REAC.Application.Contracts.Dtos.System.LitigationRequestOwnerTypeDtos;
 using REAC.Application.Contracts.Dtos.System.LitigationRequestStatusDtos;
 using REAC.Application.Contracts.Dtos.System.ReformerStatusDto;
+using REAC.Application.Contracts.Dtos.System.SysOtherCategory;
 using REAC.Application.Contracts.Dtos.Wpf.Business.WorkFlowLog;
 using REAC.Application.Contracts.Dtos.Wpf.Business.WorkFlowProcessingLogFile;
 using REAC.EntityFrameworkCore.Entities;
@@ -320,6 +321,13 @@ namespace REAC.Application.Contracts
             CreateMap<SysSetting, SysSettingCreateUpdateDto>().ReverseMap();
             CreateMap<SysRegistrationRequest, SysRegistrationRequestCreateUpdateDto>().ReverseMap();
             CreateMap<NafathTransaction, NafathTransactionDto>().ReverseMap();
+            CreateMap<SysOtherCategoryTranslation, SysOtherCategoryCreateUpdateDtoTranslations>().ReverseMap();
+            CreateMap<OtherCategory, SysOtherCategoryCreateUpdateDto>().ReverseMap();
+            CreateMap<OtherCategory,SysOtherCategoryDto>().ForMember(des => des.CategoryName,
+                           opt => opt.MapFrom(src => (src.Translations.FirstOrDefault(x => x.LanguageCode == CultureInfo.CurrentUICulture.Name) == null ||
+                           string.IsNullOrEmpty(src.Translations.FirstOrDefault(x => x.LanguageCode == CultureInfo.CurrentUICulture.Name).CategoryName)) ?
+                           src.CategoryName : src.Translations.FirstOrDefault(x => x.LanguageCode == CultureInfo.CurrentUICulture.Name).CategoryName));
+
         }
     }
 }

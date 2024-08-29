@@ -667,14 +667,14 @@ namespace Ticketing.EntityFrameworkCore.SeedData
                             Id = Guid.NewGuid(),
                             Key = "EmailConfiguration_SendEmail",
                             Value = "true"
-                          
+
                         },
                          new SysSetting
                         {
                             Id = Guid.NewGuid(),
                             Key = "EmailConfiguration_Host",
                             Value = "smtp.office365.com",
-                            
+
                         },
                           new SysSetting
                         {
@@ -688,7 +688,7 @@ namespace Ticketing.EntityFrameworkCore.SeedData
                             Id = Guid.NewGuid(),
                             Key = "EmailConfiguration_FromEmail",
                             Value = "asgatech.test1@outlook.com",
-                           
+
                         },
                         new SysSetting
                         {
@@ -702,7 +702,7 @@ namespace Ticketing.EntityFrameworkCore.SeedData
                             Id = Guid.NewGuid(),
                             Key = "EmailConfiguration_Passowrd",
                             Value = "asgatechmailtest2024",
-                           
+
                         },
                             new SysSetting
                         {
@@ -809,6 +809,177 @@ namespace Ticketing.EntityFrameworkCore.SeedData
 
                         },
                     #endregion
+
+                    #region Sla NotificationMessages
+                        new SysSetting
+                        {
+                            Id = Guid.NewGuid(),
+                            Key = "SLA.FinishLitigation.ReviewerEmployee",
+                            Value = "يرجى اتمام مراجعة الدعوى رقم {LitigationCode}"
+                        },new SysSetting
+                        {
+                            Id = Guid.NewGuid(),
+                            Key = "SLA.WithdrewLitigation.OldReviewerEmployee",
+                            Value = "تم سحب دعوى جديدة رقم {LitigationCode} لتخطى مدة التدقيق الفصوى"
+                        },new SysSetting
+                        {
+                            Id = Guid.NewGuid(),
+                            Key = "SLA.AssignLitigation.NewReviewerEmployee",
+                            Value = "تم ارسال دعوى جديدة رقم {LitigationCode} للتدقيق"
+                        },new SysSetting
+                        {
+                            Id = Guid.NewGuid(),
+                            Key = "SLA.AssignLitigation.ReviewerAdmin",
+                            Value = "تم ارسال الدعوى رقم {LitigationCode} إلى مدقق جديد لتخطى المدقق السابق مدة التدقيق الفصوى"
+                        },new SysSetting
+                        {
+                            Id = Guid.NewGuid(),
+                            Key = "SLA.ReviewDelay.ReviewerAdmin",
+                            Value = "يوجد تأخير تجاوز المده المسموح بها للتدقيق على الدعوى رقم {LitigationCode}"
+                        },new SysSetting
+                        {
+                            Id = Guid.NewGuid(),
+                            Key = "SLA.FinishNotes",
+                            Value = "يرجى سرعة معالجة كافة الملاحظات على الدعوى رقم {LitigationCode}"
+                        },new SysSetting
+                        {
+                            Id = Guid.NewGuid(),
+                            Key = "SLA.LitigationCancelled",
+                            Value = "تم إلفاء الدعوى رقم {LitigationCode} لعدم الرد على الملاحظات المرسلة"
+                        },new SysSetting
+                        {
+                            Id = Guid.NewGuid(),
+                            Key = "SLA.FinishAgreementRequest",
+                            Value = "يرجى سرعة الرد على طلب المشارطة المرسل على الدعوى رقم {LitigationCode}"
+                        },new SysSetting
+                        {
+                            Id = Guid.NewGuid(),
+                            Key = "SLA.AgreementCancelled",
+                            Value = "تم إلفاء الدعوى رقم {LitigationCode} لعدم الرد على طلب المشارطة"
+                        },new SysSetting
+                        {
+                            Id = Guid.NewGuid(),
+                            Key = "SLA.FinishReconciliation",
+                            Value = "يرجى سرعة اتمام عملية الصلح على الدعوى رقم {LitigationCode}"
+                        },new SysSetting
+                        {
+                            Id = Guid.NewGuid(),
+                            Key = "SLA.FinishReconciliation.WarnReconciliationAdmin",
+                            Value = "يرجى العلم أن المصلح تجاوز الفترة المسموح بها للصلح على الدعوى رقم {LitigationCode}"
+                        },new SysSetting
+                        {
+                            Id = Guid.NewGuid(),
+                            Key = "SLA.ReconciliationReport.PleaseReply",
+                            Value = "يرجى سرعة الرد على محضر الصلح الصادر على الدعوى رقم {LitigationCode}"
+                        },new SysSetting
+                        {
+                            Id = Guid.NewGuid(),
+                            Key = "SLA.ReconciliationReport.WarnReformer",
+                            Value = "يرجى العلم أن الرد على محضر الصلح الصادر على الدعوى رقم {LitigationCode} قد تجاوز مهلته القصوى"
+                        },new SysSetting
+                        {
+                            Id = Guid.NewGuid(),
+                            Key = "SLA.ReconciliationTask.PleaseReply",
+                            Value = "يرجى سرعة الرد على طلب مهمة الصلح على الدعوى رقم {LitigationCode}"
+                        },new SysSetting
+                        {
+                            Id = Guid.NewGuid(),
+                            Key = "SLA.ReconciliationTaskCancelled",
+                            Value = "تم إلغاء طلب مهمة الصلح على الدعوى رقم {LitigationCode} لتجاوز الرد على المهمة مهلته القصوى "
+                        },new SysSetting
+                        {
+                            Id = Guid.NewGuid(),
+                            Key = "SLA.ReconciliationTask.New",
+                            Value = "يوجد طلب مهمة صلح جديد على الدعوى رقم {LitigationCode}"
+                        },new SysSetting
+                        {
+                            Id = Guid.NewGuid(),
+                            Key = "SLA.ReconciliationTask.ReAssigned",
+                            Value = "يرجى العلم أن الرد على مهمة الصلح للمصلح على الدعوى رقم {LitigationCode} قد تجاوز مهلته القصوى وتم إلغاؤها وارسال مهمة جديدة للمصلح"
+                        },new SysSetting
+                        {
+                            Id = Guid.NewGuid(),
+                            Key = "SLA.ArbitratorsCount.FirstWarning",
+                            Value = "يرجى سرعة اتمام عملية إختيار عدد المحكمين على الدعوى رقم {LitigationCode}"
+                        },new SysSetting
+                        {
+                            Id = Guid.NewGuid(),
+                            Key = "SLA.ArbitratorsCount.SecondWarning",
+                            Value = "تذكير يرجى سرعة اتمام عملية إختيار عدد المحكمين على الدعوى رقم {LitigationCode}"
+                        },new SysSetting
+                        {
+                            Id = Guid.NewGuid(),
+                            Key = "SLA.ArbitratorsCount.FinalWarning.Plantiff",
+                            Value = "لم يقم المدعى بتحديد عدد المحكمين على الدعوى رقم {LitigationCode}"
+                        },new SysSetting
+                        {
+                            Id = Guid.NewGuid(),
+                            Key = "SLA.ArbitratorsCount.FinalWarning.Defendant",
+                            Value = "لم يقم المدعى عليه بتحديد عدد المحكمين على الدعوى رقم {LitigationCode}"
+                        },new SysSetting
+                        {
+                            Id = Guid.NewGuid(),
+                            Key = "SLA.ArbitratorsCount.FinalWarning.Both",
+                            Value = "لم يقم المدعى والمدعى عليه بتحديد عدد المحكمين على الدعوى رقم {LitigationCode}"
+                        },new SysSetting
+                        {
+                            Id = Guid.NewGuid(),
+                            Key = "SLA.ArbitratorsSelect.FirstWarning",
+                            Value = "يرجى سرعة اتمام عملية إختيار هيئة التحكيم على الدعوى رقم {LitigationCode}"
+                        },
+                        new SysSetting
+                        {
+                            Id = Guid.NewGuid(),
+                            Key = "SLA.ArbitratorsSelect.FinalWarning.Plantiff",
+                            Value = "لم يقم المدعى بإنهاء تعيين هيئة المحكمين على الدعوى رقم {LitigationCode}"
+                        },new SysSetting
+                        {
+                            Id = Guid.NewGuid(),
+                            Key = "SLA.ArbitratorsSelect.FinalWarning.Defendant",
+                            Value = "لم يقم المدعى عليه بإنهاء تعيين هيئة المحكمين على الدعوى رقم {LitigationCode}"
+                        },new SysSetting
+                        {
+                            Id = Guid.NewGuid(),
+                            Key = "SLA.ArbitratorsSelect.FinalWarning.Both",
+                            Value = "لم يقم المدعى والمدعى عليه بإنهاء تعيين هيئة المحكمين على الدعوى رقم {LitigationCode}"
+                        },new SysSetting
+                        {
+                            Id = Guid.NewGuid(),
+                            Key = "SLA.ArbitratorsChairmanSelect.FirstWarning",
+                            Value = "يرجى سرعة اتمام عملية إختيار رئيس هيئة التحكيم على الدعوى رقم {LitigationCode}"
+                        },new SysSetting
+                        {
+                            Id = Guid.NewGuid(),
+                            Key = "SLA.ArbitratorsChairmanSelect.FinalWarning.Admin",
+                            Value = "لم يتم تعيين رئيس هيئة التحكيم على الدعوى رقم {LitigationCode}"
+                        },new SysSetting
+                        {
+                            Id = Guid.NewGuid(),
+                            Key = "SLA.ArbitratorTaskRequest.FirstWarning",
+                            Value = "يرجى سرعة الرد على طلب مهمة التحكيم على الدعوى رقم {LitigationCode}"
+                        },new SysSetting
+                        {
+                            Id = Guid.NewGuid(),
+                            Key = "SLA.ArbitratorTaskRequest.Cancelled",
+                            Value = "تم إلغاء طلب مهمة التحكيم كمحكم على الدعوى رقم {LitigationCode} لتجاوز الرد على المهمة مهلته القصوى"
+                        },new SysSetting
+                        {
+                            Id = Guid.NewGuid(),
+                            Key = "SLA.ArbitratorTaskRequest.ReAssign",
+                            Value = "تم إرسال طلب مهمة تحكيم جديدة كمحكم على الدعوى رقم {LitigationCode} "
+                        },new SysSetting
+                        {
+                            Id = Guid.NewGuid(),
+                            Key = "SLA.ArbitratorChairmanTaskRequest.Cancelled",
+                            Value = "تم إلغاء طلب مهمة التحكيم كرئيس هيئة تحكيم على الدعوى رقم {LitigationCode} لتجاوز الرد على المهمة مهلته القصوى"
+                        },new SysSetting
+                        {
+                            Id = Guid.NewGuid(),
+                            Key = "SLA.ArbitratorChairmanTaskRequest.ReAssign",
+                            Value = "تم إرسال طلب مهمة تحكيم جديدة كرئيس هيئة على الدعوى رقم {LitigationCode} "
+                        },
+	                #endregion
+
                     #endregion
 
                     new SysSetting
@@ -824,6 +995,89 @@ namespace Ticketing.EntityFrameworkCore.SeedData
                             Key = "Arbitration.ArbitratorMaxSessionsCountPerDay",
                             Value = "3"
 
+                        },
+                        new SysSetting
+                        {
+                            Id = Guid.NewGuid(),
+                            Key = "Arbitration.LitigationRequestArbitratorRecusalRequestPeriod",
+                            Value = "24"
+
+                        },
+                        new SysSetting
+                        {
+                            Id = Guid.NewGuid(),
+                            Key = "Arbitration.LitigationRequestArbitrationReportExplanationRequestPeriod",
+                            Value = "24"
+
+                        },
+                        new SysSetting
+                        {
+                            Id = Guid.NewGuid(),
+                            Key = "SLA.LitigationRequestArbitratorCountSelectionResponsePeriod",
+                            Value = "24"
+
+                        },
+                        new SysSetting
+                        {
+                            Id = Guid.NewGuid(),
+                            Key = "SLA.LitigationRequestArbitratorCountSelectionDecisionPeriod",
+                            Value = "72"
+
+                        },
+                        new SysSetting
+                        {
+                            Id = Guid.NewGuid(),
+                            Key = "SLA.LitigationRequestArbitratorNominationListResponsePeriod",
+                            Value = "24"
+
+                        },
+                        new SysSetting
+                        {
+                            Id = Guid.NewGuid(),
+                            Key = "SLA.LitigationRequestArbitratorNominationListDecisionPeriod",
+                            Value = "72"
+
+                        },
+                        new SysSetting
+                        {
+                            Id = Guid.NewGuid(),
+                            Key = "SLA.LitigationRequestArbitratorChairmanNominationListResponseFirstPeriod",
+                            Value = "24"
+
+                        },
+                        new SysSetting
+                        {
+                            Id = Guid.NewGuid(),
+                            Key = "SLA.LitigationRequestArbitratorChairmanNominationListDecisionSecondPeriod",
+                            Value = "72"
+
+                        },
+                        new SysSetting
+                        {
+                            Id = Guid.NewGuid(),
+                            Key = "SLA.LitigationRequestArbitratorAssigningRequestResponseFirstPeriod",
+                            Value = "24"
+
+                        },
+                        new SysSetting
+                        {
+                            Id = Guid.NewGuid(),
+                            Key = "SLA.LitigationRequestArbitratorAssigningRequestResponseSecondPeriod",
+                            Value = "72"
+
+                        },
+                        new SysSetting
+                        {
+                            Id = Guid.NewGuid(),
+                            Key = "SLA.LitigationRequestArbitratorAssigningRequestDecisionPeriod",
+                            Value = "144"
+
+                        },
+                        new SysSetting
+                        {
+                            Id = Guid.NewGuid(),
+                            Key = "SLA.LitigationRequestArbitrationReportExplanationRequestResponsePeriod",
+                            Value = "72"
                         },
                 });
             context.SaveChanges();

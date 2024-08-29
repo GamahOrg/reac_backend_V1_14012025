@@ -18,8 +18,8 @@ namespace REAC.Application.ModuleServices
         {
             try
             {
-                Guid employeeId = Guid.Empty;
-                _jwtReader.GetReferenceId(ref employeeId);
+                Guid referenceId = Guid.Empty;
+                _jwtReader.GetReferenceId(ref referenceId);
                 var msg = "";
                 var litigationRequest = (await _repository.GetQueryable<LitigationRequest, Guid>())?
                          .Include(x => x.LitigationRequestSessions.Where(x => x.LitigationRequestSessionRequestTypeId == LitigationRequestSessionRequestType.Reconciliation))
@@ -81,6 +81,21 @@ namespace REAC.Application.ModuleServices
 
                 if (litigationRequest?.LitigationRequestSubStage == LitigationRequestSubStage.LitigationRequestReportAdded)
                     allowAdd = false;
+
+
+                int ReformerMaxSessionsCountPerDay = 0;
+                int.TryParse(_sysSettingService.GetBySettingKey(SysSettingKeyConstants.SLA_Reconciliation_ReformerMaxSessionsCountPerDay).Result.Data?.Value, out ReformerMaxSessionsCountPerDay);
+                if (ReformerMaxSessionsCountPerDay > 0)
+                {
+                    var litigationRequestSession = (await _repository.GetQueryable<LitigationRequestSession, Guid>())?
+                     .Where(x => x.LitigationRequest.ReformerCitizenId == referenceId & x.SessionDatetime.Date == requestPayload.SessionDateTime.Date & x.LitigationRequestSessionRequestTypeId == LitigationRequestSessionRequestType.Reconciliation).Count();
+
+                    if (litigationRequestSession >= ReformerMaxSessionsCountPerDay)
+                    {
+                        return new BaseResponse() { IsDone = false, Message = "يوجد " + litigationRequestSession.ToString() + " جلسة خلال اليوم ولا يمكن إضافة المزيد من الجلسات" };
+
+                    }
+                }
 
 
                 int sessionCountValidation = 3;

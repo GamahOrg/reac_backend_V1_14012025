@@ -2,7 +2,6 @@
 using Core.Shared.Responses;
 using Microsoft.EntityFrameworkCore;
 using REAC.Application.Contracts.Dtos.Arbitration;
-using REAC.Application.Contracts.Dtos.Litigation.CreateUpdate.Litigation;
 using REAC.Application.Contracts.Dtos.Notification;
 using REAC.Application.Contracts.Dtos.Reconciliation.Process;
 using REAC.Domain.Shared.Constants;
@@ -26,8 +25,8 @@ namespace REAC.Application.ModuleServices
                 _jwtReader.GetReferenceId(ref referenceId);
 
                 var litigationRequest = (await _repository.GetQueryable<LitigationRequest, Guid>())
-                    
-                    .Include(x=> x.ArbitratorCitizen)
+
+                    .Include(x => x.ArbitratorCitizen)
                     .Include(x => x.ApplicantCitizen)
                     .Include(x => x.Area)
                     .Include(x => x.City)
@@ -45,10 +44,6 @@ namespace REAC.Application.ModuleServices
                                       .Include(x => x.Contract.SecondPartyCitizen)
                                       .Include(x => x.Contract.LitigationRequestContractType)
                                       .Include(x => x.ApplicantCitizen)
-                                     
-                  
-                  
-
                                       .Where(x => x.Id == requestPayload.LitigationRequestId).SingleOrDefault();
 
                 if (litigationRequest == null)
@@ -57,6 +52,17 @@ namespace REAC.Application.ModuleServices
                         IsDone = false,
                         Message = "طلب غير موجود"
                     };
+
+                int LitigationRequestArbitrationReportExplanationRequestPeriod = 0;
+                int.TryParse(_settingService.GetBySettingKey(SysSettingKeyConstants.Arbitration_LitigationRequestArbitrationReportExplanationRequestPeriod).Result.Data?.Value, out LitigationRequestArbitrationReportExplanationRequestPeriod);
+                if (LitigationRequestArbitrationReportExplanationRequestPeriod > 0)
+                {
+                    var periodHours = (DateTime.Now - litigationRequest.LitigationRequestArbitrationReports.FirstOrDefault()?.JudgmentDate).Value.TotalHours;
+                    if (periodHours >= LitigationRequestArbitrationReportExplanationRequestPeriod)
+                    {
+                        return new BaseResponse() { IsDone = false, Message = "لا يمكن إضافة طلب التفسير لتجاوز المهله المتاحة لذلك" };
+                    }
+                }
 
                 bool allowAdd = true;
 
@@ -325,7 +331,7 @@ namespace REAC.Application.ModuleServices
 
                         throw;
                     }
-                 
+
 
                 }
                 else
@@ -1056,11 +1062,11 @@ namespace REAC.Application.ModuleServices
                         }, notifications);
                     }
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
 
                 }
-               
+
             }
             catch (Exception ex)
             {

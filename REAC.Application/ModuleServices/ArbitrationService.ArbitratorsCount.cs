@@ -45,6 +45,21 @@ namespace REAC.Application.ModuleServices
                 if (!litigationRequest.FirstPartyArbitratorsCount.HasValue & !litigationRequest.SecondPartyArbitratorsCount.HasValue)
                     allowAdd = false;
 
+
+                int LitigationRequestArbitratorCountSelectionDecisionPeriod = 0;
+                int.TryParse(_settingService.GetBySettingKey(SysSettingKeyConstants.SLA_LitigationRequestArbitratorCountSelectionDecisionPeriod).Result.Data?.Value, out LitigationRequestArbitratorCountSelectionDecisionPeriod);
+
+                if (LitigationRequestArbitratorCountSelectionDecisionPeriod > 0)
+                {
+                    double totalHours = 0;
+
+                    totalHours += (DateTime.Now - litigationRequest.ArbitratorsSelectionDurationDateTime).Value.TotalHours;
+                    if (totalHours >= LitigationRequestArbitratorCountSelectionDecisionPeriod)
+                    {
+                        allowAdd = true;
+                    }
+                }
+
                 if (allowAdd)
                 {
                     litigationRequest.ArbitratorsCount = arbitratorCountRequestPayload.ArbitratorCount;
@@ -179,7 +194,6 @@ namespace REAC.Application.ModuleServices
                     {
 
                     }
-               
                 }
                 else
                 {
@@ -188,7 +202,6 @@ namespace REAC.Application.ModuleServices
                         IsDone = false,
                         Message = "لا يمكن إضافة عدد المحكمين"
                     };
-
                 }
             }
             catch (Exception ex)
@@ -846,9 +859,9 @@ namespace REAC.Application.ModuleServices
                     catch (Exception e)
                     {
 
-                        
+
                     }
-                   
+
 
 
                 }
@@ -900,9 +913,9 @@ namespace REAC.Application.ModuleServices
                     catch (Exception e)
                     {
 
-                     
+
                     }
-                
+
                 }
             }
 

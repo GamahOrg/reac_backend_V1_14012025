@@ -18,8 +18,8 @@ namespace REAC.Application.ModuleServices
         {
             try
             {
-                Guid employeeId = Guid.Empty;
-                _jwtReader.GetReferenceId(ref employeeId);
+                Guid referenceId = Guid.Empty;
+                _jwtReader.GetReferenceId(ref referenceId);
 
                 var litigationRequest = (await _repository.GetQueryable<LitigationRequest, Guid>())?
                         .Include(x => x.LitigationRequestSessions.Where(x => x.LitigationRequestSessionRequestTypeId == LitigationRequestSessionRequestType.Arbitration))
@@ -30,7 +30,7 @@ namespace REAC.Application.ModuleServices
                           .Include(x => x.Contract.FirstPartyCitizen)
                           .Include(x => x.Contract.SecondPartyFacility).ThenInclude(x => x.Citizen)
                           .Include(x => x.Contract.SecondPartyCitizen)
-                          .Include(x=> x.LitigationRequestArbitratorLists)
+                          .Include(x => x.LitigationRequestArbitratorLists)
                           .ThenInclude(x => x.ArbitratorCitizen)
                         .FirstOrDefault(x => x.Id == requestPayload.RequestId);
 
@@ -108,6 +108,21 @@ namespace REAC.Application.ModuleServices
                         }
                     }
                 }
+
+                int arbitratorMaxSessionsCountPerDay = 0;
+                int.TryParse(_settingService.GetBySettingKey(SysSettingKeyConstants.SLA_Arbitration_ArbitratorMaxSessionsCountPerDay).Result.Data?.Value, out arbitratorMaxSessionsCountPerDay);
+                if (arbitratorMaxSessionsCountPerDay > 0)
+                {
+                    var litigationRequestSession = (await _repository.GetQueryable<LitigationRequestSession, Guid>())?
+                     .Where(x => x.LitigationRequest.ArbitratorCitizenId == referenceId & x.SessionDatetime.Date == requestPayload.SessionDateTime.Date & x.LitigationRequestSessionRequestTypeId == LitigationRequestSessionRequestType.Reconciliation).Count();
+
+                    if (litigationRequestSession >= arbitratorMaxSessionsCountPerDay)
+                    {
+                        return new BaseResponse() { IsDone = false, Message = "يوجد " + litigationRequestSession.ToString() + " جلسة خلال اليوم ولا يمكن إضافة المزيد من الجلسات" };
+
+                    }
+                }
+
                 if (allowAdd)
                 {
                     LitigationRequestSession litigationRequestSession = new LitigationRequestSession()
@@ -294,11 +309,11 @@ namespace REAC.Application.ModuleServices
                     catch (Exception e)
                     {
 
-                      
-                    }
-                   
 
-                  
+                    }
+
+
+
                 }
                 else
                 {

@@ -189,14 +189,69 @@
         public const string SLA_LitigationRequestReformerAssigningRequestResponsePeriod = "SLA.LitigationRequestReformerAssigningRequestResponsePeriod";
         public const string SLA_LitigationRequestReformerAssigningRequestDecisionPeriod = "SLA.LitigationRequestReformerAssigningRequestDecisionPeriod";
 
+        public const string SLA_Reconciliation_ReformerMaxSessionsCountPerDay = "SLA.Reconciliation.ReformerMaxSessionsCountPerDay";
+        public const string SLA_Arbitration_ArbitratorMaxSessionsCountPerDay = "SLA.Arbitration.ArbitratorMaxSessionsCountPerDay";
+
+        public const string SLA_Arbitration_LitigationRequestArbitratorRecusalRequestPeriod = "SLA.Arbitration.LitigationRequestArbitratorRecusalRequestPeriod";
+        public const string Arbitration_LitigationRequestArbitrationReportExplanationRequestPeriod = "Arbitration.LitigationRequestArbitrationReportExplanationRequestPeriod";
+
+        public const string SLA_LitigationRequestArbitratorCountSelectionResponsePeriod = "SLA.LitigationRequestArbitratorCountSelectionResponsePeriod";
+        public const string SLA_LitigationRequestArbitratorCountSelectionDecisionPeriod = "SLA.LitigationRequestArbitratorCountSelectionDecisionPeriod";
+        public const string SLA_LitigationRequestArbitratorNominationListResponsePeriod = "SLA.LitigationRequestArbitratorNominationListResponsePeriod";
+        public const string SLA_LitigationRequestArbitratorNominationListDecisionPeriod = "SLA.LitigationRequestArbitratorNominationListDecisionPeriod";
+        public const string SLA_LitigationRequestArbitratorChairmanNominationListResponseFirstPeriod = "SLA.LitigationRequestArbitratorChairmanNominationListResponseFirstPeriod";
+        public const string SLA_LitigationRequestArbitratorChairmanNominationListDecisionSecondPeriod = "SLA.LitigationRequestArbitratorChairmanNominationListDecisionSecondPeriod";
+        public const string SLA_LitigationRequestArbitratorAssigningRequestResponseFirstPeriod = "SLA.LitigationRequestArbitratorAssigningRequestResponseFirstPeriod";
+        public const string SLA_LitigationRequestArbitratorAssigningRequestResponseSecondPeriod = "SLA.LitigationRequestArbitratorAssigningRequestResponseSecondPeriod";
+        public const string SLA_LitigationRequestArbitratorAssigningRequestDecisionPeriod = "SLA.LitigationRequestArbitratorAssigningRequestDecisionPeriod";
+        public const string SLA_LitigationRequestArbitrationReportExplanationRequestResponsePeriod = "SLA.LitigationRequestArbitrationReportExplanationRequestResponsePeriod";
+
         #endregion
-        #region
+
+        #region Sla Notification Messages
+
+        public const string SLA_FinishLitigation_ReviewerEmployee = "SLA.FinishLitigation.ReviewerEmployee";
+        public const string SLA_WithdrewLitigation_OldReviewerEmployee = "SLA.WithdrewLitigation.OldReviewerEmployee";
+        public const string SLA_AssignLitigation_NewReviewerEmployee = "SLA.AssignLitigation.NewReviewerEmployee";
+        public const string SLA_AssignLitigation_ReviewerAdmin = "SLA.AssignLitigation.ReviewerAdmin";
+        public const string SLA_ReviewDelay_ReviewerAdmin = "SLA.ReviewDelay.ReviewerAdmin";
+        public const string SLA_FinishNotes = "SLA.FinishNotes";
+        public const string SLA_LitigationCancelled = "SLA.LitigationCancelled";
+        public const string SLA_FinishAgreementRequest = "SLA.FinishAgreementRequest";
+        public const string SLA_AgreementCancelled = "SLA.AgreementCancelled";
+        public const string SLA_FinishReconciliation = "SLA.FinishReconciliation";
+        public const string SLA_FinishReconciliation_WarnReconciliationAdmin = "SLA.FinishReconciliation.WarnReconciliationAdmin";
+        public const string SLA_ReconciliationReport_PleaseReply = "SLA.ReconciliationReport.PleaseReply";
+        public const string SLA_ReconciliationReport_WarnReformer = "SLA.ReconciliationReport.WarnReformer";
+        public const string SLA_ReconciliationTask_PleaseReply = "SLA.ReconciliationTask.PleaseReply";
+        public const string SLA_ReconciliationTaskCancelled = "SLA.ReconciliationTaskCancelled";
+        public const string SLA_ReconciliationTask_New = "SLA.ReconciliationTask.New";
+        public const string SLA_ReconciliationTask_ReAssigned = "SLA.ReconciliationTask.ReAssigned";
+
+        public const string SLA_ArbitratorsCount_FirstWarning = "SLA.ArbitratorsCount.FirstWarning";
+        public const string SLA_ArbitratorsCount_SecondWarning = "SLA.ArbitratorsCount.SecondWarning";
+        public const string SLA_ArbitratorsCount_FinalWarning_Plantiff = "SLA.ArbitratorsCount.FinalWarning.Plantiff";
+        public const string SLA_ArbitratorsCount_FinalWarning_Defendant = "SLA.ArbitratorsCount.FinalWarning.Defendant";
+        public const string SLA_ArbitratorsCount_FinalWarning_Both = "SLA.ArbitratorsCount.FinalWarning.Both";
+        public const string SLA_ArbitratorsSelect_FirstWarning = "SLA.ArbitratorsSelect.FirstWarning";
+        public const string SLA_ArbitratorsSelect_FinalWarning_Plantiff = "SLA.ArbitratorsSelect.FinalWarning.Plantiff";
+        public const string SLA_ArbitratorsSelect_FinalWarning_Defendant = "SLA.ArbitratorsSelect.FinalWarning.Defendant";
+        public const string SLA_ArbitratorsSelect_FinalWarning_Both = "SLA.ArbitratorsSelect.FinalWarning.Both";
+        public const string SLA_ArbitratorsChairmanSelect_FirstWarning = "SLA.ArbitratorsChairmanSelect.FirstWarning";
+        public const string SLA_ArbitratorsChairmanSelect_FinalWarning_Admin = "SLA.ArbitratorsChairmanSelect.FinalWarning.Admin";
+        public const string SLA_ArbitratorTaskRequest_FirstWarning = "SLA.ArbitratorTaskRequest.FirstWarning";
+        public const string SLA_ArbitratorTaskRequest_Cancelled = "SLA.ArbitratorTaskRequest.Cancelled";
+        public const string SLA_ArbitratorTaskRequest_ReAssign = "SLA.ArbitratorTaskRequest.ReAssign";
+        public const string SLA_ArbitratorChairmanTaskRequest_Cancelled = "SLA.ArbitratorChairmanTaskRequest.Cancelled";
+        public const string SLA_ArbitratorChairmanTaskRequest_ReAssign = "SLA.ArbitratorChairmanTaskRequest.ReAssign";
 
 
+      
 
         #endregion
 
-        #region Email
+
+                            #region Email
         public const string PrefexEmailConfiguration = "EmailConfiguration_";
         public const string EmailConfiguration_SendEmail = "EmailConfiguration_SendEmail";
         public const string EmailFromAddress = "EmailConfiguration_FromEmail";

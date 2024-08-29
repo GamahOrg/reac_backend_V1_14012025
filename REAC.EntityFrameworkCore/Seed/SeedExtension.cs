@@ -76,6 +76,9 @@ namespace REAC.EntityFrameworkCore.Seed
                 await CitizenSeedDataCreator.SeedAsync(context);
                 await FacilitySeedDataCreator.SeedAsync(context);
                 await DelegatorSeedDataCreator.SeedAsync(context);
+
+                await OtherCategoriesSeedData.SeedAsync(context);
+
                 await DefaultWorkFlowDataCreator.CreateAsync(context);
 
                 context.SaveChanges();

@@ -12,8 +12,8 @@ using REAC.EntityFrameworkCore.Entities.System;
 namespace REAC.EntityFrameworkCore.Migrations
 {
     [DbContext(typeof(REACDBContext))]
-    [Migration("20240828085800_InitDatabaseMigration")]
-    partial class InitDatabaseMigration
+    [Migration("20240829085804_addingTranslationsToOtherCategory")]
+    partial class addingTranslationsToOtherCategory
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -950,6 +950,30 @@ namespace REAC.EntityFrameworkCore.Migrations
                         .HasColumnType("bit");
 
                     b.Property<bool>("IsAllowEdit")
+                        .HasColumnType("bit");
+
+                    b.Property<bool?>("IsArbitratorAssigningRequestResponseFirstPeriodSent")
+                        .HasColumnType("bit");
+
+                    b.Property<bool?>("IsArbitratorAssigningRequestResponseSecondPeriodSent")
+                        .HasColumnType("bit");
+
+                    b.Property<bool?>("IsArbitratorChairmanNominationListDecisionPeriodSent")
+                        .HasColumnType("bit");
+
+                    b.Property<bool?>("IsArbitratorChairmanNominationListResponsePeriodSent")
+                        .HasColumnType("bit");
+
+                    b.Property<bool?>("IsArbitratorCountSelectionDecisionPeriodSent")
+                        .HasColumnType("bit");
+
+                    b.Property<bool?>("IsArbitratorCountSelectionResponsePeriodSent")
+                        .HasColumnType("bit");
+
+                    b.Property<bool?>("IsArbitratorNominationListDecisionPeriodSent")
+                        .HasColumnType("bit");
+
+                    b.Property<bool?>("IsArbitratorNominationListResponsePeriodSent")
                         .HasColumnType("bit");
 
                     b.Property<bool?>("IsArbitratorsChairmanDecisionRequired")
@@ -4249,6 +4273,38 @@ namespace REAC.EntityFrameworkCore.Migrations
                         .HasConstraintName("FKLitigationLitigationRequestSessions535233");
 
                     b.Navigation("LitigationRequest");
+                });
+
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Litigation.OtherCategory", b =>
+                {
+                    b.OwnsMany("REAC.EntityFrameworkCore.Entities.System.SysOtherCategoryTranslation", "Translations", b1 =>
+                        {
+                            b1.Property<Guid>("OtherCategoryId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<int>("Id")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("int");
+
+                            b1.Property<string>("CategoryName")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.Property<string>("LanguageCode")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.HasKey("OtherCategoryId", "Id");
+
+                            b1.ToTable("OtherCategories");
+
+                            b1.ToJson("Translations");
+
+                            b1.WithOwner()
+                                .HasForeignKey("OtherCategoryId");
+                        });
+
+                    b.Navigation("Translations");
                 });
 
             modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Notification.SysNotification", b =>

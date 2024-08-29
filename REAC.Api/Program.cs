@@ -18,6 +18,7 @@ using REAC.Api.OptionsSetup;
 using REAC.Application.AppServices.Common;
 using REAC.Application.AppServices.Integration.GEE;
 using REAC.Application.AppServices.Integration.Hubs;
+using REAC.Application.AppServices.SLA;
 using REAC.Application.Contracts.IAppServices.Common;
 using REAC.Domain.Shared.Constants;
 using REAC.EntityFrameworkCore.Entities.System;
@@ -51,6 +52,7 @@ builder.Services.AddGenericRepository<REACDBContext>();
 
 
 builder.Services.AddHostedService<NafathBackgroundTaskService>();
+builder.Services.AddHostedService<SLABackgroundTaskService>();
 
 #endregion
 // Add services to the container.

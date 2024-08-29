@@ -7,5 +7,6 @@ namespace REAC.Application.Contracts.IAppServices.System
     public interface ISysEmployeeService : IBasicService<SysEmployee, Guid>
     {
         Task<DataResponse<SysEmployee>> GetAdminsByDepartmentType(DepartmentType deptType);
+        Task<DataResponse<SysEmployee>> GetEmployeeByDepartmentType(DepartmentType deptType);
     }
 }
