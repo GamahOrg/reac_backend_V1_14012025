@@ -555,7 +555,7 @@ namespace REAC.EntityFrameworkCore.Seed
             var defaultUser = new User
             {
                 Id = Guid.Parse("17840ab6-b134-4c5f-9273-5c97345010a3"),
-                ReferenceId = Guid.Parse("e4c57d8c-86db-49e6-8f7c-a9948a6f860e"),
+                ReferenceId = Guid.Parse("17840ab6-b134-4c5f-9273-5c97345010a3"),
                 UserName = "readmin",
                 Email = "reEmployee1@domain.com",
                 EmailConfirmed = true,
@@ -581,7 +581,7 @@ namespace REAC.EntityFrameworkCore.Seed
             var defaultUser = new User
             {
                 Id = Guid.Parse("e4c57d8c-86db-49e6-8f7c-a9948a6f860e"),
-                ReferenceId = Guid.Parse("d4430015-c883-413d-b57a-29b5fc6c07c8"),
+                ReferenceId = Guid.Parse("e4c57d8c-86db-49e6-8f7c-a9948a6f860e"),
                 UserName = "reemp1",
                 Email = "reEmployee2@domain.com",
                 EmailConfirmed = true,

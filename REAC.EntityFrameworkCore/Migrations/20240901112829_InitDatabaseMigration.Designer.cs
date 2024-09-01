@@ -12,8 +12,8 @@ using REAC.EntityFrameworkCore.Entities.System;
 namespace REAC.EntityFrameworkCore.Migrations
 {
     [DbContext(typeof(REACDBContext))]
-    [Migration("20240829085804_addingTranslationsToOtherCategory")]
-    partial class addingTranslationsToOtherCategory
+    [Migration("20240901112829_InitDatabaseMigration")]
+    partial class InitDatabaseMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -1054,6 +1054,9 @@ namespace REAC.EntityFrameworkCore.Migrations
                     b.Property<DateTime?>("MintuesOfMeetingApprovalPlaintiffStatusOn")
                         .HasColumnType("datetime2");
 
+                    b.Property<Guid?>("OtherCategories")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<DateTime?>("PaidOn")
                         .HasColumnType("datetime");
 
@@ -1120,6 +1123,8 @@ namespace REAC.EntityFrameworkCore.Migrations
                     b.HasIndex("LitigationRequestCategoryId");
 
                     b.HasIndex("LitigationRequestOwnerTypeId");
+
+                    b.HasIndex("OtherCategories");
 
                     b.HasIndex("ReformerCitizenId");
 
@@ -4005,6 +4010,11 @@ namespace REAC.EntityFrameworkCore.Migrations
                         .IsRequired()
                         .HasConstraintName("FKLitigation580725");
 
+                    b.HasOne("REAC.EntityFrameworkCore.Entities.Litigation.OtherCategory", "OtherCategory")
+                        .WithMany("LitigationRequests")
+                        .HasForeignKey("OtherCategories")
+                        .HasConstraintName("FKOtherCategory580725");
+
                     b.HasOne("REAC.EntityFrameworkCore.Entities.Actor.Citizen", "ReformerCitizen")
                         .WithMany("ArbitratorLitigationRequests")
                         .HasForeignKey("ReformerCitizenId")
@@ -4033,6 +4043,8 @@ namespace REAC.EntityFrameworkCore.Migrations
                     b.Navigation("LitigationRequestCategory");
 
                     b.Navigation("LitigationRequestOwnerType");
+
+                    b.Navigation("OtherCategory");
 
                     b.Navigation("ReformerCitizen");
 
@@ -6025,6 +6037,11 @@ namespace REAC.EntityFrameworkCore.Migrations
             modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Litigation.LitigationRequestRequest", b =>
                 {
                     b.Navigation("LitigationRequestRequestFiles");
+                });
+
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Litigation.OtherCategory", b =>
+                {
+                    b.Navigation("LitigationRequests");
                 });
 
             modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Notification.SysNotificationActorType", b =>
