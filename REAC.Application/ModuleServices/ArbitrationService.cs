@@ -419,7 +419,7 @@ namespace REAC.Application.ModuleServices
                                   litigationRequestArbitratorList.ArbitratorCitizen.Mobile
                                 };
 
-                                await _notificationService.SendNotifications(new Contracts.Dtos.Notification.SendEmailDto()
+                                _notificationService.SendNotifications(new Contracts.Dtos.Notification.SendEmailDto()
                                 {
                                     To = emails,
                                     Subject = "إلغاء مهمتك كمحكم على الدعوى",
@@ -485,7 +485,7 @@ namespace REAC.Application.ModuleServices
                                   litigationRequest.ArbitratorCitizen.Mobile
                                 };
 
-                                await _notificationService.SendNotifications(new Contracts.Dtos.Notification.SendEmailDto()
+                                _notificationService.SendNotifications(new Contracts.Dtos.Notification.SendEmailDto()
                                 {
                                     To = emails,
                                     Subject = "إلغاء مهمتك كرأيس محكمين على الدعوى",
@@ -569,7 +569,7 @@ namespace REAC.Application.ModuleServices
                                   arbitratorInfo.Mobile
                                 };
 
-                            await _notificationService.SendNotifications(new Contracts.Dtos.Notification.SendEmailDto()
+                            _notificationService.SendNotifications(new Contracts.Dtos.Notification.SendEmailDto()
                             {
                                 To = emails,
                                 Subject = " طلب مهمه جديد كمحكم على الدعوي",
@@ -625,7 +625,7 @@ namespace REAC.Application.ModuleServices
                                   litigationRequest.ArbitratorCitizen.Mobile
                                 };
 
-                            await _notificationService.SendNotifications(new Contracts.Dtos.Notification.SendEmailDto()
+                            _notificationService.SendNotifications(new Contracts.Dtos.Notification.SendEmailDto()
                             {
                                 To = emailList,
                                 Subject = " طلب مهمه جديد كرأيس هيئة محكمين على الدعوي",

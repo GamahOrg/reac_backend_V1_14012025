@@ -507,7 +507,7 @@ namespace REAC.Application.ModuleServices
                     {
                         msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.LitigationRequest_Decision_ReconciliationWasMade).Result.Data?.Value;
                         msg = msg.Replace("{LitigationCode}", litigationRequest.RequestCode);
-                        sendNotificationMSWithAllTypes(msg, litigationRequest, "Citizen Litigation Request For Report Reply Added");
+                        SendNotificationMSWithAllTypes(msg, litigationRequest, "Citizen Litigation Request For Report Reply Added");
                     }
                     catch (Exception e)
                     {
@@ -541,7 +541,7 @@ namespace REAC.Application.ModuleServices
                         {
                             msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.LitigationRequest_Decision_ReconciliationWasNotMadeAndMoveToArbitration).Result.Data?.Value;
                             msg = msg.Replace("{LitigationCode}", litigationRequest.RequestCode);
-                            await sendNotificationMSWithAllTypes(msg, litigationRequest, "Citizen Litigation Request For Report Reply Refused");
+                            SendNotificationMSWithAllTypes(msg, litigationRequest, "Citizen Litigation Request For Report Reply Refused");
                         }
                         catch (Exception e)
                         {
@@ -566,7 +566,7 @@ namespace REAC.Application.ModuleServices
                         {
                             msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.LitigationRequest_Decision_ReconciliationWasNotMade).Result.Data?.Value;
                             msg = msg.Replace("{LitigationCode}", litigationRequest.RequestCode);
-                            await sendNotificationMSWithAllTypes(msg, litigationRequest, "Citizen Litigation Request For Report Reply Refused");
+                            SendNotificationMSWithAllTypes(msg, litigationRequest, "Citizen Litigation Request For Report Reply Refused");
 
                         }
                         catch (Exception e)
@@ -586,7 +586,7 @@ namespace REAC.Application.ModuleServices
 
         }
 
-        private async Task sendNotificationMSWithAllTypes(string msg, LitigationRequest litigationRequest, string Subject)
+        private async Task SendNotificationMSWithAllTypes(string msg, LitigationRequest litigationRequest, string Subject)
         {
             var deptAdminInfoReconciliation = await _employeeService.GetAdminsByDepartmentType(DepartmentType.Reconciliation);
 

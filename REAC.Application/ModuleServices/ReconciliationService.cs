@@ -152,7 +152,7 @@ namespace REAC.Application.ModuleServices
                             msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.Reconciliation_Cancelled).Result.Data?.Value;
                             msg = msg?.Replace("{LitigationCode}", litigationRequest?.RequestCode);
 
-                            var notificationResponse = await _notificationService.SendNotifications(
+                            var notificationResponse = _notificationService.SendNotifications(
                            new Contracts.Dtos.Notification.SendEmailDto()
                            {
                                To = new List<string>() { litigationRequest.ReformerCitizen.Email, deptAdminInfoReconciliation.Data.Email },
@@ -218,7 +218,7 @@ namespace REAC.Application.ModuleServices
                     msg = msg?.Replace("{LitigationCode}", litigationRequest?.RequestCode);
                     msg = msg?.Replace("{ReformerName}", citizen?.FullName);
 
-                    var notificationResponse = await _notificationService.SendNotifications(
+                    var notificationResponse = _notificationService.SendNotifications(
                            new Contracts.Dtos.Notification.SendEmailDto()
                            {
                                To = new List<string>() { deptAdminInfoReconciliation.Data.Email },
@@ -311,7 +311,7 @@ namespace REAC.Application.ModuleServices
                     {
                         msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.LitigationRequest_Decision_WaiverOfRight).Result.Data?.Value;
                         msg = msg.Replace("{LitigationCode}", litigationRequest.RequestCode);
-                        sendNotificationMSWithAllTypes(msg, litigationRequest, "Citizen Litigation Request For Report Reply Added");
+                        SendNotificationMSWithAllTypes(msg, litigationRequest, "Citizen Litigation Request For Report Reply Added");
                     }
                     catch (Exception e)
                     { }
@@ -328,7 +328,7 @@ namespace REAC.Application.ModuleServices
                     {
                         msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.LitigationRequest_Decision_ReconciliationWasMade).Result.Data?.Value;
                         msg = msg.Replace("{LitigationCode}", litigationRequest.RequestCode);
-                        sendNotificationMSWithAllTypes(msg, litigationRequest, "Citizen Litigation Request For Report Reply Added");
+                        SendNotificationMSWithAllTypes(msg, litigationRequest, "Citizen Litigation Request For Report Reply Added");
                     }
                     catch (Exception e)
                     { }
@@ -345,7 +345,7 @@ namespace REAC.Application.ModuleServices
                     {
                         msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.LitigationRequest_Decision_WaiverOfTheLitigation).Result.Data?.Value;
                         msg = msg.Replace("{LitigationCode}", litigationRequest.RequestCode);
-                        sendNotificationMSWithAllTypes(msg, litigationRequest, "Decision of reconciliation was added");
+                        SendNotificationMSWithAllTypes(msg, litigationRequest, "Decision of reconciliation was added");
                     }
                     catch (Exception e)
                     { }
@@ -363,7 +363,7 @@ namespace REAC.Application.ModuleServices
                         {
                             msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.LitigationRequest_Decision_ReconciliationWasNotMadeAndMoveToArbitration).Result.Data?.Value;
                             msg = msg.Replace("{LitigationCode}", litigationRequest.RequestCode);
-                            sendNotificationMSWithAllTypes(msg, litigationRequest, "Citizen Litigation Request For Report Reply Added");
+                            SendNotificationMSWithAllTypes(msg, litigationRequest, "Citizen Litigation Request For Report Reply Added");
                         }
                         catch (Exception e)
                         {
@@ -385,7 +385,7 @@ namespace REAC.Application.ModuleServices
                         {
                             msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.LitigationRequest_Decision_ReconciliationWasNotMade).Result.Data?.Value;
                             msg = msg.Replace("{LitigationCode}", litigationRequest.RequestCode);
-                            sendNotificationMSWithAllTypes(msg, litigationRequest, "Citizen Litigation Request For Report Reply Added");
+                            SendNotificationMSWithAllTypes(msg, litigationRequest, "Citizen Litigation Request For Report Reply Added");
                         }
                         catch (Exception e)
                         { }

@@ -179,7 +179,7 @@ namespace REAC.Application.AppServices
                     return new BaseResponse() { IsDone = false, Message = "هذا المستخدم ليس من بين أصحاب السجل التجاري" };
 
                 Guid referenceId = Guid.Empty;
-                if (citizenId.HasValue)
+                if (citizenId.Value != Guid.Empty)
                     referenceId = citizenId.Value;
                 else
                     _jwtReader.GetReferenceId(ref referenceId);
@@ -225,6 +225,7 @@ namespace REAC.Application.AppServices
             }
             catch (Exception ex)
             {
+                Console.WriteLine("ERROR LOG ========================>" + ex.ToString());
                 return new BaseResponse() { IsDone = false, Message = "خطأ داخلي" };
             }
 

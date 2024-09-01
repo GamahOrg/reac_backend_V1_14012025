@@ -188,7 +188,7 @@ namespace REAC.Application.ModuleServices
                         }
 
                         };
-                        await _notificationService.SendNotifications(new Contracts.Dtos.Notification.SendEmailDto()
+                        _notificationService.SendNotifications(new Contracts.Dtos.Notification.SendEmailDto()
                         {
                             To = new List<string>() { applicantInfo.Email, arbitrationAdmin.Data?.Email },
                             Subject = "أضافة طلب رد محكم",
@@ -1012,7 +1012,7 @@ namespace REAC.Application.ModuleServices
                             });
                             emails.Add(litigationRequest.Contract.SecondPartyFacility.Citizen.Email);
                         };
-                        await _notificationService.SendNotifications(new Contracts.Dtos.Notification.SendEmailDto()
+                        _notificationService.SendNotifications(new Contracts.Dtos.Notification.SendEmailDto()
                         {
                             To = emails,
                             Subject = "طلب رد محكم",

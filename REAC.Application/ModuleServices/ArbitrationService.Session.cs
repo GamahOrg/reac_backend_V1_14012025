@@ -292,7 +292,7 @@ namespace REAC.Application.ModuleServices
                                 recipients.Add(arbitrator.ArbitratorCitizen.Mobile);
                             }
 
-                            await _notificationService.SendNotifications(new Contracts.Dtos.Notification.SendEmailDto()
+                            _notificationService.SendNotifications(new Contracts.Dtos.Notification.SendEmailDto()
                             {
                                 To = emails,
                                 Subject = " جلسة التحكيم",

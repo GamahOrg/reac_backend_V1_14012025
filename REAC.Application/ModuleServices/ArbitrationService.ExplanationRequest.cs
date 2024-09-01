@@ -311,7 +311,7 @@ namespace REAC.Application.ModuleServices
                                 };
                             }
 
-                            await _notificationService.SendNotifications(new Contracts.Dtos.Notification.SendEmailDto()
+                            _notificationService.SendNotifications(new Contracts.Dtos.Notification.SendEmailDto()
                             {
                                 To = emails,
                                 Subject = "اضافة طلب تفسير على حكم التحكيم",
@@ -1048,7 +1048,7 @@ namespace REAC.Application.ModuleServices
                             };
                         }
 
-                        await _notificationService.SendNotifications(new Contracts.Dtos.Notification.SendEmailDto()
+                        _notificationService.SendNotifications(new Contracts.Dtos.Notification.SendEmailDto()
                         {
                             To = emails,
                             Subject = "اضافة طلب تفسير على حكم التحكيم",

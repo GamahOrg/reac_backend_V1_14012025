@@ -131,7 +131,7 @@ namespace REAC.Application.ModuleServices
                                 msg = msg?.Replace("{LitigationCode}", litigationRequest?.RequestCode).Replace("{LitigationType}", nameof(LitigationRequestSessionRequestType.Reconciliation))
                                     .Replace("{LitigationDate}", litigationRequest?.CreatedOn.Date.ToString())
                                      .Replace("{LitigationDateTime}", litigationRequest?.CreatedOn.TimeOfDay.ToString());
-                                await sendNotificationMS(msg, litigationRequest);
+                                SendNotificationMS(msg, litigationRequest);
                             }
                             catch (Exception e)
                             {
@@ -160,7 +160,7 @@ namespace REAC.Application.ModuleServices
                                 msg = msg?.Replace("{LitigationCode}", litigationRequest?.RequestCode).Replace("{LitigationType}", nameof(LitigationRequestSessionRequestType.Reconciliation))
                                  .Replace("{LitigationDate}", litigationRequest?.CreatedOn.Date.ToString())
                                   .Replace("{LitigationDateTime}", litigationRequest?.CreatedOn.TimeOfDay.ToString());
-                                await sendNotificationMS(msg, litigationRequest);
+                                SendNotificationMS(msg, litigationRequest);
                             }
                             catch (Exception e)
                             {
@@ -211,7 +211,7 @@ namespace REAC.Application.ModuleServices
             return await GetLitigationRequestForSession(requestPayload.RequestId, cancellationToken);
 
         }
-        private async Task sendNotificationMS(string msg, LitigationRequest litigationRequest)
+        private async Task SendNotificationMS(string msg, LitigationRequest litigationRequest)
         {
             var deptAdminInfoReconciliation = await _employeeService.GetAdminsByDepartmentType(DepartmentType.Reconciliation);
             //ApplicantCitizen
@@ -347,7 +347,7 @@ namespace REAC.Application.ModuleServices
                 objSms.recipients.Add(litigationRequest?.Contract?.SecondPartyFacility?.Citizen?.Mobile);
 
             }
-            await _notificationService.SendNotifications(objEmail, objSms, lstNotification);
+            _notificationService.SendNotifications(objEmail, objSms, lstNotification);
 
         }
         public async Task<BaseResponse> GetLitigationRequestForSession(Guid requestId, CancellationToken cancellationToken)

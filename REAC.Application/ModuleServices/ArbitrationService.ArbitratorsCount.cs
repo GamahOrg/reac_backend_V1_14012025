@@ -176,7 +176,7 @@ namespace REAC.Application.ModuleServices
                                 emails.Add(litigationRequest.Contract.SecondPartyFacility.Citizen.Email);
                                 recipients.Add(litigationRequest.Contract.SecondPartyFacility.Citizen.Mobile);
                             };
-                            await _notificationService.SendNotifications(new Contracts.Dtos.Notification.SendEmailDto()
+                            _notificationService.SendNotifications(new Contracts.Dtos.Notification.SendEmailDto()
                             {
                                 To = emails,
                                 Subject = "عدد المحكمين النهائي",
@@ -841,7 +841,7 @@ namespace REAC.Application.ModuleServices
                                   arbitrationAdmin.Data?.Mobile
                                 };
 
-                            await _notificationService.SendNotifications(new Contracts.Dtos.Notification.SendEmailDto()
+                            _notificationService.SendNotifications(new Contracts.Dtos.Notification.SendEmailDto()
                             {
                                 To = emails,
                                 Subject = "الإنتهاء من تحديد عدد المحكمين",
@@ -895,7 +895,7 @@ namespace REAC.Application.ModuleServices
                                   arbitrationAdmin.Data?.Mobile
                                 };
 
-                            await _notificationService.SendNotifications(new Contracts.Dtos.Notification.SendEmailDto()
+                            _notificationService.SendNotifications(new Contracts.Dtos.Notification.SendEmailDto()
                             {
                                 To = emails,
                                 Subject = "الإنتهاء من تحديد عدد المحكمين",

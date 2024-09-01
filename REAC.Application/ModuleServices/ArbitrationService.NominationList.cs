@@ -187,7 +187,7 @@ namespace REAC.Application.ModuleServices
                             emails.Add(litigationRequest.Contract.SecondPartyFacility.Citizen.Email);
                             recipients.Add(litigationRequest.Contract.SecondPartyFacility.Citizen.Mobile);
                         };
-                        await _notificationService.SendNotifications(new Contracts.Dtos.Notification.SendEmailDto()
+                        _notificationService.SendNotifications(new Contracts.Dtos.Notification.SendEmailDto()
                         {
                             To = emails,
                             Subject = "تم إضافة قائمة تعيين هيئة التحكيم برجاء الاختيار",
@@ -222,7 +222,7 @@ namespace REAC.Application.ModuleServices
                             {
                                   arbitrationAdmin.Data?.Mobile
                             };
-                            await _notificationService.SendNotifications(new Contracts.Dtos.Notification.SendEmailDto()
+                            _notificationService.SendNotifications(new Contracts.Dtos.Notification.SendEmailDto()
                             {
                                 To = emailList,
                                 Subject = "إضافة قائمة تعيين هيئة التحكيم",
@@ -1046,7 +1046,7 @@ namespace REAC.Application.ModuleServices
                                   citizenInfo.Mobile
                             };
 
-                                    await _notificationService.SendNotifications(new Contracts.Dtos.Notification.SendEmailDto()
+                                    _notificationService.SendNotifications(new Contracts.Dtos.Notification.SendEmailDto()
                                     {
                                         To = emailList,
                                         Subject = "طلب مهمة جديدة كمحكم علي الدعوي",
@@ -1112,7 +1112,7 @@ namespace REAC.Application.ModuleServices
                                   arbitrationAdmin.Data?.Mobile
                             };
 
-                        await _notificationService.SendNotifications(new Contracts.Dtos.Notification.SendEmailDto()
+                        _notificationService.SendNotifications(new Contracts.Dtos.Notification.SendEmailDto()
                         {
                             To = emailList,
                             Subject = "تم تعيين هيئة التحكيم وإرسال طلبات المهام",

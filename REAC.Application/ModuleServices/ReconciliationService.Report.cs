@@ -98,7 +98,7 @@ namespace REAC.Application.ModuleServices
                     {
                         msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.Reconciliation_Request_Added).Result.Data?.Value;
                         msg = msg.Replace("{LitigationCode}", litigationRequest.RequestCode);
-                        sendNotificationMSWithAllTypes(msg, litigationRequest, "Reconciliation Request Added");
+                        SendNotificationMSWithAllTypes(msg, litigationRequest, "Reconciliation Request Added");
                     }
                     catch (Exception e)
                     {

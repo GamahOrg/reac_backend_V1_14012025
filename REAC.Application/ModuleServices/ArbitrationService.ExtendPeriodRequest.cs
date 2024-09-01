@@ -200,7 +200,7 @@ namespace REAC.Application.ModuleServices
                                 emails.Add(litigationRequest.Contract.SecondPartyFacility.Citizen.Email);
                                 recipients.Add(litigationRequest.Contract.SecondPartyFacility.Citizen.Mobile);
                             };
-                            await _notificationService.SendNotifications(new Contracts.Dtos.Notification.SendEmailDto()
+                            _notificationService.SendNotifications(new Contracts.Dtos.Notification.SendEmailDto()
                             {
                                 To = emails,
                                 Subject = "اضافة  الرد علي طلب مد مدة التحكيم",
@@ -428,7 +428,7 @@ namespace REAC.Application.ModuleServices
                             emails.Add(litigationRequest.Contract.SecondPartyFacility.Citizen.Email);
                             recipients.Add(litigationRequest.Contract.SecondPartyFacility.Citizen.Mobile);
                         };
-                        await _notificationService.SendNotifications(new Contracts.Dtos.Notification.SendEmailDto()
+                        _notificationService.SendNotifications(new Contracts.Dtos.Notification.SendEmailDto()
                         {
                             To = emails,
                             Subject = "الرد علي طلب مد مدة التحكيم",

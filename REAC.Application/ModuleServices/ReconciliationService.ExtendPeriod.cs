@@ -95,7 +95,7 @@ namespace REAC.Application.ModuleServices
                     {
                         msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.Arbitration_ExtendRequest_Added).Result.Data?.Value;
                         msg = msg.Replace("{LitigationCode}", litigationRequest.RequestCode);
-                        sendNotificationMSWithAllTypes(msg, litigationRequest, "Citizen Litigation Request For Report Reply Added");
+                        SendNotificationMSWithAllTypes(msg, litigationRequest, "Citizen Litigation Request For Report Reply Added");
                     }
                     catch (Exception e)
                     {
@@ -188,7 +188,7 @@ namespace REAC.Application.ModuleServices
                         {
                             msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.Reconciliation_ExtendRequest_Accepted).Result.Data?.Value;
                             msg = msg.Replace("{LitigationCode}", litigationRequest.RequestCode);
-                            sendNotificationMSWithAllTypes(msg, litigationRequest, "Citizen Litigation Request For Report Reply Added");
+                            SendNotificationMSWithAllTypes(msg, litigationRequest, "Citizen Litigation Request For Report Reply Added");
                         }
                         catch (Exception e)
                         {
@@ -213,7 +213,7 @@ namespace REAC.Application.ModuleServices
                         {
                             msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.Arbitration_ExtendRequest_Rejected).Result.Data?.Value;
                             msg = msg.Replace("{LitigationCode}", litigationRequest.RequestCode);
-                            sendNotificationMSWithAllTypes(msg, litigationRequest, "Citizen Litigation Request For Report Reply Added");
+                            SendNotificationMSWithAllTypes(msg, litigationRequest, "Citizen Litigation Request For Report Reply Added");
                         }
                         catch (Exception e)
                         {

@@ -247,7 +247,7 @@ namespace Bpf.Application.ModuleServices
                         {
                             msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.LitigationRequest_Creation_Reject).Result.Data?.Value;
                             msg = msg.Replace("{LitigationCode}", litigationRequest.RequestCode);
-                            await sendNotificationMSPlaintiff(msg, litigationRequest, RequestType.LitigationRequest, "Litigation Request Rejected");
+                            SendNotificationMSPlaintiff(msg, litigationRequest, RequestType.LitigationRequest, "Litigation Request Rejected");
                         }
                         catch (Exception e)
                         {
@@ -265,7 +265,7 @@ namespace Bpf.Application.ModuleServices
                             msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.LitigationRequest_Creation_Resent).Result.Data?.Value;
                             msg = msg.Replace("{LitigationCode}", litigationRequest.RequestCode);
                             msg = msg.Replace("{ExpirationDate}", "5");
-                            await sendNotificationMSPlaintiff(msg, litigationRequest, RequestType.LitigationRequest, "Litigation Request Resent");
+                            SendNotificationMSPlaintiff(msg, litigationRequest, RequestType.LitigationRequest, "Litigation Request Resent");
                         }
                         catch (Exception)
                         {
@@ -354,7 +354,7 @@ namespace Bpf.Application.ModuleServices
                         {
                             msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.LitigationRequest_Creation_Accept).Result.Data?.Value;
                             msg = msg.Replace("{LitigationCode}", litigationRequest.RequestCode);
-                            await sendNotificationMSPlaintiff(msg, litigationRequest, RequestType.LitigationRequest, "Litigation Request Accepted");
+                            SendNotificationMSWithDefendant(msg,msg, litigationRequest, RequestType.LitigationRequest, "Litigation Request Accepted");
                         }
                         catch (Exception)
                         {
@@ -370,7 +370,7 @@ namespace Bpf.Application.ModuleServices
                         {
                             msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.ProcessWorkflow_Edited).Result.Data?.Value;
                             msg = msg.Replace("{LitigationCode}", litigationRequest.RequestCode);
-                            await sendNotificationMSPlaintiff(msg, litigationRequest, RequestType.LitigationRequest, "Litigation Request Updated and Resent");
+                            SendNotificationMSPlaintiff(msg, litigationRequest, RequestType.LitigationRequest, "Litigation Request Updated and Resent");
                         }
                         catch (Exception e)
                         {
@@ -397,7 +397,7 @@ namespace Bpf.Application.ModuleServices
                             msg = msg.Replace("{LitigationCode}", litigationRequest.RequestCode);
                             string msgReview = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.WorkFlow_Condition_Review).Result.Data?.Value;
                             msgReview = msgReview.Replace("{LitigationCode}", litigationRequest.RequestCode);
-                            await sendNotificationMSWithDefendant(msg, msgReview, litigationRequest, RequestType.LitigationRequest, "Litigation Request Resent");
+                            SendNotificationMSWithDefendant(msg, msgReview, litigationRequest, RequestType.LitigationRequest, "Litigation Request Resent");
                         }
                         catch (Exception e)
                         {
@@ -426,7 +426,7 @@ namespace Bpf.Application.ModuleServices
             };
         }
         //المدعى -مدير ادارة التدقيق
-        private async Task sendNotificationMSPlaintiff(string msg, LitigationRequest litigationRequest, RequestType requestTypeId, string subject)
+        private async Task SendNotificationMSPlaintiff(string msg, LitigationRequest litigationRequest, RequestType requestTypeId, string subject)
         {
             var deptAdminInfoReview = await _employeeService.GetAdminsByDepartmentType(DepartmentType.Review);
             var employee = litigationRequest.WorkFlowProcessingLogs.Where(w => w.EmployeeId != null).OrderBy(x => x.CreatedOn).LastOrDefault()?.Employee;
@@ -533,11 +533,11 @@ namespace Bpf.Application.ModuleServices
 
 
             }
-            await _notificationService.SendNotifications(objEmail, objSms, lstNotification);
+           _notificationService.SendNotifications(objEmail, objSms, lstNotification);
 
         }
         //المدعى -مدير ادارة التدقيق -المدعى عليه
-        private async Task sendNotificationMSWithDefendant(string msg, string msgReview, LitigationRequest litigationRequest, RequestType requestTypeId, string subject)
+        private async Task SendNotificationMSWithDefendant(string msg, string msgReview, LitigationRequest litigationRequest, RequestType requestTypeId, string subject)
         {
             var deptAdminInfoReview = await _employeeService.GetAdminsByDepartmentType(DepartmentType.Review);
             //ApplicantCitizen
@@ -661,7 +661,7 @@ namespace Bpf.Application.ModuleServices
 
             }
 
-            await _notificationService.SendNotifications(objEmail, objSms, lstNotification);
+           _notificationService.SendNotifications(objEmail, objSms, lstNotification);
 
         }
     }

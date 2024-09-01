@@ -135,7 +135,7 @@ namespace REAC.Application.ModuleServices
                                 });
                                 emails.Add(arbitrator.ArbitratorCitizen.Email);
                             }
-                            await _notificationService.SendNotifications(new Contracts.Dtos.Notification.SendEmailDto()
+                            _notificationService.SendNotifications(new Contracts.Dtos.Notification.SendEmailDto()
                             {
                                 To = emails,
                                 Subject = "تم إضافة قائمة مرشحى رئيس هيئة التحكيم ",
@@ -961,7 +961,7 @@ namespace REAC.Application.ModuleServices
                                 };
 
                                
-                                await _notificationService.SendNotifications(new Contracts.Dtos.Notification.SendEmailDto()
+                                _notificationService.SendNotifications(new Contracts.Dtos.Notification.SendEmailDto()
                                 {
                                     To = emails,
                                     Subject = "اتخاذ قرار",
@@ -1027,7 +1027,7 @@ namespace REAC.Application.ModuleServices
                                 };
 
 
-                                await _notificationService.SendNotifications(new Contracts.Dtos.Notification.SendEmailDto()
+                                _notificationService.SendNotifications(new Contracts.Dtos.Notification.SendEmailDto()
                                 {
                                     To = emails,
                                     Subject = "إعلام بأرسال طلب مهمة",
@@ -1067,7 +1067,7 @@ namespace REAC.Application.ModuleServices
                           
 
                         };
-                            await _notificationService.SendNotifications(new Contracts.Dtos.Notification.SendEmailDto()
+                            _notificationService.SendNotifications(new Contracts.Dtos.Notification.SendEmailDto()
                             {
                                 To = new List<string>() { arbitratorInfo.Email},
                                 Subject = "طلب مهمة جديدة",
