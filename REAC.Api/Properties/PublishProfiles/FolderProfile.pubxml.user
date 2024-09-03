@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+https://go.microsoft.com/fwlink/?LinkID=208121.
+-->
+<Project>
+  <PropertyGroup>
+    <_PublishTargetUrl>D:\Asga-work\REAC\BackEnd\REAC.Api\bin\Release\net8.0\publish\</_PublishTargetUrl>
+    <History>True|2024-09-01T16:59:52.1934829Z||;True|2024-09-01T19:28:11.3358157+03:00||;True|2024-09-01T19:27:25.8746161+03:00||;True|2024-09-01T17:57:28.4012684+03:00||;True|2024-09-01T17:29:48.1390106+03:00||;</History>
+    <LastFailureDetails />
+  </PropertyGroup>
+</Project>
