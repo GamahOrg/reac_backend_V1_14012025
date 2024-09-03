@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "U+GJyhtgP9s+zurrhel0GS+VB46oRYTEJuIMhb7spYg=",
+  "Source": "Core.Security.Api",
+  "BasePath": "_content/Core.Security.Api",
+  "Mode": "Default",
+  "ManifestType": "Publish",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}

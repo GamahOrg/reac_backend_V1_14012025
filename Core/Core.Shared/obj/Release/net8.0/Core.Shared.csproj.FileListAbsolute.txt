@@ -1,0 +1,11 @@
+C:\Users\admin\source\repos\BackEnd\Core\Core.Shared\bin\Release\net8.0\Core.Shared.deps.json
+C:\Users\admin\source\repos\BackEnd\Core\Core.Shared\bin\Release\net8.0\Core.Shared.dll
+C:\Users\admin\source\repos\BackEnd\Core\Core.Shared\bin\Release\net8.0\Core.Shared.pdb
+C:\Users\admin\source\repos\BackEnd\Core\Core.Shared\obj\Release\net8.0\Core.Shared.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\admin\source\repos\BackEnd\Core\Core.Shared\obj\Release\net8.0\Core.Shared.AssemblyInfoInputs.cache
+C:\Users\admin\source\repos\BackEnd\Core\Core.Shared\obj\Release\net8.0\Core.Shared.AssemblyInfo.cs
+C:\Users\admin\source\repos\BackEnd\Core\Core.Shared\obj\Release\net8.0\Core.Shared.csproj.CoreCompileInputs.cache
+C:\Users\admin\source\repos\BackEnd\Core\Core.Shared\obj\Release\net8.0\Core.Shared.dll
+C:\Users\admin\source\repos\BackEnd\Core\Core.Shared\obj\Release\net8.0\refint\Core.Shared.dll
+C:\Users\admin\source\repos\BackEnd\Core\Core.Shared\obj\Release\net8.0\Core.Shared.pdb
+C:\Users\admin\source\repos\BackEnd\Core\Core.Shared\obj\Release\net8.0\ref\Core.Shared.dll
