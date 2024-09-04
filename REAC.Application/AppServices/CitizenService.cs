@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Core.Contracts;
 using Core.GenericRepository.BaseRepository;
 using Core.GenericRepository.Shared.Pagging;
 using Core.Log.Application.Contracts.IAppServices;
@@ -8,6 +9,7 @@ using REAC.Application.Contracts.Dtos.Citizen;
 using REAC.Application.Contracts.Dtos.Integration.GEE;
 using REAC.Application.Contracts.Dtos.Notification;
 using REAC.Application.Contracts.IAppServices;
+using REAC.Application.Contracts.IAppServices.Integration;
 using REAC.Application.Contracts.IAppServices.Notification;
 using REAC.Application.Contracts.IAppServices.System;
 using REAC.Domain.Shared.Constants;
@@ -43,7 +45,7 @@ namespace REAC.Application.AppServices
             var identityExpirationDate = quarable.FirstOrDefault(x => x.Id == userId)?.IdentityExpiryDate;
             return identityExpirationDate;
         }
-        public async Task<BaseResponse> GetDelegatedPersonsLawyer()
+        public async Task<BaseResponse> GetDelegatedPersons()
         {
             Guid referenceId = Guid.Empty;
             _jwtReader.GetReferenceId(ref referenceId);
@@ -51,38 +53,7 @@ namespace REAC.Application.AppServices
             var delegatorPersons = (await _repository.GetQueryable<Delegator, Guid>())
                             .Include(x => x.Citizen)
                             .Include(x => x.Facility)
-                         .Where(x => x.DelegatorCitizenId == referenceId
-                         & x.DelegationRelationshipTypeId == DelegationRelationshipType.Lawyer
-                         & x.CitizenId.HasValue == true).ToList();
-
-            List<DelegatorItem> persons = new List<DelegatorItem>();
-
-
-            foreach (var delegatorPerson in delegatorPersons)
-            {
-                if (delegatorPerson.Facility == null)
-                {
-                    if (delegatorPerson.CitizenId.HasValue)
-                        persons.Add(new DelegatorItem() { Id = delegatorPerson.CitizenId.Value, Name = delegatorPerson.Citizen.FullName });
-                }
-            }
-
-            return new DataResponse<List<DelegatorItem>>()
-            {
-                IsDone = true,
-                Data = persons
-            };
-        }
-        public async Task<BaseResponse> GetDelegatedPersonsAgent()
-        {
-            Guid referenceId = Guid.Empty;
-            _jwtReader.GetReferenceId(ref referenceId);
-
-            var delegatorPersons = (await _repository.GetQueryable<Delegator, Guid>())
-                            .Include(x => x.Citizen)
-                            .Include(x => x.Facility)
-                         .Where(x => x.DelegatorCitizenId == referenceId
-                         & x.CitizenId.HasValue == true).ToList();
+                         .Where(x => x.DelegatorCitizenId == referenceId).ToList();
 
             List<DelegatorItem> persons = new List<DelegatorItem>();
 
@@ -101,7 +72,7 @@ namespace REAC.Application.AppServices
                 Data = persons
             };
         }
-        public async Task<BaseResponse> GetDelegatedFacilitiesAgent()
+        public async Task<BaseResponse> GetDelegatedFacilities()
         {
             Guid referenceId = Guid.Empty;
             _jwtReader.GetReferenceId(ref referenceId);
@@ -109,11 +80,7 @@ namespace REAC.Application.AppServices
             var delegatorPersons = (await _repository.GetQueryable<Delegator, Guid>())
                             .Include(x => x.Citizen)
                             .Include(x => x.Facility)
-                         .Where(x => x.DelegatorCitizenId == referenceId
-                         & x.DelegationRelationshipTypeId == DelegationRelationshipType.Agent
-                         & x.FacilityId.HasValue == true).ToList();
-
-
+                         .Where(x => x.DelegatorCitizenId == referenceId).ToList();
             List<DelegatorItem> facilities = new List<DelegatorItem>();
 
             foreach (var delegatorPerson in delegatorPersons)
@@ -123,64 +90,11 @@ namespace REAC.Application.AppServices
                     facilities.Add(new DelegatorItem() { Id = delegatorPerson.FacilityId.Value, Name = delegatorPerson.Facility.ArabicFacilityName });
                 }
             }
-            return new DataResponse<List<DelegatorItem>>()
-            {
-                IsDone = true,
-                Data = facilities,
-                Message = "agent"
-            };
-        }
-
-        public async Task<BaseResponse> GetDelegatedFacilitiesLawyer()
-        {
-            Guid referenceId = Guid.Empty;
-            _jwtReader.GetReferenceId(ref referenceId);
-
-            var delegatorPersons = (await _repository.GetQueryable<Delegator, Guid>())
-                            .Include(x => x.Citizen)
-                            .Include(x => x.Facility)
-                         .Where(x => x.DelegatorCitizenId == referenceId
-                         & x.DelegationRelationshipTypeId == DelegationRelationshipType.Lawyer
-                        & x.FacilityId.HasValue == true).ToList();
-
-
-            List<DelegatorItem> facilities = new List<DelegatorItem>();
-
-            foreach (var delegatorPerson in delegatorPersons)
-            {
-                if (delegatorPerson.Facility != null)
-                {
-                    facilities.Add(new DelegatorItem() { Id = delegatorPerson.FacilityId.Value, Name = delegatorPerson.Facility.ArabicFacilityName });
-                }
-            }
-            return new DataResponse<List<DelegatorItem>>()
-            {
-                IsDone = true,
-                Data = facilities,
-                Message = "Lawyer"
-            };
-        }
-
-        public async Task<BaseResponse> GetOwnerFacilities()
-        {
-            Guid referenceId = Guid.Empty;
-            _jwtReader.GetReferenceId(ref referenceId);
-
-            var faclities = (await _repository.GetQueryable<Facility, Guid>())
-                        .Where(x => x.CitizenId == referenceId).ToList();
-
-            List<DelegatorItem> facilities = new List<DelegatorItem>();
-
-            foreach (var faclity in faclities)
-            {
-                facilities.Add(new DelegatorItem() { Id = faclity.Id, Name = faclity.ArabicFacilityName });
-            }
 
             return new DataResponse<List<DelegatorItem>>()
             {
                 IsDone = true,
-                Data = facilities,
-                Message = "owner"
+                Data = facilities
             };
         }
         public async Task<ICollection<Facility>> GetRepresentativeCitizens(Guid? userId) // بجيب هنا كل المدعي عليهم اللي انا ممثل عنهم
@@ -995,42 +909,8 @@ namespace REAC.Application.AppServices
             };
 
         }
-
-
-        public async Task<BaseResponse> GetFacilities(RelationShipType relationShipId)
-        {
-            switch (relationShipId)
-            {
-                case RelationShipType.LawyerForCompany:
-                    return await GetDelegatedFacilitiesLawyer();
-                case RelationShipType.AgentForCompany:
-                    return await GetDelegatedFacilitiesAgent();
-                case RelationShipType.CompanyRepresentative:
-                    return await GetOwnerFacilities();
-                default:
-                    return new DataResponse<List<DelegatorItem>>()
-                    {
-                        IsDone = true,
-                        Data = null
-                    };
-            }
-        }
-        public async Task<BaseResponse> GetPersons(RelationShipType relationShipId)
-        {
-            switch (relationShipId)
-            {
-                case RelationShipType.LawyerForIndividual:
-                    return await GetDelegatedPersonsLawyer();
-                case RelationShipType.AgentForIndividual:
-                    return await GetDelegatedPersonsAgent();
-                default:
-                    return new DataResponse<List<DelegatorItem>>()
-                    {
-                        IsDone = true,
-                        Data = null
-                    };
-            }
-        }
-
     }
+
+
+
 }

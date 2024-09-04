@@ -160,7 +160,6 @@ namespace REAC.Application.Contracts
 
 
             CreateMap<Delegator, DelegatorDto>().ReverseMap();
-            CreateMap<Delegator, LawyerDelegatorDto>().ReverseMap();
             CreateMap<Citizen, CitizenCreateUpdateDto>().ReverseMap();
             CreateMap<DelegationRequest, DelegationRequestCreateUpdateDto>().ReverseMap();
             CreateMap<Facility, FacilityCreateUpdateDto>().ReverseMap();

@@ -235,16 +235,6 @@ namespace Ticketing.EntityFrameworkCore.SeedData
                     },new SysSetting
                     {
                         Id = Guid.NewGuid(),
-                        Key = "Citizen.AddAgent",
-                        Value = "تم اضافة وكيل جديد بأسم  {CitizenName} ",
-                    },new SysSetting
-                    {
-                        Id = Guid.NewGuid(),
-                        Key = "Delegator.AddAgent",
-                        Value = "تم اضافتك كوكيل للمستخدم {CitizenName} ",
-                    },new SysSetting
-                    {
-                        Id = Guid.NewGuid(),
                         Key = "Citizen.EditBankAccount",
                         Value = "تم تعديل بيانات الحساب البنكي الخاص ب {CitizenName} ",
                     },new SysSetting

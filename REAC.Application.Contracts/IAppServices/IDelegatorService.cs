@@ -15,11 +15,5 @@ namespace REAC.Application.Contracts.IAppServices
         Task<DataResponse<PartiesDto>> GetDelegatorCitizenData(GetDeligatorCitizenData getDelegatorDataDto);
 
         Task<string> GenerateCitizenCode();
-
-        Task<BaseResponse> GetLawyersDelegators(int pageIndex, int pageSize, string? searchKey);
-        Task<BaseResponse> GetLawyerDelegatorById(Guid delegatorId);
-        Task<BaseResponse> ValidateLawyerDelagator(ValidateLawyerDelegatorDto delegatorDto);
-        Task<BaseResponse> AddLawyerDelagator(LawyerDelegatorDto delegatorDto);
-        Task<BaseResponse> AddLawyerCitizenAndDelagator(LawyerDelegatorDto delegatorDto);
     }
 }

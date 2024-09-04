@@ -7,9 +7,6 @@ using REAC.Application.Contracts.Dtos.Delegator;
 using REAC.Application.Contracts.Dtos.Integration.GEE;
 using REAC.Application.Contracts.IAppServices;
 using REAC.Application.Contracts.IAppServices.Integration;
-using REAC.Application.Contracts.IAppServices.Notification;
-using REAC.Application.Contracts.IAppServices.System;
-using REAC.Domain.Shared.Constants;
 using REAC.Domain.Shared.Enum;
 using REAC.EntityFrameworkCore.Entities.Actor;
 using REAC.EntityFrameworkCore.Entities.System;
@@ -25,19 +22,14 @@ namespace REAC.Application.AppServices
         protected ILoggerManager _loggerManager;
         private readonly IJwtReader _jwtReader;
         private readonly IMOJService _mOJService;
-        private readonly INotificationService _notificationService;
-        private readonly ISysSettingService _sysSettingService;
-
         public DelegatorService(IEntityRepository repository,
-            IMapper mapper, ILoggerManager loggerManager, IJwtReader jwtReader, IMOJService mOJService, INotificationService notificationService, ISysSettingService sysSettingService)
+            IMapper mapper, ILoggerManager loggerManager, IJwtReader jwtReader, IMOJService mOJService)
         {
             _repository = repository;
             _mapper = mapper;
             _jwtReader = jwtReader;
             _loggerManager = loggerManager;
             _mOJService = mOJService;
-            _notificationService = notificationService;
-            _sysSettingService = sysSettingService;
         }
 
 
@@ -52,7 +44,7 @@ namespace REAC.Application.AppServices
                     .Include(x => x.Citizen).Include(x => x.Facility).Include(x => x.DelegatorCitizen)
                     .Include(x => x.DelegationFile)
                     .Include(x => x.SysDelegationRelationshipType)
-                .Where(x => x.CitizenId == referenceId & x.DelegationRelationshipTypeId == DelegationRelationshipType.Agent)
+                .Where(x => x.CitizenId == referenceId)
                 .ToList();
 
                 var fullDelegators = _mapper.Map<List<DelegatorShortDataDto>>(delegators);
@@ -117,11 +109,11 @@ namespace REAC.Application.AppServices
             // Edit Delegator
             if (delegatorDto.Id != Guid.Empty)
             {
-                return await EditAgentDelagator(delegatorDto);
+                return await EditDelagator(delegatorDto);
             }
 
             // Add new Delegator
-            return await AddAgentDelagator(delegatorDto);
+            return await AddDelagator(delegatorDto);
 
         }
 
@@ -191,7 +183,7 @@ namespace REAC.Application.AppServices
 
         }
 
-        private async Task<BaseResponse> EditAgentDelagator(DelegatorDto delegatorDto)
+        private async Task<BaseResponse> EditDelagator(DelegatorDto delegatorDto)
         {
             try
             {
@@ -232,7 +224,7 @@ namespace REAC.Application.AppServices
 
         }
 
-        private async Task<BaseResponse> AddAgentDelagator(DelegatorDto delegatorDto)
+        private async Task<BaseResponse> AddDelagator(DelegatorDto delegatorDto)
         {
             try
             {
@@ -299,58 +291,6 @@ namespace REAC.Application.AppServices
                 var saveResponse = await _repository.SaveChangesAsync();
                 if (!saveResponse.IsDone) return saveResponse;
 
-                // Send Notification To User and Delegator
-
-                try
-                {
-                    var agentInfo = (await _repository.GetQueryable<Citizen, Guid>()).FirstOrDefault(x => x.Id == delegatorDto.DelegatorCitizenId);
-
-                    var citizenMsg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.Citizen_AddAgent).Result.Data?.Value;
-                    citizenMsg = citizenMsg.Replace("{CitizenName}", agentInfo.FullName);
-
-                    var agentMsg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.Citizen_AddAgent).Result.Data?.Value;
-                    agentMsg = citizenMsg.Replace("{CitizenName}", sourceCitizen.FullName);
-
-
-                    _notificationService.SendNotifications(null, null, new List<Contracts.Dtos.Notification.SysNotificationDto>()
-                    {
-                        new Contracts.Dtos.Notification.SysNotificationDto()
-                        {
-                             Id = Guid.NewGuid(),
-                        ActorId = referenceId,
-                        ActorTypeId = NotificationActorType.Applicant,
-                        RequestId = agentInfo.Id,
-                        RequestTypeId = RequestType.AddAgent,
-                        IsViewed = false,
-                        ViewedOn = null,
-                        CreatedOn = DateTime.Now,
-                        Message = citizenMsg,
-                        }
-                    });
-
-
-                    _notificationService.SendNotifications(null, null, new List<Contracts.Dtos.Notification.SysNotificationDto>()
-                    {
-                        new Contracts.Dtos.Notification.SysNotificationDto()
-                        {
-                             Id = Guid.NewGuid(),
-                        ActorId = agentInfo.Id,
-                        ActorTypeId = NotificationActorType.Agent,
-                        RequestId = updatedCitizen.Id,
-                        RequestTypeId = RequestType.AddAgent,
-                        IsViewed = false,
-                        ViewedOn = null,
-                        CreatedOn = DateTime.Now,
-                        Message = agentMsg,
-                        }
-                    });
-
-                }
-                catch (Exception ex)
-                {
-                }
-
-
                 return new BaseResponse() { IsDone = true, Message = "تم الاضافة بنجاح" };
             }
             catch (Exception ex)
@@ -375,245 +315,6 @@ namespace REAC.Application.AppServices
                 code = "CZ-" + (citizenRequestList.Count() + 1).ToString("D4");
 
             return code;
-        }
-
-
-        public async Task<BaseResponse> GetLawyersDelegators(int pageIndex, int pageSize, string? searchKey)
-        {
-            try
-            {
-                Guid referenceId = Guid.Empty;
-                _jwtReader.GetReferenceId(ref referenceId);
-
-                var delegators = (await _repository.GetQueryable<Delegator, Guid>())
-                    .Include(x => x.Citizen).Include(x => x.Facility).Include(x => x.DelegatorCitizen)
-                    .Include(x => x.DelegationFile)
-                    .Include(x => x.SysDelegationRelationshipType)
-                .Where(x => x.CitizenId == referenceId & x.DelegationRelationshipTypeId == DelegationRelationshipType.Lawyer)
-                .ToList();
-
-                var fullDelegators = _mapper.Map<List<DelegatorShortDataDto>>(delegators);
-
-                var result = await PaginatedList<DelegatorShortDataDto>.CreateAsync(fullDelegators, pageIndex, pageSize);
-                if (result.Items.Count == 0) return new BaseResponse() { IsDone = true, Message = "غير موجود" };
-
-                return new DataResponse<PaginatedList<DelegatorShortDataDto>>()
-                {
-                    IsDone = true,
-                    Data = result
-                };
-            }
-            catch (Exception ex)
-            {
-                return new BaseResponse { IsDone = false, Message = "خطأ داخلي" };
-
-            }
-
-        }
-        public async Task<BaseResponse> GetLawyerDelegatorById(Guid delegatorId)
-        {
-            try
-            {
-                Guid referenceId = Guid.Empty;
-                _jwtReader.GetReferenceId(ref referenceId);
-
-                var delegators = (await _repository.GetQueryable<Delegator, Guid>())
-                    .Include(x => x.Citizen).Include(x => x.Facility).Include(x => x.DelegatorCitizen)
-                    .Include(x => x.DelegationFile)
-                              .Where(x => x.Id == delegatorId)
-                              .ToList();
-
-                var fullDelegators = _mapper.Map<List<DelegatorFullDataDto>>(delegators);
-                if (fullDelegators.Count > 0)
-                {
-                    return new DataResponse<DelegatorFullDataDto>()
-                    {
-                        IsDone = true,
-                        Data = fullDelegators.FirstOrDefault()
-                    };
-                }
-                else
-                {
-                    return new BaseResponse()
-                    {
-                        IsDone = false,
-                        Message = "غير موجود"
-                    };
-                }
-            }
-            catch (Exception ex)
-            {
-                return new BaseResponse() { IsDone = false, Message = "خطأ داخلي" };
-            }
-
-        }
-
-
-        public async Task<BaseResponse> ValidateLawyerDelagator(ValidateLawyerDelegatorDto delegatorDto)
-        {
-            try
-            {
-                Guid referenceId = Guid.Empty;
-                _jwtReader.GetReferenceId(ref referenceId);
-
-                var sourceCitizen = (await _repository.GetQueryable<Citizen, Guid>()).FirstOrDefault(x => x.Id == referenceId);
-
-                if (sourceCitizen is null)
-                    return new BaseResponse() { IsDone = false, Message = "المستخدم غير موجود" };
-
-                var identityCheck = (await _repository.GetQueryable<Citizen, Guid>()).Any(x => x.IdentityNumber == delegatorDto.IdentityNumber);
-                var licenseCheck = (await _repository.GetQueryable<Citizen, Guid>()).Any(x => x.LawyerLicenseNumber == delegatorDto.LawyerLicenseNumber);
-
-                if ((identityCheck & !licenseCheck) || (!identityCheck & licenseCheck))
-                {
-                    return new BaseResponse() { IsDone = false, Message = "البيانات المدخله خطأ" };
-
-                }
-
-                var lawyerCitizen = (await _repository.GetQueryable<Citizen, Guid>())
-                    .FirstOrDefault(x => x.IdentityNumber == delegatorDto.IdentityNumber & x.LawyerLicenseNumber == delegatorDto.LawyerLicenseNumber);
-
-                if (lawyerCitizen is not null)
-                {
-
-                    return new DataResponse<LawyerDelegatorDto>()
-                    {
-                        IsDone = true,
-                        Data = new LawyerDelegatorDto()
-                        {
-                            Id = lawyerCitizen.Id,
-                            FullName = lawyerCitizen.FullName,
-                        }
-                    };
-                }
-
-
-                return new DataResponse<LawyerDelegatorDto>()
-                {
-                    IsDone = true,
-                    Data = null
-                };
-
-
-            }
-            catch (Exception ex)
-            {
-                return new BaseResponse() { IsDone = false, Message = "خطأ داخلي" };
-
-            }
-
-
-        }
-
-        public async Task<BaseResponse> AddLawyerDelagator(LawyerDelegatorDto delegatorDto)
-        {
-            try
-            {
-                Guid referenceId = Guid.Empty;
-                _jwtReader.GetReferenceId(ref referenceId);
-
-                var sourceCitizen = (await _repository.GetQueryable<Citizen, Guid>()).FirstOrDefault(x => x.Id == referenceId);
-
-                if (sourceCitizen is null)
-                    return new BaseResponse() { IsDone = false, Message = "المستخدم غير موجود" };
-
-                var lawyerCitizen = (await _repository.GetQueryable<Citizen, Guid>())
-                    .FirstOrDefault(x => x.Id == delegatorDto.Id);
-
-
-                if (lawyerCitizen is null)
-                    return new BaseResponse() { IsDone = false, Message = " المحامي غير موجود" };
-
-                var lawyerDelegator = (await _repository.GetQueryable<Delegator, Guid>())
-                    .FirstOrDefault(x => x.DelegatorCitizenId == lawyerCitizen.Id & x.CitizenId == referenceId);
-
-                if (lawyerDelegator is not null)
-                    return new BaseResponse() { IsDone = false, Message = " المحامي موجود مسبقا" };
-
-
-                var newLawyerDelegatorObject = new Delegator()
-                {
-                    Id = new Guid(),
-                    DelegatorCitizenId = lawyerCitizen.Id,
-                    IsActive = true,
-                    CitizenId = referenceId,
-                    DelegationRelationshipTypeId = DelegationRelationshipType.Lawyer,
-                };
-                
-
-                await _repository.AddAsync<Delegator, Guid>(newLawyerDelegatorObject);
-                var saveResponse = await _repository.SaveChangesAsync();
-                if (!saveResponse.IsDone) return saveResponse;
-
-
-                return new BaseResponse() { IsDone = true, Message = "تم الاضافة بنجاح" };
-
-
-            }
-            catch (Exception ex)
-            {
-                return new BaseResponse() { IsDone = false, Message = "خطأ داخلي" };
-
-            }
-        }
-
-        public async Task<BaseResponse> AddLawyerCitizenAndDelagator(LawyerDelegatorDto delegatorDto)
-        {
-            try
-            {
-                Guid referenceId = Guid.Empty;
-                _jwtReader.GetReferenceId(ref referenceId);
-
-                var sourceCitizen = (await _repository.GetQueryable<Citizen, Guid>()).FirstOrDefault(x => x.Id == referenceId);
-
-                if (sourceCitizen is null)
-                    return new BaseResponse() { IsDone = false, Message = "المستخدم غير موجود" };
-
-                var lawyerCitizen = (await _repository.GetQueryable<Citizen, Guid>()).FirstOrDefault(x => x.IdentityNumber == delegatorDto.IdentityNumber);
-
-                if (lawyerCitizen is null)
-                {
-                    
-                    CultureInfo provider = new CultureInfo("en-US");
-                    CultureInfo.CurrentCulture = provider;
-
-                    Citizen newLawyerCitizen = new Citizen()
-                    {
-                        Id = Guid.NewGuid(),
-                        FullName = delegatorDto.FullName,
-                        IdentityNumber = delegatorDto.IdentityNumber,
-                        IsDraftAccount = true,
-                        Code = await GenerateCitizenCode(),
-                        IsLawyer = true,
-                        LawyerLicenseNumber = delegatorDto.LawyerLicenseNumber,
-                        Mobile = delegatorDto.MobileNumber
-                    };
-
-                    var response = await _repository.AddAsync<Citizen, Guid>(newLawyerCitizen);
-                    if (!response.IsDone) return new BaseResponse() { IsDone = false, Message = "خطأ في الاضافة" };
-
-                    delegatorDto.DelegatorCitizenId = newLawyerCitizen.Id;
-                }
-                else
-                {
-                    delegatorDto.DelegatorCitizenId = lawyerCitizen.Id;
-                }
-
-                var updatedCitizen = _mapper.Map<Delegator>(delegatorDto);
-                updatedCitizen.CitizenId = referenceId;
-                updatedCitizen.IsActive = true;
-                await _repository.AddAsync<Delegator, Guid>(updatedCitizen);
-                var saveResponse = await _repository.SaveChangesAsync();
-                if (!saveResponse.IsDone) return saveResponse;
-
-
-                return new BaseResponse() { IsDone = true, Message = "تم الاضافة بنجاح" };
-            }
-            catch (Exception ex)
-            {
-                return new BaseResponse() { IsDone = false, Message = "خطأ داخلي" };
-
-            }
         }
     }
 }

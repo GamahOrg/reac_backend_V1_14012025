@@ -14,10 +14,5 @@
         Defendant = 5,
         ///<summary>مقدم الطلب</summary>
         Applicant = 6,
-        ///<summary>محامي</summary>
-        Lawyer = 7,
-        ///<summary>وكيل</summary>
-        Agent = 8,
-
     }
 }

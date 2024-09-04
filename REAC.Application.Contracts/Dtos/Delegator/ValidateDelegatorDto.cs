@@ -11,10 +11,4 @@ namespace REAC.Application.Contracts.Dtos.Delegator
         public int DelegateNumber { get; set; }
         public string IdentityNumber { get; set; }
     }
-    
-    public class ValidateLawyerDelegatorDto
-    {
-        public string LawyerLicenseNumber { get; set; }
-        public string IdentityNumber { get; set; }
-    }
 }

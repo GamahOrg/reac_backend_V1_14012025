@@ -55,7 +55,7 @@ namespace REAC.Application.AppServices
             catch (Exception ex) { return new BaseResponse() { IsDone = false, Message = "خطأ داخلي" }; }
         }
         public async Task<BaseResponse> GetAllFacilitiesDropdown()
-       {
+        {
             try
             {
                 Guid referenceId = Guid.Empty;
@@ -155,14 +155,28 @@ namespace REAC.Application.AppServices
                 if (string.IsNullOrWhiteSpace(crNumber))
                     return new BaseResponse() { IsDone = false, Message = "رقم السجل التجاري غير موجود" };
 
+                var isExist = (await _repository.GetQueryable<Facility, Guid>()).Any(x => x.CommercialRegisterNumber == crNumber || x.Facility700Number == crNumber);
+                if (isExist)
+                    return new BaseResponse() { IsDone = false, Message = "رقم السجل التجاري موجود مسبقا" };
 
+                var crInformationResult = await _mCService.GetCRInformationByCRNumber(crNumber);
+
+                if (crInformationResult.Data == null || !crInformationResult.IsDone || crInformationResult.Data.Data is null
+                    || crInformationResult.Data.Error is not null || crInformationResult.Data.UnauthorizedError is not null)
+                    return new BaseResponse() { IsDone = false, Message = "المنشأة غير موجوده" };
+
+                if (crInformationResult.Data.Data.CRStatus != CRStatusType.Active.ToString())
+                    return new BaseResponse() { IsDone = false, Message = "رقم السجل التجاري غير فعال" };
+
+                if (crInformationResult.Data.Data.CRExpiryDate < DateTime.Now)
+                    return new BaseResponse() { IsDone = false, Message = "رقم السجل التجاري منتهي" };
 
                 // Get CR Owners
                 var crOwnersnresult = await _mCService.GetCRInformationByCROwners(crNumber);
 
                 if (crOwnersnresult.Data == null || !crOwnersnresult.IsDone || crOwnersnresult.Data.Data is null
                     || crOwnersnresult.Data.Error is not null || crOwnersnresult.Data.UnauthorizedError is not null)
-                    return new BaseResponse() { IsDone = false, Message = "البيانات المدخله غير صحيحه" };
+                    return new BaseResponse() { IsDone = false, Message = "هذا المستخدم ليس من بين أصحاب السجل التجاري" };
 
                 Guid referenceId = Guid.Empty;
                 if (citizenId.Value != Guid.Empty)
@@ -175,28 +189,7 @@ namespace REAC.Application.AppServices
 
                 // Check if User is an owner
                 if (!crOwnersnresult.Data.Data.Contains(citizen.IdentityNumber))
-                    return new BaseResponse() { IsDone = false, Message = "البيانات المدخله غير صحيحه" };
-
-
-
-                var crInformationResult = await _mCService.GetCRInformationByCRNumber(crNumber);
-
-                if (crInformationResult.Data == null || !crInformationResult.IsDone || crInformationResult.Data.Data is null
-                    || crInformationResult.Data.Error is not null || crInformationResult.Data.UnauthorizedError is not null)
-                    return new BaseResponse() { IsDone = false, Message = "البيانات المدخله غير صحيحه" };
-
-                if (crInformationResult.Data.Data.CRStatus != CRStatusType.Active.ToString())
-                    return new BaseResponse() { IsDone = false, Message = "رقم السجل التجاري غير فعال" };
-
-                if (crInformationResult.Data.Data.CRExpiryDate < DateTime.Now)
-                    return new BaseResponse() { IsDone = false, Message = "رقم السجل التجاري منتهي" };
-
-
-
-
-                var isExist = (await _repository.GetQueryable<Facility, Guid>()).Any(x => x.CommercialRegisterNumber == crNumber || x.Facility700Number == crNumber);
-                if (isExist)
-                    return new BaseResponse() { IsDone = false, Message = "رقم السجل التجاري موجود مسبقا" };
+                    return new BaseResponse() { IsDone = false, Message = "هذا المستخدم ليس من بين أصحاب السجل التجاري" };
 
 
                 // Add new Facility
