@@ -96,6 +96,12 @@
 
         public const string Citizen_AddBankAccount = "Citizen.AddBankAccount";
         public const string Citizen_EditBankAccount = "Citizen.EditBankAccount";
+        public const string Citizen_AddAgent = "Citizen.AddAgent";
+        public const string Delegator_AddAgent = "Delegator.AddAgent";
+        public const string Citizen_AddLawyer = "Citizen.AddLawyer";
+        public const string Delegator_AddLawyer = "Delegator.AddLawyer";
+        public const string Citizen_DeleteLawyer = "Citizen.DeleteLawyer";
+        public const string Delegator_DeleteLawyer = "Delegator.DeleteLawyer";
         public const string Reformer_JoiningRequest = "Reformer.JoiningRequest";
         public const string Arbitrator_JoiningRequest = "Arbitrator.JoiningRequest";
         public const string Reformer_AcceptJoiningRequest = "Reformer.AcceptJoiningRequest";

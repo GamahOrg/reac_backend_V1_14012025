@@ -76,6 +76,31 @@ namespace REAC.EntityFrameworkCore.Seed
                 {
                     Id = RequestType.JoinRequestAsArbitratorRequest,
                     RequestTypeName = "طلب الإنضمام كمحكم",
+                },
+                new SysRequestType
+                {
+                    Id = RequestType.ArbitratorNominationList,
+                    RequestTypeName = "قائمة ترشيح هيئة التحكيم",
+                },
+                new SysRequestType
+                {
+                    Id = RequestType.ArbitratorChairmanNominationList,
+                    RequestTypeName = "قائمة ترشيح رئيس هيئة التحكيم",
+                },
+                new SysRequestType
+                {
+                    Id = RequestType.AddAgent,
+                    RequestTypeName = "اضافة وكيل",
+                },
+                new SysRequestType
+                {
+                    Id = RequestType.AddLawyer,
+                    RequestTypeName = "اضافة محامي",
+                },
+                new SysRequestType
+                {
+                    Id = RequestType.DeleteLawyer,
+                    RequestTypeName = "حذف محامي",
                 }
 
 

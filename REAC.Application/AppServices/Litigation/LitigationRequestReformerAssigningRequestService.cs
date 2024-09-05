@@ -121,7 +121,7 @@ namespace REAC.Application.AppServices.Litigation
                                 Message = msg
                             });
 
-                            var notificationResultUpdatedArbitrator = _notificationService.SendNotifications(
+                           await _notificationService.SendNotifications(
                                 new SendEmailDto()
                                 {
                                     To = new List<string>() { citizenInfo.Email, deptAdminInfoReconciliation.Data.Email },
@@ -263,7 +263,7 @@ namespace REAC.Application.AppServices.Litigation
                                                 assignApplicationNotification
                                                 );
 
-                                            var notificationResultReformerReAssign = _notificationService.SendNotifications(
+                                            await _notificationService.SendNotifications(
                                                 new SendEmailDto()
                                                 {
                                                     To = new List<string>() { citizenInfo.Email, deptAdminInfoReconciliation.Data.Email },
@@ -321,7 +321,7 @@ namespace REAC.Application.AppServices.Litigation
                                 Message = msg
                             });
 
-                            var notificationResult = _notificationService.SendNotifications(
+                            await _notificationService.SendNotifications(
                                 new SendEmailDto()
                                 {
                                     To = new List<string>() { citizenInfo.Email, deptAdminInfoReconciliation.Data.Email },

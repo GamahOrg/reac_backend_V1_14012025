@@ -250,16 +250,21 @@ namespace REAC.Application.Contracts
             CreateMap<CitizenRequest, CitizenRequestCreateUpdateDto>().ReverseMap();
 
             CreateMap<DelegationRequest, DelegationRequestCreateUpdateDto>().ReverseMap();
+            CreateMap<Delegator, LawyerDelegatorDto>().ReverseMap();
+
             CreateMap<Facility, FacilityCreateUpdateDto>().ReverseMap();
             CreateMap<Facility, FacilityShortDto>().ReverseMap();
             CreateMap<Facility, GetAllFacilitiesResponseDto>().ReverseMap();
             CreateMap<Facility, GetFacilityByIdResponse>().ReverseMap();
             CreateMap<Facility, EditFacilityRequestDto>().ReverseMap();
+            CreateMap<Facility, GetAllFacilitiesForDropdownDto>().ReverseMap();
 
 
             CreateMap<Delegator, DelegatorFullDataDto>().ReverseMap();
             CreateMap<Delegator, DelegatorShortDataDto>()
                       .ForMember(dest => dest.DelegatorName, opt => opt.MapFrom(src => src.DelegatorCitizen.FullName))
+                      .ForMember(dest => dest.LicenseNumber, opt => opt.MapFrom(src => src.DelegatorCitizen.LawyerLicenseNumber))
+                      .ForMember(dest => dest.IdentityNumber, opt => opt.MapFrom(src => src.DelegatorCitizen.IdentityNumber))
                     .ForMember(dest => dest.FacilityName, opt => opt.MapFrom(src => src.Facility.ArabicFacilityName))
                     .ForMember(dest => dest.DelegationRelationshipTypeName, opt => opt.MapFrom(src => src.SysDelegationRelationshipType.DelegationRelationshipTypeName))
 

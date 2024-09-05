@@ -49,5 +49,17 @@
         // قائمة ترشيح رئيس هيئة التحكيم
         // LitigationRequest Id
         ArbitratorChairmanNominationList = 15,
+        
+        // اضافة وكيل
+        // Agent
+        AddAgent = 16,
+
+        //  اضافة محامي 
+        // Lawyer
+        AddLawyer = 17,
+        
+        //  حذف محامي 
+        // Lawyer
+        DeleteLawyer = 18,
     }
 }

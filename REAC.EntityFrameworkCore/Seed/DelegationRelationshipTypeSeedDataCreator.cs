@@ -49,26 +49,27 @@ namespace Ticketing.EntityFrameworkCore.SeedData
                             }
                         }
 
-                    },
-                    new SysDelegationRelationshipType
-                    {
-                        Id = DelegationRelationshipType.CompanyRepresentative,
-                        DelegationRelationshipTypeName="ممثل عن شركة",
-                        Translations=new List<SysDelegationRelationshipTypeTranslation>
-                        {
-                            new SysDelegationRelationshipTypeTranslation
-                            {
-                                DelegationRelationshipTypeName="ممثل عن شركة",
-                                LanguageCode=Constants.EnglishLanguage
-                            },
-                             new SysDelegationRelationshipTypeTranslation
-                            {
-                                DelegationRelationshipTypeName="Company Representative",
-                                LanguageCode=Constants.ArabicLanguage
-                            }
-                        }
-
                     }
+                    //,
+                    //new SysDelegationRelationshipType
+                    //{
+                    //    Id = DelegationRelationshipType.CompanyRepresentative,
+                    //    DelegationRelationshipTypeName="ممثل عن شركة",
+                    //    Translations=new List<SysDelegationRelationshipTypeTranslation>
+                    //    {
+                    //        new SysDelegationRelationshipTypeTranslation
+                    //        {
+                    //            DelegationRelationshipTypeName="ممثل عن شركة",
+                    //            LanguageCode=Constants.EnglishLanguage
+                    //        },
+                    //         new SysDelegationRelationshipTypeTranslation
+                    //        {
+                    //            DelegationRelationshipTypeName="Company Representative",
+                    //            LanguageCode=Constants.ArabicLanguage
+                    //        }
+                    //    }
+
+                    //}
                 });
             context.SaveChanges();
         }

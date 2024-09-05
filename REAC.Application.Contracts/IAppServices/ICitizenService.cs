@@ -1,5 +1,6 @@
 ﻿using Core.Shared.Responses;
 using REAC.Application.Contracts.Dtos.Citizen;
+using REAC.Domain.Shared.Enum;
 using REAC.EntityFrameworkCore.Entities;
 
 namespace REAC.Application.Contracts.IAppServices
@@ -11,9 +12,16 @@ namespace REAC.Application.Contracts.IAppServices
         Task<(Guid, bool)> CheckCitizenExist(string identityNumber);
         Task<BaseResponse> GetCitizenBasicData();
         Task<BaseResponse> UpdateCitizenBasicData(SaveCitizenBasicDataProfileDto citizenBasicDataProfileDto);
-        Task<BaseResponse> GetDelegatedPersons();
-        Task<BaseResponse> GetDelegatedFacilities();
+        Task<BaseResponse> GetDelegatedPersonsLawyer();
+        Task<BaseResponse> GetDelegatedPersonsAgent();
+        Task<BaseResponse> GetDelegatedFacilitiesLawyer();
+        Task<BaseResponse> GetDelegatedFacilitiesAgent();
 
+
+        Task<BaseResponse> GetFacilities(RelationShipType relationShipId);
+        Task<BaseResponse> GetPersons(RelationShipType relationShipId);
+
+        Task<BaseResponse> GetOwnerFacilities();
         Task<BaseResponse> GetReformersLookup(Guid? citizenId, Guid requestId);
         Task<BaseResponse> GetArbitratorsLookup(Guid? citizenId, Guid requestId);
         Task<BaseResponse> GetArbitratorsFullLookup(Guid? citizenId, Guid requestId);

@@ -27,4 +27,22 @@ namespace REAC.Application.Contracts.Dtos.Delegator
         public bool IsActive { get; set; }
 
     }
+
+    public class LawyerDelegatorDto : BaseEntity<Guid>
+    {
+        public string IdentityNumber { get; set; }
+        public string LawyerLicenseNumber { get; set; }
+        public string? FullName { get; set; }
+        public string? MobileNumber { get; set; }
+        public string? DelegateNumber { get; set; }
+
+        public DelegationRelationshipType? DelegationRelationshipTypeId { get; set; }
+
+        public Guid? DelegatorCitizenId { get; set; }
+
+        public Guid? DelegationFileId { get; set; }
+
+        public bool IsActive { get; set; }
+
+    }
 }

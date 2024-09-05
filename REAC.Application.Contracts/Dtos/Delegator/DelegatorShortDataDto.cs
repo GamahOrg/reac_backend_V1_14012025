@@ -14,6 +14,8 @@ namespace REAC.Application.Contracts.Dtos.Delegator
         public virtual string DelegationRelationshipTypeName { get; set; } = null!;
 
         public virtual string FacilityName { get; set; }
+        public virtual string? LicenseNumber { get; set; }
+        public virtual string? IdentityNumber { get; set; }
 
     }
 }

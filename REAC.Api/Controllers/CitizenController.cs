@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using REAC.Application.Contracts.Dtos.Citizen;
 using REAC.Application.Contracts.IAppServices;
 using REAC.Domain.Shared.Constants;
+using REAC.Domain.Shared.Enum;
 
 namespace REAC.Api.Controllers.Litigation;
 
@@ -114,12 +115,26 @@ public class CitizenController : ControllerBase
 
         return BadRequest();
     }
-    [HttpGet(nameof(GetDelegatedPersons))]
-    public async Task<ActionResult> GetDelegatedPersons()
+
+    // محامى عن شخص
+    [HttpGet(nameof(GetDelegatedPersonsLawyer))]
+    public async Task<ActionResult> GetDelegatedPersonsLawyer()
     {
         if (ModelState.IsValid)
         {
-            var returnValue = await _citizenService.GetDelegatedPersons();
+            var returnValue = await _citizenService.GetDelegatedPersonsLawyer();
+            return Ok(returnValue);
+        }
+
+        return BadRequest();
+    }
+    // ممثل عن شخص
+    [HttpGet(nameof(GetDelegatedPersonsAgent))]
+    public async Task<ActionResult> GetDelegatedPersonsAgent()
+    {
+        if (ModelState.IsValid)
+        {
+            var returnValue = await _citizenService.GetDelegatedPersonsAgent();
             return Ok(returnValue);
         }
 
@@ -203,12 +218,60 @@ public class CitizenController : ControllerBase
         return BadRequest();
     }
 
-    [HttpGet(nameof(GetDelegatedFacilities))]
-    public async Task<ActionResult> GetDelegatedFacilities()
+    // محامى عن شركة
+    [HttpGet(nameof(GetDelegatedFacilitiesLawyer))]
+    public async Task<ActionResult> GetDelegatedFacilitiesLawyer()
     {
         if (ModelState.IsValid)
         {
-            var returnValue = await _citizenService.GetDelegatedFacilities();
+            var returnValue = await _citizenService.GetDelegatedFacilitiesLawyer();
+            return Ok(returnValue);
+        }
+        return BadRequest();
+    }
+
+    [HttpGet(nameof(GetFacilities))]
+    public async Task<ActionResult> GetFacilities(RelationShipType relationShipId)
+    {
+        if (ModelState.IsValid)
+        {
+            var returnValue = await _citizenService.GetFacilities(relationShipId);
+            return Ok(returnValue);
+        }
+
+        return BadRequest();
+    }
+    [HttpGet(nameof(GetPersons))]
+    public async Task<ActionResult> GetPersons(RelationShipType relationShipId)
+    {
+        if (ModelState.IsValid)
+        {
+            var returnValue = await _citizenService.GetPersons(relationShipId);
+            return Ok(returnValue);
+        }
+
+        return BadRequest();
+    }
+    // وكيل عن شركة
+    [HttpGet(nameof(GetDelegatedFacilitiesAgent))]
+    public async Task<ActionResult> GetDelegatedFacilitiesAgent()
+    {
+        if (ModelState.IsValid)
+        {
+            var returnValue = await _citizenService.GetDelegatedFacilitiesAgent();
+            return Ok(returnValue);
+        }
+
+        return BadRequest();
+    }
+
+    // ممثل عن شركة
+    [HttpGet(nameof(GetOwnerFacilities))]
+    public async Task<ActionResult> GetOwnerFacilities()
+    {
+        if (ModelState.IsValid)
+        {
+            var returnValue = await _citizenService.GetOwnerFacilities();
             return Ok(returnValue);
         }
 

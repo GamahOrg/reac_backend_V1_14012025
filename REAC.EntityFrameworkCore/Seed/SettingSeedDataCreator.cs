@@ -235,6 +235,36 @@ namespace Ticketing.EntityFrameworkCore.SeedData
                     },new SysSetting
                     {
                         Id = Guid.NewGuid(),
+                        Key = "Citizen.AddAgent",
+                        Value = "تم اضافة وكيل جديد بأسم  {CitizenName} ",
+                    },new SysSetting
+                    {
+                        Id = Guid.NewGuid(),
+                        Key = "Delegator.AddAgent",
+                        Value = "تم اضافتك كوكيل للمستخدم {CitizenName} ",
+                    },new SysSetting
+                    {
+                        Id = Guid.NewGuid(),
+                        Key = "Citizen.AddLawyer",
+                        Value = "تم اضافة محامي جديد بأسم  {CitizenName} ",
+                    },new SysSetting
+                    {
+                        Id = Guid.NewGuid(),
+                        Key = "Delegator.AddLawyer",
+                        Value = "تم اضافتك كمحامي للمستخدم {CitizenName} ",
+                    },new SysSetting
+                    {
+                        Id = Guid.NewGuid(),
+                        Key = "Citizen.DeleteLAwyer",
+                        Value = "تم حذف المحامي بأسم  {CitizenName} ",
+                    },new SysSetting
+                    {
+                        Id = Guid.NewGuid(),
+                        Key = "Delegator.DeleteLawyer",
+                        Value = "تم حذفك كمحامي للمستخدم {CitizenName} ",
+                    },new SysSetting
+                    {
+                        Id = Guid.NewGuid(),
                         Key = "Citizen.EditBankAccount",
                         Value = "تم تعديل بيانات الحساب البنكي الخاص ب {CitizenName} ",
                     },new SysSetting

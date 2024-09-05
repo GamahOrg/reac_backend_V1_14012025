@@ -11,6 +11,6 @@ namespace REAC.Application.Contracts.Dtos.Facility
     {
         public string ArabicFacilityName { get; set; } = null!;
 
-        public string EnglishFacilityName { get; set; } = null!;
+        public string? EnglishFacilityName { get; set; } = null!;
     }
 }

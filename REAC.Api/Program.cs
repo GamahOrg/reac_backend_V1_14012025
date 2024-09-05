@@ -10,6 +10,7 @@ using Core.Security.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
@@ -163,6 +164,7 @@ builder.Services.AddSignalR();
 
 var app = builder.Build();
 
+
 // Configure the HTTP request pipeline.
 //if (app.Environment.IsDevelopment())
 //{
@@ -191,6 +193,18 @@ app.UseSwaggerUI(c =>
 
 
 app.UseHttpsRedirection();
+
+app.UseStaticFiles(new StaticFileOptions()
+{
+    ServeUnknownFileTypes = true,
+    FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), @"reac")),
+    RequestPath = new PathString("/reac")
+});
+app.UseStaticFiles(new StaticFileOptions()
+{
+    FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), @"Resources")),
+    RequestPath = new PathString("/Resources")
+});
 
 app.UseAuthentication();
 app.UseAuthorization();

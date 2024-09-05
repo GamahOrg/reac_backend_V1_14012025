@@ -48,7 +48,7 @@ namespace Ticketing.EntityFrameworkCore.SeedData
                                  AllowReAssign= true,
                                  IsAdmin = true,
                                  Mobile = "0558599225",
-                                 UserId = new Guid("66a449c4-d1e5-4327-bf94-da91122ddc15"),
+                                 UserId = new Guid("17840AB6-B134-4C5F-9273-5C97345010A3"),
                                  Translations = new List<SysEmployeeTranslation>()
                                  {
                                      new SysEmployeeTranslation()
@@ -76,7 +76,7 @@ namespace Ticketing.EntityFrameworkCore.SeedData
                                  AllowReAssign= true,
                                  IsAdmin = false,
                                  Mobile = "0558800225",
-                                 UserId = new Guid("17840ab6-b134-4c5f-9273-5c97345010a3"),
+                                 UserId = new Guid("E4C57D8C-86DB-49E6-8F7C-A9948A6F860E"),
                                  Translations = new List<SysEmployeeTranslation>()
                                  {
                                      new SysEmployeeTranslation()
