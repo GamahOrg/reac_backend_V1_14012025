@@ -113,21 +113,40 @@ namespace Bpf.Application.ModuleServices
                                         default:
                                             if (z.EmployeeId.HasValue)
                                             {
-                                                if (z.EmployeeId == referenceId)
+                                                if (employee.DepartmentId == z.DepartmentId & employee.IsAdmin)
                                                 {
                                                     WorkFlowStepEventForActorShortDtos.WorkFlowStepEventShortDtos.Add(new WorkFlowStepEventShortDto()
                                                     {
                                                         Id = y.Id,
                                                         EventName = (y.Translations.FirstOrDefault(
-                                                        x => x.LanguageCode == CultureInfo.CurrentUICulture.Name) == null || string.IsNullOrEmpty(y.Translations.FirstOrDefault(
-                                                        x => x.LanguageCode == CultureInfo.CurrentUICulture.Name).EventName)) ? y.EventName : y.Translations.FirstOrDefault(
-                                                        x => x.LanguageCode == CultureInfo.CurrentUICulture.Name).EventName,
+                                                            x => x.LanguageCode == CultureInfo.CurrentUICulture.Name) == null || string.IsNullOrEmpty(y.Translations.FirstOrDefault(
+                                                            x => x.LanguageCode == CultureInfo.CurrentUICulture.Name).EventName)) ? y.EventName : y.Translations.FirstOrDefault(
+                                                            x => x.LanguageCode == CultureInfo.CurrentUICulture.Name).EventName,
                                                         AllowFileUpload = y.AllowFileUpload,
                                                         AllowNotes = y.AllowNotes,
                                                         ProcessingLogId = x.Id,
                                                         CustomActionType = y.CustomActionType
                                                     });
                                                     mainBreak = true;
+                                                }
+                                                else
+                                                {
+                                                    if (z.EmployeeId == referenceId)
+                                                    {
+                                                        WorkFlowStepEventForActorShortDtos.WorkFlowStepEventShortDtos.Add(new WorkFlowStepEventShortDto()
+                                                        {
+                                                            Id = y.Id,
+                                                            EventName = (y.Translations.FirstOrDefault(
+                                                            x => x.LanguageCode == CultureInfo.CurrentUICulture.Name) == null || string.IsNullOrEmpty(y.Translations.FirstOrDefault(
+                                                            x => x.LanguageCode == CultureInfo.CurrentUICulture.Name).EventName)) ? y.EventName : y.Translations.FirstOrDefault(
+                                                            x => x.LanguageCode == CultureInfo.CurrentUICulture.Name).EventName,
+                                                            AllowFileUpload = y.AllowFileUpload,
+                                                            AllowNotes = y.AllowNotes,
+                                                            ProcessingLogId = x.Id,
+                                                            CustomActionType = y.CustomActionType
+                                                        });
+                                                        mainBreak = true;
+                                                    }
                                                     break;
                                                 }
 

@@ -841,7 +841,7 @@ namespace REAC.Application.ModuleServices
                                   arbitrationAdmin.Data?.Mobile
                                 };
 
-                            _notificationService.SendNotifications(new Contracts.Dtos.Notification.SendEmailDto()
+                           await _notificationService.SendNotifications(new Contracts.Dtos.Notification.SendEmailDto()
                             {
                                 To = emails,
                                 Subject = "الإنتهاء من تحديد عدد المحكمين",
@@ -895,7 +895,7 @@ namespace REAC.Application.ModuleServices
                                   arbitrationAdmin.Data?.Mobile
                                 };
 
-                            _notificationService.SendNotifications(new Contracts.Dtos.Notification.SendEmailDto()
+                           await _notificationService.SendNotifications(new Contracts.Dtos.Notification.SendEmailDto()
                             {
                                 To = emails,
                                 Subject = "الإنتهاء من تحديد عدد المحكمين",

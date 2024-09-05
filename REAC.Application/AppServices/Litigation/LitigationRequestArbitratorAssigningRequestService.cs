@@ -173,7 +173,7 @@ namespace REAC.Application.AppServices.Litigation
                                 Message = msg
                             });
 
-                            var notificationResultUpdatedArbitrator = _notificationService.SendNotifications(
+                             await _notificationService.SendNotifications(
                                 new SendEmailDto()
                                 {
                                     To = new List<string>() { citizenInfo.Email, deptAdminInfoArbitration.Data.Email },
@@ -305,7 +305,7 @@ namespace REAC.Application.AppServices.Litigation
                                 Message = msg
                             });
 
-                            var notificationResultUpdatedArbitrator = _notificationService.SendNotifications(
+                             await _notificationService.SendNotifications(
                                 new SendEmailDto()
                                 {
                                     To = new List<string>() { citizenInfo.Email, deptAdminInfoArbitration.Data.Email },
@@ -384,7 +384,7 @@ namespace REAC.Application.AppServices.Litigation
                          .Include(x => x.Contract.SecondPartyCitizen)
                          .Include(x => x.Contract.LitigationRequestContractType)
                          .Where(x => x.LitigationRequestArbitratorAssigningRequests
-                         .Where(t => t.CitizenId == referenceId).Count() > 0).OrderByDescending(x => x.CreatedOn).ToList();
+                         .Where(t => t.CitizenId == referenceId).Count() > 0).OrderByDescending(x => x.CreatedOn).AsNoTracking().ToList();
 
             List<CustomLitigationRequestMircoArbitratorDto> litigationRequestMircoDtos = new List<CustomLitigationRequestMircoArbitratorDto>();
             if (litigationRequests != null)
@@ -550,7 +550,7 @@ namespace REAC.Application.AppServices.Litigation
                          .Include(x => x.Contract.SecondPartyCitizen)
                          .Include(x => x.Contract.LitigationRequestContractType)
                          .Where(x => x.LitigationRequestArbitratorAssigningRequests
-                         .Where(t => t.Id == LitigationRequestArbitratorAssigningRequestId).Count() > 0).OrderByDescending(x => x.CreatedOn).ToList().FirstOrDefault();
+                         .Where(t => t.Id == LitigationRequestArbitratorAssigningRequestId).Count() > 0).OrderByDescending(x => x.CreatedOn).AsNoTracking().ToList().FirstOrDefault();
 
             if (litigationRequest != null)
             {

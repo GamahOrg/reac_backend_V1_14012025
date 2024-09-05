@@ -2,8 +2,6 @@
 using Core.GenericRepository.BaseRepository;
 using Core.Shared.Responses;
 using Microsoft.EntityFrameworkCore;
-using REAC.Application.AppServices.Notification;
-using REAC.Application.Contracts.Dtos.Litigation.CreateUpdate.Litigation;
 using REAC.Application.Contracts.Dtos.Notification;
 using REAC.Application.Contracts.IAppServices.Notification;
 using REAC.Application.Contracts.IAppServices.System;
@@ -80,11 +78,11 @@ namespace REAC.Application.AppServices.SLA
                                     // يرجى سرعة اتمام عملية الصلح على الدعوى رقم ......
                                     try
                                     {
-                                       var msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.SLA_FinishReconciliation).Result.Data?.Value;
+                                        var msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.SLA_FinishReconciliation).Result.Data?.Value;
                                         msg = msg?.Replace("{LitigationCode}", litigationRequest?.RequestCode);
-                                           
-                                        SendNotificationMS(msg,litigationRequest, "سرعة اتمام عملية الصلح", NotificationActorType.Reformer,RequestType.ReformerTaskrequests,
-                                           false,true);
+
+                                        await SendNotificationMS(msg, litigationRequest, "سرعة اتمام عملية الصلح", NotificationActorType.Reformer, RequestType.ReformerTaskrequests,
+                                           false, true);
                                     }
                                     catch (Exception e)
                                     {
@@ -109,8 +107,8 @@ namespace REAC.Application.AppServices.SLA
                                     var msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.SLA_FinishReconciliation_WarnReconciliationAdmin).Result.Data?.Value;
                                     msg = msg?.Replace("{LitigationCode}", litigationRequest?.RequestCode);
 
-                                    SendNotificationMS(msg, litigationRequest, "المصلح تجاوز الفترة المسموح بها", NotificationActorType.Employee, RequestType.LitigationRequest,
-                                       false, false,true);
+                                    await SendNotificationMS(msg, litigationRequest, "المصلح تجاوز الفترة المسموح بها", NotificationActorType.Employee, RequestType.LitigationRequest,
+                                       false, false, true);
                                 }
                                 catch (Exception e)
                                 {
@@ -173,8 +171,8 @@ namespace REAC.Application.AppServices.SLA
                                             var msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.SLA_ReconciliationReport_PleaseReply).Result.Data?.Value;
                                             msg = msg?.Replace("{LitigationCode}", litigationRequest?.RequestCode);
 
-                                            SendNotificationMS(msg, litigationRequest, " سرعة الرد على محضر الصلح", NotificationActorType.Plaintiff, RequestType.ReformationReport,
-                                               true, false, false,true,false,true);//المدعى  سواء فرد او شركة
+                                            await SendNotificationMS(msg, litigationRequest, " سرعة الرد على محضر الصلح", NotificationActorType.Plaintiff, RequestType.ReformationReport,
+                                               true, false, false, true, false, true);//المدعى  سواء فرد او شركة
                                         }
                                         catch (Exception e)
                                         {
@@ -191,8 +189,8 @@ namespace REAC.Application.AppServices.SLA
                                             var msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.SLA_ReconciliationReport_PleaseReply).Result.Data?.Value;
                                             msg = msg?.Replace("{LitigationCode}", litigationRequest?.RequestCode);
 
-                                            SendNotificationMS(msg, litigationRequest, " سرعة الرد على محضر الصلح", NotificationActorType.Defendant, RequestType.ReformationReport,
-                                               false, false, false, false, true, false,true);//المدعى عليه سواء فرد او شركة
+                                            await SendNotificationMS(msg, litigationRequest, " سرعة الرد على محضر الصلح", NotificationActorType.Defendant, RequestType.ReformationReport,
+                                               false, false, false, false, true, false, true);//المدعى عليه سواء فرد او شركة
                                         }
                                         catch (Exception e)
                                         {
@@ -218,7 +216,7 @@ namespace REAC.Application.AppServices.SLA
                                     var msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.SLA_ReconciliationReport_WarnReformer).Result.Data?.Value;
                                     msg = msg?.Replace("{LitigationCode}", litigationRequest?.RequestCode);
 
-                                    SendNotificationMS(msg, litigationRequest, "الرد على محضر الصلح", NotificationActorType.Reformer, RequestType.ReformationReport,
+                                    await SendNotificationMS(msg, litigationRequest, "الرد على محضر الصلح", NotificationActorType.Reformer, RequestType.ReformationReport,
                                        false, true);
                                 }
                                 catch (Exception e)
@@ -274,7 +272,7 @@ namespace REAC.Application.AppServices.SLA
                                         var msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.SLA_ReconciliationTask_PleaseReply).Result.Data?.Value;
                                         msg = msg?.Replace("{LitigationCode}", litigationRequestReformerAssigningRequest.LitigationRequest?.RequestCode);
 
-                                        SendNotificationMS(msg, litigationRequestReformerAssigningRequest.LitigationRequest, "سرعة الرد على طلب مهمة الصلح", NotificationActorType.Reformer, RequestType.ReformerTaskrequests,
+                                        await SendNotificationMS(msg, litigationRequestReformerAssigningRequest.LitigationRequest, "سرعة الرد على طلب مهمة الصلح", NotificationActorType.Reformer, RequestType.ReformerTaskrequests,
                                            false, true);
                                     }
                                     catch (Exception e)
@@ -335,13 +333,13 @@ namespace REAC.Application.AppServices.SLA
                                             Message = msg
                                         }
                                     };
-                                    _notificationService.SendNotifications(objEmail, objSms, lstNotification);
+                                    await _notificationService.SendNotifications(objEmail, objSms, lstNotification);
                                 }
                                 catch (Exception e)
                                 {
 
                                 }
-                               
+
 
 
                                 await _repository.AddAsync<WorkFlowLog, Guid>(new WorkFlowLog()
@@ -419,7 +417,7 @@ namespace REAC.Application.AppServices.SLA
                                                             Message = msg
                                                         }
                                                     };
-                                                    _notificationService.SendNotifications(objEmail, objSms, lstNotification);
+                                                    await _notificationService.SendNotifications(objEmail, objSms, lstNotification);
                                                 }
                                                 catch (Exception e)
                                                 {
@@ -434,7 +432,7 @@ namespace REAC.Application.AppServices.SLA
                                                     var msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.SLA_ReconciliationTask_ReAssigned).Result.Data?.Value;
                                                     msg = msg?.Replace("{LitigationCode}", litigationRequestReformerAssigningRequest.LitigationRequest?.RequestCode);
 
-                                                    SendNotificationMS(msg, litigationRequestReformerAssigningRequest.LitigationRequest, "الرد على مهمة الصلح للمصلح", NotificationActorType.Employee, RequestType.LitigationRequest,
+                                                    await SendNotificationMS(msg, litigationRequestReformerAssigningRequest.LitigationRequest, "الرد على مهمة الصلح للمصلح", NotificationActorType.Employee, RequestType.LitigationRequest,
                                                        false, false, true);
                                                 }
                                                 catch (Exception e)
@@ -467,7 +465,7 @@ namespace REAC.Application.AppServices.SLA
             return new BaseResponse() { IsDone = true };
         }
 
-        private async Task SendNotificationMS(string msg, LitigationRequest litigationRequest,string subject, NotificationActorType notificationActorType, RequestType requestType, bool notifyApplicant = false, bool notifyReformer = false, bool notifyDeptAdmin = false, bool notifyFirstParty = false, bool notifySecondParty = false, bool notifyFirstPartyFacility = false, bool notifySecondPartyFacility = false)
+        private async Task  SendNotificationMS(string msg, LitigationRequest litigationRequest, string subject, NotificationActorType notificationActorType, RequestType requestType, bool notifyApplicant = false, bool notifyReformer = false, bool notifyDeptAdmin = false, bool notifyFirstParty = false, bool notifySecondParty = false, bool notifyFirstPartyFacility = false, bool notifySecondPartyFacility = false)
         {
             var deptAdminInfoReconciliation = await _employeeService.GetAdminsByDepartmentType(DepartmentType.Reconciliation);
             var objEmail = new SendEmailDto()
@@ -612,7 +610,7 @@ namespace REAC.Application.AppServices.SLA
                 });
             }
 
-            _notificationService.SendNotifications(objEmail, objSms, lstNotification);
+            await _notificationService.SendNotifications(objEmail, objSms, lstNotification);
         }
 
     }

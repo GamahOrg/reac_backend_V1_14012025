@@ -109,7 +109,7 @@ namespace REAC.Application.AppServices.SLA
                                                     Message = msg
                                                 });
 
-                                                var notificationResult = _notificationService.SendNotifications(
+                                                var notificationResult = await _notificationService.SendNotifications(
                                                     new SendEmailDto()
                                                     {
                                                         Body = msg,
@@ -223,7 +223,7 @@ namespace REAC.Application.AppServices.SLA
                                                             Message = msg
                                                         });
 
-                                                        var notificationResult = _notificationService.SendNotifications(
+                                                        var notificationResult = await _notificationService.SendNotifications(
                                                             new SendEmailDto()
                                                             {
                                                                 Body = msg,
@@ -271,7 +271,7 @@ namespace REAC.Application.AppServices.SLA
                                                             Message = msg
                                                         });
 
-                                                        var notificationResult = _notificationService.SendNotifications(
+                                                        var notificationResult = await _notificationService.SendNotifications(
                                                             new SendEmailDto()
                                                             {
                                                                 Body = msg,
@@ -319,7 +319,7 @@ namespace REAC.Application.AppServices.SLA
                                                             Message = msg
                                                         });
 
-                                                        var notificationResult = _notificationService.SendNotifications(
+                                                        var notificationResult = await _notificationService.SendNotifications(
                                                             new SendEmailDto()
                                                             {
                                                                 Body = msg,
@@ -373,7 +373,7 @@ namespace REAC.Application.AppServices.SLA
                                                     Message = msg
                                                 });
 
-                                                var notificationResult = _notificationService.SendNotifications(
+                                                var notificationResult = await _notificationService.SendNotifications(
                                                     new SendEmailDto()
                                                     {
                                                         Body = msg,
@@ -463,7 +463,7 @@ namespace REAC.Application.AppServices.SLA
                                                 }
                                             };
 
-                                            List<string> emails = new List<string>() 
+                                            List<string> emails = new List<string>()
                                             {
                                                 litigationRequest.ApplicantCitizen.Email,
                                             };
@@ -504,9 +504,9 @@ namespace REAC.Application.AppServices.SLA
                                                 emails.Add(litigationRequest.Contract.FirstPartyFacility.Citizen.Email);
                                                 recipients.Add(litigationRequest.Contract.FirstPartyFacility.Citizen.Mobile);
                                             };
-                                            
 
-                                            var notificationResult = _notificationService.SendNotifications(
+
+                                            var notificationResult = await _notificationService.SendNotifications(
                                                 new SendEmailDto()
                                                 {
                                                     Body = msg,
@@ -625,9 +625,9 @@ namespace REAC.Application.AppServices.SLA
                                             emails.Add(litigationRequest.Contract.FirstPartyFacility.Citizen.Email);
                                             recipients.Add(litigationRequest.Contract.FirstPartyFacility.Citizen.Mobile);
                                         };
-                                        
 
-                                        var notificationResult = _notificationService.SendNotifications(
+
+                                        var notificationResult = await _notificationService.SendNotifications(
                                             new SendEmailDto()
                                             {
                                                 Body = msg,
@@ -734,7 +734,7 @@ namespace REAC.Application.AppServices.SLA
                                             };
 
 
-                                            var notificationResult = _notificationService.SendNotifications(
+                                            var notificationResult = await _notificationService.SendNotifications(
                                                 new SendEmailDto()
                                                 {
                                                     Body = msg,
@@ -852,7 +852,7 @@ namespace REAC.Application.AppServices.SLA
                                             };
 
 
-                                            var notificationResult = _notificationService.SendNotifications(
+                                            var notificationResult = await _notificationService.SendNotifications(
                                                 new SendEmailDto()
                                                 {
                                                     Body = msg,
@@ -965,7 +965,7 @@ namespace REAC.Application.AppServices.SLA
                                     };
 
 
-                                    var notificationResult = _notificationService.SendNotifications(
+                                    var notificationResult = await _notificationService.SendNotifications(
                                         new SendEmailDto()
                                         {
                                             Body = msg,

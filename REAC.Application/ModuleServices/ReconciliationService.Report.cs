@@ -98,7 +98,7 @@ namespace REAC.Application.ModuleServices
                     {
                         msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.Reconciliation_Request_Added).Result.Data?.Value;
                         msg = msg.Replace("{LitigationCode}", litigationRequest.RequestCode);
-                        SendNotificationMSWithAllTypes(msg, litigationRequest, "Reconciliation Request Added");
+                        await SendNotificationMSWithAllTypes(msg, litigationRequest, "Reconciliation Request Added");
                     }
                     catch (Exception e)
                     {
@@ -205,7 +205,8 @@ namespace REAC.Application.ModuleServices
             {
                 int LitigationRequestReconciliationReportDecisionPeriod = int.Parse(_sysSettingService.GetBySettingKey(SysSettingKeyConstants.SLA_LitigationRequestReconciliationReportDecisionPeriod).Result.Data?.Value);
                 double totalHours = 0;
-                totalHours += (DateTime.Now - litigationRequest.LitigationRequestReconciliationReports.FirstOrDefault().ReportDate).TotalHours;
+                if (litigationRequest.LitigationRequestReconciliationReports is not null & litigationRequest.LitigationRequestReconciliationReports.Count() > 0)
+                    totalHours += (DateTime.Now - litigationRequest.LitigationRequestReconciliationReports.FirstOrDefault().ReportDate).TotalHours;
                 if (totalHours >= LitigationRequestReconciliationReportDecisionPeriod)
                 {
                     allowDecision = true;
@@ -307,7 +308,8 @@ namespace REAC.Application.ModuleServices
                     {
                         int LitigationRequestReconciliationReportDecisionPeriod = int.Parse(_sysSettingService.GetBySettingKey(SysSettingKeyConstants.SLA_LitigationRequestReconciliationReportDecisionPeriod).Result.Data?.Value);
                         double totalHours = 0;
-                        totalHours += (DateTime.Now - litigationRequest.LitigationRequestReconciliationReports.FirstOrDefault().ReportDate).TotalHours;
+                        if(litigationRequest.LitigationRequestReconciliationReports is not null & litigationRequest.LitigationRequestReconciliationReports.Count() > 0)
+                        totalHours +=  (DateTime.Now - litigationRequest.LitigationRequestReconciliationReports.FirstOrDefault().ReportDate).TotalHours;
                         if (totalHours >= LitigationRequestReconciliationReportDecisionPeriod)
                         {
                             allowAdd = true;

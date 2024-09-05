@@ -836,6 +836,7 @@ namespace REAC.Application.AppServices
                                     break;
                                 case CitizenRequestType.Arbitrator:
                                     citizen.IsArbitrator = true;
+                                    citizen.ArbitratorStatusId = ArbitratorStatus.Certified;
                                     break;
                             }
                         }

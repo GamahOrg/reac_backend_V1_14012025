@@ -507,7 +507,7 @@ namespace REAC.Application.ModuleServices
                     {
                         msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.LitigationRequest_Decision_ReconciliationWasMade).Result.Data?.Value;
                         msg = msg.Replace("{LitigationCode}", litigationRequest.RequestCode);
-                        SendNotificationMSWithAllTypes(msg, litigationRequest, "Citizen Litigation Request For Report Reply Added");
+                        await SendNotificationMSWithAllTypes(msg, litigationRequest, "Citizen Litigation Request For Report Reply Added");
                     }
                     catch (Exception e)
                     {
@@ -539,9 +539,10 @@ namespace REAC.Application.ModuleServices
                         // تم رفض الصلح والانتقال إلى التحكيم
                         try
                         {
+                            bool isAdminArbitrator = true;
                             msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.LitigationRequest_Decision_ReconciliationWasNotMadeAndMoveToArbitration).Result.Data?.Value;
                             msg = msg.Replace("{LitigationCode}", litigationRequest.RequestCode);
-                            SendNotificationMSWithAllTypes(msg, litigationRequest, "Citizen Litigation Request For Report Reply Refused");
+                            await SendNotificationMSWithAllTypes(msg, litigationRequest, "Citizen Litigation Request For Report Reply Refused",isAdminArbitrator);
                         }
                         catch (Exception e)
                         {
@@ -566,7 +567,7 @@ namespace REAC.Application.ModuleServices
                         {
                             msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.LitigationRequest_Decision_ReconciliationWasNotMade).Result.Data?.Value;
                             msg = msg.Replace("{LitigationCode}", litigationRequest.RequestCode);
-                            SendNotificationMSWithAllTypes(msg, litigationRequest, "Citizen Litigation Request For Report Reply Refused");
+                            await SendNotificationMSWithAllTypes(msg, litigationRequest, "Citizen Litigation Request For Report Reply Refused");
 
                         }
                         catch (Exception e)
@@ -586,9 +587,10 @@ namespace REAC.Application.ModuleServices
 
         }
 
-        private async Task SendNotificationMSWithAllTypes(string msg, LitigationRequest litigationRequest, string Subject)
+        private async Task SendNotificationMSWithAllTypes(string msg, LitigationRequest litigationRequest, string Subject, bool? isAdminArbitrator = null)
         {
             var deptAdminInfoReconciliation = await _employeeService.GetAdminsByDepartmentType(DepartmentType.Reconciliation);
+            var deptAdminInfoArbitration = await _employeeService.GetAdminsByDepartmentType(DepartmentType.Arbitration);
 
             //ApplicantCitizen
             var objEmail = new SendEmailDto()
@@ -652,6 +654,26 @@ namespace REAC.Application.ModuleServices
                     Message = msg,
                 });
             }
+
+            //مدير ادارة التحكيم
+            if (isAdminArbitrator is not null & (bool)isAdminArbitrator)
+            {
+                objEmail.To.Add(deptAdminInfoArbitration?.Data?.Email);
+                objSms.recipients.Add(deptAdminInfoArbitration?.Data?.Mobile);
+
+                lstNotification.Add(new Contracts.Dtos.Notification.SysNotificationDto()
+                {
+                    ActorId = deptAdminInfoArbitration.Data.Id,
+                    CreatedOn = DateTime.Now,
+                    ActorTypeId = NotificationActorType.Employee,
+                    IsViewed = false,
+                    ViewedOn = null,
+                    RequestId = litigationRequest.Id,
+                    RequestTypeId = RequestType.ReformationReport,
+                    Message = msg,
+                });
+            }
+
             if (litigationRequest?.Contract?.FirstPartyCitizen != null && litigationRequest?.Contract?.FirstPartyCitizen.Id != litigationRequest.ApplicantCitizen.Id)
             {
                 objEmail.To.Add(litigationRequest?.Contract?.FirstPartyCitizen.Email);
@@ -723,7 +745,7 @@ namespace REAC.Application.ModuleServices
 
             }
 
-            var notificationResult = _notificationService.SendNotifications(objEmail,objSms, lstNotification);
+             await _notificationService.SendNotifications(objEmail,objSms, lstNotification);
         }
 
         #endregion

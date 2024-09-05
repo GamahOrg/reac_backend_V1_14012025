@@ -2,7 +2,6 @@
 using Core.GenericRepository.BaseRepository;
 using Core.Shared.Responses;
 using Microsoft.EntityFrameworkCore;
-using REAC.Application.Contracts.Dtos.Litigation.CreateUpdate.Litigation;
 using REAC.Application.Contracts.Dtos.Notification;
 using REAC.Application.Contracts.IAppServices.Notification;
 using REAC.Application.Contracts.IAppServices.System;
@@ -12,7 +11,6 @@ using REAC.EntityFrameworkCore.Entities.Actor;
 using REAC.EntityFrameworkCore.Entities.Arbitration;
 using REAC.EntityFrameworkCore.Entities.Litigation;
 using REAC.EntityFrameworkCore.Entities.Wpf.Business;
-using System;
 
 namespace REAC.Application.AppServices.SLA
 {
@@ -79,8 +77,8 @@ namespace REAC.Application.AppServices.SLA
                                             var msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.SLA_ArbitratorsCount_FirstWarning).Result.Data?.Value;
                                             msg = msg?.Replace("{LitigationCode}", litigationRequest?.RequestCode);
 
-                                            SendNotificationMS(msg, litigationRequest, "سرعة اتمام عملية الصلح", NotificationActorType.Plaintiff, RequestType.ArbitratorNominationList
-                                               ,notifyFirstParty:true,notifyApplicant:true);
+                                            await SendNotificationMS(msg, litigationRequest, "سرعة اتمام عملية الصلح", NotificationActorType.Plaintiff, RequestType.ArbitratorNominationList
+                                               , notifyFirstParty: true, notifyApplicant: true);
                                         }
                                         catch (Exception e)
                                         {
@@ -96,8 +94,8 @@ namespace REAC.Application.AppServices.SLA
                                         var msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.SLA_ArbitratorsCount_SecondWarning).Result.Data?.Value;
                                         msg = msg?.Replace("{LitigationCode}", litigationRequest?.RequestCode);
 
-                                        SendNotificationMS(msg, litigationRequest, "تذكيرسرعة اتمام عملية الصلح", NotificationActorType.Defendant, RequestType.ArbitratorNominationList
-                                          ,notifySecondParty:true);
+                                        await SendNotificationMS(msg, litigationRequest, "تذكيرسرعة اتمام عملية الصلح", NotificationActorType.Defendant, RequestType.ArbitratorNominationList
+                                          , notifySecondParty: true);
                                     }
                                 }
                             }
@@ -125,12 +123,12 @@ namespace REAC.Application.AppServices.SLA
                                             var msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.SLA_ArbitratorsCount_SecondWarning).Result.Data?.Value;
                                             msg = msg?.Replace("{LitigationCode}", litigationRequest?.RequestCode);
 
-                                            SendNotificationMS(msg, litigationRequest, "سرعة اتمام عملية إختيار عدد المحكمين", NotificationActorType.Plaintiff, RequestType.ArbitratorNominationList
+                                            await SendNotificationMS(msg, litigationRequest, "سرعة اتمام عملية إختيار عدد المحكمين", NotificationActorType.Plaintiff, RequestType.ArbitratorNominationList
                                               , notifyApplicant: true, notifyFirstParty: true);
                                         }
                                         catch (Exception ex) { }
 
-                                        
+
 
                                     }
                                     if (!litigationRequest.SecondPartyArbitratorsCount.HasValue)
@@ -143,11 +141,11 @@ namespace REAC.Application.AppServices.SLA
                                             var msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.SLA_ArbitratorsCount_SecondWarning).Result.Data?.Value;
                                             msg = msg?.Replace("{LitigationCode}", litigationRequest?.RequestCode);
 
-                                            SendNotificationMS(msg, litigationRequest, "سرعة اتمام عملية إختيار عدد المحكمين", NotificationActorType.Defendant, RequestType.ArbitratorNominationList
+                                            await SendNotificationMS(msg, litigationRequest, "سرعة اتمام عملية إختيار عدد المحكمين", NotificationActorType.Defendant, RequestType.ArbitratorNominationList
                                               , notifyApplicant: true, notifyFirstParty: true);
                                         }
                                         catch (Exception ex) { }
-                                        
+
                                     }
 
                                     //Send Notification for Arbitration department admin
@@ -160,11 +158,11 @@ namespace REAC.Application.AppServices.SLA
                                             var msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.SLA_ArbitratorsCount_FinalWarning_Both).Result.Data?.Value;
                                             msg = msg?.Replace("{LitigationCode}", litigationRequest?.RequestCode);
 
-                                            SendNotificationMS(msg, litigationRequest, "لم يقم المدعى والمدعى عليه بتحديد عدد المحكمين", NotificationActorType.Employee, RequestType.ArbitratorNominationList
+                                            await SendNotificationMS(msg, litigationRequest, "لم يقم المدعى والمدعى عليه بتحديد عدد المحكمين", NotificationActorType.Employee, RequestType.ArbitratorNominationList
                                               , notifyDeptAdmin: true);
                                         }
                                         catch (Exception ex) { }
-                                       
+
 
                                     }
                                     else
@@ -177,11 +175,11 @@ namespace REAC.Application.AppServices.SLA
                                                 var msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.SLA_ArbitratorsCount_FinalWarning_Plantiff).Result.Data?.Value;
                                                 msg = msg?.Replace("{LitigationCode}", litigationRequest?.RequestCode);
 
-                                                SendNotificationMS(msg, litigationRequest, "لم يقم المدعى بتحديد عدد المحكمين", NotificationActorType.Employee, RequestType.ArbitratorNominationList
+                                                await SendNotificationMS(msg, litigationRequest, "لم يقم المدعى بتحديد عدد المحكمين", NotificationActorType.Employee, RequestType.ArbitratorNominationList
                                                   , notifyDeptAdmin: true);
                                             }
                                             catch (Exception ex) { }
-                                            
+
                                         }
                                         if (!litigationRequest.SecondPartyArbitratorsCount.HasValue)
                                         {
@@ -191,11 +189,11 @@ namespace REAC.Application.AppServices.SLA
                                                 var msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.SLA_ArbitratorsCount_FinalWarning_Defendant).Result.Data?.Value;
                                                 msg = msg?.Replace("{LitigationCode}", litigationRequest?.RequestCode);
 
-                                                SendNotificationMS(msg, litigationRequest, "لم يقم المدعى بتحديد عدد المحكمين", NotificationActorType.Employee, RequestType.ArbitratorNominationList
+                                                await SendNotificationMS(msg, litigationRequest, "لم يقم المدعى بتحديد عدد المحكمين", NotificationActorType.Employee, RequestType.ArbitratorNominationList
                                                   , notifyDeptAdmin: true);
                                             }
                                             catch (Exception ex) { }
-                                            
+
                                         }
                                     }
                                 }
@@ -254,11 +252,11 @@ namespace REAC.Application.AppServices.SLA
                                             var msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.SLA_ArbitratorsSelect_FirstWarning).Result.Data?.Value;
                                             msg = msg?.Replace("{LitigationCode}", litigationRequest?.RequestCode);
 
-                                            SendNotificationMS(msg, litigationRequest, "سرعة اتمام عملية إختيار هيئة التحكيم", NotificationActorType.Plaintiff, RequestType.ArbitratorNominationList
+                                            await SendNotificationMS(msg, litigationRequest, "سرعة اتمام عملية إختيار هيئة التحكيم", NotificationActorType.Plaintiff, RequestType.ArbitratorNominationList
                                               , notifyApplicant: true, notifyFirstParty: true);
                                         }
                                         catch (Exception ex) { }
-                                        
+
                                     }
                                     if (litigationRequest.LitigationRequestArbitratorNominationLists.Where(x => x.DefendantPriority.HasValue != true).Count() > 0)
                                     {
@@ -270,11 +268,11 @@ namespace REAC.Application.AppServices.SLA
                                             var msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.SLA_ArbitratorsSelect_FirstWarning).Result.Data?.Value;
                                             msg = msg?.Replace("{LitigationCode}", litigationRequest?.RequestCode);
 
-                                            SendNotificationMS(msg, litigationRequest, "سرعة اتمام عملية إختيار هيئة التحكيم", NotificationActorType.Defendant, RequestType.ArbitratorNominationList
+                                            await SendNotificationMS(msg, litigationRequest, "سرعة اتمام عملية إختيار هيئة التحكيم", NotificationActorType.Defendant, RequestType.ArbitratorNominationList
                                               , notifySecondParty: true);
                                         }
                                         catch (Exception ex) { }
-                                       
+
                                     }
                                 }
                             }
@@ -302,11 +300,11 @@ namespace REAC.Application.AppServices.SLA
                                             var msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.SLA_ArbitratorsSelect_FirstWarning).Result.Data?.Value;
                                             msg = msg?.Replace("{LitigationCode}", litigationRequest?.RequestCode);
 
-                                            SendNotificationMS(msg, litigationRequest, "سرعة اتمام عملية إختيار هيئة التحكيم", NotificationActorType.Plaintiff, RequestType.ArbitratorNominationList
+                                            await SendNotificationMS(msg, litigationRequest, "سرعة اتمام عملية إختيار هيئة التحكيم", NotificationActorType.Plaintiff, RequestType.ArbitratorNominationList
                                               , notifyApplicant: true, notifyFirstParty: true);
                                         }
                                         catch (Exception ex) { }
-                                        
+
                                     }
                                     if (litigationRequest.LitigationRequestArbitratorNominationLists.Where(x => x.DefendantPriority.HasValue != true).Count() > 0)
                                     {
@@ -318,11 +316,11 @@ namespace REAC.Application.AppServices.SLA
                                             var msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.SLA_ArbitratorsSelect_FirstWarning).Result.Data?.Value;
                                             msg = msg?.Replace("{LitigationCode}", litigationRequest?.RequestCode);
 
-                                            SendNotificationMS(msg, litigationRequest, "سرعة اتمام عملية إختيار هيئة التحكيم", NotificationActorType.Defendant, RequestType.ArbitratorNominationList
+                                            await SendNotificationMS(msg, litigationRequest, "سرعة اتمام عملية إختيار هيئة التحكيم", NotificationActorType.Defendant, RequestType.ArbitratorNominationList
                                               , notifySecondParty: true);
                                         }
                                         catch (Exception ex) { }
-                                        
+
                                     }
 
                                     //Send Notification for Arbitration department admin
@@ -330,13 +328,13 @@ namespace REAC.Application.AppServices.SLA
                                     if (!litigationRequest.FirstPartyArbitratorsCount.HasValue & !litigationRequest.SecondPartyArbitratorsCount.HasValue)
                                     {
                                         // لم يقم المدعى والمدعى عليه بإنهاء تعيين هيئة المحكمين غلى الدعوى رقم ........
-                                       
+
                                         try
                                         {
                                             var msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.SLA_ArbitratorsSelect_FinalWarning_Both).Result.Data?.Value;
                                             msg = msg?.Replace("{LitigationCode}", litigationRequest?.RequestCode);
 
-                                            SendNotificationMS(msg, litigationRequest, "لم يقم المدعى والمدعى عليه بإنهاء تعيين هيئة المحكمين", NotificationActorType.Employee, RequestType.ArbitratorNominationList
+                                            await SendNotificationMS(msg, litigationRequest, "لم يقم المدعى والمدعى عليه بإنهاء تعيين هيئة المحكمين", NotificationActorType.Employee, RequestType.ArbitratorNominationList
                                               , notifyDeptAdmin: true);
                                         }
                                         catch (Exception)
@@ -354,7 +352,7 @@ namespace REAC.Application.AppServices.SLA
                                                 var msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.SLA_ArbitratorsSelect_FinalWarning_Plantiff).Result.Data?.Value;
                                                 msg = msg?.Replace("{LitigationCode}", litigationRequest?.RequestCode);
 
-                                                SendNotificationMS(msg, litigationRequest, "لم يقم المدعى بإنهاء تعيين هيئة المحكمين", NotificationActorType.Employee, RequestType.ArbitratorNominationList
+                                                await SendNotificationMS(msg, litigationRequest, "لم يقم المدعى بإنهاء تعيين هيئة المحكمين", NotificationActorType.Employee, RequestType.ArbitratorNominationList
                                                   , notifyDeptAdmin: true);
                                             }
                                             catch (Exception)
@@ -370,7 +368,7 @@ namespace REAC.Application.AppServices.SLA
                                                 var msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.SLA_ArbitratorsSelect_FinalWarning_Defendant).Result.Data?.Value;
                                                 msg = msg?.Replace("{LitigationCode}", litigationRequest?.RequestCode);
 
-                                                SendNotificationMS(msg, litigationRequest, "لم يقم المدعى عليه بإنهاء تعيين هيئة المحكمين", NotificationActorType.Employee, RequestType.ArbitratorNominationList
+                                                await SendNotificationMS(msg, litigationRequest, "لم يقم المدعى عليه بإنهاء تعيين هيئة المحكمين", NotificationActorType.Employee, RequestType.ArbitratorNominationList
                                                   , notifyDeptAdmin: true);
                                             }
                                             catch (Exception)
@@ -446,7 +444,7 @@ namespace REAC.Application.AppServices.SLA
                                                 var msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.SLA_ArbitratorsChairmanSelect_FirstWarning).Result.Data?.Value;
                                                 msg = msg?.Replace("{LitigationCode}", litigationRequest?.RequestCode);
 
-                                                SendNotificationMS(msg, litigationRequest, "سرعة اتمام عملية إختيار رئيس هيئة التحكيم", NotificationActorType.Arbitrator, RequestType.ArbitratorChairmanNominationList, arbitrator
+                                                await SendNotificationMS(msg, litigationRequest, "سرعة اتمام عملية إختيار رئيس هيئة التحكيم", NotificationActorType.Arbitrator, RequestType.ArbitratorChairmanNominationList, arbitrator
                                                   , notifyArbitrators: true);
                                             }
                                             catch (Exception)
@@ -489,7 +487,7 @@ namespace REAC.Application.AppServices.SLA
                                                 var msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.SLA_ArbitratorsChairmanSelect_FirstWarning).Result.Data?.Value;
                                                 msg = msg?.Replace("{LitigationCode}", litigationRequest?.RequestCode);
 
-                                                SendNotificationMS(msg, litigationRequest, "سرعة اتمام عملية إختيار رئيس هيئة التحكيم", NotificationActorType.Arbitrator, RequestType.ArbitratorChairmanNominationList, arbitrator
+                                                await SendNotificationMS(msg, litigationRequest, "سرعة اتمام عملية إختيار رئيس هيئة التحكيم", NotificationActorType.Arbitrator, RequestType.ArbitratorChairmanNominationList, arbitrator
                                                   , notifyArbitrators: true);
                                             }
                                             catch (Exception)
@@ -508,11 +506,11 @@ namespace REAC.Application.AppServices.SLA
                                             var msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.SLA_ArbitratorsChairmanSelect_FinalWarning_Admin).Result.Data?.Value;
                                             msg = msg?.Replace("{LitigationCode}", litigationRequest?.RequestCode);
 
-                                            SendNotificationMS(msg, litigationRequest, "لم يتم تعيين رئيس هيئة التحكيم", NotificationActorType.Employee, RequestType.ArbitratorChairmanNominationList
+                                            await SendNotificationMS(msg, litigationRequest, "لم يتم تعيين رئيس هيئة التحكيم", NotificationActorType.Employee, RequestType.ArbitratorChairmanNominationList
                                               , notifyDeptAdmin: true);
                                         }
                                         catch (Exception ex) { }
-                                        
+
                                     }
                                 }
                             }
@@ -583,7 +581,7 @@ namespace REAC.Application.AppServices.SLA
                                                 Message = msg
                                             });
 
-                                            var notificationResult = _notificationService.SendNotifications(
+                                            var notificationResult = await _notificationService.SendNotifications(
                                                 new SendEmailDto()
                                                 {
                                                     Body = msg,
@@ -641,7 +639,7 @@ namespace REAC.Application.AppServices.SLA
                                                 Message = msg
                                             });
 
-                                            var notificationResult = _notificationService.SendNotifications(
+                                            var notificationResult = await _notificationService.SendNotifications(
                                                 new SendEmailDto()
                                                 {
                                                     Body = msg,
@@ -680,9 +678,18 @@ namespace REAC.Application.AppServices.SLA
                                     // تم إلغاء طلب مهمة التحكيم كمحكم على الدعوى رقم ..... لتجاوز الرد على المهمة مهلته القصوى 
                                     try
                                     {
-                                        var msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.SLA_ArbitratorTaskRequest_Cancelled).Result.Data?.Value;
-                                        msg = msg.Replace("{LitigationCode}", litigationRequestArbitratorAssigningRequest.LitigationRequest.RequestCode);
+                                        var msg = "";
+                                        switch (litigationRequestArbitratorAssigningRequest.ArbitratorAssigningRequestTypeId)
+                                        {
+                                            case ArbitratorAssigningRequestType.Arbitrator:
+                                                msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.SLA_ArbitratorTaskRequest_Cancelled).Result.Data?.Value;
+                                                break;
+                                            case ArbitratorAssigningRequestType.ArbitratorsChairman:
+                                                msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.SLA_ArbitratorChairmanTaskRequest_Cancelled).Result.Data?.Value;
+                                                break;
+                                        }
 
+                                        msg = msg.Replace("{LitigationCode}", litigationRequestArbitratorAssigningRequest.LitigationRequest.RequestCode);
                                         var applicationNotifications = new List<SysNotificationDto>();
 
                                         applicationNotifications.Add(new SysNotificationDto()
@@ -697,7 +704,7 @@ namespace REAC.Application.AppServices.SLA
                                             Message = msg
                                         });
 
-                                        var notificationResult = _notificationService.SendNotifications(
+                                        var notificationResult = await _notificationService.SendNotifications(
                                             new SendEmailDto()
                                             {
                                                 Body = msg,
@@ -765,7 +772,7 @@ namespace REAC.Application.AppServices.SLA
                                                         var msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.SLA_ArbitratorTaskRequest_ReAssign).Result.Data?.Value;
                                                         msg = msg.Replace("{LitigationCode}", litigationRequestArbitratorAssigningRequest.LitigationRequest.RequestCode);
 
-                                                        SendNotificationMS(msg, litigationRequestArbitratorAssigningRequest.LitigationRequest, "لم يتم تعيين رئيس هيئة التحكيم", NotificationActorType.Employee, RequestType.ArbitratorTaskrequests
+                                                        await SendNotificationMS(msg, litigationRequestArbitratorAssigningRequest.LitigationRequest, "لم يتم تعيين رئيس هيئة التحكيم", NotificationActorType.Employee, RequestType.ArbitratorTaskrequests
                                                         , notifyDeptAdmin: true);
 
                                                         var applicationNotifications = new List<SysNotificationDto>();
@@ -786,7 +793,7 @@ namespace REAC.Application.AppServices.SLA
                                                             Message = msg
                                                         });
 
-                                                        var notificationResult = _notificationService.SendNotifications(
+                                                        var notificationResult = await _notificationService.SendNotifications(
                                                             new SendEmailDto()
                                                             {
                                                                 Body = msg,
@@ -836,7 +843,7 @@ namespace REAC.Application.AppServices.SLA
                                                     Message = msg
                                                 });
 
-                                                var notificationResult = _notificationService.SendNotifications(
+                                                var notificationResult = await _notificationService.SendNotifications(
                                                     new SendEmailDto()
                                                     {
                                                         Body = msg,
@@ -899,7 +906,7 @@ namespace REAC.Application.AppServices.SLA
                                                         var msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.SLA_ArbitratorChairmanTaskRequest_ReAssign).Result.Data?.Value;
                                                         msg = msg.Replace("{LitigationCode}", litigationRequestArbitratorAssigningRequest.LitigationRequest.RequestCode);
 
-                                                        SendNotificationMS(msg, litigationRequestArbitratorAssigningRequest.LitigationRequest, "تم إرسال طلب مهمة تحكيم جديدة كرئيس هيئة التحكيم", NotificationActorType.Employee, RequestType.ArbitratorTaskrequests
+                                                        await SendNotificationMS(msg, litigationRequestArbitratorAssigningRequest.LitigationRequest, "تم إرسال طلب مهمة تحكيم جديدة كرئيس هيئة التحكيم", NotificationActorType.Employee, RequestType.ArbitratorTaskrequests
                                                         , notifyDeptAdmin: true);
 
                                                         var applicationNotifications = new List<SysNotificationDto>();
@@ -920,7 +927,7 @@ namespace REAC.Application.AppServices.SLA
                                                             Message = msg
                                                         });
 
-                                                        var notificationResult = _notificationService.SendNotifications(
+                                                        var notificationResult = await _notificationService.SendNotifications(
                                                             new SendEmailDto()
                                                             {
                                                                 Body = msg,
@@ -961,7 +968,7 @@ namespace REAC.Application.AppServices.SLA
         }
 
 
-        private async Task SendNotificationMS(string msg, LitigationRequest litigationRequest, string subject, NotificationActorType notificationActorType, RequestType requestType, LitigationRequestArbitratorList? arbitrator = null, bool notifyApplicant = false, bool notifyArbitrators = false, bool notifyDeptAdmin = false, bool notifyFirstParty = false, bool notifySecondParty = false)
+        private async Task  SendNotificationMS(string msg, LitigationRequest litigationRequest, string subject, NotificationActorType notificationActorType, RequestType requestType, LitigationRequestArbitratorList? arbitrator = null, bool notifyApplicant = false, bool notifyArbitrators = false, bool notifyDeptAdmin = false, bool notifyFirstParty = false, bool notifySecondParty = false)
         {
             var deptAdminInfoArbitration = await _employeeService.GetAdminsByDepartmentType(DepartmentType.Arbitration);
             var objEmail = new SendEmailDto()
@@ -1106,7 +1113,7 @@ namespace REAC.Application.AppServices.SLA
                 });
             }
 
-            _notificationService.SendNotifications(objEmail, objSms, lstNotification);
+            await _notificationService.SendNotifications(objEmail, objSms, lstNotification);
         }
 
 

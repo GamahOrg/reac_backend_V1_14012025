@@ -278,7 +278,7 @@ namespace REAC.Application.ModuleServices
                          .Include(x => x.Contract.SecondPartyFacility)
                          .Include(x => x.Contract.SecondPartyCitizen)
                          .Include(x => x.Contract.LitigationRequestContractType)
-                         .Where(x => x.Id == requestId).ToList().FirstOrDefault();
+                         .Where(x => x.Id == requestId).AsNoTracking().ToList().FirstOrDefault();
 
             if (litigationRequest == null)
                 return new BaseResponse() { IsDone = false, Message = "طلب غير موجود" };
