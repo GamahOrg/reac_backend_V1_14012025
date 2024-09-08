@@ -53,7 +53,7 @@ builder.Services.AddGenericRepository<REACDBContext>();
 
 
 builder.Services.AddHostedService<NafathBackgroundTaskService>();
-builder.Services.AddHostedService<SLABackgroundTaskService>();
+//builder.Services.AddHostedService<SLABackgroundTaskService>();
 
 #endregion
 // Add services to the container.
