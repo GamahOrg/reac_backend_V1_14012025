@@ -292,7 +292,7 @@ namespace REAC.Application.ModuleServices
                                 recipients.Add(arbitrator.ArbitratorCitizen.Mobile);
                             }
 
-                            _notificationService.SendNotifications(new Contracts.Dtos.Notification.SendEmailDto()
+                            await _notificationService.SendNotifications(new Contracts.Dtos.Notification.SendEmailDto()
                             {
                                 To = emails,
                                 Subject = " جلسة التحكيم",
@@ -362,7 +362,7 @@ namespace REAC.Application.ModuleServices
                           .Include(x => x.Contract.FirstPartyCitizen)
                           .Include(x => x.Contract.SecondPartyFacility)
                           .Include(x => x.Contract.SecondPartyCitizen)
-                          .Include(x => x.Contract.LitigationRequestContractType)
+                          .Include(x => x.Contract.LitigationRequestContractType).AsNoTracking()
                           .Where(x => x.Id == requestId).ToList().FirstOrDefault();
 
             if (litigationRequest == null)
@@ -390,7 +390,12 @@ namespace REAC.Application.ModuleServices
                 else
                 {
                     if (litigationRequest?.LitigationRequestSubStage != LitigationRequestSubStage.LitigationRequestAddArbitrationSession)
-                        allowAdd = false;
+                    {
+                        if (litigationRequest?.LitigationRequestSubStage != LitigationRequestSubStage.JudgmentDecisionIssuing)
+                        {
+                            allowAdd = false;
+                        }
+                    }
                     else
                     {
                         int sessionCountValidation = 3;

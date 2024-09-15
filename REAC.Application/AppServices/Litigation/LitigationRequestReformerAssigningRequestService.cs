@@ -121,22 +121,22 @@ namespace REAC.Application.AppServices.Litigation
                                 Message = msg
                             });
 
-                           await _notificationService.SendNotifications(
-                                new SendEmailDto()
-                                {
-                                    To = new List<string>() { citizenInfo.Email, deptAdminInfoReconciliation.Data.Email },
-                                    Subject = "Arbitraor Accept Task",
-                                    Body = msg
-                                },
-                                new SMSRequestDto()
-                                {
-                                    message_text = msg,
-                                    recipients = new List<string>() { citizenInfo.Mobile, deptAdminInfoReconciliation.Data.Mobile },
-                                    notification_type = "SMS",
+                            await _notificationService.SendNotifications(
+                                 new SendEmailDto()
+                                 {
+                                     To = new List<string>() { citizenInfo.Email, deptAdminInfoReconciliation.Data.Email },
+                                     Subject = "Arbitraor Accept Task",
+                                     Body = msg
+                                 },
+                                 new SMSRequestDto()
+                                 {
+                                     message_text = msg,
+                                     recipients = new List<string>() { citizenInfo.Mobile, deptAdminInfoReconciliation.Data.Mobile },
+                                     notification_type = "SMS",
 
-                                },
-                                applicationNotifications
-                                );
+                                 },
+                                 applicationNotifications
+                                 );
                         }
                         catch (Exception ex)
                         {
@@ -165,14 +165,16 @@ namespace REAC.Application.AppServices.Litigation
                             {
                                 case DepartmentDistributionMode.AutoDistribution:
                                     var reformer = (await _repository.GetQueryable<Citizen, Guid>())?
-                                        .Include(x => x.ReformerLitigationRequests)
+                                        .Include(x => x.ReformerLitigationRequests).Include(x => x.LitigationRequestReformerAssigningRequests)
                                                 .Where(x => x.IsReformer == true & x.ReformerStatusId == ReformerStatus.Certified & x.Id != referenceId)
                                                 .OrderBy(x => x.ReformerLitigationRequests
-                                                .Count(t => t.IsFinished == false))
+                                                .Count(t => t.IsFinished == false)
+                                                + x.LitigationRequestReformerAssigningRequests
+                                                .Count(x => x.Response == LitigationRequestReformerAssigningRequestStatus.None))
+                                                .ThenBy(x => x.ReformerLitigationRequests.Count())
                                                 .FirstOrDefault();
                                     if (reformer != null)
                                     {
-
                                         LitigationRequestReformerAssigningRequest newLitigationRequestReformerAssigningRequest = new LitigationRequestReformerAssigningRequest();
                                         newLitigationRequestReformerAssigningRequest.CitizenId = reformer.Id;
                                         newLitigationRequestReformerAssigningRequest.RequestOn = DateTime.Now;
@@ -246,7 +248,7 @@ namespace REAC.Application.AppServices.Litigation
                                                 Message = reAssignMsg
                                             });
 
-                                            var notificationResultReformerAssign = _notificationService.SendNotifications(
+                                            var notificationResultReformerAssign = await _notificationService.SendNotifications(
                                                 new SendEmailDto()
                                                 {
                                                     To = new List<string>() { reformer.Email, deptAdminInfoReconciliation.Data.Email },
@@ -456,6 +458,8 @@ namespace REAC.Application.AppServices.Litigation
 
 
             litigationRequests = entitiesQuerable
+                .Where(x => x.LitigationRequest.LitigationRequestStage != LitigationRequestStage.Review
+                & x.LitigationRequest.LitigationRequestCategoryId != LitigationRequestCategory.Arbitration)
                                        .OrderByDescending(x => x.LitigationRequest.CreatedOn)
                                        .AsSplitQuery()
                                        .AsNoTracking()

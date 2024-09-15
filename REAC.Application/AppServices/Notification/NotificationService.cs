@@ -60,7 +60,7 @@ namespace REAC.Application.AppServices.Notification
                 IsDone = true,
                 Data = new NotificationListDto
                 {
-                    NotificationList = _mapper.Map<List<NotificationDto>>(notifications),
+                    NotificationList = _mapper.Map<List<NotificationDto>>(notifications).OrderByDescending(x => x.CreatedOn).ToList(),
                     NotViewedCount = notViewNotificationCount,
                 }
             };
@@ -78,8 +78,8 @@ namespace REAC.Application.AppServices.Notification
                 .Include(x => x.SysRequestType).OrderByDescending(x => x.CreatedOn).ToListAsync();
             var notViewNotificationCount = await query.CountAsync(x => x.IsViewed == false);
 
-            var response = _mapper.Map<List<NotificationDto>>(notifications);
-            
+            var response = _mapper.Map<List<NotificationDto>>(notifications).OrderByDescending(x => x.CreatedOn).ToList();
+
 
             return new DataResponse<NotificationListDto>
             {
@@ -189,15 +189,15 @@ namespace REAC.Application.AppServices.Notification
             {
                 if (email is not null)
                 {
-                    var emailResultCitizen =  _emailService.SendMail(email.To, email.Subject, email.Body);
+                    var emailResultCitizen = await _emailService.SendMail(email.To, email.Subject, email.Body);
                 }
 
                 if (sms is not null)
                 {
-                    var smsResultCitizen =  _smsService.SendSMS(sms);
+                    var smsResultCitizen = await _smsService.SendSMS(sms);
                 }
 
-                if(notifications.Any() )
+                if (notifications.Any())
                 {
                     foreach (var notification in notifications)
                     {
@@ -215,7 +215,7 @@ namespace REAC.Application.AppServices.Notification
                         }
                         notification.Id = Guid.NewGuid();
 
-                        var notificationObject =  _mapper.Map<SysNotification>(notification);
+                        var notificationObject = _mapper.Map<SysNotification>(notification);
                         notificationObject.NotificationActorTypeId = notification.ActorTypeId;
 
                         var dbNotificationResult = await _repository.AddAsync<SysNotification, Guid>(notificationObject);
@@ -223,7 +223,7 @@ namespace REAC.Application.AppServices.Notification
 
                     }
 
-                   var res = await _repository.SaveChangesAsync();
+                    var res = await _repository.SaveChangesAsync();
                 }
 
                 return new BaseResponse() { IsDone = true };

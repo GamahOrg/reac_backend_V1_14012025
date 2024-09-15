@@ -12,7 +12,7 @@ using REAC.EntityFrameworkCore.Entities.System;
 namespace REAC.EntityFrameworkCore.Migrations
 {
     [DbContext(typeof(REACDBContext))]
-    [Migration("20240901112829_InitDatabaseMigration")]
+    [Migration("20240915131859_InitDatabaseMigration")]
     partial class InitDatabaseMigration
     {
         /// <inheritdoc />
@@ -3949,7 +3949,7 @@ namespace REAC.EntityFrameworkCore.Migrations
                         .HasConstraintName("FKLitigation638578");
 
                     b.HasOne("REAC.EntityFrameworkCore.Entities.Actor.Citizen", "ArbitratorCitizen")
-                        .WithMany("ReformerLitigationRequests")
+                        .WithMany("ArbitratorLitigationRequests")
                         .HasForeignKey("ArbitratorCitizenId")
                         .HasConstraintName("FKReformerCitizenLitigation638578");
 
@@ -4016,7 +4016,7 @@ namespace REAC.EntityFrameworkCore.Migrations
                         .HasConstraintName("FKOtherCategory580725");
 
                     b.HasOne("REAC.EntityFrameworkCore.Entities.Actor.Citizen", "ReformerCitizen")
-                        .WithMany("ArbitratorLitigationRequests")
+                        .WithMany("ReformerLitigationRequests")
                         .HasForeignKey("ReformerCitizenId")
                         .HasConstraintName("FKArbitratorCitizenLitigation638578");
 

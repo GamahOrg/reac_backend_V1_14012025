@@ -1127,13 +1127,13 @@ public partial class REACDBContext : DbContext
             entity.Property(e => e.SentOn).HasColumnType("datetime");
             entity.Property(e => e.Title).HasMaxLength(250);
 
-            entity.HasOne(d => d.ReformerCitizen).WithMany(p => p.ArbitratorLitigationRequests)
+            entity.HasOne(d => d.ReformerCitizen).WithMany(p => p.ReformerLitigationRequests)
                 .HasForeignKey(d => d.ReformerCitizenId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FKArbitratorCitizenLitigation638578");
 
 
-            entity.HasOne(d => d.ArbitratorCitizen).WithMany(p => p.ReformerLitigationRequests)
+            entity.HasOne(d => d.ArbitratorCitizen).WithMany(p => p.ArbitratorLitigationRequests)
               .HasForeignKey(d => d.ArbitratorCitizenId)
               .OnDelete(DeleteBehavior.ClientSetNull)
               .HasConstraintName("FKReformerCitizenLitigation638578");

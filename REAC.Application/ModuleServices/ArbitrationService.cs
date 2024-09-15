@@ -156,7 +156,9 @@ namespace REAC.Application.ModuleServices
                                       .Include(x => x.Contract.SecondPartyCitizen)
                                       .Include(x => x.Contract.LitigationRequestContractType);
 
-            litigationRequests = entitiesQuerable.Where(x => x.LitigationRequestCategoryId != LitigationRequestCategory.Reconciliation & x.IsFinished != true & x.LitigationRequestStage == LitigationRequestStage.Arbitration)
+            litigationRequests = entitiesQuerable.Where(x => x.LitigationRequestCategoryId
+            != LitigationRequestCategory.Reconciliation & x.IsFinished != true
+            & x.LitigationRequestStage == LitigationRequestStage.Arbitration)
               .OrderByDescending(x => x.LitigationRequestSessions.OrderBy(x => x.CreatedOn)
               .LastOrDefault().SessionDatetime)
               .AsSplitQuery()
@@ -326,7 +328,8 @@ namespace REAC.Application.ModuleServices
                 var litigationRequest = (await _repository.GetQueryable<LitigationRequest, Guid>())?
                        .Include(x => x.LitigationRequestArbitratorLists)
                        .Include(x => x.ArbitratorCitizen)
-                       .Where(x => x.Id == assignRequestPayload.RequestId).Single();
+                       .Where(x => x.Id == assignRequestPayload.RequestId).SingleOrDefault();
+
 
                 if (litigationRequest == null)
                     return new BaseResponse()
@@ -334,6 +337,16 @@ namespace REAC.Application.ModuleServices
                         IsDone = false,
                         Message = "طلب غير موجود"
                     };
+
+                if (litigationRequest.IsFinished.HasValue)
+                {
+                    if (litigationRequest.IsFinished.Value)
+                        return new BaseResponse()
+                        {
+                            IsDone = false,
+                            Message = "دعوى مغلقة"
+                        };
+                }
 
                 if (litigationRequest.ArbitratorCitizenId.HasValue)
                 {
@@ -419,7 +432,7 @@ namespace REAC.Application.ModuleServices
                                   litigationRequestArbitratorList.ArbitratorCitizen.Mobile
                                 };
 
-                                _notificationService.SendNotifications(new Contracts.Dtos.Notification.SendEmailDto()
+                                await _notificationService.SendNotifications(new Contracts.Dtos.Notification.SendEmailDto()
                                 {
                                     To = emails,
                                     Subject = "إلغاء مهمتك كمحكم على الدعوى",
@@ -447,7 +460,7 @@ namespace REAC.Application.ModuleServices
                             litigationRequest.ArbitratorCitizenId = null;
                             // Send Notification
                             // تم إلغاء تعيينك كرئيس هيئة تحكيم على الدعوى رقم كذا
-                            
+
                             var boosMsg = "";
                             boosMsg = _settingService.GetBySettingKey(SysSettingKeyConstants.ArbitraorRecusal_InformArbitratorChairman_Rejected).Result.Data?.Value;
                             boosMsg = boosMsg?.Replace("{LitigationCode}", litigationRequest?.RequestCode);
@@ -485,7 +498,7 @@ namespace REAC.Application.ModuleServices
                                   litigationRequest.ArbitratorCitizen.Mobile
                                 };
 
-                                _notificationService.SendNotifications(new Contracts.Dtos.Notification.SendEmailDto()
+                                await _notificationService.SendNotifications(new Contracts.Dtos.Notification.SendEmailDto()
                                 {
                                     To = emails,
                                     Subject = "إلغاء مهمتك كرأيس محكمين على الدعوى",
@@ -517,9 +530,9 @@ namespace REAC.Application.ModuleServices
                 catch (Exception e)
                 {
 
-                    
+
                 }
-              
+
                 var citizen = (await _repository.GetQueryable<Citizen, Guid>())?
                             .Where(x => x.Id == assignRequestPayload.ArbitratorId).Single();
 
@@ -569,7 +582,7 @@ namespace REAC.Application.ModuleServices
                                   arbitratorInfo.Mobile
                                 };
 
-                            _notificationService.SendNotifications(new Contracts.Dtos.Notification.SendEmailDto()
+                            await _notificationService.SendNotifications(new Contracts.Dtos.Notification.SendEmailDto()
                             {
                                 To = emails,
                                 Subject = " طلب مهمه جديد كمحكم على الدعوي",
@@ -625,7 +638,7 @@ namespace REAC.Application.ModuleServices
                                   litigationRequest.ArbitratorCitizen.Mobile
                                 };
 
-                            _notificationService.SendNotifications(new Contracts.Dtos.Notification.SendEmailDto()
+                            await _notificationService.SendNotifications(new Contracts.Dtos.Notification.SendEmailDto()
                             {
                                 To = emailList,
                                 Subject = " طلب مهمه جديد كرأيس هيئة محكمين على الدعوي",
@@ -652,9 +665,9 @@ namespace REAC.Application.ModuleServices
                 catch (Exception e)
                 {
 
-                   
+
                 }
-              
+
 
                 var repositorySaveResponse = await _repository.SaveChangesAsync(new CancellationToken());
                 return repositorySaveResponse;

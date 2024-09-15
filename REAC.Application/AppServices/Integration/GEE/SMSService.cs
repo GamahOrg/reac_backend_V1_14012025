@@ -69,6 +69,9 @@ namespace REAC.Application.AppServices.Integration.GEE
                 else
                 {
                     responseDto.SMSError = await response.Content.ReadFromJsonAsync<SMSErrorDto>();
+                    
+
+
                     return new DataResponse<SMSResponseDto> { IsDone = false, Data = responseDto };
                 }
             }

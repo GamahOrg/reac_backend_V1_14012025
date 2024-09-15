@@ -160,7 +160,6 @@ namespace REAC.Application.AppServices.Litigation
                                 RequestTypeId = RequestType.ArbitratorTaskrequests,
                                 Message = msg
                             });
-
                             applicationNotifications.Add(new SysNotificationDto()
                             {
                                 ActorId = deptAdminInfoArbitration.Data.Id,
@@ -173,22 +172,22 @@ namespace REAC.Application.AppServices.Litigation
                                 Message = msg
                             });
 
-                             await _notificationService.SendNotifications(
-                                new SendEmailDto()
-                                {
-                                    To = new List<string>() { citizenInfo.Email, deptAdminInfoArbitration.Data.Email },
-                                    Subject = "Arbitraor Accept Task",
-                                    Body = msg
-                                },
-                                new SMSRequestDto()
-                                {
-                                    message_text = msg,
-                                    recipients = new List<string>() { citizenInfo.Mobile, deptAdminInfoArbitration.Data.Mobile },
-                                    notification_type = "SMS",
+                            await _notificationService.SendNotifications(
+                               new SendEmailDto()
+                               {
+                                   To = new List<string>() { citizenInfo.Email, deptAdminInfoArbitration.Data.Email },
+                                   Subject = "Arbitraor Accept Task",
+                                   Body = msg
+                               },
+                               new SMSRequestDto()
+                               {
+                                   message_text = msg,
+                                   recipients = new List<string>() { citizenInfo.Mobile, deptAdminInfoArbitration.Data.Mobile },
+                                   notification_type = "SMS",
 
-                                },
-                                applicationNotifications
-                                );
+                               },
+                               applicationNotifications
+                               );
                         }
                         catch (Exception ex)
                         {
@@ -305,22 +304,22 @@ namespace REAC.Application.AppServices.Litigation
                                 Message = msg
                             });
 
-                             await _notificationService.SendNotifications(
-                                new SendEmailDto()
-                                {
-                                    To = new List<string>() { citizenInfo.Email, deptAdminInfoArbitration.Data.Email },
-                                    Subject = "Arbitraor Reject Task",
-                                    Body = msg
-                                },
-                                new SMSRequestDto()
-                                {
-                                    message_text = msg,
-                                    recipients = new List<string>() { citizenInfo.Mobile, deptAdminInfoArbitration.Data.Mobile },
-                                    notification_type = "SMS",
+                            await _notificationService.SendNotifications(
+                               new SendEmailDto()
+                               {
+                                   To = new List<string>() { citizenInfo.Email, deptAdminInfoArbitration.Data.Email },
+                                   Subject = "Arbitraor Reject Task",
+                                   Body = msg
+                               },
+                               new SMSRequestDto()
+                               {
+                                   message_text = msg,
+                                   recipients = new List<string>() { citizenInfo.Mobile, deptAdminInfoArbitration.Data.Mobile },
+                                   notification_type = "SMS",
 
-                                },
-                                applicationNotifications
-                                );
+                               },
+                               applicationNotifications
+                               );
                         }
                         catch (Exception ex)
                         {
@@ -391,37 +390,41 @@ namespace REAC.Application.AppServices.Litigation
             {
                 foreach (var litigationRequest in litigationRequests)
                 {
-                    CustomLitigationRequestMircoArbitratorDto litigationRequestMircoDto = new CustomLitigationRequestMircoArbitratorDto();
-                    litigationRequestMircoDto.Id = litigationRequest.LitigationRequestArbitratorAssigningRequests.Where(x => x.CitizenId == referenceId).FirstOrDefault().Id;
-                    litigationRequestMircoDto.RequestId = litigationRequest.Id;
-                    litigationRequestMircoDto.RequestDate = litigationRequest.CreatedOn;
-                    litigationRequestMircoDto.RequestCode = litigationRequest.RequestCode;
-                    litigationRequestMircoDto.ArbitratorAssigningRequestType = litigationRequest.LitigationRequestArbitratorAssigningRequests.Where(x => x.CitizenId == referenceId).FirstOrDefault().ArbitratorAssigningRequestTypeId;
-                    litigationRequestMircoDto.FirstPartyName = (litigationRequest.Contract.FirstPartyCitizen == null) ? litigationRequest.Contract.FirstPartyFacility.ArabicFacilityName : litigationRequest.Contract.FirstPartyCitizen.FullName;
-                    litigationRequestMircoDto.SecondPartyName = (litigationRequest.Contract.SecondPartyCitizen == null) ? litigationRequest.Contract.SecondPartyFacility.ArabicFacilityName : litigationRequest.Contract.SecondPartyCitizen.FullName;
-                    litigationRequestMircoDto.RequestTypeName = litigationRequest.Contract.LitigationRequestContractType.TypeName;
-                    litigationRequestMircoDto.Response = litigationRequest.LitigationRequestArbitratorAssigningRequests.Where(x => x.CitizenId == referenceId).FirstOrDefault()?.Response;
-                    litigationRequestMircoDto.ResponseOn = litigationRequest.LitigationRequestArbitratorAssigningRequests.Where(x => x.CitizenId == referenceId).FirstOrDefault()?.ResponseOn;
-
-                    bool allowAdd = true;
-
-                    if (litigationRequest.LitigationRequestArbitratorAssigningRequests.Where(x => x.CitizenId == referenceId).Any())
+                    foreach (var litigationRequestArbitratorAssigningRequest in litigationRequest.LitigationRequestArbitratorAssigningRequests
+                        .Where(x => x.CitizenId == referenceId).OrderByDescending(x => x.RequestOn))
                     {
-                        if (litigationRequest.LitigationRequestArbitratorAssigningRequests.Where(x => x.CitizenId == referenceId).FirstOrDefault()?.Response == LitigationRequestArbitratorAssigningRequestStatus.Approve |
-                            litigationRequest.LitigationRequestArbitratorAssigningRequests.Where(x => x.CitizenId == referenceId).FirstOrDefault()?.Response == LitigationRequestArbitratorAssigningRequestStatus.Cancelled |
-                            litigationRequest.LitigationRequestArbitratorAssigningRequests.Where(x => x.CitizenId == referenceId).FirstOrDefault()?.Response == LitigationRequestArbitratorAssigningRequestStatus.Reject)
+                        CustomLitigationRequestMircoArbitratorDto litigationRequestMircoDto = new CustomLitigationRequestMircoArbitratorDto();
+                        litigationRequestMircoDto.Id = litigationRequestArbitratorAssigningRequest.Id;
+                        litigationRequestMircoDto.RequestId = litigationRequest.Id;
+                        litigationRequestMircoDto.RequestDate = litigationRequest.CreatedOn;
+                        litigationRequestMircoDto.RequestCode = litigationRequest.RequestCode;
+                        litigationRequestMircoDto.ArbitratorAssigningRequestType = litigationRequestArbitratorAssigningRequest.ArbitratorAssigningRequestTypeId;
+                        litigationRequestMircoDto.FirstPartyName = (litigationRequest.Contract.FirstPartyCitizen == null) ? litigationRequest.Contract.FirstPartyFacility.ArabicFacilityName : litigationRequest.Contract.FirstPartyCitizen.FullName;
+                        litigationRequestMircoDto.SecondPartyName = (litigationRequest.Contract.SecondPartyCitizen == null) ? litigationRequest.Contract.SecondPartyFacility.ArabicFacilityName : litigationRequest.Contract.SecondPartyCitizen.FullName;
+                        litigationRequestMircoDto.RequestTypeName = litigationRequest.Contract.LitigationRequestContractType.TypeName;
+                        litigationRequestMircoDto.Response = litigationRequestArbitratorAssigningRequest.Response;
+                        litigationRequestMircoDto.ResponseOn = litigationRequestArbitratorAssigningRequest.ResponseOn;
+
+                        bool allowAdd = true;
+
+                        if (litigationRequest.LitigationRequestArbitratorAssigningRequests.Where(x => x.CitizenId == referenceId).Any())
                         {
-                            allowAdd = false;
+                            if (litigationRequestArbitratorAssigningRequest.Response == LitigationRequestArbitratorAssigningRequestStatus.Approve |
+                                litigationRequestArbitratorAssigningRequest.Response == LitigationRequestArbitratorAssigningRequestStatus.Cancelled |
+                                litigationRequestArbitratorAssigningRequest.Response == LitigationRequestArbitratorAssigningRequestStatus.Reject)
+                            {
+                                allowAdd = false;
+                            }
                         }
+
+                        if (allowAdd)
+                            litigationRequestMircoDto.IsDone = "--";
+                        else
+                            litigationRequestMircoDto.IsDone = "تم";
+
+                        litigationRequestMircoDto.Status = litigationRequest.ExternalStatus.RequestStatus;
+                        litigationRequestMircoDtos.Add(litigationRequestMircoDto);
                     }
-
-                    if (allowAdd)
-                        litigationRequestMircoDto.IsDone = "--";
-                    else
-                        litigationRequestMircoDto.IsDone = "تم";
-
-                    litigationRequestMircoDto.Status = litigationRequest.ExternalStatus.RequestStatus;
-                    litigationRequestMircoDtos.Add(litigationRequestMircoDto);
                 }
             }
 
@@ -458,7 +461,8 @@ namespace REAC.Application.AppServices.Litigation
                          .Include(x => x.LitigationRequest.Contract.LitigationRequestContractType);
 
 
-            litigationRequests = entitiesQuerable
+            litigationRequests = entitiesQuerable.Where(x => x.LitigationRequest.LitigationRequestStage
+            == LitigationRequestStage.Arbitration)
                                        .OrderByDescending(x => x.LitigationRequest.CreatedOn)
                                        .AsSplitQuery()
                                        .AsNoTracking()

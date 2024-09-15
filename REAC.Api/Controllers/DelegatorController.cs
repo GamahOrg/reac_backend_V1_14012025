@@ -107,7 +107,7 @@ public class DelegatorController : ControllerBase
     {
         if (ModelState.IsValid)
         {
-            var returnValue = await _delegatorService.ValidateDelegator(validateDelegatorDto);
+            var returnValue = await _delegatorService.ValidateAgentDelegator(validateDelegatorDto);
             return Ok(returnValue);
         }
 

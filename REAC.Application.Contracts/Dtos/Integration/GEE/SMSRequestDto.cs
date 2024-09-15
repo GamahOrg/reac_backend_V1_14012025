@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -63,7 +64,7 @@ namespace REAC.Application.Contracts.Dtos.Integration.GEE
         public string type { get; set; }
         public string msg { get; set; }
         public string input { get; set; }
-        public List<string> loc { get; set; }
+        public object[] loc { get; set; }
         public CtxDto ctx { get; set; }
     }
 

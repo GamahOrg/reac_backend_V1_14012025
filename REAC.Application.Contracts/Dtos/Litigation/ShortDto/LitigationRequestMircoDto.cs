@@ -13,6 +13,7 @@ public partial class LitigationRequestMircoDto : BaseEntity<Guid>
     public int RequestTypeId { get; set; }
     public string? Status { get; set; } = null!;
     public string IsDone { get; set; } = null!;
+    public ApproveRejectStatus Response { get; set; }
 
 
 }
@@ -40,6 +41,10 @@ public partial class LitigationRequestMircoExplanationRequestDto : BaseEntity<Gu
     public string? Status { get; set; } = null!;
     public string IsDone { get; set; } = null!;
     public string IsResponseDone { get; set; } = null!;
+    public ApproveRejectStatus Response { get; set; }
+
+    public LitigationRequestParty RequestParty { get; set; }
+
 
 
 }

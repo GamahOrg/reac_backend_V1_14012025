@@ -3946,7 +3946,7 @@ namespace REAC.EntityFrameworkCore.Migrations
                         .HasConstraintName("FKLitigation638578");
 
                     b.HasOne("REAC.EntityFrameworkCore.Entities.Actor.Citizen", "ArbitratorCitizen")
-                        .WithMany("ReformerLitigationRequests")
+                        .WithMany("ArbitratorLitigationRequests")
                         .HasForeignKey("ArbitratorCitizenId")
                         .HasConstraintName("FKReformerCitizenLitigation638578");
 
@@ -4013,7 +4013,7 @@ namespace REAC.EntityFrameworkCore.Migrations
                         .HasConstraintName("FKOtherCategory580725");
 
                     b.HasOne("REAC.EntityFrameworkCore.Entities.Actor.Citizen", "ReformerCitizen")
-                        .WithMany("ArbitratorLitigationRequests")
+                        .WithMany("ReformerLitigationRequests")
                         .HasForeignKey("ReformerCitizenId")
                         .HasConstraintName("FKArbitratorCitizenLitigation638578");
 

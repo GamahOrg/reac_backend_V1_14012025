@@ -176,7 +176,7 @@ namespace REAC.Application.ModuleServices
                                 emails.Add(litigationRequest.Contract.SecondPartyFacility.Citizen.Email);
                                 recipients.Add(litigationRequest.Contract.SecondPartyFacility.Citizen.Mobile);
                             };
-                            _notificationService.SendNotifications(new Contracts.Dtos.Notification.SendEmailDto()
+                            await _notificationService.SendNotifications(new Contracts.Dtos.Notification.SendEmailDto()
                             {
                                 To = emails,
                                 Subject = "عدد المحكمين النهائي",
@@ -237,7 +237,7 @@ namespace REAC.Application.ModuleServices
                          .Include(x => x.Contract.SecondPartyCitizen)
                          .Include(x => x.Contract.LitigationRequestContractType)
 
-                         .Where(x => x.Id == requestId).ToList().FirstOrDefault();
+                         .Where(x => x.Id == requestId).AsNoTracking().ToList().FirstOrDefault();
 
             var request = _mapper.Map<LitigationRequestShortDto>(litigationRequest);
 
@@ -419,7 +419,8 @@ namespace REAC.Application.ModuleServices
                                       .Include(x => x.Contract.SecondPartyCitizen).Include(x => x.Contract.LitigationRequestContractType);
 
             litigationRequests = entitiesQuerable.Where
-                                      (x => x.RequestCode != null & x.ArbitratorSelectionDuration.HasValue & x.ApplicantCitizenId == referenceId & x.LitigationRequestStage == LitigationRequestStage.Arbitration & x.LitigationRequestStage == LitigationRequestStage.Arbitration
+                                      (x => x.RequestCode != null & x.ArbitratorSelectionDuration.HasValue
+                                        & x.ApplicantCitizenId == referenceId & x.LitigationRequestStage == LitigationRequestStage.Arbitration & x.LitigationRequestStage == LitigationRequestStage.Arbitration
                                       | x.RequestCode != null & x.ArbitratorSelectionDuration.HasValue & x.Contract.FirstPartyCitizenId == referenceId & x.LitigationRequestStage == LitigationRequestStage.Arbitration & x.LitigationRequestStage == LitigationRequestStage.Arbitration
                                       | x.RequestCode != null & x.ArbitratorSelectionDuration.HasValue & x.Contract.SecondPartyCitizenId == referenceId & x.LitigationRequestStage == LitigationRequestStage.Arbitration & x.LitigationRequestStage == LitigationRequestStage.Arbitration
                                       | x.RequestCode != null & x.ArbitratorSelectionDuration.HasValue & x.Contract.FirstPartyFacility.CitizenId == referenceId & x.LitigationRequestStage == LitigationRequestStage.Arbitration & x.LitigationRequestStage == LitigationRequestStage.Arbitration
@@ -568,7 +569,7 @@ namespace REAC.Application.ModuleServices
                          .Include(x => x.Contract.SecondPartyCitizen)
                          .Include(x => x.Contract.LitigationRequestContractType)
 
-                         .Where(x => x.Id == requestId).ToList().FirstOrDefault();
+                         .Where(x => x.Id == requestId).AsNoTracking().ToList().FirstOrDefault();
 
             if (litigationRequest == null)
                 return new BaseResponse() { IsDone = false, Message = "طلب غير موجود" };
@@ -811,14 +812,14 @@ namespace REAC.Application.ModuleServices
                         var arbitrationAdmin = await _sysEmployeeService.GetAdminsByDepartmentType(DepartmentType.Arbitration);
                         var msg = _settingService.GetBySettingKey(SysSettingKeyConstants.Arbitrators_Count_FromBothSides).Result.Data?.Value;
                         msg = msg?.Replace("{LitigationCode}", litigationRequest.RequestCode);
-                        if (litigationRequest?.Contract?.FirstPartyCitizen != null)
-                            msg = msg?.Replace("{FirstParty}", litigationRequest?.Contract?.FirstPartyCitizen.FullName);
-                        if (litigationRequest?.Contract?.SecondPartyCitizen != null)
-                            msg = msg?.Replace("{SecondParty}", litigationRequest?.Contract?.SecondPartyCitizen.FullName);
-                        if (litigationRequest?.Contract?.FirstPartyFacility != null)
-                            msg = msg?.Replace("{FirstParty}", litigationRequest?.Contract?.FirstPartyFacility.Citizen.FullName);
-                        if (litigationRequest?.Contract?.SecondPartyFacility != null)
-                            msg = msg?.Replace("{SecondParty}", litigationRequest?.Contract?.SecondPartyFacility.Citizen.FullName);
+                        //if (litigationRequest?.Contract?.FirstPartyCitizen != null)
+                        //    msg = msg?.Replace("{FirstParty}", litigationRequest?.Contract?.FirstPartyCitizen.FullName);
+                        //if (litigationRequest?.Contract?.SecondPartyCitizen != null)
+                        //    msg = msg?.Replace("{SecondParty}", litigationRequest?.Contract?.SecondPartyCitizen.FullName);
+                        //if (litigationRequest?.Contract?.FirstPartyFacility != null)
+                        //    msg = msg?.Replace("{FirstParty}", litigationRequest?.Contract?.FirstPartyFacility.Citizen.FullName);
+                        //if (litigationRequest?.Contract?.SecondPartyFacility != null)
+                        //    msg = msg?.Replace("{SecondParty}", litigationRequest?.Contract?.SecondPartyFacility.Citizen.FullName);
 
 
                         if (arbitrationAdmin.IsDone)
@@ -841,7 +842,7 @@ namespace REAC.Application.ModuleServices
                                   arbitrationAdmin.Data?.Mobile
                                 };
 
-                           await _notificationService.SendNotifications(new Contracts.Dtos.Notification.SendEmailDto()
+                            await _notificationService.SendNotifications(new Contracts.Dtos.Notification.SendEmailDto()
                             {
                                 To = emails,
                                 Subject = "الإنتهاء من تحديد عدد المحكمين",
@@ -895,7 +896,7 @@ namespace REAC.Application.ModuleServices
                                   arbitrationAdmin.Data?.Mobile
                                 };
 
-                           await _notificationService.SendNotifications(new Contracts.Dtos.Notification.SendEmailDto()
+                            await _notificationService.SendNotifications(new Contracts.Dtos.Notification.SendEmailDto()
                             {
                                 To = emails,
                                 Subject = "الإنتهاء من تحديد عدد المحكمين",

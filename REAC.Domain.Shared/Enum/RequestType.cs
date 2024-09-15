@@ -61,5 +61,9 @@
         //  حذف محامي 
         // Lawyer
         DeleteLawyer = 18,
+        
+        //   طلبات المشارطه
+        // Litigation Agreement
+        LitigationAgreementRequest = 19,
     }
 }

@@ -11,5 +11,6 @@ namespace REAC.Application.Contracts.Dtos.Litigation.CreateUpdate.Litigation
     {
         [MaxLength(200)]
         public string LitigationPurpose { get; set; }
+        public Guid? RequestId { get; set; }
     }
 }

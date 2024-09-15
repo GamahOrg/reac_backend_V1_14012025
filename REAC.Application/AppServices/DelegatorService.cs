@@ -132,7 +132,7 @@ namespace REAC.Application.AppServices
 
         }
 
-        public async Task<BaseResponse> ValidateDelegator(ValidateDelegatorDto validateDelegatorDto)
+        public async Task<BaseResponse> ValidateAgentDelegator(ValidateDelegatorDto validateDelegatorDto)
         {
             try
             {
@@ -149,10 +149,21 @@ namespace REAC.Application.AppServices
                     SecondParties = validateDelegatorDto.IdentityNumber
                 });
 
-                if (validationResult is null || !validationResult.IsDone || !validationResult.Data.IsValid)
+                if (validationResult is null || !validationResult.IsDone || !validationResult.Data.IsValid || validationResult.Data?.Error is null)
                     return new BaseResponse() { IsDone = false, Message = "المحامي أو الوكيل غير صالح" };
+                
 
-                return new BaseResponse() { IsDone = true };
+                var secondParties = validationResult.Data.Data?.responseObject.Results?
+                .Select(r => r.Model.SecondParties).FirstOrDefault();
+
+
+                var citizenDataResult = secondParties?.FirstOrDefault(m => m.IdentityNo == validateDelegatorDto.IdentityNumber);
+
+                return new DataResponse<PartiesDto>()
+                {
+                    IsDone = true,
+                    Data = citizenDataResult
+                };
             }
             catch (Exception ex)
             {
@@ -273,6 +284,7 @@ namespace REAC.Application.AppServices
                         Id = Guid.NewGuid(),
                         FullName = integrationCitizen.Data.FullName,
                         ShortName = integrationCitizen.Data.FirstName,
+                        Mobile = integrationCitizen.Data.MobileNumber,
                         IdentityNumber = delegatorDto.IdentityNumber,
                         GenderId = (integrationCitizen.Data.GenderId == Gender.Male.GetHashCode()) ? Gender.Male : Gender.Female,
                         BirthDate = DateTime.Parse(integrationCitizen.Data.BirthDate),
@@ -545,6 +557,7 @@ namespace REAC.Application.AppServices
                     IsActive = true,
                     CitizenId = referenceId,
                     DelegationRelationshipTypeId = DelegationRelationshipType.Lawyer,
+                    DelegationFileId = delegatorDto.DelegationFileId
                 };
 
 
@@ -629,7 +642,6 @@ namespace REAC.Application.AppServices
                 var lawyerCitizen = (await _repository.GetQueryable<Citizen, Guid>()).FirstOrDefault(x => x.IdentityNumber == delegatorDto.IdentityNumber);
                 var lawyerUser = _userManager.Users.FirstOrDefault(u => u.UserName == delegatorDto.IdentityNumber);
 
-                var lawyerMsg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.Delegator_AddLawyer).Result.Data?.Value;
 
 
                 if (lawyerCitizen is null)
@@ -658,12 +670,10 @@ namespace REAC.Application.AppServices
 
                     delegatorDto.DelegatorCitizenId = newLawyerCitizen.Id;
 
-                    lawyerMsg = lawyerMsg.Replace("{CitizenName}", newLawyerCitizen.FullName);
                 }
                 else
                 {
                     delegatorDto.DelegatorCitizenId = lawyerCitizen.Id;
-                    lawyerMsg = lawyerMsg.Replace("{CitizenName}", lawyerCitizen.FullName);
 
                 }
 
@@ -695,7 +705,10 @@ namespace REAC.Application.AppServices
                 {
 
                     var citizenMsg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.Citizen_AddLawyer).Result.Data?.Value;
-                    citizenMsg = citizenMsg.Replace("{CitizenName}", sourceCitizen.FullName);
+                    citizenMsg = citizenMsg.Replace("{CitizenName}", delegatorDto.FullName);
+
+                    var lawyerMsg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.Delegator_AddLawyer).Result.Data?.Value;
+                    lawyerMsg = lawyerMsg.Replace("{CitizenName}", sourceCitizen.FullName);
 
 
                     _notificationService.SendNotifications(null, null, new List<Contracts.Dtos.Notification.SysNotificationDto>()

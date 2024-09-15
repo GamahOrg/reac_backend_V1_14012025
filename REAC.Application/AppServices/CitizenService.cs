@@ -212,7 +212,8 @@ namespace REAC.Application.AppServices
 
 
             var citizen = (await _repository.GetQueryable<Citizen, Guid>())
-                    .Include(x => x.Gender)
+                    .Include(x => x.Gender).Include(x => x.City)
+                    .Include(x => x.Area)
                     .Include(x => x.IdentityFile)
                     .Include(x => x.LawLicenseFile)
                     .Include(x => x.Nationality)
@@ -449,7 +450,7 @@ namespace REAC.Application.AppServices
                         Message = msg
                     });
 
-                    var notificationResultUpdatedArbitrator = _notificationService.SendNotifications(
+                    var notificationResultUpdatedArbitrator = await _notificationService.SendNotifications(
                         new SendEmailDto()
                         {
                             To = new List<string>() { citizen.Email, deptAdminInfoArbitration.Data.Email },
@@ -545,7 +546,7 @@ namespace REAC.Application.AppServices
                         Message = msg
                     });
 
-                    var notificationResultUpdatedArbitrator = _notificationService.SendNotifications(
+                    var notificationResultUpdatedArbitrator = await _notificationService.SendNotifications(
                         new SendEmailDto()
                         {
                             To = new List<string>() { citizen.Email, deptAdminInfoArbitration.Data.Email },
@@ -641,7 +642,7 @@ namespace REAC.Application.AppServices
                         Message = msg
                     });
 
-                    var notificationResultUpdatedArbitrator = _notificationService.SendNotifications(
+                    var notificationResultUpdatedArbitrator = await _notificationService.SendNotifications(
                         new SendEmailDto()
                         {
                             To = new List<string>() { citizen.Email, deptAdminInfoReconciliation.Data.Email },
@@ -682,6 +683,18 @@ namespace REAC.Application.AppServices
                 var citizen = (await _repository.GetQueryable<Citizen, Guid>())?
                     .Where(x => x.Id == reformerStopDecisionCreateDto.CitizenId)
                     .SingleOrDefault();
+
+                if (!string.IsNullOrEmpty(reformerStopDecisionCreateDto.LateLitigationRequestNumber))
+                {
+                    var litigationRequest = (await _repository.GetQueryable<LitigationRequest, Guid>())
+                    .Any(l => l.RequestCode == reformerStopDecisionCreateDto.LateLitigationRequestNumber);
+
+                    if (!litigationRequest)
+                        return new BaseResponse() { IsDone = false, Message = "لا يوجد دعوي بهذا الرقم" };
+
+                }
+
+                
                 var deptAdminInfoReconciliation = await _employeeService.GetAdminsByDepartmentType(DepartmentType.Reconciliation);
                 var msg = "";
                 var applicationNotifications = new List<SysNotificationDto>();

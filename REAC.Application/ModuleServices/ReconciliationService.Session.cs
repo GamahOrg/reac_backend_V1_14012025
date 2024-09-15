@@ -128,9 +128,8 @@ namespace REAC.Application.ModuleServices
                             try
                             {
                                 msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.ReconciliationSession_set).Result.Data?.Value;
-                                msg = msg?.Replace("{LitigationCode}", litigationRequest?.RequestCode).Replace("{LitigationType}", nameof(LitigationRequestSessionRequestType.Reconciliation))
-                                    .Replace("{LitigationDate}", litigationRequest?.CreatedOn.Date.ToString())
-                                     .Replace("{LitigationDateTime}", litigationRequest?.CreatedOn.TimeOfDay.ToString());
+
+                                msg = msg?.Replace("{LitigationCode}", litigationRequest?.RequestCode);
                                 SendNotificationMS(msg, litigationRequest);
                             }
                             catch (Exception e)
@@ -157,9 +156,7 @@ namespace REAC.Application.ModuleServices
                             try
                             {
                                 msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.ReconciliationSession_Reset).Result.Data?.Value;
-                                msg = msg?.Replace("{LitigationCode}", litigationRequest?.RequestCode).Replace("{LitigationType}", nameof(LitigationRequestSessionRequestType.Reconciliation))
-                                 .Replace("{LitigationDate}", litigationRequest?.CreatedOn.Date.ToString())
-                                  .Replace("{LitigationDateTime}", litigationRequest?.CreatedOn.TimeOfDay.ToString());
+                                msg = msg?.Replace("{LitigationCode}", litigationRequest?.RequestCode);
                                 SendNotificationMS(msg, litigationRequest);
                             }
                             catch (Exception e)
@@ -829,7 +826,7 @@ namespace REAC.Application.ModuleServices
                                       .Include(x => x.Contract.LitigationRequestContractType);
 
             litigationRequests = entitiesQuerable.Where(x => x.LitigationRequestCategoryId != LitigationRequestCategory.Arbitration
-            & x.RequestCode != null & x.LitigationRequestStage.HasValue & x.InternalStatusId != RequestStatus.Rejected)
+            & x.RequestCode != null & x.LitigationRequestStage != LitigationRequestStage.Review & x.InternalStatusId != RequestStatus.Rejected)
                 .OrderByDescending(x => x.CreatedOn)
               .AsSplitQuery()
               .AsNoTracking()

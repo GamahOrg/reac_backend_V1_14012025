@@ -193,6 +193,8 @@ namespace REAC.Application.Contracts
 
             CreateMap<Citizen, GetCitizenBasicDataProfileDto>()
                                 .ForMember(dest => dest.GenderName, opt => opt.MapFrom(src => src.Gender.Gender))
+                                .ForMember(dest => dest.AreaName, opt => opt.MapFrom(src => src.Area.AreaName))
+                                .ForMember(dest => dest.CityName, opt => opt.MapFrom(src => src.City.CityName))
                                 .ForMember(dest => dest.NationalityName, opt => opt.MapFrom(src => src.Nationality.NationalityName))
                                 .ReverseMap();
             CreateMap<Citizen, SaveCitizenBasicDataProfileDto>()
@@ -208,9 +210,9 @@ namespace REAC.Application.Contracts
             CreateMap<SysNotification, SysNotificationCreateUpdateDto>().ReverseMap();
             CreateMap<SysNotificationDto, SysNotification>()
                 .ForMember(x => x.CreatedOn, src => src.MapFrom(x => DateTime.Now))
-                .ForMember(x => x.NotificationActorTypeId, src => src.MapFrom(x => x.ActorTypeId)) 
+                .ForMember(x => x.NotificationActorTypeId, src => src.MapFrom(x => x.ActorTypeId))
                 .ReverseMap();
-            
+
             CreateMap<SysNotification, SysNotificationDto>()
                 .ReverseMap();
 
@@ -328,7 +330,7 @@ namespace REAC.Application.Contracts
             CreateMap<NafathTransaction, NafathTransactionDto>().ReverseMap();
             CreateMap<SysOtherCategoryTranslation, SysOtherCategoryCreateUpdateDtoTranslations>().ReverseMap();
             CreateMap<OtherCategory, SysOtherCategoryCreateUpdateDto>().ReverseMap();
-            CreateMap<OtherCategory,SysOtherCategoryDto>().ForMember(des => des.CategoryName,
+            CreateMap<OtherCategory, SysOtherCategoryDto>().ForMember(des => des.CategoryName,
                            opt => opt.MapFrom(src => (src.Translations.FirstOrDefault(x => x.LanguageCode == CultureInfo.CurrentUICulture.Name) == null ||
                            string.IsNullOrEmpty(src.Translations.FirstOrDefault(x => x.LanguageCode == CultureInfo.CurrentUICulture.Name).CategoryName)) ?
                            src.CategoryName : src.Translations.FirstOrDefault(x => x.LanguageCode == CultureInfo.CurrentUICulture.Name).CategoryName));

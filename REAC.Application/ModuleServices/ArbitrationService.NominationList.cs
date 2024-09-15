@@ -12,6 +12,7 @@ using REAC.EntityFrameworkCore.Entities.Arbitration;
 using REAC.EntityFrameworkCore.Entities.Litigation;
 using REAC.EntityFrameworkCore.Entities.System;
 using REAC.EntityFrameworkCore.Entities.Wpf.Business;
+using System.Globalization;
 
 namespace REAC.Application.ModuleServices
 {
@@ -112,8 +113,8 @@ namespace REAC.Application.ModuleServices
                         var msg = _settingService.GetBySettingKey(SysSettingKeyConstants.ArbitratorsNominationList_Added).Result.Data?.Value;
                         msg = msg?.Replace("{LitigationCode}", litigationRequest.RequestCode);
                         var expirationDateHours = int.Parse(_settingService.GetBySettingKey(SysSettingKeyConstants.Arbitration_ExpirationDateHours).Result.Data?.Value);
-                        msg = msg?.Replace("{ExpirationDate}", DateTime.Now.AddHours(expirationDateHours).ToString("MM/dd/yyyy hh:mm tt"));
-                       
+                        msg = msg?.Replace("{ExpirationDate}", DateTime.Now.AddHours(expirationDateHours).ToString("MM/dd/yyyy hh:mm tt", new CultureInfo("en-US")));
+
                         List<SysNotificationDto> notifications = new List<SysNotificationDto>() {
                         new SysNotificationDto{
                         ActorId = litigationRequest.ApplicantCitizen.Id,
@@ -187,7 +188,7 @@ namespace REAC.Application.ModuleServices
                             emails.Add(litigationRequest.Contract.SecondPartyFacility.Citizen.Email);
                             recipients.Add(litigationRequest.Contract.SecondPartyFacility.Citizen.Mobile);
                         };
-                        _notificationService.SendNotifications(new Contracts.Dtos.Notification.SendEmailDto()
+                        await _notificationService.SendNotifications(new Contracts.Dtos.Notification.SendEmailDto()
                         {
                             To = emails,
                             Subject = "تم إضافة قائمة تعيين هيئة التحكيم برجاء الاختيار",
@@ -222,7 +223,7 @@ namespace REAC.Application.ModuleServices
                             {
                                   arbitrationAdmin.Data?.Mobile
                             };
-                            _notificationService.SendNotifications(new Contracts.Dtos.Notification.SendEmailDto()
+                            await _notificationService.SendNotifications(new Contracts.Dtos.Notification.SendEmailDto()
                             {
                                 To = emailList,
                                 Subject = "إضافة قائمة تعيين هيئة التحكيم",
@@ -289,7 +290,7 @@ namespace REAC.Application.ModuleServices
                             .Include(x => x.Contract.SecondPartyFacility)
                             .Include(x => x.Contract.SecondPartyCitizen)
                             .Include(x => x.Contract.LitigationRequestContractType)
-                            .Where(x => x.Id == requestId).ToList().FirstOrDefault();
+                            .Where(x => x.Id == requestId).AsNoTracking().ToList().FirstOrDefault();
 
             var request = _mapper.Map<LitigationRequestShortDto>(litigationRequest);
 
@@ -1014,18 +1015,18 @@ namespace REAC.Application.ModuleServices
                             await _repository.AddAsync<LitigationRequestArbitratorAssigningRequest, Guid>(litigationRequestArbitratorAssigningRequest);
                             arbitratorsList[record].IsSent = true;
 
-                    // Send Notification
-                    // يوجد طلب مهمه جديده كمحكم علي الدعوي رقم
-                    try
-                    {
-                        var Fmsg = _settingService.GetBySettingKey(SysSettingKeyConstants.Arbitration_Arbitraor_Assigned).Result.Data?.Value;
-                        Fmsg = Fmsg?.Replace("{LitigationCode}", litigationRequest.RequestCode);
-                        var citizenInfo = (await _repository.GetQueryable<Citizen, Guid>())
-                                            .Where(c => c.Id == litigationRequestArbitratorAssigningRequest.CitizenId)
-                                            .FirstOrDefault();
+                            // Send Notification
+                            // يوجد طلب مهمه جديده كمحكم علي الدعوي رقم
+                            try
+                            {
+                                var Fmsg = _settingService.GetBySettingKey(SysSettingKeyConstants.Arbitration_Arbitraor_Assigned).Result.Data?.Value;
+                                Fmsg = Fmsg?.Replace("{LitigationCode}", litigationRequest.RequestCode);
+                                var citizenInfo = (await _repository.GetQueryable<Citizen, Guid>())
+                                                    .Where(c => c.Id == litigationRequestArbitratorAssigningRequest.CitizenId)
+                                                    .FirstOrDefault();
 
 
-                        List<SysNotificationDto> notificationList = new List<SysNotificationDto>() {
+                                List<SysNotificationDto> notificationList = new List<SysNotificationDto>() {
 
                            new SysNotificationDto{
                         ActorId = litigationRequestArbitratorAssigningRequest.CitizenId,
@@ -1037,31 +1038,31 @@ namespace REAC.Application.ModuleServices
                         }
 
                         };
-                            List<string> emailList = new List<string>() {
+                                List<string> emailList = new List<string>() {
                                   citizenInfo.Email
                                 };
 
-                                    List<string> recipientList = new List<string>()
+                                List<string> recipientList = new List<string>()
                             {
                                   citizenInfo.Mobile
                             };
 
-                                    _notificationService.SendNotifications(new Contracts.Dtos.Notification.SendEmailDto()
-                                    {
-                                        To = emailList,
-                                        Subject = "طلب مهمة جديدة كمحكم علي الدعوي",
-                                        Body = Fmsg
-                                    }, new Contracts.Dtos.Integration.GEE.SMSRequestDto()
-                                    {
-                                        message_text = Fmsg,
-                                        recipients = recipientList,
-                                        notification_type = "SMS",
+                                await _notificationService.SendNotifications(new Contracts.Dtos.Notification.SendEmailDto()
+                                {
+                                    To = emailList,
+                                    Subject = "طلب مهمة جديدة كمحكم علي الدعوي",
+                                    Body = Fmsg
+                                }, new Contracts.Dtos.Integration.GEE.SMSRequestDto()
+                                {
+                                    message_text = Fmsg,
+                                    recipients = recipientList,
+                                    notification_type = "SMS",
 
-                            }, notificationList);
-                        
-                    }
-                    catch (Exception e)
-                    {
+                                }, notificationList);
+
+                            }
+                            catch (Exception e)
+                            {
 
 
                             }
@@ -1112,7 +1113,7 @@ namespace REAC.Application.ModuleServices
                                   arbitrationAdmin.Data?.Mobile
                             };
 
-                        _notificationService.SendNotifications(new Contracts.Dtos.Notification.SendEmailDto()
+                        await _notificationService.SendNotifications(new Contracts.Dtos.Notification.SendEmailDto()
                         {
                             To = emailList,
                             Subject = "تم تعيين هيئة التحكيم وإرسال طلبات المهام",

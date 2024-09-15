@@ -1,6 +1,5 @@
 ﻿using Core.Shared.Responses;
 using Microsoft.EntityFrameworkCore;
-using REAC.Application.Contracts.Dtos.Litigation.CreateUpdate.Litigation;
 using REAC.Application.Contracts.Dtos.Notification;
 using REAC.Application.Contracts.Dtos.Reconciliation.Process;
 using REAC.Domain.Shared.Constants;
@@ -491,7 +490,8 @@ namespace REAC.Application.ModuleServices
                 {
                     litigationRequest.InternalStatusId = RequestStatus.ReconciliationWasMade;
                     litigationRequest.ExternalStatusId = RequestStatus.ReconciliationWasMade;
-                   
+                    litigationRequest.LitigationRequestSubStage = LitigationRequestSubStage.LitigationRequestPartiesDecisionAdded;
+
                     await _repository.AddAsync<WorkFlowLog, Guid>(new WorkFlowLog()
                     {
                         Id = Guid.NewGuid(),
@@ -525,7 +525,7 @@ namespace REAC.Application.ModuleServices
                     {
                         litigationRequest.LitigationRequestStage = LitigationRequestStage.Arbitration;
                         litigationRequest.LitigationRequestSubStage = LitigationRequestSubStage.ArbitratorSelectionDuration;
-                        
+
                         await _repository.AddAsync<WorkFlowLog, Guid>(new WorkFlowLog()
                         {
                             Id = Guid.NewGuid(),
@@ -542,7 +542,7 @@ namespace REAC.Application.ModuleServices
                             bool isAdminArbitrator = true;
                             msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.LitigationRequest_Decision_ReconciliationWasNotMadeAndMoveToArbitration).Result.Data?.Value;
                             msg = msg.Replace("{LitigationCode}", litigationRequest.RequestCode);
-                            await SendNotificationMSWithAllTypes(msg, litigationRequest, "Citizen Litigation Request For Report Reply Refused",isAdminArbitrator);
+                            await SendNotificationMSWithAllTypes(msg, litigationRequest, "Citizen Litigation Request For Report Reply Refused", isAdminArbitrator);
                         }
                         catch (Exception e)
                         {
@@ -611,7 +611,7 @@ namespace REAC.Application.ModuleServices
             {
                 ActorId = litigationRequest.ApplicantCitizen.Id,
                 CreatedOn = DateTime.Now,
-                ActorTypeId = NotificationActorType.Applicant,
+                ActorTypeId = NotificationActorType.Plaintiff,
                 IsViewed = false,
                 ViewedOn = null,
                 RequestId = litigationRequest.Id,
@@ -656,22 +656,26 @@ namespace REAC.Application.ModuleServices
             }
 
             //مدير ادارة التحكيم
-            if (isAdminArbitrator is not null & (bool)isAdminArbitrator)
+            if (isAdminArbitrator is not null)
             {
-                objEmail.To.Add(deptAdminInfoArbitration?.Data?.Email);
-                objSms.recipients.Add(deptAdminInfoArbitration?.Data?.Mobile);
-
-                lstNotification.Add(new Contracts.Dtos.Notification.SysNotificationDto()
+                if ((bool)isAdminArbitrator)
                 {
-                    ActorId = deptAdminInfoArbitration.Data.Id,
-                    CreatedOn = DateTime.Now,
-                    ActorTypeId = NotificationActorType.Employee,
-                    IsViewed = false,
-                    ViewedOn = null,
-                    RequestId = litigationRequest.Id,
-                    RequestTypeId = RequestType.ReformationReport,
-                    Message = msg,
-                });
+                    objEmail.To.Add(deptAdminInfoArbitration?.Data?.Email);
+                    objSms.recipients.Add(deptAdminInfoArbitration?.Data?.Mobile);
+
+                    lstNotification.Add(new Contracts.Dtos.Notification.SysNotificationDto()
+                    {
+                        ActorId = deptAdminInfoArbitration.Data.Id,
+                        CreatedOn = DateTime.Now,
+                        ActorTypeId = NotificationActorType.Employee,
+                        IsViewed = false,
+                        ViewedOn = null,
+                        RequestId = litigationRequest.Id,
+                        RequestTypeId = RequestType.ReformationReport,
+                        Message = msg,
+                    });
+                }
+
             }
 
             if (litigationRequest?.Contract?.FirstPartyCitizen != null && litigationRequest?.Contract?.FirstPartyCitizen.Id != litigationRequest.ApplicantCitizen.Id)
@@ -745,7 +749,7 @@ namespace REAC.Application.ModuleServices
 
             }
 
-             await _notificationService.SendNotifications(objEmail,objSms, lstNotification);
+            await _notificationService.SendNotifications(objEmail, objSms, lstNotification);
         }
 
         #endregion

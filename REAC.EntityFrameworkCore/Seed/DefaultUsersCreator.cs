@@ -400,7 +400,7 @@ namespace REAC.EntityFrameworkCore.Seed
                 Id = Guid.Parse("a0c57bde-d7bf-49ca-9662-9665ef3fc835"),
                 UserName = "coadmin",
                 Email = "Employee1@domain.com",
-                ReferenceId = Guid.Parse("7f14c6d6-8b17-4749-9c60-a07e191bc4f1"),
+                ReferenceId = Guid.Parse("d4430015-c883-413d-b57a-29b5fc6c07c8"),
                 EmailConfirmed = true,
             };
 
@@ -503,7 +503,7 @@ namespace REAC.EntityFrameworkCore.Seed
             {
                 Id = Guid.Parse("4bf8345e-16d7-43ef-b263-935dee667d96"),
                 ReferenceId = Guid.Parse("8ccace67-f2aa-447d-9cae-054eda040ca4"),
-                UserName = "aremp",
+                UserName = "aremp1",
                 Email = "Employee5@domain.com",
                 EmailConfirmed = true,
             };

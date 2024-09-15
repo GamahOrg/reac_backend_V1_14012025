@@ -28,11 +28,13 @@ namespace REAC.Application.ModuleServices
         private readonly INotificationService _notificationService;
         private readonly ISysSettingService _sysSettingService;
 
-        public ReconciliationService(IEntityRepository repository, ISysSettingService sysSettingService,
+        public ReconciliationService(IEntityRepository repository,
+                          ISysSettingService sysSettingService,
                           IWorkFlowProcessingLogService workFlowProcessingLogService,
                           IMapper mapper,
-                          IJwtReader jwtReader
-, INotificationService notificationService, ISysEmployeeService employeeService)
+                          IJwtReader jwtReader,
+                          INotificationService notificationService,
+                          ISysEmployeeService employeeService)
 
         {
             _mapper = mapper;
@@ -93,11 +95,22 @@ namespace REAC.Application.ModuleServices
                         Message = "طلب دعوى غير موجود"
                     };
 
-                if (litigationRequest.IsFinished == true)
+
+                if (litigationRequest.IsFinished.HasValue)
+                {
+                    if (litigationRequest.IsFinished.Value)
+                        return new BaseResponse()
+                        {
+                            IsDone = false,
+                            Message = "دعوى مغلقة"
+                        };
+                }
+
+                if (litigationRequest.LitigationRequestStage != LitigationRequestStage.Reconciliation)
                     return new BaseResponse()
                     {
                         IsDone = false,
-                        Message = "طلب دعوى منتهى"
+                        Message = "الدعوى ليست بمرحلة الصلح"
                     };
 
                 if (litigationRequest.ReformerCitizenId.HasValue)
@@ -152,21 +165,21 @@ namespace REAC.Application.ModuleServices
                             msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.Reconciliation_Cancelled).Result.Data?.Value;
                             msg = msg?.Replace("{LitigationCode}", litigationRequest?.RequestCode);
 
-                            var notificationResponse = _notificationService.SendNotifications(
-                           new Contracts.Dtos.Notification.SendEmailDto()
-                           {
-                               To = new List<string>() { litigationRequest.ReformerCitizen.Email, deptAdminInfoReconciliation.Data.Email },
-                               Subject = "Reconciliation cancelled",
-                               Body = msg
-                           },
-                           new Contracts.Dtos.Integration.GEE.SMSRequestDto()
-                           {
-                               message_text = msg,
-                               recipients = new List<string>() { litigationRequest.ReformerCitizen.Mobile, deptAdminInfoReconciliation.Data.Mobile },
-                               notification_type = "SMS",
-                           },
-                           new List<SysNotificationDto>()
-                           {
+                            await _notificationService.SendNotifications(
+                            new Contracts.Dtos.Notification.SendEmailDto()
+                            {
+                                To = new List<string>() { litigationRequest.ReformerCitizen.Email, deptAdminInfoReconciliation.Data.Email },
+                                Subject = "Reconciliation cancelled",
+                                Body = msg
+                            },
+                            new Contracts.Dtos.Integration.GEE.SMSRequestDto()
+                            {
+                                message_text = msg,
+                                recipients = new List<string>() { litigationRequest.ReformerCitizen.Mobile, deptAdminInfoReconciliation.Data.Mobile },
+                                notification_type = "SMS",
+                            },
+                            new List<SysNotificationDto>()
+                            {
                                new SysNotificationDto()
                                {
                                     ActorId = litigationRequest.ReformerCitizen.Id,
@@ -189,8 +202,8 @@ namespace REAC.Application.ModuleServices
                                     RequestTypeId = RequestType.ReformerTaskrequests,
                                     Message = msg,
                                }
-                           }
-                           );
+                            }
+                            );
                         }
                         catch (Exception ex)
                         {
@@ -218,7 +231,7 @@ namespace REAC.Application.ModuleServices
                     msg = msg?.Replace("{LitigationCode}", litigationRequest?.RequestCode);
                     msg = msg?.Replace("{ReformerName}", citizen?.FullName);
 
-                    var notificationResponse = _notificationService.SendNotifications(
+                    await _notificationService.SendNotifications(
                            new Contracts.Dtos.Notification.SendEmailDto()
                            {
                                To = new List<string>() { deptAdminInfoReconciliation.Data.Email },
@@ -402,8 +415,6 @@ namespace REAC.Application.ModuleServices
             return await GetLitigationRequestForReport(requestPayload.RequestId, cancellationToken);
 
         }
-
-
         #endregion
     }
 }

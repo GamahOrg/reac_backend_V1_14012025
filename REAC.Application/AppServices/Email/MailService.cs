@@ -52,7 +52,7 @@ namespace REAC.Application.AppServices.Email
 
                     try
                     {
-                        client.SendMailAsync(mail);
+                        await client.SendMailAsync(mail);
                         return new BaseResponse { IsDone = true };
                     }
                     catch (Exception ex)

@@ -479,6 +479,7 @@ public class ArbitrationController : ControllerBase
         return BadRequest();
     }
 
+    // Portal
     [HttpGet(nameof(GetLitigationRequestForArbitratorRecusalRequestByRequestId))]
     public async Task<IActionResult> GetLitigationRequestForArbitratorRecusalRequestByRequestId(Guid litigationRequestId)
     {
@@ -516,6 +517,7 @@ public class ArbitrationController : ControllerBase
         return BadRequest();
     }
 
+    
     [HttpGet(nameof(GetLitigationRequestForArbitratorRecusalRequestForArbitratorByRequestId))]
     public async Task<IActionResult> GetLitigationRequestForArbitratorRecusalRequestForArbitratorByRequestId(Guid litigationRequestId)
     {

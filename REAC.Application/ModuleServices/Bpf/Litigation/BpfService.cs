@@ -80,8 +80,7 @@ namespace Bpf.Application.ModuleServices
             foreach (var step in workFlow.WorkFlowSteps)
             {
                 response = await ExecuteWorkFlowStep(step, requestId, sourceWorkFlowProcessingLogId, sameEmployee, cancellationToken);
-                if (!response.IsDone)
-                    return response;
+                return response;
             }
             #endregion
 

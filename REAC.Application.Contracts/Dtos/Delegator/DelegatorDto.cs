@@ -40,9 +40,12 @@ namespace REAC.Application.Contracts.Dtos.Delegator
 
         public Guid? DelegatorCitizenId { get; set; }
 
+
         public Guid? DelegationFileId { get; set; }
 
-        public bool IsActive { get; set; }
+        public Guid? FacilityId { get; set; }
+        public bool IsFacility { get; set; }
+
 
     }
 }

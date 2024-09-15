@@ -90,33 +90,7 @@ namespace Ticketing.EntityFrameworkCore.SeedData
                                          LanguageCode=Constants.ArabicLanguage
                                      }
                                  }
-                            },
-                            //new SysEmployee()
-                            //{
-                            //    Id= Guid.Parse("66855f0e-ffb7-49ae-a831-516d93822e11"),
-                            //     CreatedOn = DateTime.Now,
-                            //     Email = "Con2@Employee.com",
-                            //     EmployeeName = "هاني متعب العريفي",
-                            //     IsActive = true,
-                            //     IsLocked = false,
-                            //     IsDeleted = false,
-                            //     IsAdmin = true,
-                            //     Mobile = "0558500225",
-                            //     UserId = new Guid("1be718d3-aa47-429d-a5fe-c8a064462ee0"),
-                            //     Translations = new List<SysEmployeeTranslation>()
-                            //     {
-                            //         new SysEmployeeTranslation()
-                            //         {
-                            //             EmployeeName = "Conciliation Department Employee 2",
-                            //             LanguageCode=Constants.EnglishLanguage
-                            //         },
-                            //         new SysEmployeeTranslation()
-                            //         {
-                            //             EmployeeName = "هاني متعب العريفي",
-                            //             LanguageCode=Constants.ArabicLanguage
-                            //         }
-                            //     }
-                            //}
+                            }
                         }
                     },
                     new SysDepartment
@@ -176,7 +150,7 @@ namespace Ticketing.EntityFrameworkCore.SeedData
                                  IsActive = true,
                                  IsLocked = false,
                                  IsDeleted = false,
-                                 IsAdmin = true,
+                                 IsAdmin = false,
                                  AllowAssign = true,
                                  AllowReAssign= true,
                                  Mobile = "0558500225",
@@ -195,32 +169,6 @@ namespace Ticketing.EntityFrameworkCore.SeedData
                                      }
                                  }
                             },
-                            //new SysEmployee()
-                            //{
-                            //    Id= Guid.Parse("9d77c383-c2dd-40f5-b8b8-ff6aeacdd80b"),
-                            //     CreatedOn = DateTime.Now,
-                            //     Email = "Con2@Employee.com",
-                            //     EmployeeName = "خالد محمد عوض",
-                            //     IsActive = true,
-                            //     IsLocked = false,
-                            //     IsDeleted = false,
-                            //     IsAdmin = true,
-                            //     Mobile = "0558500225",
-                            //     UserId = new Guid("1fda6687-66c7-48ae-9d2e-21b8465596eb"),
-                            //     Translations = new List<SysEmployeeTranslation>()
-                            //     {
-                            //         new SysEmployeeTranslation()
-                            //         {
-                            //             EmployeeName = "Conciliation Department Employee 2",
-                            //             LanguageCode=Constants.EnglishLanguage
-                            //         },
-                            //         new SysEmployeeTranslation()
-                            //         {
-                            //             EmployeeName = "خالد محمد عوض",
-                            //             LanguageCode=Constants.ArabicLanguage
-                            //         }
-                            //     }
-                            //}
                         }
                     },
                     new SysDepartment
@@ -280,7 +228,7 @@ namespace Ticketing.EntityFrameworkCore.SeedData
                                  IsActive = true,
                                  IsLocked = false,
                                  IsDeleted = false,
-                                 IsAdmin = true,
+                                 IsAdmin = false,
                                  Mobile = "0558500225",
                                  UserId = new Guid("4bf8345e-16d7-43ef-b263-935dee667d96"),
                                  Translations = new List<SysEmployeeTranslation>()

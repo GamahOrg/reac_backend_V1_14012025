@@ -434,6 +434,16 @@ namespace Ticketing.EntityFrameworkCore.SeedData
                         Value = "تم إلغاء مهمتك كرئيس هيئة تحكيم على الدعوى رقم {LitigationCode}",
                     },new SysSetting
                     {
+                       Id = Guid.NewGuid(),
+                        Key = "ArbitratorChairman.NewTask",
+                        Value = "يوجد طلب مهمة جديد كرئيس هيئة تحكيم على الدعوى رقم {LitigationCode}",
+                    },new SysSetting
+                    {
+                       Id = Guid.NewGuid(),
+                        Key = "ArbitratorChairman.NewTask.Admin",
+                        Value = "تم تحديد رئيس هيئة التحكيم للدعوة رقم {LitigationCode} وإرسال طلب المهمة ",
+                    },new SysSetting
+                    {
 
                        Id = Guid.NewGuid(),
                         Key = "ArbitratorsChairmanNominationList.MakeDecision",
@@ -525,12 +535,17 @@ namespace Ticketing.EntityFrameworkCore.SeedData
                     {
                         Id = Guid.NewGuid(),
                         Key = "Arbitrators.Count.FromBothSides",
-                        Value = "تم الإنتهاء من تحديد عدد المحكمين من قبل المدعى {FirstParty} والمدعى عليه {SecondParty} لدعوي رقم {LitigationCode}",
+                        Value = "تم الإنتهاء من تحديد عدد المحكمين من قبل المدعى لدعوي رقم {LitigationCode}",
                     },new SysSetting
                     {
                         Id = Guid.NewGuid(),
                         Key = "ArbitratorSelectionDuration.Added",
-                        Value = "تم تحديد مدة تحديد المحكمين لدعوي رقم {LitigationCode}",
+                        Value = "تم تحديد مدة أختيار المحكمين لدعوي رقم {LitigationCode} , يرجي تحديد عدد هيئة التحكيم للدعوى",
+                    },new SysSetting
+                    {
+                        Id = Guid.NewGuid(),
+                        Key = "ArbitratorSelectionDuration.Added.Admin",
+                        Value = "تم تحديد مدة أختيار المحكمين لدعوي رقم {LitigationCode}",
                     },new SysSetting
                     {
                         Id = Guid.NewGuid(),
@@ -655,13 +670,13 @@ namespace Ticketing.EntityFrameworkCore.SeedData
                     {
                         Id = Guid.NewGuid(),
                         Key = "ReconciliationSession.Set",
-                        Value = "تم تحديد موعد لجلسة الصلح\r\nرقم الدعوى: {LitigationCode}\r\nنوع الدعوى: {LitigationType}\r\nتاريت الجلسة: {LitigationDate}\r\nالتوقيت: {LitigationDateTime}\r\n \r\nبرجاء التواجد ف الموعد المحدد",
+                        Value = "تم تحديد موعد لجلسة الصلح\r\nرقم الدعوى: {LitigationCode} برجاء التواجد فى الموعد المحدد",
 
                     },new SysSetting
                     {
                         Id = Guid.NewGuid(),
                         Key = "ReconciliationSession.Reset",
-                        Value = "تم أعادة تعيين جلسة الصلح\r\nترقم الدعوى: {LitigationCode}\r\nنوع الدعوى: {LitigationType}\r\nتاريت الجلسة: {LitigationDate}\r\nالتوقيت: {LitigationDateTime}\r\n \r\nبرجاء التواجد ف الموعد المحدد",
+                        Value = "تم أعادة تعيين جلسة الصلح\r\nترقم الدعوى: {LitigationCode} برجاء التواجد ف الموعد المحدد",
 
                     },
                     new SysSetting
@@ -687,6 +702,16 @@ namespace Ticketing.EntityFrameworkCore.SeedData
                         Id = Guid.NewGuid(),
                         Key = "Reconciliation.Request.Added",
                         Value = "تم إضافة محضر الصلح لدعوى رقم {LitigationCode}"
+                    },new SysSetting
+                    {
+                        Id = Guid.NewGuid(),
+                        Key = "LitigationRequest.Accept.Agreement",
+                        Value = "تم الموافقة على طلب المشارطة على الدعوى رقم {LitigationCode}"
+                    },new SysSetting
+                    {
+                        Id = Guid.NewGuid(),
+                        Key = "LitigationRequest.Reject.Agreement",
+                        Value = "تم رفض طلب المشارطة على الدعوى رقم {LitigationCode}"
                     },
 	                #endregion
                   

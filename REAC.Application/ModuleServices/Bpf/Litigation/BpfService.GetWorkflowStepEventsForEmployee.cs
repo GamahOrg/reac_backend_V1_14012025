@@ -30,8 +30,8 @@ namespace Bpf.Application.ModuleServices
                 }
 
                 var processinglog = (await _repository.GetQueryable<WorkFlowProcessingLog, Guid>())?
-                    .Where(x => x.RequestId == requestId &
-                           x.IsFinished == false)
+                    .Where(x => x.RequestId == requestId & x.IsFinished == false)
+                    .Include(x => x.LitigationRequest)
                     .Include(x => x.Employee)
                     .Include(x => x.WorkFlowStep)
                     .ThenInclude(x => x.WorkFlowStepEvents)
@@ -55,83 +55,31 @@ namespace Bpf.Application.ModuleServices
                 {
                     x.WorkFlowStep.WorkFlowStepEvents.ToList().ForEach(y =>
                     {
-                        switch (y.EventSecurityLevelId)
+                        bool allowAdd = true;
+                        if (y.InternalStatusId == REAC.Domain.Shared.Enum.RequestStatus.AgreementRequestHasBeenSent)
                         {
-                            case EventSecurityLevel.Specified:
-                                bool mainBreak = false;
-                                y.WorkFlowStepEventSecurityLevelActors.ToList().ForEach(z =>
-                                {
-
-                                    if (mainBreak) { return; }
-
-                                    switch (z.SecurityLevelActorId)
+                            if (x.LitigationRequest.IsAgreementRequestRequired.HasValue)
+                            {
+                                allowAdd = false;
+                            }
+                        }
+                        if (allowAdd)
+                        {
+                            switch (y.EventSecurityLevelId)
+                            {
+                                case EventSecurityLevel.Specified:
+                                    bool mainBreak = false;
+                                    y.WorkFlowStepEventSecurityLevelActors.ToList().ForEach(z =>
                                     {
-                                        case SecurityLevelActorType.Department:
-                                            if (z.DepartmentId.HasValue)
-                                            {
-                                                if (employee.DepartmentId == z.DepartmentId)
+
+                                        if (mainBreak) { return; }
+
+                                        switch (z.SecurityLevelActorId)
+                                        {
+                                            case SecurityLevelActorType.Department:
+                                                if (z.DepartmentId.HasValue)
                                                 {
-                                                    WorkFlowStepEventForActorShortDtos.WorkFlowStepEventShortDtos.Add(new WorkFlowStepEventShortDto()
-                                                    {
-                                                        Id = y.Id,
-                                                        EventName = (y.Translations.FirstOrDefault(
-                                                        x => x.LanguageCode == CultureInfo.CurrentUICulture.Name) == null || string.IsNullOrEmpty(y.Translations.FirstOrDefault(
-                                                        x => x.LanguageCode == CultureInfo.CurrentUICulture.Name).EventName)) ? y.EventName : y.Translations.FirstOrDefault(
-                                                        x => x.LanguageCode == CultureInfo.CurrentUICulture.Name).EventName,
-                                                        AllowFileUpload = y.AllowFileUpload,
-                                                        AllowNotes = y.AllowNotes,
-                                                        ProcessingLogId = x.Id,
-                                                        CustomActionType = y.CustomActionType
-                                                    });
-                                                    mainBreak = true;
-                                                    break;
-                                                }
-                                            }
-                                            break;
-                                        case SecurityLevelActorType.Admin:
-                                            if (z.DepartmentId.HasValue)
-                                            {
-                                                if (employee.DepartmentId == z.DepartmentId & employee.IsAdmin)
-                                                {
-                                                    WorkFlowStepEventForActorShortDtos.WorkFlowStepEventShortDtos.Add(new WorkFlowStepEventShortDto()
-                                                    {
-                                                        Id = y.Id,
-                                                        EventName = (y.Translations.FirstOrDefault(
-                                                        x => x.LanguageCode == CultureInfo.CurrentUICulture.Name) == null || string.IsNullOrEmpty(y.Translations.FirstOrDefault(
-                                                        x => x.LanguageCode == CultureInfo.CurrentUICulture.Name).EventName)) ? y.EventName : y.Translations.FirstOrDefault(
-                                                        x => x.LanguageCode == CultureInfo.CurrentUICulture.Name).EventName,
-                                                        AllowFileUpload = y.AllowFileUpload,
-                                                        AllowNotes = y.AllowNotes,
-                                                        ProcessingLogId = x.Id,
-                                                        CustomActionType = y.CustomActionType
-                                                    });
-                                                    mainBreak = true;
-                                                    break;
-                                                }
-                                            }
-                                            break;
-                                        default:
-                                            if (z.EmployeeId.HasValue)
-                                            {
-                                                if (employee.DepartmentId == z.DepartmentId & employee.IsAdmin)
-                                                {
-                                                    WorkFlowStepEventForActorShortDtos.WorkFlowStepEventShortDtos.Add(new WorkFlowStepEventShortDto()
-                                                    {
-                                                        Id = y.Id,
-                                                        EventName = (y.Translations.FirstOrDefault(
-                                                            x => x.LanguageCode == CultureInfo.CurrentUICulture.Name) == null || string.IsNullOrEmpty(y.Translations.FirstOrDefault(
-                                                            x => x.LanguageCode == CultureInfo.CurrentUICulture.Name).EventName)) ? y.EventName : y.Translations.FirstOrDefault(
-                                                            x => x.LanguageCode == CultureInfo.CurrentUICulture.Name).EventName,
-                                                        AllowFileUpload = y.AllowFileUpload,
-                                                        AllowNotes = y.AllowNotes,
-                                                        ProcessingLogId = x.Id,
-                                                        CustomActionType = y.CustomActionType
-                                                    });
-                                                    mainBreak = true;
-                                                }
-                                                else
-                                                {
-                                                    if (z.EmployeeId == referenceId)
+                                                    if (employee.DepartmentId == z.DepartmentId)
                                                     {
                                                         WorkFlowStepEventForActorShortDtos.WorkFlowStepEventShortDtos.Add(new WorkFlowStepEventShortDto()
                                                         {
@@ -146,53 +94,116 @@ namespace Bpf.Application.ModuleServices
                                                             CustomActionType = y.CustomActionType
                                                         });
                                                         mainBreak = true;
+                                                        break;
                                                     }
-                                                    break;
                                                 }
+                                                break;
+                                            case SecurityLevelActorType.Admin:
+                                                if (z.DepartmentId.HasValue)
+                                                {
+                                                    if (employee.DepartmentId == z.DepartmentId & employee.IsAdmin)
+                                                    {
+                                                        WorkFlowStepEventForActorShortDtos.WorkFlowStepEventShortDtos.Add(new WorkFlowStepEventShortDto()
+                                                        {
+                                                            Id = y.Id,
+                                                            EventName = (y.Translations.FirstOrDefault(
+                                                            x => x.LanguageCode == CultureInfo.CurrentUICulture.Name) == null || string.IsNullOrEmpty(y.Translations.FirstOrDefault(
+                                                            x => x.LanguageCode == CultureInfo.CurrentUICulture.Name).EventName)) ? y.EventName : y.Translations.FirstOrDefault(
+                                                            x => x.LanguageCode == CultureInfo.CurrentUICulture.Name).EventName,
+                                                            AllowFileUpload = y.AllowFileUpload,
+                                                            AllowNotes = y.AllowNotes,
+                                                            ProcessingLogId = x.Id,
+                                                            CustomActionType = y.CustomActionType
+                                                        });
+                                                        mainBreak = true;
+                                                        break;
+                                                    }
+                                                }
+                                                break;
+                                            default:
+                                                if (z.EmployeeId.HasValue)
+                                                {
+                                                    if (employee.DepartmentId == z.DepartmentId & employee.IsAdmin)
+                                                    {
+                                                        WorkFlowStepEventForActorShortDtos.WorkFlowStepEventShortDtos.Add(new WorkFlowStepEventShortDto()
+                                                        {
+                                                            Id = y.Id,
+                                                            EventName = (y.Translations.FirstOrDefault(
+                                                                x => x.LanguageCode == CultureInfo.CurrentUICulture.Name) == null || string.IsNullOrEmpty(y.Translations.FirstOrDefault(
+                                                                x => x.LanguageCode == CultureInfo.CurrentUICulture.Name).EventName)) ? y.EventName : y.Translations.FirstOrDefault(
+                                                                x => x.LanguageCode == CultureInfo.CurrentUICulture.Name).EventName,
+                                                            AllowFileUpload = y.AllowFileUpload,
+                                                            AllowNotes = y.AllowNotes,
+                                                            ProcessingLogId = x.Id,
+                                                            CustomActionType = y.CustomActionType
+                                                        });
+                                                        mainBreak = true;
+                                                    }
+                                                    else
+                                                    {
+                                                        if (z.EmployeeId == referenceId)
+                                                        {
+                                                            WorkFlowStepEventForActorShortDtos.WorkFlowStepEventShortDtos.Add(new WorkFlowStepEventShortDto()
+                                                            {
+                                                                Id = y.Id,
+                                                                EventName = (y.Translations.FirstOrDefault(
+                                                                x => x.LanguageCode == CultureInfo.CurrentUICulture.Name) == null || string.IsNullOrEmpty(y.Translations.FirstOrDefault(
+                                                                x => x.LanguageCode == CultureInfo.CurrentUICulture.Name).EventName)) ? y.EventName : y.Translations.FirstOrDefault(
+                                                                x => x.LanguageCode == CultureInfo.CurrentUICulture.Name).EventName,
+                                                                AllowFileUpload = y.AllowFileUpload,
+                                                                AllowNotes = y.AllowNotes,
+                                                                ProcessingLogId = x.Id,
+                                                                CustomActionType = y.CustomActionType
+                                                            });
+                                                            mainBreak = true;
+                                                        }
+                                                        break;
+                                                    }
 
-                                            }
-                                            break;
-                                    }
-                                });
-                                break;
-                            case EventSecurityLevel.UnSpecified:
-                                if (x.EmployeeId == employee.Id)
-                                {
-                                    WorkFlowStepEventForActorShortDtos.WorkFlowStepEventShortDtos.Add(new WorkFlowStepEventShortDto()
-                                    {
-                                        Id = y.Id,
-                                        EventName = (y.Translations.FirstOrDefault(
-                                        x => x.LanguageCode == CultureInfo.CurrentUICulture.Name) == null || string.IsNullOrEmpty(y.Translations.FirstOrDefault(
-                                        x => x.LanguageCode == CultureInfo.CurrentUICulture.Name).EventName)) ? y.EventName : y.Translations.FirstOrDefault(
-                                        x => x.LanguageCode == CultureInfo.CurrentUICulture.Name).EventName,
-                                        AllowFileUpload = y.AllowFileUpload,
-                                        AllowNotes = y.AllowNotes,
-                                        ProcessingLogId = x.Id,
-                                        CustomActionType = y.CustomActionType
+                                                }
+                                                break;
+                                        }
                                     });
-                                }
-                                else
-                                {
-                                    if (employee.IsAdmin & employee.WorkAsEmployee)
+                                    break;
+                                case EventSecurityLevel.UnSpecified:
+                                    if (x.EmployeeId == employee.Id)
                                     {
-                                        if (x.WorkFlowStep.DepartmentId == employee.DepartmentId)
+                                        WorkFlowStepEventForActorShortDtos.WorkFlowStepEventShortDtos.Add(new WorkFlowStepEventShortDto()
                                         {
-                                            WorkFlowStepEventForActorShortDtos.WorkFlowStepEventShortDtos.Add(new WorkFlowStepEventShortDto()
+                                            Id = y.Id,
+                                            EventName = (y.Translations.FirstOrDefault(
+                                            x => x.LanguageCode == CultureInfo.CurrentUICulture.Name) == null || string.IsNullOrEmpty(y.Translations.FirstOrDefault(
+                                            x => x.LanguageCode == CultureInfo.CurrentUICulture.Name).EventName)) ? y.EventName : y.Translations.FirstOrDefault(
+                                            x => x.LanguageCode == CultureInfo.CurrentUICulture.Name).EventName,
+                                            AllowFileUpload = y.AllowFileUpload,
+                                            AllowNotes = y.AllowNotes,
+                                            ProcessingLogId = x.Id,
+                                            CustomActionType = y.CustomActionType
+                                        });
+                                    }
+                                    else
+                                    {
+                                        if (employee.IsAdmin & employee.WorkAsEmployee)
+                                        {
+                                            if (x.WorkFlowStep.DepartmentId == employee.DepartmentId)
                                             {
-                                                Id = y.Id,
-                                                EventName = (y.Translations.FirstOrDefault(
-                                                x => x.LanguageCode == CultureInfo.CurrentUICulture.Name) == null || string.IsNullOrEmpty(y.Translations.FirstOrDefault(
-                                                x => x.LanguageCode == CultureInfo.CurrentUICulture.Name).EventName)) ? y.EventName : y.Translations.FirstOrDefault(
-                                                x => x.LanguageCode == CultureInfo.CurrentUICulture.Name).EventName,
-                                                AllowFileUpload = y.AllowFileUpload,
-                                                AllowNotes = y.AllowNotes,
-                                                ProcessingLogId = x.Id,
-                                                CustomActionType = y.CustomActionType
-                                            });
+                                                WorkFlowStepEventForActorShortDtos.WorkFlowStepEventShortDtos.Add(new WorkFlowStepEventShortDto()
+                                                {
+                                                    Id = y.Id,
+                                                    EventName = (y.Translations.FirstOrDefault(
+                                                    x => x.LanguageCode == CultureInfo.CurrentUICulture.Name) == null || string.IsNullOrEmpty(y.Translations.FirstOrDefault(
+                                                    x => x.LanguageCode == CultureInfo.CurrentUICulture.Name).EventName)) ? y.EventName : y.Translations.FirstOrDefault(
+                                                    x => x.LanguageCode == CultureInfo.CurrentUICulture.Name).EventName,
+                                                    AllowFileUpload = y.AllowFileUpload,
+                                                    AllowNotes = y.AllowNotes,
+                                                    ProcessingLogId = x.Id,
+                                                    CustomActionType = y.CustomActionType
+                                                });
+                                            }
                                         }
                                     }
-                                }
-                                break;
+                                    break;
+                            }
                         }
                     });
                 });

@@ -155,6 +155,7 @@ namespace REAC.Application.ModuleServices
                 var savePeriodResponse = await _repository.SaveChangesAsync();
                 if (!savePeriodResponse.IsDone)
                     return savePeriodResponse;
+
                 //var updateResponse = _repository.Update<LitigationRequestExtendPeriodRequest, Guid>(litigationRequestExtendPeriodRequest);
                 //if (!updateResponse.IsDone)
                 //    return updateResponse;
@@ -303,6 +304,7 @@ namespace REAC.Application.ModuleServices
                     LitigationRequestExtendPeriodRequestCreateUpdateDto = extendPeriodRequest.FirstOrDefault()
                 },
                 IsDone = true,
+                Message = "تمت العملية بنجاح"
             };
 
         }
@@ -405,7 +407,13 @@ namespace REAC.Application.ModuleServices
                                       .Include(x => x.Contract.SecondPartyFacility)
                                       .Include(x => x.Contract.SecondPartyCitizen).Include(x => x.Contract.LitigationRequestContractType)
 
-                                      .Where(x => x.ReformerCitizenId == referenceId & x.RequestCode != null & x.InternalStatusId != RequestStatus.Rejected & x.LitigationRequestCategoryId != LitigationRequestCategory.Arbitration).ToList();
+                                      .Where(x => x.ReformerCitizenId == referenceId
+                                      & x.RequestCode != null & x.IsFinished != true
+                                      & x.LitigationRequestCategoryId != LitigationRequestCategory.Arbitration
+                                      & x.LitigationRequestStage == LitigationRequestStage.Reconciliation
+                                      | x.LitigationRequestExtendPeriodRequests.Where(x => x.LitigationRequestExtendPeriodRequestTypeId
+                                      == LitigationRequestExtendPeriodRequestType.Reconciliation).Count() > 0
+                                      ).ToList();
 
             List<LitigationRequestMircoDto> litigationRequestMircoDtos = new List<LitigationRequestMircoDto>();
             if (litigationRequests != null)

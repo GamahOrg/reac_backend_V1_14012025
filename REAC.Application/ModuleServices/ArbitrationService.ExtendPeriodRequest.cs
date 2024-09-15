@@ -447,10 +447,6 @@ namespace REAC.Application.ModuleServices
 
                 }
               
-
-
-
-
                 return await GetLitigationRequestExtendPeriodForEmployee(requestPayload.LitigationRequestId, cancellationToken);
             }
             catch (Exception ex)
@@ -489,7 +485,7 @@ namespace REAC.Application.ModuleServices
                          .Include(x => x.Contract.SecondPartyFacility)
                          .Include(x => x.Contract.SecondPartyCitizen)
                          .Include(x => x.Contract.LitigationRequestContractType)
-                         .Where(x => x.Id == requestId).ToList().FirstOrDefault();
+                         .Where(x => x.Id == requestId).AsNoTracking().ToList().FirstOrDefault();
 
             var request = _mapper.Map<LitigationRequestShortDto>(litigationRequest);
             var extendPeriodRequest = _mapper.Map<List<LitigationRequestExtendPeriodRequestGetDto>>(litigationRequest?.LitigationRequestExtendPeriodRequests);
@@ -555,7 +551,7 @@ namespace REAC.Application.ModuleServices
                          .Include(x => x.Contract.FirstPartyCitizen)
                          .Include(x => x.Contract.SecondPartyFacility)
                          .Include(x => x.Contract.SecondPartyCitizen)
-                         .Include(x => x.Contract.LitigationRequestContractType)
+                         .Include(x => x.Contract.LitigationRequestContractType).AsNoTracking()
                          .Where(x => x.Id == requestId).ToList().FirstOrDefault();
 
             var request = _mapper.Map<LitigationRequestShortDto>(litigationRequest);

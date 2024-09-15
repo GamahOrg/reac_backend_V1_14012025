@@ -101,6 +101,10 @@ namespace REAC.EntityFrameworkCore.Seed
                 {
                     Id = RequestType.DeleteLawyer,
                     RequestTypeName = "حذف محامي",
+                },new SysRequestType
+                {
+                    Id = RequestType.LitigationAgreementRequest,
+                    RequestTypeName = "طلب المشارطة",
                 }
 
 

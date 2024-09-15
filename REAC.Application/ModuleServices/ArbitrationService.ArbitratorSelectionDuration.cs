@@ -82,6 +82,9 @@ namespace REAC.Application.ModuleServices
                             var msg = _settingService.GetBySettingKey(SysSettingKeyConstants.ArbitratorSelectionDuration_Added).Result.Data?.Value;
                             msg = msg?.Replace("{LitigationCode}", litigationRequest.RequestCode);
 
+                            var adminMsg = _settingService.GetBySettingKey(SysSettingKeyConstants.ArbitratorSelectionDuration_Added_Admin).Result.Data?.Value;
+                            adminMsg = adminMsg?.Replace("{LitigationCode}", litigationRequest.RequestCode);
+
 
                             List<SysNotificationDto> notifications = new List<SysNotificationDto>() {
                         new SysNotificationDto{
@@ -91,26 +94,15 @@ namespace REAC.Application.ModuleServices
                         RequestTypeId=RequestType.LitigationRequest,
                         ActorTypeId=NotificationActorType.Plaintiff,
                         Message=msg
-                        },
-                           new SysNotificationDto{
-                        ActorId = (Guid)arbitrationAdmin.Data?.Id,
-                        RequestId=litigationRequest.Id,
-                        CreatedOn= DateTime.Now,
-                        RequestTypeId=RequestType.LitigationRequest,
-                        ActorTypeId=NotificationActorType.Employee,
-                        Message=msg
                         }
-
                         };
                             List<string> emails = new List<string>() {
                                 litigationRequest.ApplicantCitizen.Email,
-                                  arbitrationAdmin.Data?.Email
                                 };
 
                             List<string> recipients = new List<string>()
                             {
                                 litigationRequest.ApplicantCitizen.Mobile,
-                                  arbitrationAdmin.Data?.Mobile
                             };
                             if (litigationRequest?.Contract?.FirstPartyCitizenId != null && litigationRequest?.Contract?.FirstPartyCitizenId != litigationRequest.ApplicantCitizenId)
                             {
@@ -170,10 +162,11 @@ namespace REAC.Application.ModuleServices
                                 emails.Add(litigationRequest.Contract.SecondPartyFacility.Citizen.Email);
                                 recipients.Add(litigationRequest.Contract.SecondPartyFacility.Citizen.Mobile);
                             };
-                            _notificationService.SendNotifications(new Contracts.Dtos.Notification.SendEmailDto()
+
+                            await _notificationService.SendNotifications(new Contracts.Dtos.Notification.SendEmailDto()
                             {
                                 To = emails,
-                                Subject = "طلب تمديد مدة التحكيم",
+                                Subject = "تحديد مدة أختيار المحكمين",
                                 Body = msg
                             }, new Contracts.Dtos.Integration.GEE.SMSRequestDto()
                             {
@@ -182,6 +175,29 @@ namespace REAC.Application.ModuleServices
                                 notification_type = "SMS",
 
                             }, notifications);
+
+                            await _notificationService.SendNotifications(new Contracts.Dtos.Notification.SendEmailDto()
+                            {
+                                To = emails,
+                                Subject = "تحديد مدة أختيار المحكمين",
+                                Body = adminMsg
+                            }, new Contracts.Dtos.Integration.GEE.SMSRequestDto()
+                            {
+                                message_text = adminMsg,
+                                recipients = recipients,
+                                notification_type = "SMS",
+
+                            }, new List<SysNotificationDto>()
+                            {
+                                new SysNotificationDto{
+                                ActorId = (Guid)arbitrationAdmin.Data?.Id,
+                                RequestId=litigationRequest.Id,
+                                CreatedOn= DateTime.Now,
+                                RequestTypeId=RequestType.LitigationRequest,
+                                ActorTypeId=NotificationActorType.Employee,
+                                Message=adminMsg
+                                }
+                            });
                         }
                     }
                     catch (Exception e)
@@ -234,7 +250,7 @@ namespace REAC.Application.ModuleServices
                          .Include(x => x.Contract.SecondPartyCitizen)
                          .Include(x => x.Contract.LitigationRequestContractType)
 
-                         .Where(x => x.Id == requestId).ToList().FirstOrDefault();
+                         .Where(x => x.Id == requestId).AsNoTracking().ToList().FirstOrDefault();
 
             var request = _mapper.Map<LitigationRequestShortDto>(litigationRequest);
 
@@ -254,10 +270,10 @@ namespace REAC.Application.ModuleServices
             }
             if (!isDone)
             {
-                if (litigationRequest.ArbitratorsCount.HasValue)
+
+                if (litigationRequest.FirstPartyArbitratorsCount.HasValue & litigationRequest.SecondPartyArbitratorsCount.HasValue)
                     allowAdd = false;
-                if (!litigationRequest.FirstPartyArbitratorsCount.HasValue & !litigationRequest.ArbitratorSelectionDuration.HasValue)
-                    allowAdd = false;
+
             }
 
 

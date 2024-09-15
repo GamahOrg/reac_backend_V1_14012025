@@ -124,6 +124,8 @@
         public const string Arbitrator_DeActivate = "Arbitrator.DeActivate";
         public const string Arbitration_Arbitraor_Assigned = "Arbitration.Arbitraor.Assigned";
         public const string Arbitration_ArbitraorChairman_Assigned = "Arbitration.ArbitraorChairman.Assigned";
+        public const string ArbitratorChairman_NewTask = "ArbitratorChairman.NewTask";
+        public const string ArbitratorChairman_NewTask_Admin = "ArbitratorChairman.NewTask.Admin";
         public const string Arbitration_ArbitraorAssigned_SendToChairman = "Arbitration.ArbitraorAssigned.SendToChairman";
         public const string Reconciliation_Reconciliator_AcceptTask = "Reconciliation.Reconciliator.AcceptTask";
         public const string Arbitration_Arbitraor_AcceptTask = "Arbitration.Arbitraor.AcceptTask";
@@ -152,6 +154,7 @@
         public const string Arbitrators_Count_Added_AfterAgreement = "Arbitrators.Count.Added.AfterAgreement";
         public const string Arbitrators_Count_FromBothSides = "Arbitrators.Count.FromBothSides";
         public const string ArbitratorSelectionDuration_Added = "ArbitratorSelectionDuration.Added";
+        public const string ArbitratorSelectionDuration_Added_Admin = "ArbitratorSelectionDuration.Added.Admin";
         public const string ArbitrationReport_Added_FirstParty = "ArbitrationReport.Added.FirstParty";
         public const string ArbitrationReport_Added_SecondParty = "ArbitrationReport.Added.SecondParty";
         public const string ArbitrationSession_Added = "ArbitrationSession.Added";
@@ -164,6 +167,7 @@
         public const string Reconciliation_Cancelled = "Reconciliation.Cancelled";
         public const string Reconciliation_ReAssigned = "Reconciliation.ReAssigned";
         public const string Reconciliation_Assign = "Reconciliation.Assign";
+        public const string Reconciliation_NewRequest = "Reconciliation.NewRequest";
         public const string LitigationRequest_Creation_Reject = "LitigationRequest.Creation.Reject";
         public const string LitigationRequest_Creation_Resent = "LitigationRequest.Creation.Resent";
         public const string LitigationRequest_Creation_Accept = "LitigationRequest.Creation.Accept";
@@ -172,6 +176,8 @@
         public const string LitigationRequest_Decision_WaiverOfTheLitigation = "LitigationRequest.Decision.WaiverOfTheLitigation";
         public const string LitigationRequest_Decision_ReconciliationWasNotMadeAndMoveToArbitration = "LitigationRequest.Decision.ReconciliationWasNotMadeAndMoveToArbitration";
         public const string LitigationRequest_Decision_ReconciliationWasNotMade = "LitigationRequest.Decision.ReconciliationWasNotMade";
+        public const string LitigationRequest_Accept_Agreement = "LitigationRequest.Accept.Agreement";
+        public const string LitigationRequest_Reject_Agreement = "LitigationRequest.Reject.Agreement";
         public const string Reconciliation_ExtendRequest_Added = "Reconciliation.ExtendRequest.Added";
         public const string Reconciliation_ExtendRequest_Accepted = "Reconciliation.ExtendRequest.Accepted";
         public const string Reconciliation_ExtendRequest_Rejected = "Reconciliation.ExtendRequest.Rejected";
