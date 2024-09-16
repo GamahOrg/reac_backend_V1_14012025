@@ -7,6 +7,7 @@ using REAC.Domain.Shared.Constants;
 using System.Net.Mail;
 using REAC.EntityFrameworkCore.Entities.System;
 using System.Net;
+using Microsoft.EntityFrameworkCore;
 
 namespace REAC.Application.AppServices.Email
 {
@@ -24,23 +25,23 @@ namespace REAC.Application.AppServices.Email
         {
             try
             {
-                var emailSetting = await GetEmailSettings();
+                var emailSetting =  GetEmailSettings();
 
-                if (emailSetting != null && emailSetting.SendEmail)
+                if (emailSetting != null && emailSetting.Result != null && emailSetting.Result.SendEmail)
                 {
 
                     MailMessage mail = new MailMessage();
                     SmtpClient client = new SmtpClient
                     {
-                        Port = emailSetting.Port,
+                        Port = emailSetting.Result.Port,
                         DeliveryMethod = SmtpDeliveryMethod.Network,
-                        UseDefaultCredentials = emailSetting.UseDefaultCredentials,
-                        Host = emailSetting.Host,
-                        Credentials = new NetworkCredential(emailSetting.From, emailSetting.Passowrd),
+                        UseDefaultCredentials = emailSetting.Result.UseDefaultCredentials,
+                        Host = emailSetting.Result.Host,
+                        Credentials = new NetworkCredential(emailSetting.Result.From, emailSetting.Result.Passowrd),
                         EnableSsl = true,
                     };
                     mail.Subject = subject;
-                    mail.From = new MailAddress(emailSetting.From);
+                    mail.From = new MailAddress(emailSetting.Result.From);
                     mail.Body = body;
                     mail.IsBodyHtml = true;
 
@@ -52,7 +53,7 @@ namespace REAC.Application.AppServices.Email
 
                     try
                     {
-                        await client.SendMailAsync(mail);
+                         client.SendMailAsync(mail);
                         return new BaseResponse { IsDone = true };
                     }
                     catch (Exception ex)
@@ -78,8 +79,8 @@ namespace REAC.Application.AppServices.Email
         {
             SendEmailOptions? sendEmail = null;
 
-            var query = await _repository.GetQueryable<SysSetting, Guid>();
-            var sysSettings = query.Where(x => x.Key.StartsWith(SysSettingKeyConstants.PrefexEmailConfiguration)).ToList();
+            var query = (await _repository.GetQueryable<SysSetting, Guid>());
+            var sysSettings = query.Where(x => x.Key.StartsWith(SysSettingKeyConstants.PrefexEmailConfiguration)).AsNoTracking().ToList();
             if (sysSettings.Any())
             {
                 sendEmail = new SendEmailOptions();

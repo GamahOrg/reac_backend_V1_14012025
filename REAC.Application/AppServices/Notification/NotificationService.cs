@@ -189,12 +189,12 @@ namespace REAC.Application.AppServices.Notification
             {
                 if (email is not null)
                 {
-                    var emailResultCitizen = await _emailService.SendMail(email.To, email.Subject, email.Body);
+                    var emailResultCitizen = _emailService.SendMail(email.To, email.Subject, email.Body);
                 }
 
                 if (sms is not null)
                 {
-                    var smsResultCitizen = await _smsService.SendSMS(sms);
+                    var smsResultCitizen =  _smsService.SendSMS(sms);
                 }
 
                 if (notifications.Any())

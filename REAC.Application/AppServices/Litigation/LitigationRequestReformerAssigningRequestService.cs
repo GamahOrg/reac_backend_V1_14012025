@@ -548,7 +548,7 @@ namespace REAC.Application.AppServices.Litigation
                          .Include(x => x.Contract.SecondPartyCitizen)
                          .Include(x => x.Contract.LitigationRequestContractType)
                          .Where(x => x.LitigationRequestReformerAssigningRequests
-                         .Where(t => t.Id == LitigationRequestReformerAssigningRequestId).Count() > 0).ToList().FirstOrDefault();
+                         .Where(t => t.Id == LitigationRequestReformerAssigningRequestId).Count() > 0).AsNoTracking().ToList().FirstOrDefault();
 
             if (litigationRequest != null)
             {
