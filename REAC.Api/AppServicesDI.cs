@@ -12,6 +12,7 @@ using REAC.Application.AppServices.Integration.GEE;
 using REAC.Application.AppServices.Litigation;
 using REAC.Application.AppServices.Notification;
 using REAC.Application.AppServices.Reconciliation;
+using REAC.Application.AppServices.Reports;
 using REAC.Application.AppServices.SLA;
 using REAC.Application.AppServices.System;
 using REAC.Application.AppServices.UserManage;
@@ -22,6 +23,7 @@ using REAC.Application.Contracts.IAppServices.Integration;
 using REAC.Application.Contracts.IAppServices.Litigation;
 using REAC.Application.Contracts.IAppServices.Notification;
 using REAC.Application.Contracts.IAppServices.Reconciliation;
+using REAC.Application.Contracts.IAppServices.Reports;
 using REAC.Application.Contracts.IAppServices.SLA;
 using REAC.Application.Contracts.IAppServices.System;
 using REAC.Application.Contracts.IAppServices.UserManage;
@@ -120,9 +122,12 @@ namespace REAC.Api
             services.AddScoped<IMCService, MCService>();
             services.AddScoped<ISMSService, SMSService>();
             services.AddScoped<IOTPService, OTPService>();
+            services.AddScoped<IZoomService, ZoomService>();
             services.AddSingleton<INafathTransactionService, NafathTransactionService>();
 
             services.AddScoped<IJwtReader, JwtReader>();
+            services.AddScoped<IZoomService, ZoomService>();
+            services.AddScoped<IReportService, ReportService>();
 
         }
 

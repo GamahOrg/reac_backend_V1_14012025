@@ -12,6 +12,7 @@ using REAC.Application.Contracts.Dtos.Wpf.Business;
 using REAC.Application.Contracts.IAppServices;
 using REAC.Application.Contracts.IAppServices.Notification;
 using REAC.Application.Contracts.IAppServices.System;
+using REAC.Application.Contracts.IAppServices.UserManage;
 using REAC.Application.Contracts.IAppServices.Wpf.Business;
 using REAC.Domain.Shared.Constants;
 using REAC.Domain.Shared.Enum;
@@ -123,11 +124,12 @@ namespace REAC.Application.ModuleServices
         private readonly ISysSettingService _settingService;
         protected readonly INotificationService _notificationService;
         private readonly ISysEmployeeService _sysEmployeeService;
+        private readonly IZoomService _zoomService;
         protected readonly IHubContext<NotificationHub, INotificationClient> _notificationHub;
         public ArbitrationService(IEntityRepository repository, ISysSettingService settingService,
                           IWorkFlowProcessingLogService workFlowProcessingLogService,
                           IMapper mapper,
-                          IJwtReader jwtReader, ISysEmployeeService sysEmployeeService, INotificationService notificationService)
+                          IJwtReader jwtReader, ISysEmployeeService sysEmployeeService, INotificationService notificationService, IZoomService zoomService)
         {
             _mapper = mapper;
             _repository = repository;
@@ -135,7 +137,7 @@ namespace REAC.Application.ModuleServices
             _settingService = settingService;
             _sysEmployeeService = sysEmployeeService;
             _notificationService = notificationService;
-
+            _zoomService = zoomService;
         }
 
         public async Task<BaseResponse> GetLitigationRequestForFullAllArbitrator(int pageIndex, int pageSize, CancellationToken cancellationToken)

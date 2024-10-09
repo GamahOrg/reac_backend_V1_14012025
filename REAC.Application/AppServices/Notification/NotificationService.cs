@@ -13,6 +13,7 @@ using REAC.Application.Contracts.IAppServices.Common;
 using REAC.Application.Contracts.IAppServices.Integration;
 using REAC.Application.Contracts.IAppServices.Notification;
 using REAC.EntityFrameworkCore.Entities.Notification;
+using System.Text.RegularExpressions;
 using Wafi.Application.Hubs;
 using Wafi.Application.Hubs.Contracts;
 
@@ -194,6 +195,14 @@ namespace REAC.Application.AppServices.Notification
 
                 if (sms is not null)
                 {
+                    var recipiants = new List<string>();
+                    foreach (var mobile in sms.recipients)
+                    {
+                        if (Regex.IsMatch(mobile, "^05[0-9]*$"))
+                            recipiants.Add(mobile);
+                    }
+
+                    sms.recipients = recipiants;
                     var smsResultCitizen =  _smsService.SendSMS(sms);
                 }
 

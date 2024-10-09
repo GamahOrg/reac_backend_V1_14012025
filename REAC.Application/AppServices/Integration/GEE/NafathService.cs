@@ -1,4 +1,5 @@
-﻿using Core.Dtos;
+﻿using AutoMapper.Internal;
+using Core.Dtos;
 using Core.GenericRepository.BaseRepository;
 using Core.Log.Application.Contracts.Dto;
 using Core.Log.Application.Contracts.IAppServices;
@@ -39,7 +40,7 @@ namespace REAC.Application.AppServices.Integration.GEE
         private readonly UserManager<User> _userManager;
         private readonly ILoggerManager _loggerManager;
 
-        public NafathService(ISysSettingService sysSetting, IAccountService accountService, IEntityRepository repository, IGEELoginService gEELoginService, IHubContext<IdentityHub, IIdentityClient> identityHub, 
+        public NafathService(ISysSettingService sysSetting, IAccountService accountService, IEntityRepository repository, IGEELoginService gEELoginService, IHubContext<IdentityHub, IIdentityClient> identityHub,
             INafathTransactionService nafathTransactionService, UserManager<User> userManager, ILoggerManager loggerManager)
         {
             _sysSetting = sysSetting;
@@ -88,14 +89,14 @@ namespace REAC.Application.AppServices.Integration.GEE
                     accessToken = login.Data.AccessToken;
                     refreshToken = login.Data.RefreshToken;
                 }
-               
-                if(!nafathRequestDto.IsRegister && existCitizen is null && !isDraftAccount)
+
+                if (!nafathRequestDto.IsRegister && existCitizen is null && !isDraftAccount)
                     return new DataResponse<NafathResponseDto> { IsDone = false, Message = "هذا المستخدم غير مسجل بالنظام" };
 
                 if (nafathRequestDto.IsRegister)
                 {
                     var isExistUser = _userManager.Users.Any(x => x.UserName == nafathRequestDto.NationalId);
-                    if(!isDraftAccount && isExistUser)
+                    if (!isDraftAccount && isExistUser)
                         return new DataResponse<NafathResponseDto> { IsDone = false, Message = "المستخدم موجود بالفعل" };
                 }
 
@@ -158,8 +159,13 @@ namespace REAC.Application.AppServices.Integration.GEE
                 }
                 else
                 {
-                    nafathResponse.Error = await response.Content.ReadFromJsonAsync<NafathResponseErrorDto>();
-                    nafathResponse.IsDraftAccount = isDraftAccount;
+                    var jsonResponse = await response.Content.ReadAsStringAsync();
+                    if (!string.IsNullOrEmpty(jsonResponse))
+                    {
+                        nafathResponse.Error = await response.Content.ReadFromJsonAsync<NafathResponseErrorDto>();
+                        nafathResponse.IsDraftAccount = isDraftAccount;
+                    }
+
                     return new DataResponse<NafathResponseDto> { IsDone = false, Message = nafathResponse.Error?.Message ?? nafathResponse.Error?.Code ?? "", Data = nafathResponse };
                 }
             }
@@ -168,8 +174,8 @@ namespace REAC.Application.AppServices.Integration.GEE
                 return new DataResponse<NafathResponseDto>() { IsDone = false, Message = e.Message + e.InnerException };
             }
         }
-        
-        
+
+
         public async Task CheckNafathStatus()
         {
             try
@@ -239,36 +245,79 @@ namespace REAC.Application.AppServices.Integration.GEE
                                     continue;
                                 }
 
+                                IdentityStatus identityStatus = new IdentityStatus();
+
                                 var userInfo = await NafathGetUserInfo(nafathCheckStatusResponse.Data.Data.AccessToken);
+
+                                _loggerManager.Log(Core.Log.Domain.Shared.Enums.LoggerType.Database
+                                , new LogDto()
+                                {
+                                    Type = Core.Log.Domain.Shared.Enums.LogType.Debug,
+                                    Message = $"Token ==> {token}, Id ====> {nafathCheckRequestDto.Id}"
+                                });
+
+                                if (!string.IsNullOrEmpty(token) && nafathCheckRequestDto is not null)
+                                {
+                                    if (!string.IsNullOrEmpty(nafathCheckRequestDto.Id))
+                                    {
+                                        var userAddressInfo = await NafathGetUserAddressInfo(token, nafathCheckRequestDto.Id);
+
+                                        if (userAddressInfo is not null)
+                                        {
+                                            if (userAddressInfo.IsDone)
+                                            {
+                                                identityStatus.UserAddressInfoUpdated = new UserAddressInfoUpdatedDto()
+                                                {
+                                                    AdditionalNumber = userAddressInfo.Data.AdditionalNumber,
+                                                    BuildingNumber = userAddressInfo.Data.BuildingNumber,
+                                                    ZipCode = userAddressInfo.Data.ZipCode,
+                                                    UnitNumber = userAddressInfo.Data.UnitNumber,
+                                                    DistrictAreaArabic = userAddressInfo.Data.DistrictAreaArabic,
+                                                    DistrictAreaEnglish = userAddressInfo.Data.DistrictAreaEnglish,
+                                                    StreetNameArabic = userAddressInfo.Data.StreetNameArabic,
+                                                    StreetNameEnglish = userAddressInfo.Data.StreetNameEnglish,
+                                                    CityNameArabic = userAddressInfo.Data.CityNameArabic,
+                                                    CityNameEnglish = userAddressInfo.Data.CityNameEnglish,
+                                                    FullName = userAddressInfo.Data.FullName,
+                                                    Latitude = userAddressInfo.Data.Latitude,
+                                                    Longitude = userAddressInfo.Data.Longitude,
+                                                };
+                                            }
+                                        }
+                                    }
+
+                                }
+
+
                                 if (userInfo.IsDone)
                                 {
-                                    IdentityStatus identityStatus = new IdentityStatus()
+
+                                    identityStatus.TransactionId = nafathTransaction.TransactionId;
+                                    identityStatus.IsValid = true;
+                                    identityStatus.Token = nafathTransaction.AccessToken;
+                                    identityStatus.RefreshToken = nafathTransaction.RefreshToken;
+                                    identityStatus.UserInfoUpdated = new UserInfoUpdatedDto()
                                     {
-                                        TransactionId = nafathTransaction.TransactionId,
-                                        IsValid = true,
-                                        Token = nafathTransaction.AccessToken,
-                                        RefreshToken = nafathTransaction.RefreshToken,
-                                        UserInfoUpdated = new UserInfoUpdatedDto()
-                                        {
-                                            IsDraftAccount = nafathTransaction.IsDraftAccount,
-                                            IsLawye = nafathTransaction.IsLawye,
-                                            IsArbitrator = nafathTransaction.IsArbitrator,
-                                            IsReformer = nafathTransaction.IsReformer,
-                                            DateOfBirth = userInfo.Data?.DateOfBirth,
-                                            FirstName = userInfo.Data?.FirstName,
-                                            FullName = userInfo.Data?.FullName,
-                                            Gender = userInfo.Data?.Gender,
-                                            NationalId = userInfo.Data?.NationalId,
-                                            NationalIdExpiryDate = userInfo.Data?.NationalIdExpiryDate,
-                                            Nationality = userInfo.Data?.Nationality,
-                                            NationalityId = userInfo.Data?.NationalityId,
-                                        },
+                                        IsDraftAccount = nafathTransaction.IsDraftAccount,
+                                        IsLawye = nafathTransaction.IsLawye,
+                                        IsArbitrator = nafathTransaction.IsArbitrator,
+                                        IsReformer = nafathTransaction.IsReformer,
+                                        DateOfBirth = userInfo.Data?.DateOfBirth,
+                                        FirstName = userInfo.Data?.FirstName,
+                                        FullName = userInfo.Data?.FullName,
+                                        Gender = userInfo.Data?.Gender,
+                                        NationalId = userInfo.Data?.NationalId,
+                                        NationalIdExpiryDate = userInfo.Data?.NationalIdExpiryDate,
+                                        Nationality = userInfo.Data?.Nationality,
+                                        NationalityId = userInfo.Data?.NationalityId,
                                     };
+
                                     await _identityHub.Clients.Group(identityStatus.TransactionId).ReceivedIdentityStatus(identityStatus);
 
                                     removeList.Add(nafathTransaction);
                                     continue;
                                 }
+
                             }
 
                             if (nafathCheckStatusResponse.Data?.Data?.Status == SysSettingKeyConstants.NafathStatus_REJECTED
@@ -300,12 +349,9 @@ namespace REAC.Application.AppServices.Integration.GEE
             catch (Exception)
             {
             }
-            
+
         }
-        
-        
-        
-        
+
         private async Task<DataResponse<UserInfoUpdatedDto>> NafathGetUserInfo(string token)
         {
             try
@@ -341,6 +387,42 @@ namespace REAC.Application.AppServices.Integration.GEE
                 return new DataResponse<UserInfoUpdatedDto>() { IsDone = false, Message = e.Message + e.InnerException };
             }
         }
+
+        private async Task<DataResponse<UserAddressInfoUpdatedDto>> NafathGetUserAddressInfo(string token, string identiyNumber)
+        {
+            try
+            {
+                var url = _sysSetting.GetBySettingKey(SysSettingKeyConstants.NafathGetUserAddressInfo_URL).Result.Data?.Value;
+
+                if (string.IsNullOrEmpty(token) || string.IsNullOrEmpty(url))
+                    return new DataResponse<UserAddressInfoUpdatedDto>() { IsDone = false, Message = "" };
+
+                url = string.Format(url, identiyNumber);
+
+                var client = new HttpClient();
+                var request = new HttpRequestMessage(HttpMethod.Get, url);
+                request.Headers.Add("Authorization", $"Bearer {token}");
+                var response = await client.SendAsync(request);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var content = await response.Content.ReadAsStringAsync();
+
+                    var userAddressInfo = JsonSerializer.Deserialize<NafathUserAddressInfo>(content);
+
+                    var userAddressInfoUpdated = await MapUserAddressInfoDataAsync(userAddressInfo.GetIndividualWaselAddressResponse.GetIndividualWaselAddressResult.getIndividualWaselAddressResponseDetailObject.WaselAddress.FirstOrDefault());
+                    return new DataResponse<UserAddressInfoUpdatedDto> { IsDone = true, Data = userAddressInfoUpdated.Data };
+                }
+                else if (response.StatusCode == HttpStatusCode.Unauthorized)
+                    return new DataResponse<UserAddressInfoUpdatedDto> { IsDone = false, Message = "" };
+                else
+                    return new DataResponse<UserAddressInfoUpdatedDto> { IsDone = false, Message = "" };
+            }
+            catch (Exception e)
+            {
+                return new DataResponse<UserAddressInfoUpdatedDto>() { IsDone = false, Message = e.Message + e.InnerException };
+            }
+        }
         private async Task<DataResponse<UserInfoUpdatedDto>> MapUserInfoDataAsync(NafathUserInfoDto nafathUserInfoDto)
         {
             var nationality = (await _repository.GetQueryable<SysNationality, Guid>()).FirstOrDefault(x => x.NationalityCode == nafathUserInfoDto.user_info.nationality);
@@ -374,11 +456,37 @@ namespace REAC.Application.AppServices.Integration.GEE
                     FirstName = nafathUserInfoDto.user_info.first_name_ar,
                     NationalId = nafathUserInfoDto.user_info.id,
                     DateOfBirth = DateTime.Parse(nafathUserInfoDto.user_info.dob_g),
-                    NationalIdExpiryDate = nafathUserInfoDto.user_info.id_expiry_date_g is not null ? 
+                    NationalIdExpiryDate = nafathUserInfoDto.user_info.id_expiry_date_g is not null ?
                         DateTime.Parse(nafathUserInfoDto.user_info.id_expiry_date_g) : null,
                     Gender = nafathUserInfoDto.user_info.gender == "M" ? Domain.Shared.Enum.Gender.Male : Domain.Shared.Enum.Gender.Female,
                     NationalityId = nationality?.Id ?? nationalityId,
                     Nationality = nationality?.NationalityName ?? nafathUserInfoDto.user_info.nationality_ar,
+                }
+            };
+        }
+
+        private async Task<DataResponse<UserAddressInfoUpdatedDto>> MapUserAddressInfoDataAsync(WaselAddress nafathUserInfoDto)
+        {
+
+            return new DataResponse<UserAddressInfoUpdatedDto>()
+            {
+                IsDone = true,
+                Data = new UserAddressInfoUpdatedDto()
+                {
+                    AdditionalNumber = nafathUserInfoDto.AdditionalNumber,
+                    BuildingNumber = nafathUserInfoDto.BuildingNumber,
+                    ZipCode = nafathUserInfoDto.ZipCode,
+                    UnitNumber = nafathUserInfoDto.UnitNumber,
+                    DistrictAreaArabic = nafathUserInfoDto.DistrictAreaArabic,
+                    DistrictAreaEnglish = nafathUserInfoDto.DistrictAreaEnglish,
+                    StreetNameArabic = nafathUserInfoDto.StreetNameArabic,
+                    StreetNameEnglish = nafathUserInfoDto.StreetNameEnglish,
+                    CityNameArabic = nafathUserInfoDto.CityNameArabic,
+                    CityNameEnglish = nafathUserInfoDto.CityNameEnglish,
+                    FullName = nafathUserInfoDto.FullName,
+                    Latitude = nafathUserInfoDto.Latitude,
+                    Longitude = nafathUserInfoDto.Longitude,
+
                 }
             };
         }

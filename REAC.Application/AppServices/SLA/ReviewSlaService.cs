@@ -407,6 +407,7 @@ namespace REAC.Application.AppServices.SLA
             }
 
             litigationRequests = (await _repository.GetQueryable<LitigationRequest, Guid>())?
+                             .Include(x => x.ApplicantCitizen)
                              .Include(x => x.WorkFlowProcessingLogs)
                              .ThenInclude(x => x.WorkFlowStep)
                              .Include(x => x.WorkFlowProcessingLogs)
@@ -659,6 +660,7 @@ namespace REAC.Application.AppServices.SLA
             }
 
             litigationRequests = (await _repository.GetQueryable<LitigationRequest, Guid>())?
+                             .Include(x => x.ApplicantCitizen)
                              .Include(x => x.WorkFlowProcessingLogs)
                              .ThenInclude(x => x.WorkFlowStep)
                              .Include(x => x.WorkFlowProcessingLogs)

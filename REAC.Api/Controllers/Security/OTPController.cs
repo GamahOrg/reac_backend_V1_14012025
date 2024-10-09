@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using REAC.Application.Contracts.IAppServices.UserManage;
 using REAC.Domain.Shared.Constants;
+using REAC.Application.Contracts.Dtos.Zoom;
 
 namespace REAC.Api.Controllers.Security
 {
@@ -14,10 +15,12 @@ namespace REAC.Api.Controllers.Security
     public class OTPController : ControllerBase
     {
         private readonly IOTPService _oPTService;
+        private readonly IZoomService _zoomService;
 
-        public OTPController(IOTPService oPTService)
+        public OTPController(IOTPService oPTService, IZoomService zoomService)
         {
             _oPTService = oPTService;
+            _zoomService = zoomService;
         }
 
         [HttpGet]
@@ -36,5 +39,25 @@ namespace REAC.Api.Controllers.Security
         [Route(nameof(GetOTPTimeoutValue))]
         public async Task<BaseResponse> GetOTPTimeoutValue()
         => await _oPTService.GetOTPTimeoutSettingValue();
+
+
+        [HttpGet]
+        [AllowAnonymous]
+        [Route(nameof(GetOTPByMobile) + "/{mobileNumber}")]
+        public async Task<string> GetOTPByMobile(string mobileNumber)
+            => await _oPTService.GetOTPByMobile(mobileNumber);
+
+
+        [HttpGet]
+        [AllowAnonymous]
+        [Route(nameof(GenerateZoomMeeting))]
+        public async Task<ZoomMeting?> GenerateZoomMeeting()
+            => await _zoomService.GenerateMeeting("test meeting");
+
+        [HttpGet]
+        [AllowAnonymous]
+        [Route(nameof(GetZoomMeeting))]
+        public async Task<ZoomMeetingDetails?> GetZoomMeeting(long id)
+            => await _zoomService.GetMeetingById(id);
     }
 }

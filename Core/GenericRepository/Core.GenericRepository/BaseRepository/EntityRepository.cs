@@ -13,6 +13,8 @@ using System.Globalization;
 using System.Linq.Expressions;
 using Core.GenericRepository.Extensions;
 using static Core.GenericRepository.Shared.RepositoryDelegates;
+using Microsoft.Data.SqlClient;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Core.GenericRepository.BaseRepository
 {
@@ -1925,5 +1927,147 @@ namespace Core.GenericRepository.BaseRepository
         }
 
         #endregion
+        #region StoredProcedures Functions
+        public async Task<(BaseResponse, Dictionary<string, object>)> ExecuteStoredProcedureAsync<T>(string storedProcedureName, Dictionary<string, object> parameters = null, Dictionary<string, object> outputParameters = null, CancellationToken cancellationToken = default) where T : class
+        {
+            try
+            {
+                List<SqlParameter> sqlParameters = new List<SqlParameter>();
+                foreach (var kvp in parameters)
+                {
+                    var parameter = new SqlParameter($"@{kvp.Key}", kvp.Value ?? DBNull.Value);
+                    if (kvp.Value != null)
+                    {
+                        parameter.SqlDbType = GetSqlDbTypeFromValue(kvp.Value);
+                    }
+                    sqlParameters.Add(parameter);
+                }
+                // Construct the SQL command string with parameters and their values directly embedded
+                var parameterValuesWithAt = string.Join(", ", parameters
+                    .Select(kvp => $"@{kvp.Key}=@{kvp.Key}")
+                    );
+
+                #region Prepare OutPut parameters
+
+                if (outputParameters != null && outputParameters.Count > 0)
+                {
+
+                    // Construct the output parameters string
+                    //var outputParameterValuesWithAt = string.Join(", ", outputParameters
+                    //    .Select(kvp => $"@{kvp.Key}={(kvp.Value == null || kvp.Value == "string" || kvp.Value == "int" ? $"@{kvp.Key} OUTPUT" : kvp.Value)}")
+                    //    );
+
+                    var outputParameterValuesWithAt = string.Join(", ", outputParameters
+                       .Select(kvp => $"@{kvp.Key}={(kvp.Value == null || kvp.Value == "string" || kvp.Value == "int" ? $"@{kvp.Key} OUTPUT" : $"@{kvp.Key}")}")
+                      );
+
+
+                    // Append the output parameters to the main parameters string
+                    parameterValuesWithAt += ", " + outputParameterValuesWithAt;
+
+                    foreach (var outputParam in outputParameters)
+                    {
+                        var outputParamSql = new SqlParameter
+                        {
+                            Value = DBNull.Value,
+                            ParameterName = "@" + outputParam.Key,
+                            Direction = ParameterDirection.Output,
+                            SqlDbType = GetSqlDbTypeFromOutPutValue(outputParam.Value) // Helper method to infer SqlDbType
+                        };
+                        if (!outputParam.Value.Equals("int") && !outputParam.Value.Equals("string"))
+                        {
+                            outputParamSql.Value = outputParam.Value;
+                            outputParamSql.Direction = ParameterDirection.InputOutput;
+                            //continue;// break the foreach if the output has a value
+                        }
+
+                        sqlParameters.Add(outputParamSql);
+                    }
+
+                }
+                #endregion
+
+                var sqlCommand = $"EXEC {storedProcedureName} {parameterValuesWithAt}";
+
+
+                //var result = await _context.SqlQueryAsync<T>(sqlCommand, sqlParameters.ToArray(), cancellationToken);
+                var result = await SqlQueryAsync<T>(sqlCommand, sqlParameters.ToArray(), cancellationToken);
+                var outputValues = new Dictionary<string, object>();
+                if (outputParameters != null)
+                {
+                    foreach (var outputParam in outputParameters)
+                    {
+                        var outputParameter = sqlParameters.FirstOrDefault(p => p.ParameterName == "@" + outputParam.Key);
+                        if (outputParameter != null && outputParameter.Direction == ParameterDirection.Output)
+                        {
+                            outputValues.Add(outputParam.Key, outputParameter.Value);
+                        }
+                    }
+                }
+                var dataResponse = new DataResponse<List<T>>()
+                {
+                    IsDone = true,
+                    Data = result
+                };
+                return (dataResponse, outputValues);
+            }
+            catch (Exception e)
+            {
+
+                var excep = new BaseResponse()
+                {
+                    IsDone = false,
+                    Message = e.ToString()
+                };
+                return (excep, default);
+            
+        }
+          
+        }
+        private async Task<List<T>> SqlQueryAsync<T>(string sql, object[] parameters = null, CancellationToken cancellationToken = default) where T : class
+        {
+            if (parameters is null)
+            {
+                parameters = new object[] { };
+            }
+
+            if (typeof(T).GetProperties().Any())
+            {
+                // return await db.Database.SqlQueryRaw<T>(sql, parameters).ToListAsync();
+                // string sqlQuery =  db.Set<T>().FromSqlRaw(sql, parameters).ToQueryString();
+                return await _dbContext.Set<T>().FromSqlRaw(sql, parameters).ToListAsync(cancellationToken);
+            }
+            else
+            {
+                await _dbContext.Database.ExecuteSqlRawAsync(sql, parameters, cancellationToken);
+                return default;
+            }
+        }
+        private SqlDbType GetSqlDbTypeFromOutPutValue(object value)
+        {
+            // This function attempts to infer the SqlDbType based on the value's type
+            if (value is "int") return SqlDbType.Int;
+            else if (value is "string") return SqlDbType.VarChar;
+            else
+            {
+                return GetSqlDbTypeFromValue(value);
+            }
+           
+
+        }
+        private SqlDbType GetSqlDbTypeFromValue(object value)
+        {
+            // This function attempts to infer the SqlDbType based on the value's type
+            if (value is int) return SqlDbType.Int;
+            if (value is string) return SqlDbType.VarChar;
+            if (value is DateTime) return SqlDbType.DateTime;
+            if (value is DateTimeOffset) return SqlDbType.DateTimeOffset;
+            // Add more type mappings as needed
+
+            // Default to SqlDbType.NVarChar for unknown types
+            return SqlDbType.NVarChar;
+        }
+        #endregion
+
     }
 }

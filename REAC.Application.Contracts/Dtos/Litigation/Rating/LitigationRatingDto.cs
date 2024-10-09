@@ -14,7 +14,7 @@ namespace REAC.Application.Contracts.Dtos.Litigation.Rating
         public int PretenderRating { get; set; }
         public int DefendantRating { get; set; }
 
-        public virtual LitigationRequest Litigation { get; set; }
+      public virtual LitigationRequest Litigation { get; set; }
 
     }
 }

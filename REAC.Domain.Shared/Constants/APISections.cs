@@ -12,6 +12,7 @@
         public const string Integration = "Integration";
         public const string Public = "Public";
         public const string Security = "Security";
+        public const string Reports = "Reports";
 
 
 

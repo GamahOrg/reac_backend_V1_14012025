@@ -8,6 +8,8 @@ using REAC.Domain.Shared.Constants;
 using REAC.Domain.Shared.Enum;
 using REAC.EntityFrameworkCore.Entities.Litigation;
 using REAC.EntityFrameworkCore.Entities.Wpf.Business;
+using REAC.Application.Contracts.Dtos.Zoom;
+using System.Globalization;
 
 namespace REAC.Application.ModuleServices
 {
@@ -125,13 +127,20 @@ namespace REAC.Application.ModuleServices
 
                 if (allowAdd)
                 {
+                    CultureInfo provider = new CultureInfo("en-US");
+                    CultureInfo.CurrentCulture = provider;
+                    var sessionDateGreg = DateTime.ParseExact(requestPayload.SessionDateTime.ToString(), "M/d/yyyy h:mm:ss tt", provider);
+                    var _zoomMeeting = await _zoomService.GenerateMeeting($"{litigationRequest.RequestCode}_{sessionDateGreg.ToString()}");
+                    var sessionUrl = _zoomMeeting?.join_url;
                     LitigationRequestSession litigationRequestSession = new LitigationRequestSession()
                     {
                         Id = Guid.NewGuid(),
                         LitigationRequestId = requestPayload.RequestId,
                         SessionDatetime = requestPayload.SessionDateTime,
                         CreatedOn = DateTime.Now,
-                        LitigationRequestSessionRequestTypeId = LitigationRequestSessionRequestType.Arbitration
+                        LitigationRequestSessionRequestTypeId = LitigationRequestSessionRequestType.Arbitration,
+                        SessionUrl = sessionUrl,
+                        MeetingId = _zoomMeeting?.id,
                     };
 
                     if (litigationRequest.LitigationRequestSessions.Count == 0)
@@ -179,6 +188,7 @@ namespace REAC.Application.ModuleServices
                         {
                             var msg = _settingService.GetBySettingKey(SysSettingKeyConstants.ArbitrationSession_Added).Result.Data?.Value;
                             msg = msg?.Replace("{LitigationCode}", litigationRequest.RequestCode);
+                            msg = msg?.Replace("{SessionLink}", sessionUrl);
 
 
                             List<SysNotificationDto> notifications = new List<SysNotificationDto>() {
@@ -767,7 +777,8 @@ namespace REAC.Application.ModuleServices
                                       .Include(x => x.Contract.FirstPartyCitizen)
                                       .Include(x => x.Contract.SecondPartyFacility)
                                       .Include(x => x.Contract.SecondPartyCitizen)
-                                      .Include(x => x.Contract.LitigationRequestContractType);
+                                      .Include(x => x.Contract.LitigationRequestContractType)
+                                      .Where(x => x.LitigationRequestSessions.Any());
 
             litigationRequests = entitiesQuerable
                 .Where(x => x.LitigationRequestCategoryId != LitigationRequestCategory.Reconciliation & x.InternalStatusId != RequestStatus.Rejected
@@ -785,6 +796,7 @@ namespace REAC.Application.ModuleServices
             {
                 foreach (var litigationRequest in litigationRequests.Results)
                 {
+
                     LitigationRequestMircoForRequestSessionDto litigationRequestMircoDto = new LitigationRequestMircoForRequestSessionDto();
                     litigationRequestMircoDto.Id = litigationRequest.Id;
                     litigationRequestMircoDto.RequestDate = litigationRequest.CreatedOn;
@@ -795,6 +807,7 @@ namespace REAC.Application.ModuleServices
                     litigationRequestMircoDto.SessionDatetime = litigationRequest.LitigationRequestSessions.OrderBy(x => x.SessionDatetime).Last().SessionDatetime;
                     litigationRequestMircoDto.Url = litigationRequest.LitigationRequestSessions.OrderBy(x => x.SessionDatetime).Last().SessionUrl;
                     litigationRequestMircoDtos.Add(litigationRequestMircoDto);
+
                 }
             }
 

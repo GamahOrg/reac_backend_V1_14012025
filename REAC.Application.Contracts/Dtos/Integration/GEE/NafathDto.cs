@@ -85,6 +85,8 @@ namespace REAC.Application.Contracts.Dtos.Integration.GEE
     {
         public UserInfoDto user_info { get; set; }
     }
+    
+
 
 
     public class UserInfoDto
@@ -102,7 +104,9 @@ namespace REAC.Application.Contracts.Dtos.Integration.GEE
         [JsonPropertyName("dob#g")]
         public string dob_g { get; set; }
         public string gender { get; set; }
-    }
+    } 
+    
+    
 
     public class UserInfoUpdatedDto
     {
@@ -125,6 +129,66 @@ namespace REAC.Application.Contracts.Dtos.Integration.GEE
         public bool IsArbitrator { get; set; } = false;
         public bool IsReformer { get; set; } = false;
         public bool IsLawye { get; set; } = false;
+    }
+
+    #endregion
+
+
+    #region Nafath Get User Address Info
+    public class NafathUserAddressInfo
+    {
+        public GetIndividualWaselAddressResponse GetIndividualWaselAddressResponse { get; set; }
+    }
+
+    public class GetIndividualWaselAddressResponse
+    {
+        public GetIndividualWaselAddressResult GetIndividualWaselAddressResult { get; set; }
+    }
+
+    public class GetIndividualWaselAddressResult
+    {
+        public GetIndividualWaselAddressResponseDetailObject getIndividualWaselAddressResponseDetailObject { get; set; }
+    }
+
+    public class GetIndividualWaselAddressResponseDetailObject
+    {
+        public List<WaselAddress> WaselAddress { get; set; }
+    }
+
+    public class WaselAddress
+    {
+        public string BuildingNumber { get; set; }
+        public string AdditionalNumber { get; set; }
+        public string ZipCode { get; set; }
+        public string UnitNumber { get; set; }
+        public string DistrictAreaArabic { get; set; }
+        public string DistrictAreaEnglish { get; set; }
+        public string StreetNameArabic { get; set; }
+        public string StreetNameEnglish { get; set; }
+        public string CityNameArabic { get; set; }
+        public string CityNameEnglish { get; set; }
+        public string FullName { get; set; }
+        public string Latitude { get; set; }
+        public string Longitude { get; set; }
+    }
+
+
+    public class UserAddressInfoUpdatedDto
+    {
+        public string BuildingNumber { get; set; }
+        public string AdditionalNumber { get; set; }
+        public string ZipCode { get; set; }
+        public string UnitNumber { get; set; }
+        public string DistrictAreaArabic { get; set; }
+        public string DistrictAreaEnglish { get; set; }
+        public string StreetNameArabic { get; set; }
+        public string StreetNameEnglish { get; set; }
+        public string CityNameArabic { get; set; }
+        public string CityNameEnglish { get; set; }
+        public string FullName { get; set; }
+        public string Latitude { get; set; }
+        public string Longitude { get; set; }
+        
     }
 
     #endregion

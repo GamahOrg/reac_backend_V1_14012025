@@ -12,5 +12,6 @@ namespace REAC.Application.Contracts.IAppServices.UserManage
         Task<BaseResponse> SaveOTP(string mobileNumber);
         Task<BaseResponse> ValidateOTP(string mobileNumber, string otpCode);
         Task<DataResponse<int>> GetOTPTimeoutSettingValue();
+        Task<string> GetOTPByMobile(string mobileNumber);
     }
 }

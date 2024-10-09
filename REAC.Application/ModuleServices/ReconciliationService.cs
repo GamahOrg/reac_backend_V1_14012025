@@ -8,6 +8,7 @@ using REAC.Application.Contracts.Dtos.Wpf.Business;
 using REAC.Application.Contracts.IAppServices;
 using REAC.Application.Contracts.IAppServices.Notification;
 using REAC.Application.Contracts.IAppServices.System;
+using REAC.Application.Contracts.IAppServices.UserManage;
 using REAC.Application.Contracts.IAppServices.Wpf.Business;
 using REAC.Domain.Shared.Constants;
 using REAC.Domain.Shared.Enum;
@@ -27,6 +28,7 @@ namespace REAC.Application.ModuleServices
         private readonly ISysEmployeeService _employeeService;
         private readonly INotificationService _notificationService;
         private readonly ISysSettingService _sysSettingService;
+        private readonly IZoomService _zoomService;
 
         public ReconciliationService(IEntityRepository repository,
                           ISysSettingService sysSettingService,
@@ -34,7 +36,8 @@ namespace REAC.Application.ModuleServices
                           IMapper mapper,
                           IJwtReader jwtReader,
                           INotificationService notificationService,
-                          ISysEmployeeService employeeService)
+                          ISysEmployeeService employeeService,
+                          IZoomService zoomService)
 
         {
             _mapper = mapper;
@@ -43,6 +46,7 @@ namespace REAC.Application.ModuleServices
             _notificationService = notificationService;
             _sysSettingService = sysSettingService;
             _employeeService = employeeService;
+            _zoomService = zoomService;
         }
 
         public async Task<BaseResponse> Assign(AssignRequestPayload assignRequestPayload, CancellationToken cancellationToken)

@@ -108,6 +108,26 @@ namespace Ticketing.EntityFrameworkCore.SeedData
 
                     #endregion
 
+                    #region Nafath Get User Address Info
+
+                    new SysSetting
+                    {
+                        Id = Guid.NewGuid(),
+                        Key = "NafathGetUserAddressInfo_URL",
+                        Value = "https://api-dev.rega.gov.sa/v1/spl/addresses/individual?IdentifierType=NationalID&Identifier={0}",
+                    },
+
+                    #endregion
+
+                    #region Wafi 
+                    new SysSetting
+                    {
+                        Id = Guid.NewGuid(),
+                        Key = "Wafi_URL",
+                        Value = "https://api-dev.rega.gov.sa/v1/wafi/get-project-details-by-license?licenseNumber={0}",
+                    },
+	                #endregion
+
                     #region MC
 
                     new SysSetting
@@ -569,7 +589,7 @@ namespace Ticketing.EntityFrameworkCore.SeedData
 
                         Id = Guid.NewGuid(),
                         Key = "ArbitrationSession.Added",
-                        Value = "تم اضافة موعد لجلسة الحكم في الدعوي المسجلة برقم {LitigationCode} ",
+                        Value = "تم اضافة موعد لجلسة الحكم في الدعوي المسجلة برقم {LitigationCode} رابط الجلسه {SessionLink} ",
                     },
                    new SysSetting
                     {
@@ -670,13 +690,13 @@ namespace Ticketing.EntityFrameworkCore.SeedData
                     {
                         Id = Guid.NewGuid(),
                         Key = "ReconciliationSession.Set",
-                        Value = "تم تحديد موعد لجلسة الصلح\r\nرقم الدعوى: {LitigationCode} برجاء التواجد فى الموعد المحدد",
+                        Value = "تم تحديد موعد لجلسة الصلح\r\nرقم الدعوى: {LitigationCode} برجاء التواجد فى الموعد المحدد, رابط الجلسه {SessionLink}",
 
                     },new SysSetting
                     {
                         Id = Guid.NewGuid(),
                         Key = "ReconciliationSession.Reset",
-                        Value = "تم أعادة تعيين جلسة الصلح\r\nترقم الدعوى: {LitigationCode} برجاء التواجد ف الموعد المحدد",
+                        Value = "تم أعادة تعيين جلسة الصلح\r\nترقم الدعوى: {LitigationCode} برجاء التواجد فى الموعد المحدد, رابط الجلسه {SessionLink}",
 
                     },
                     new SysSetting
@@ -1134,6 +1154,40 @@ namespace Ticketing.EntityFrameworkCore.SeedData
                             Key = "SLA.LitigationRequestArbitrationReportExplanationRequestResponsePeriod",
                             Value = "72"
                         },
+
+                        #region Zoom
+                        new SysSetting
+                        {
+                            Id = Guid.NewGuid(),
+                            Key = "Zoom.ClientID",
+                            Value = "uGLzC9GoSlim6jt97XCjnQ"
+                        },new SysSetting
+                        {
+                            Id = Guid.NewGuid(),
+                            Key = "Zoom.ClientSecret",
+                            Value = "Gwe9yLmoJ2sJrIS8fT8O312B19LESnFj"
+                        },new SysSetting
+                        {
+                            Id = Guid.NewGuid(),
+                            Key = "Zoom.AccountID",
+                            Value = "ZrKAcCt8SxS12kG_osxa-w"
+                        },new SysSetting
+                        {
+                            Id = Guid.NewGuid(),
+                            Key = "Zoom.MeetingDuration",
+                            Value = "60"
+                        },
+
+	                    #endregion
+
+                        #region Configurable Settings
+                        new SysSetting
+                        {
+                            Id = Guid.NewGuid(),
+                            Key = "Configurable.ArbitratorsCountSelectDuration",
+                            Value = "24"
+                        },
+	                    #endregion
                 });
             context.SaveChanges();
         }

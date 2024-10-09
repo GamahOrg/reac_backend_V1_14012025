@@ -1503,6 +1503,9 @@ namespace REAC.EntityFrameworkCore.Migrations
                     b.Property<int>("LitigationRequestSessionRequestTypeId")
                         .HasColumnType("int");
 
+                    b.Property<long?>("MeetingId")
+                        .HasColumnType("bigint");
+
                     b.Property<DateTime>("SessionDatetime")
                         .HasColumnType("datetime2");
 
@@ -1865,6 +1868,230 @@ namespace REAC.EntityFrameworkCore.Migrations
                     b.HasIndex("ReformerStatusId");
 
                     b.ToTable("ReformerStopFreeUpDecision", (string)null);
+                });
+
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Reports.GetListOfLitigationArbitrationReportResult", b =>
+                {
+                    b.Property<string>("ArbitrationName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("AreaName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CategoryName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CityName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ContractAddress")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal?>("Fees")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("FirstParty")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("LitigationRequestId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("RequestCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RequestStatus")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SecondParty")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.ToTable((string)null);
+
+                    b.ToView(null, (string)null);
+                });
+
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Reports.GetListOfLitigationGeneralReportResult", b =>
+                {
+                    b.Property<string>("AreaName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CategoryName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CityName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ContractAddress")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal?>("Fees")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("FirstParty")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LitigationRequestCategoryIds")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("LitigationRequestId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("RequestCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RequestStatus")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SecondParty")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.ToTable((string)null);
+
+                    b.ToView(null, (string)null);
+                });
+
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Reports.GetListOfLitigationReformerReportResult", b =>
+                {
+                    b.Property<string>("AreaName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CategoryName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CityName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ContractAddress")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal?>("Fees")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("FirstParty")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("LitigationRequestId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("RefomerName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RequestCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RequestStatus")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SecondParty")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.ToTable((string)null);
+
+                    b.ToView(null, (string)null);
+                });
+
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Reports.GetListOfLitigationReviewReportResult", b =>
+                {
+                    b.Property<string>("AreaName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CategoryName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CityName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ContractAddress")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("EmployeeName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal?>("Fees")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("FirstParty")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("LitigationRequestId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("RequestCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RequestStatus")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SecondParty")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.ToTable((string)null);
+
+                    b.ToView(null, (string)null);
+                });
+
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Reports.GetLitigationStatisticsMainReportResult", b =>
+                {
+                    b.Property<int>("FinishedCount")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("FinishedRatio")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("NotFinishedCount")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("NotFinishedRatio")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("OtherServicesCount")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("OtherServicesRatio")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("PropertiesCount")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("PropertiesRatio")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("RealEstateBrokerageCount")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("RealEstateBrokerageRatio")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("RentCount")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("RentRatio")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("TotalLitigationCount")
+                        .HasColumnType("int");
+
+                    b.Property<int>("WafiCount")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("WafiRatio")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.ToTable((string)null);
+
+                    b.ToView(null, (string)null);
                 });
 
             modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.System.DelegationRequest", b =>

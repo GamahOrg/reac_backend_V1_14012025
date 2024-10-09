@@ -139,7 +139,7 @@ namespace REAC.Application.ModuleServices
                                 CreatedOn = DateTime.Now,
                                 RequestId = litigationRequest.Id,
                                 ShowForApplicant = false,
-                                LogMessage = "تم تحديد عدد هيئة التحكيم من قبل المدعى"
+                                LogMessage = "تم إضافة طلب استفسار على حكم التحكيم من قبل المدعى"
                             });
                             break;
                         case LitigationRequestParty.Defendant:
@@ -149,7 +149,7 @@ namespace REAC.Application.ModuleServices
                                 CreatedOn = DateTime.Now,
                                 RequestId = litigationRequest.Id,
                                 ShowForApplicant = false,
-                                LogMessage = "تم تحديد عدد هيئة التحكيم من قبل المدعى عليه"
+                                LogMessage = "تم إضافة طلب استفسار على حكم التحكيم من قبل المدعى عليه"
                             });
                             break;
                     }
@@ -803,7 +803,7 @@ namespace REAC.Application.ModuleServices
                             CreatedOn = DateTime.Now,
                             RequestId = arbitrationReportExplanationRequest.LitigationRequestArbitrationReport.LitigationRequestId,
                             ShowForApplicant = false,
-                            LogMessage = "تم تحديد عدد هيئة التحكيم من قبل المدعى"
+                            LogMessage = "تم الرد على طلب استفسار على حكم التحكيم من قبل المدعى"
                         });
                         break;
                     case LitigationRequestParty.Defendant:
@@ -813,7 +813,7 @@ namespace REAC.Application.ModuleServices
                             CreatedOn = DateTime.Now,
                             RequestId = arbitrationReportExplanationRequest.LitigationRequestArbitrationReport.LitigationRequestId,
                             ShowForApplicant = false,
-                            LogMessage = "تم تحديد عدد هيئة التحكيم من قبل المدعى عليه"
+                            LogMessage = "تم الرد على طلب استفسار على حكم التحكيم من قبل المدعى عليه"
                         });
                         break;
                 }

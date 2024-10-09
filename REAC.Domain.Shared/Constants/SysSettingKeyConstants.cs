@@ -68,6 +68,17 @@
 
         #endregion
 
+        #region Get User Address Info
+
+        public const string NafathGetUserAddressInfo_URL = "NafathGetUserAddressInfo_URL";
+
+        #endregion
+
+        #region Wafi
+        public const string Wafi_URL = "Wafi_URL";
+
+        #endregion
+
         #region Nafath Response Status keys
 
         public const string NafathStatus_COMPLETED = "COMPLETED";
@@ -275,5 +286,12 @@
         public const string EmailConfirmationURL = "EmailConfirmation_URL";
         #endregion
 
+        #region Zoom
+        public const string Zoom_ClientID = "Zoom.ClientID";
+        public const string Zoom_ClientSecret = "Zoom.ClientSecret";
+        public const string Zoom_AccountID = "Zoom.AccountID";
+        public const string Zoom_MeetingDuration = "Zoom.MeetingDuration";
+
+        #endregion
     }
 }

@@ -4,10 +4,12 @@ using Microsoft.EntityFrameworkCore;
 using REAC.Application.Contracts.Dtos.Litigation;
 using REAC.Application.Contracts.Dtos.Notification;
 using REAC.Application.Contracts.Dtos.Reconciliation.Process;
+using REAC.Application.Contracts.Dtos.Zoom;
 using REAC.Domain.Shared.Constants;
 using REAC.Domain.Shared.Enum;
 using REAC.EntityFrameworkCore.Entities.Litigation;
 using REAC.EntityFrameworkCore.Entities.Wpf.Business;
+using System.Globalization;
 
 namespace REAC.Application.ModuleServices
 {
@@ -21,6 +23,8 @@ namespace REAC.Application.ModuleServices
                 Guid referenceId = Guid.Empty;
                 _jwtReader.GetReferenceId(ref referenceId);
                 var msg = "";
+                var sessionUrl = "";
+                var _zoomMeeting=new ZoomMeting();
                 var litigationRequest = (await _repository.GetQueryable<LitigationRequest, Guid>())?
                          .Include(x => x.LitigationRequestSessions.Where(x => x.LitigationRequestSessionRequestTypeId == LitigationRequestSessionRequestType.Reconciliation))
                         .Include(x => x.Contract)
@@ -110,6 +114,12 @@ namespace REAC.Application.ModuleServices
                         allowAdd = false;
                     else
                     {
+                        CultureInfo provider = new CultureInfo("en-US");
+                        CultureInfo.CurrentCulture = provider;
+                        var sessionDateGreg = DateTime.ParseExact(requestPayload.SessionDateTime.ToString(), "M/d/yyyy h:mm:ss tt", provider);
+                        _zoomMeeting = await _zoomService.GenerateMeeting($"{litigationRequest.RequestCode}_{requestPayload.SessionDateTime.ToString()}");
+                        sessionUrl = _zoomMeeting?.join_url;
+
                         if (litigationRequest.LitigationRequestSessions.Count == 0)
                         {
                             litigationRequest.InternalStatusId = RequestStatus.AsessionTimeHasBeenSet;
@@ -130,7 +140,9 @@ namespace REAC.Application.ModuleServices
                                 msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.ReconciliationSession_set).Result.Data?.Value;
 
                                 msg = msg?.Replace("{LitigationCode}", litigationRequest?.RequestCode);
-                                SendNotificationMS(msg, litigationRequest);
+                                msg = msg?.Replace("{SessionLink}", sessionUrl);
+
+                                await SendNotificationMS(msg, litigationRequest);
                             }
                             catch (Exception e)
                             {
@@ -157,7 +169,9 @@ namespace REAC.Application.ModuleServices
                             {
                                 msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.ReconciliationSession_Reset).Result.Data?.Value;
                                 msg = msg?.Replace("{LitigationCode}", litigationRequest?.RequestCode);
-                                SendNotificationMS(msg, litigationRequest);
+                                msg = msg?.Replace("{SessionLink}", sessionUrl);
+
+                                await SendNotificationMS(msg, litigationRequest);
                             }
                             catch (Exception e)
                             {
@@ -177,7 +191,9 @@ namespace REAC.Application.ModuleServices
                         LitigationRequestId = requestPayload.RequestId,
                         SessionDatetime = requestPayload.SessionDateTime,
                         CreatedOn = DateTime.Now,
-                        LitigationRequestSessionRequestTypeId = LitigationRequestSessionRequestType.Reconciliation
+                        LitigationRequestSessionRequestTypeId = LitigationRequestSessionRequestType.Reconciliation,
+                        SessionUrl = sessionUrl,
+                        MeetingId = _zoomMeeting?.id,
                     };
 
 

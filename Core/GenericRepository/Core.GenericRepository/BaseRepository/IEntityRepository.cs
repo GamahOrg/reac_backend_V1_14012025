@@ -690,6 +690,10 @@ namespace Core.GenericRepository.BaseRepository
         /// <returns>Returns <see cref="Task{TResult}"/>.</returns>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="sql"/> is <see langword="null"/>.</exception>
         Task<BaseResponse> GetFromRawSqlAsync<T>(string sql, IEnumerable<object> parameters, CancellationToken cancellationToken = default);
+
+        #endregion
+        #region StoredProcedures Functions
+        Task<(BaseResponse, Dictionary<string, object>)> ExecuteStoredProcedureAsync<T>(string storedProcedureName, Dictionary<string, object> parameters = null, Dictionary<string, object> outputParameters = null, CancellationToken cancellationToken = default) where T : class;
         #endregion
     }
 }

@@ -230,5 +230,15 @@ namespace REAC.Application.AppServices.UserManage
             return (isExists as DataResponse<bool>).Data;
         }
 
+
+        public async Task<string> GetOTPByMobile(string mobileNumber)
+        {
+            var otpRes = await GetOTPByMobileNumber(mobileNumber);
+            if (otpRes != null)
+                return otpRes.Code;
+
+            return "Not FOund";
+        }
+
     }
 }

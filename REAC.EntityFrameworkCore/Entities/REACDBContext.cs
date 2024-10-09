@@ -4,6 +4,7 @@ using REAC.EntityFrameworkCore.Entities.Arbitration;
 using REAC.EntityFrameworkCore.Entities.Litigation;
 using REAC.EntityFrameworkCore.Entities.Notification;
 using REAC.EntityFrameworkCore.Entities.Reconciliation;
+using REAC.EntityFrameworkCore.Entities.Reports;
 using REAC.EntityFrameworkCore.Entities.Wpf.Business;
 using REAC.EntityFrameworkCore.Entities.Wpf.System;
 
@@ -2052,7 +2053,18 @@ public partial class REACDBContext : DbContext
         //  .HasKey(lr => new { lr.Id, lr.CodingPrefixSymbol });
 
         OnModelCreatingPartial(modelBuilder);
+        OnModelConfigureStoredProcedure(modelBuilder);
+
     }
 
     partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
+    private void OnModelConfigureStoredProcedure(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<GetLitigationStatisticsMainReportResult>().HasNoKey().ToView(null);
+        modelBuilder.Entity<GetListOfLitigationReviewReportResult>().HasNoKey().ToView(null);
+        modelBuilder.Entity<GetListOfLitigationReformerReportResult>().HasNoKey().ToView(null);
+        modelBuilder.Entity<GetListOfLitigationArbitrationReportResult>().HasNoKey().ToView(null);
+        modelBuilder.Entity<GetListOfLitigationGeneralReportResult>().HasNoKey().ToView(null);
+
+    }
 }
