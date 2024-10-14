@@ -13,6 +13,7 @@ namespace REAC.Application.Contracts.IMobileAppServices.Reconciliation
     {
 
         #region Citizen Report Reply
+        Task<BaseResponse> GetCitizenLitigationRequestForReportReply(int pageIndex, int pageSize);
         Task<BaseResponse> GetCitizenLitigationRequestForReportReply(Guid requestId);
         Task<BaseResponse> AddCitizenLitigationRequestForReportReply(Guid requestId, ApproveRejectStatus requestMinutesOfMeetingApprovalStatus);
         #endregion

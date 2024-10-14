@@ -11,10 +11,14 @@ namespace REAC.Application.Contracts.IMobileAppServices.Arbitration
     public interface IMobileArbitrationService
     {
         Task<BaseResponse> AddArbitrationReportExplanationRequest(LitigationRequestArbitrationReportExplanationRequestCreateDto litigationRequestArbitrationReportExplanationRequestCreateDto);
+        Task<BaseResponse> GetLitigationRequestForReportExplanationRequest(Guid requestId);
+        Task<BaseResponse> GetLitigationRequestForReportExplanationRequest(int pageIndex, int pageSize);
         Task<BaseResponse> AddArbitratorsCount(ArbitratorCountRequestPayload arbitratorCountRequestPayload);
         Task<BaseResponse> AddCitizenLitigationRequestForReportArbitratorsNominationListReply(ArbitratorNominationListRequestReplyPayload arbitratorNominationListRequestReplyPayload);
         Task<BaseResponse> GetCitizenLitigationRequestForArbitratorsNominationListReply(Guid litigationRequestId);
+        Task<BaseResponse> GetCitizenLitigationRequestForArbitratorsNominationListReply(int pageIndex, int pageSize);
         Task<BaseResponse> GetLitigationRequestForAddArbitratorsCount(Guid requestId);
+        Task<BaseResponse> GetCitizenLitigationRequestForArbitratorsCountReply(int pageIndex, int pageSize);
         Task<BaseResponse> GetLitigationRequestForReport(Guid requestId);
     }
 }

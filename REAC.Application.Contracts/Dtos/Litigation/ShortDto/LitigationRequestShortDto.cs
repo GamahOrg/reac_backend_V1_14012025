@@ -4,6 +4,7 @@ using REAC.Application.Contracts.Dtos.Litigation;
 using REAC.Application.Contracts.Dtos.System.LitigationRequestCategoryDtos;
 using REAC.Application.Contracts.Dtos.System.LitigationRequestOwnerTypeDtos;
 using REAC.Application.Contracts.Dtos.System.LitigationRequestStatusDtos;
+using REAC.Domain.Shared.Enum;
 using REAC.EntityFrameworkCore.Entities.System;
 
 namespace REAC.EntityFrameworkCore.Entities.Litigation;
@@ -13,6 +14,7 @@ public partial class LitigationRequestShortDto : BaseEntity<Guid>
     public string? RequestCode { get; set; }
     public string? CityName { get; set; }
     public string? AreaName { get; set; }
+    public RequestStatus ExternalStatusId { get; set; }
     public string? ContractAddress { get; set; } // العنوان الوطني
 
     public DateTime? MintuesOfMeetingApprovalPlaintiffStatusOn { get; set; }

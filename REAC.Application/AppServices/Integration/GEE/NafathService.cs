@@ -408,8 +408,8 @@ namespace REAC.Application.AppServices.Integration.GEE
                 {
                     var content = await response.Content.ReadAsStringAsync();
 
-                    var userAddressInfo = JsonSerializer.Deserialize<NafathUserAddressInfo>(content);
-
+                    //var userAddressInfo = JsonSerializer.Deserialize<NafathUserAddressInfo>(content);
+                    var userAddressInfo = JsonConvert.DeserializeObject<NafathUserAddressInfo>(content);
                     var userAddressInfoUpdated = await MapUserAddressInfoDataAsync(userAddressInfo.GetIndividualWaselAddressResponse.GetIndividualWaselAddressResult.getIndividualWaselAddressResponseDetailObject.WaselAddress.FirstOrDefault());
                     return new DataResponse<UserAddressInfoUpdatedDto> { IsDone = true, Data = userAddressInfoUpdated.Data };
                 }

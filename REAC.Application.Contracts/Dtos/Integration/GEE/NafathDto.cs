@@ -1,5 +1,6 @@
 ﻿using REAC.Application.Contracts.Dtos.Integration.Nafath;
 using REAC.Domain.Shared.Enum;
+using REAC.Domain.Shared.Helpers;
 using System.Text.Json.Serialization;
 
 namespace REAC.Application.Contracts.Dtos.Integration.GEE
@@ -152,6 +153,7 @@ namespace REAC.Application.Contracts.Dtos.Integration.GEE
 
     public class GetIndividualWaselAddressResponseDetailObject
     {
+        [Newtonsoft.Json.JsonConverter(typeof(SingleOrArrayJsonConverter<WaselAddress>))]
         public List<WaselAddress> WaselAddress { get; set; }
     }
 

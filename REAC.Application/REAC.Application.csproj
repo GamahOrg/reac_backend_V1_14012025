@@ -19,6 +19,7 @@
     <ProjectReference Include="..\Core\GenericRepository\Core.GenericRepository\Core.GenericRepository.csproj" />
     <ProjectReference Include="..\Core\Log\Core.Log.Application.Contracts\Core.Log.Application.Contracts.csproj" />
     <ProjectReference Include="..\REAC.Application.Contracts\REAC.Application.Contracts.csproj" />
+    <ProjectReference Include="..\REAC.Domain.Shared\REAC.Domain.Shared.csproj" />
   </ItemGroup>
 
   <ItemGroup>
