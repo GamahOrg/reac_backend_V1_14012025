@@ -182,6 +182,7 @@ public partial class LitigationRequest : BaseEntity<Guid>
     public virtual ICollection<LitigationRequestReconciliationReport> LitigationRequestReconciliationReports { get; set; } = new List<LitigationRequestReconciliationReport>();
 
     public virtual ICollection<LitigationRequestNote> LitigationRequestNotes { get; set; } = new List<LitigationRequestNote>();
+    public virtual ICollection<LititgationRequestModificationRequest> LitigationRequestModificationRequests { get; set; } = new List<LititgationRequestModificationRequest>();
     public virtual ICollection<LitigationRequestArbitratorList> LitigationRequestArbitratorLists { get; set; } = new List<LitigationRequestArbitratorList>();
     public virtual ICollection<LitigationRequestArbitratorNominationList> LitigationRequestArbitratorNominationLists { get; set; } = new List<LitigationRequestArbitratorNominationList>();
     public virtual ICollection<LitigationRequestArbitratorsChairmanNominationList> LitigationRequestArbitratorsChairmanNominationLists { get; set; } = new List<LitigationRequestArbitratorsChairmanNominationList>();

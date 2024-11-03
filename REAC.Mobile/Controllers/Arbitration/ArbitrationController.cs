@@ -91,11 +91,11 @@ public class ArbitrationController : ControllerBase
     }
 
     [HttpGet(nameof(GetCitizenLitigationRequestForArbitratorsNominationListReply))]
-    public async Task<IActionResult> GetCitizenLitigationRequestForArbitratorsNominationListReply(int pageIndex, int pageSize)
+    public async Task<IActionResult> GetCitizenLitigationRequestForArbitratorsNominationListReply(int pageIndex, int pageSize ,CancellationToken cancellationToken)
     {
         if (ModelState.IsValid)
         {
-            var returnValue = await _arbitrationService.GetCitizenLitigationRequestForArbitratorsNominationListReply(pageIndex, pageSize);
+            var returnValue = await _arbitrationService.GetCitizenLitigationRequestForArbitratorsNominationListReply(pageIndex, pageSize, cancellationToken);
             return Ok(returnValue);
         }
 
@@ -152,6 +152,30 @@ public class ArbitrationController : ControllerBase
         if (ModelState.IsValid)
         {
             var returnValue = await _arbitrationService.GetLitigationRequestForReportExplanationRequest(litigationRequestId);
+            return Ok(returnValue);
+        }
+
+        return BadRequest();
+    }
+
+    [HttpGet(nameof(GetLitigationRequestForReportExplanationRequestForArbitratorByRequestId))]
+    public async Task<IActionResult> GetLitigationRequestForReportExplanationRequestForArbitratorByRequestId(Guid litigationRequestId)
+    {
+        if (ModelState.IsValid)
+        {
+            var returnValue = await _arbitrationService.GetLitigationRequestForReportExplanationRequestForArbitrator(litigationRequestId);
+            return Ok(returnValue);
+        }
+
+        return BadRequest();
+    }
+
+    [HttpGet(nameof(GetLitigationRequestForReportExplanationRequestForArbitrator))]
+    public async Task<IActionResult> GetLitigationRequestForReportExplanationRequestForArbitrator(int pageIndex, int pageSize)
+    {
+        if (ModelState.IsValid)
+        {
+            var returnValue = await _arbitrationService.GetLitigationRequestForReportExplanationRequestForArbitrator(pageIndex, pageSize);
             return Ok(returnValue);
         }
 

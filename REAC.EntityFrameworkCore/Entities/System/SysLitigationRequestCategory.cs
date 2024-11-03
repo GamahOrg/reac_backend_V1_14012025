@@ -18,6 +18,8 @@ public partial class SysLitigationRequestCategory : BaseEntity<LitigationRequest
     public Guid BpfId { get; set; }
 
     public virtual ICollection<LitigationRequest> LitigationRequests { get; set; } = new List<LitigationRequest>();
+    public virtual ICollection<LitigationRequestNote> LitigationRequestNotes { get; set; } = new List<LitigationRequestNote>();
+    public virtual ICollection<LitigationRequestCorrespondence> LitigationRequestCorrespondences { get; set; } = new List<LitigationRequestCorrespondence>();
 
     public virtual ICollection<SysLitigationRequestCategoryTranslation> Translations { get; set; } = new List<SysLitigationRequestCategoryTranslation>();
 

@@ -6,6 +6,7 @@ using REAC.Application.Contracts.Dtos.Litigation;
 using REAC.Application.Contracts.Dtos.Litigation.Create.Contract;
 using REAC.Application.Contracts.Dtos.Litigation.Create.Defendant;
 using REAC.Application.Contracts.Dtos.Litigation.CreateUpdate.Contract;
+using REAC.Application.Contracts.Dtos.Litigation.CreateUpdate.Litigation;
 using REAC.Application.Contracts.IAppServices.Litigation;
 using REAC.Domain.Shared.Constants;
 using REAC.Domain.Shared.Enum;
@@ -116,6 +117,17 @@ public class LitigationRequestContractController : BaseController<LitigationRequ
         }
         return BadRequest();
     }
+    [HttpPost(nameof(AddModificationRequest))]
 
+    public async Task<ActionResult<LitigationModificationRequestDto>> AddModificationRequest(LitigationModificationRequestDto litigationModificationRequestDto)
+    {
+        if (ModelState.IsValid)
+        {
+            var returnValue = await _contractService.AddModificationRequest(litigationModificationRequestDto);
+            return Ok(returnValue);
+        }
+
+        return BadRequest();
+    }
 
 }

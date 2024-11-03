@@ -372,6 +372,8 @@ namespace REAC.Application.ModuleServices
                           .Include(x => x.Area)
                           .Include(x => x.City)
                           .Include(x => x.LitigationRequestSessions.Where(x => x.LitigationRequestSessionRequestTypeId == LitigationRequestSessionRequestType.Reconciliation))
+                          .Include(x => x.LitigationRequestModificationRequests)
+                          .ThenInclude(x => x.Citizen)
                           .Include(x => x.LitigationRequestReconciliationReports)
                           .Include(x => x.ApplicantCitizen)
                           .Include(x => x.InternalStatus)
@@ -398,6 +400,9 @@ namespace REAC.Application.ModuleServices
             var request = _mapper.Map<LitigationRequestShortDto>(litigationRequest);
 
             var sessions = _mapper.Map<List<LitigationRequestSessionCreateUpdateDto>>(litigationRequest?.LitigationRequestSessions);
+            
+           var modifications = _mapper.Map<List<LitigationRequestModificationRequestsDto>>(litigationRequest?.LitigationRequestModificationRequests);
+
 
             bool allowAdd = true;
             bool isDone = false;
@@ -449,7 +454,8 @@ namespace REAC.Application.ModuleServices
                 {
                     LitigationRequestShortDto = request,
                     AllowAdd = allowAdd,
-                    Sessions = (sessions.Count > 0) ? sessions : null
+                    Sessions = (sessions.Count > 0) ? sessions : null,
+                    Modifications = (modifications.Count > 0) ? modifications : null,
                 },
                 IsDone = true,
             };

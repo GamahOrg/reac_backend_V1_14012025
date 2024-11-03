@@ -732,6 +732,16 @@ namespace Ticketing.EntityFrameworkCore.SeedData
                         Id = Guid.NewGuid(),
                         Key = "LitigationRequest.Reject.Agreement",
                         Value = "تم رفض طلب المشارطة على الدعوى رقم {LitigationCode}"
+                    },new SysSetting
+                    {
+                        Id = Guid.NewGuid(),
+                        Key = "LitigationRequestCorrespondenceAdded",
+                        Value = "تم اضافة مراسلة رقم {CorrespondenceCode} علي الدعوي رقم {LitigationCode}  "
+                    },new SysSetting
+                    {
+                        Id = Guid.NewGuid(),
+                        Key = "LitigationRequestCorrespondenceReplyAdded",
+                        Value = "تم اضافة رد علي المراسلة رقم {CorrespondenceCode} علي الدعوي رقم {LitigationCode}"
                     },
 	                #endregion
                   

@@ -15,6 +15,7 @@ namespace REAC.EntityFrameworkCore.Entities.Arbitration
         public Guid CitizenId { get; set; }
         public LitigationRequestArbitratorAssigningRequestStatus Response { get; set; }
         public DateTime? ResponseOn { get; set; }
+        public string? RejectReason { get; set; }
         public virtual LitigationRequest LitigationRequest { get; set; } = null!;
         public virtual Citizen ArbitratorCitizen { get; set; } = null!;
         public virtual SysArbitratorAssigningRequestType ArbitratorAssigningRequestType { get; set; } = null!;

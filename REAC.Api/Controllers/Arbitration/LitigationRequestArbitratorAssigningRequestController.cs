@@ -35,7 +35,7 @@ public class LitigationRequestArbitratorAssigningRequestController : ControllerB
     {
         if (ModelState.IsValid)
         {
-            var returnValue = await _litigationRequestArbitratorAssigningRequest.AddLitigationRequestArbitratorAssigningRequestsResponse(requestPayload.Id, requestPayload.LitigationRequestReformerAssigningRequestStatus, cancellationToken);
+            var returnValue = await _litigationRequestArbitratorAssigningRequest.AddLitigationRequestArbitratorAssigningRequestsResponse(requestPayload, cancellationToken);
             return Ok(returnValue);
         }
         return BadRequest();

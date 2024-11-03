@@ -8,5 +8,6 @@ namespace REAC.Application.Contracts.Dtos.Reconciliation.Process
         public LitigationRequestShortDto? LitigationRequestShortDto { get; set; }
         public bool AllowAdd { get; set; }
         public List<LitigationRequestSessionCreateUpdateDto>? Sessions { get; set; }
+        public List<LitigationRequestModificationRequestsDto>? Modifications { get; set; }
     }
 }

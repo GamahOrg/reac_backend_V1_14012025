@@ -65,5 +65,13 @@
         //   طلبات المشارطه
         // Litigation Agreement
         LitigationAgreementRequest = 19,
+        
+        //   طلبات المشارطه
+        // Litigation Agreement
+        LitigationRequestCorrespondence = 20,
+
+        //   طلبات المشارطه
+        // Litigation Agreement
+        LitigationRequestCorrespondenceReply = 21,
     }
 }

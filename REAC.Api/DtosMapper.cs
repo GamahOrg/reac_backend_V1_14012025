@@ -7,6 +7,7 @@ using REAC.Application.Contracts.Dtos.Litigation;
 using REAC.Application.Contracts.Dtos.Litigation.Create.Defendant;
 using REAC.Application.Contracts.Dtos.Litigation.Create.Litigation;
 using REAC.Application.Contracts.Dtos.Litigation.CreateUpdate.Contract;
+using REAC.Application.Contracts.Dtos.Litigation.CreateUpdate.Litigation;
 using REAC.Application.Contracts.Dtos.Litigation.Get;
 using REAC.Application.Contracts.Dtos.Litigation.List;
 using REAC.Application.Contracts.Dtos.Litigation.Rating;
@@ -178,9 +179,32 @@ namespace REAC.Application.Contracts
             CreateMap<LitigationRequestGroundFile, LitigationRequestGroundFileCreateUpdateDto>().ReverseMap();
             CreateMap<LitigationRequestReconciliationReportItem, LitigationRequestReconciliationReportItemCreateUpdateDto>().ReverseMap();
             CreateMap<LitigationRequestNote, LitigationRequestNoteCreateUpdateDto>().ReverseMap();
+            CreateMap<LitigationRequestCorrespondence, LitigationRequestCorrespondenceDto>().ReverseMap();
+            CreateMap<LitigationRequestCorrespondenceReply, LitigationRequestCorrespondenceReplyDto>().ReverseMap();
+            CreateMap<LitigationRequestCorrespondenceFile, SysFileManagerCreateUpdateDto>()
+                .ForMember(des => des.FilePath, opt => opt.MapFrom(src => src.FileManager.FilePath))
+                .ForMember(des => des.FileType, opt => opt.MapFrom(src => src.FileManager.FileType))
+                .ForMember(des => des.FileDescription, opt => opt.MapFrom(src => src.FileManager.FileDescription))
+                .ForMember(des => des.Id, opt => opt.MapFrom(src => src.FileManager.Id))
+                .ReverseMap();
+            
+            CreateMap<LitigationRequestCorrespondenceReplyFile, SysFileManagerCreateUpdateDto>()
+                .ForMember(des => des.FilePath, opt => opt.MapFrom(src => src.FileManager.FilePath))
+                .ForMember(des => des.FileType, opt => opt.MapFrom(src => src.FileManager.FileType))
+                .ForMember(des => des.FileDescription, opt => opt.MapFrom(src => src.FileManager.FileDescription))
+                .ForMember(des => des.Id, opt => opt.MapFrom(src => src.FileManager.Id))
+                .ReverseMap();
+
+            CreateMap<LitigationRequestNote, LitigationRequestNotesDto>().ReverseMap();
+            CreateMap<LitigationRequestNoteFile, SysFileManagerCreateUpdateDto>()
+                .ForMember(des => des.FilePath, opt => opt.MapFrom(src => src.FileManager.FilePath))
+                .ForMember(des => des.FileType, opt => opt.MapFrom(src => src.FileManager.FileType))
+                .ForMember(des => des.FileDescription, opt => opt.MapFrom(src => src.FileManager.FileDescription))
+                .ForMember(des => des.Id, opt => opt.MapFrom(src => src.FileManager.Id))
+                .ReverseMap();
             CreateMap<LitigationRequestNoteFile, LitigationRequestNoteFileCreateUpdateDto>().ReverseMap();
             CreateMap<LitigationRequestReconciliationReport, LitigationRequestReconciliationReportCreateUpdateDto>().ReverseMap();
-            CreateMap<LitigationRequestRequest, LitigationRequestRequestCreateUpdateDto>().ReverseMap();
+            CreateMap<Dtos.Litigation.CreateUpdate.Litigation.LitigationRequestRequest, LitigationRequestRequestCreateUpdateDto>().ReverseMap();
             CreateMap<LitigationRequestRequestFile, LitigationRequestRequestFileCreateUpdateDto>().ReverseMap();
             CreateMap<SysFileManager, SysFileManagerCreateUpdateDto>().ReverseMap();
             CreateMap<SysLitigationRequestAmount, SysLitigationRequestAmountCreateUpdateDto>().ReverseMap();
@@ -279,6 +303,7 @@ namespace REAC.Application.Contracts
                 }));
             CreateMap<SysFileManager, PartyDTO>();
             CreateMap<SysFileManager, RentSecondPartyDto>();
+            CreateMap<LititgationRequestModificationRequest, LitigationModificationRequestDto>();
             CreateMap<LitigationRequest, LitigationDetailsDto>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.RequestCode, opt => opt.MapFrom(src => src.RequestCode))
@@ -298,7 +323,7 @@ namespace REAC.Application.Contracts
             #endregion
 
             CreateMap<FileParameterDto, SysFileManager>();
-            CreateMap<LitigationRequestRequestCreateUpdateDto, LitigationRequestRequest>();
+            CreateMap<LitigationRequestRequestCreateUpdateDto, Dtos.Litigation.CreateUpdate.Litigation.LitigationRequestRequest>();
             CreateMap<LitigationRequestRequestFileCreateUpdateDto, LitigationRequestRequestFile>();
             CreateMap<LitigationRequestGroundCreateUpdateDto, LitigationRequestGround>();
             CreateMap<LitigationRequestGroundFileCreateUpdateDto, LitigationRequestGroundFile>();

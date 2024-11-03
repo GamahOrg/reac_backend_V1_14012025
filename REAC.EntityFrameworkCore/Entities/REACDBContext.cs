@@ -135,6 +135,7 @@ public partial class REACDBContext : DbContext
     public virtual DbSet<LitigationRequestCorrespondenceFile> LitigationRequestCorrespondenceFiles { get; set; }
 
     public virtual DbSet<LitigationRequestExtendPeriodRequest> LitigationRequestExtendPeriodRequests { get; set; }
+    public virtual DbSet<LititgationRequestModificationRequest> LititgationRequestModificationRequest { get; set; }
 
     public virtual DbSet<LitigationRequestExtendPeriodRequestFile> LitigationRequestExtendPeriodRequestFiles { get; set; }
 
@@ -1280,6 +1281,30 @@ public partial class REACDBContext : DbContext
                 .HasForeignKey(d => d.LitigationRequestId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FKLitigation887015");
+
+            entity.HasOne(l => l.Citizen)
+            .WithMany(l => l.LitigationRequestCorrespondences)
+            .HasForeignKey(l => l.CreatedBy);
+
+            entity.HasOne(l => l.LitigationRequestCategory)
+            .WithMany(l => l.LitigationRequestCorrespondences)
+            .HasForeignKey(l => l.LitigationRequestCategoryId);
+            
+            entity.HasOne(l => l.LitigationRequestCorrespondenceStatus)
+            .WithMany(l => l.LitigationRequestCorrespondences)
+            .HasForeignKey(l => l.LitigationRequestCorrespondenceStatusId);
+        });
+        
+        modelBuilder.Entity<LitigationRequestCorrespondenceReply>(entity =>
+        {
+            
+            entity.HasOne(l => l.Citizen)
+            .WithMany(l => l.LitigationRequestCorrespondenceReply)
+            .HasForeignKey(l => l.CreatedBy);
+
+            entity.HasOne(l => l.LitigationRequestCorrespondence)
+            .WithMany(l => l.LitigationRequestCorrespondenceReply)
+            .HasForeignKey(l => l.LitigationRequestCorrespondenceId);
         });
 
         modelBuilder.Entity<LitigationRequestCorrespondenceFile>(entity =>
@@ -1299,6 +1324,19 @@ public partial class REACDBContext : DbContext
                 .HasForeignKey(d => d.LitigationRequestCorrespondenceId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FKLitigation804409");
+        });
+        
+        modelBuilder.Entity<LitigationRequestCorrespondenceReplyFile>(entity =>
+        {
+
+
+            entity.HasOne(d => d.FileManager).WithMany(p => p.LitigationRequestCorrespondenceReplyFiles)
+                .HasForeignKey(d => d.FileManagerId)
+                .OnDelete(DeleteBehavior.ClientSetNull);
+
+            entity.HasOne(d => d.LitigationRequestCorrespondenceReply).WithMany(p => p.LitigationRequestCorrespondenceReplyFiles)
+                .HasForeignKey(d => d.LitigationRequestCorrespondenceReplyId)
+                .OnDelete(DeleteBehavior.ClientSetNull);
         });
 
         modelBuilder.Entity<SysVacationRequest>(entity =>
@@ -1487,6 +1525,14 @@ public partial class REACDBContext : DbContext
                 .HasForeignKey(d => d.LitigationRequestId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FKLitigation535233");
+
+            entity.HasOne(l => l.Citizen)
+            .WithMany(l => l.LitigationRequestNotes)
+            .HasForeignKey(l => l.CreatedBy);
+            
+            entity.HasOne(l => l.LitigationRequestCategory)
+            .WithMany(l => l.LitigationRequestNotes)
+            .HasForeignKey(l => l.LitigationRequestCategoryId);
         });
 
         modelBuilder.Entity<LitigationRequestNoteFile>(entity =>
@@ -2047,6 +2093,25 @@ public partial class REACDBContext : DbContext
 
         });
 
+        modelBuilder.Entity<LititgationRequestModificationRequest>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+
+            entity.HasOne(l => l.LitigationRequestSession)
+            .WithMany(l => l.LitigationRequestModificationRequests)
+            .HasForeignKey(l => l.LitigationRequestSessionId);
+
+            entity.HasOne(l => l.LitigationRequest)
+            .WithMany(l => l.LitigationRequestModificationRequests)
+            .HasForeignKey(l => l.LitigationRequestId);
+            
+            entity.HasOne(l => l.Citizen)
+            .WithMany(l => l.LitigationRequestModificationRequests)
+            .HasForeignKey(l => l.CreatedBy);
+            
+        });
+
+            
 
         // By abdulrahman
         //modelBuilder.Entity<SysLitigationRequestContractType>()

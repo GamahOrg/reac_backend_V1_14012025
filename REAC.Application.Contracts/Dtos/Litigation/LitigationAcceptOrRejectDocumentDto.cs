@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace REAC.Application.Contracts.Dtos.Litigation
 {
-    public class LitigationAcceptOrRejectDocumentDto
+    public class LitigationArbitrationTaskAcceptOrRejectDocumentDto
     {
 
         public string ArbitratorName { get; set; }
@@ -24,5 +24,26 @@ namespace REAC.Application.Contracts.Dtos.Litigation
         public int RequestTypeId { get; set; }
         public string FirstPartyName { get; set; }
         public string SecondPartyName { get; set; }
+        public string? RejectReason { get; set; }
+    }
+    
+    public class LitigationReconciliationTaskAcceptOrRejectDocumentDto
+    {
+
+        public string ReformerName { get; set; }
+        public string AssociationName { get; set; }
+        public string ContractNumber { get; set; }
+        public string ContractReleaseDate { get; set; }
+        public string LitigationNumber { get; set; }
+        public string LitigationType { get; set; }
+        public string Subject { get; set; }
+        public string ReformerAssignerName { get; set; }
+        public string ReformerAssigningDate { get; set; }
+        public string ReformerAssigningCost { get; set; }
+        public LitigationRequestReformerAssigningRequestStatus Response { get; set; }
+        public int RequestTypeId { get; set; }
+        public string FirstPartyName { get; set; }
+        public string SecondPartyName { get; set; }
+        public string? RejectReason { get; set; }
     }
 }

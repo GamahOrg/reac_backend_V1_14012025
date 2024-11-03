@@ -33,5 +33,10 @@ namespace REAC.Mobile.Controllers.Security
         {
             return Ok(await _userRegister.Register(userRegisterDto));
         }
+        [HttpPost(nameof(CheckStatus))]
+        public async Task<IActionResult> CheckStatus(string transactionId)
+        {
+            return Ok(await _nafathService.CheckStatus(transactionId));
+        }
     }
 }

@@ -50,6 +50,10 @@ public partial class Citizen : BaseEntity<Guid>
 
     public virtual ICollection<LitigationRequestArbitratorRecusalRequest> LitigationRequestArbitratorRecusalRequests { get; set; } = new List<LitigationRequestArbitratorRecusalRequest>();
     public virtual ICollection<LitigationRequestArbitratorsChairmanNominationListValue> LitigationRequestArbitratorsChairmanNominationListChairmanValues { get; set; } = new List<LitigationRequestArbitratorsChairmanNominationListValue>();
+    public virtual ICollection<LititgationRequestModificationRequest> LitigationRequestModificationRequests { get; set; } = new List<LititgationRequestModificationRequest>();
+    public virtual ICollection<LitigationRequestNote> LitigationRequestNotes { get; set; } = new List<LitigationRequestNote>();
+    public virtual ICollection<LitigationRequestCorrespondence> LitigationRequestCorrespondences { get; set; } = new List<LitigationRequestCorrespondence>();
+    public virtual ICollection<LitigationRequestCorrespondenceReply> LitigationRequestCorrespondenceReply { get; set; } = new List<LitigationRequestCorrespondenceReply>();
 
     public virtual ICollection<Facility> Facilities { get; set; } = new List<Facility>();
     public virtual ICollection<Delegator> FromDelegators { get; set; } = new List<Delegator>();
@@ -62,7 +66,6 @@ public partial class Citizen : BaseEntity<Guid>
     public virtual ICollection<LitigationRequestArbitratorsChairmanNominationList> LitigationRequestArbitratorsChairmanNominationLists { get; set; } = new List<LitigationRequestArbitratorsChairmanNominationList>();
 
 
-    public virtual ICollection<LitigationRequestNote> LitigationRequestNotes { get; set; } = new List<LitigationRequestNote>();
 
     public virtual ICollection<CitizenBankAccount> CitizenBankAccounts { get; set; } = new List<CitizenBankAccount>();
     public virtual SysGender? Gender { get; set; }

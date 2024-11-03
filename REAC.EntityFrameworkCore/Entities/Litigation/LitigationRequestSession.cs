@@ -12,5 +12,6 @@ public partial class LitigationRequestSession : BaseEntity<Guid>
     public string? SessionUrl { get; set; }
     public long? MeetingId { get; set; }
     public virtual LitigationRequest LitigationRequest { get; set; } = null!;
+    public virtual ICollection<LititgationRequestModificationRequest> LitigationRequestModificationRequests { get; set; } = new List<LititgationRequestModificationRequest>();
 
 }

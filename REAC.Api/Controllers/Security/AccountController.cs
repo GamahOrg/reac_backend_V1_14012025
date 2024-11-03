@@ -16,10 +16,12 @@ namespace REAC.Api.Controllers.Security
     {
         private readonly INafathService _nafathService;
         private readonly IUserRegisterService _userRegister;
-        public AccountController(INafathService nafathService, IUserRegisterService userRegister)
+        private readonly INafathTransactionService _nafathTransactionService;
+        public AccountController(INafathService nafathService, IUserRegisterService userRegister, INafathTransactionService nafathTransactionService)
         {
             _nafathService = nafathService;
             _userRegister = userRegister;
+            _nafathTransactionService = nafathTransactionService;
         }
 
         [HttpPost(nameof(VerifyUser))]
@@ -32,6 +34,12 @@ namespace REAC.Api.Controllers.Security
         public async Task<IActionResult> Register(UserRegisterDto userRegisterDto)
         {
             return Ok(await _userRegister.Register(userRegisterDto));
+        }
+        
+        [HttpGet(nameof(GetNafathTransactionList))]
+        public async Task<IActionResult> GetNafathTransactionList()
+        {
+            return Ok(_nafathTransactionService.GettAll());
         }
     }
 }

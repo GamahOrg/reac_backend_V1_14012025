@@ -557,5 +557,91 @@ namespace REAC.Application.AppServices.Integration.GEE
             return new DataResponse<NafathRequestBodyDto> { Data = nafathRequestBodyDto, IsDone = true };
         }
 
+        public async Task<NafathStatusResponse> CheckStatus(string transactionId)
+        {
+            var response = new NafathStatusResponse
+            {
+                TransactionId = transactionId,
+                IsValid = false,
+                Message = "Transaction not processed."
+            };
+
+            try
+            {
+                var token = (await _gEELoginService.Login()).Data?.Access_token;
+                if (token is null)
+                {
+                    _loggerManager.Log(Core.Log.Domain.Shared.Enums.LoggerType.Database,
+                       new LogDto()
+                       {
+                           Type = Core.Log.Domain.Shared.Enums.LogType.Error,
+                           Message = "get access token from API GEE error"
+                       });
+                    response.Message = "Unable to get access token.";
+                    return response; // Return response with failure message
+                }
+
+                var nafathCheckList = _nafathTransactionService.GettAll();
+                if (nafathCheckList is not null && nafathCheckList.Any())
+                {
+                    // Find the specific transaction based on TransactionId
+                    var nafathTransaction = nafathCheckList.FirstOrDefault(nt => nt.TransactionId == transactionId);
+                    if (nafathTransaction == null)
+                    {
+                        _loggerManager.Log(Core.Log.Domain.Shared.Enums.LoggerType.Database,
+                           new LogDto()
+                           {
+                               Type = Core.Log.Domain.Shared.Enums.LogType.Error,
+                               Message = $"Transaction with ID {transactionId} not found."
+                           });
+                        return response; // Transaction not found
+                    }
+
+                    if (nafathTransaction.RequestExpired < DateTime.Now)
+                    {
+                        response.Message = "Request has expired.";
+                        return response; // Request expired
+                    }
+
+                    NafathCheckRequestDto nafathCheckRequestDto = new NafathCheckRequestDto()
+                    {
+                        Id = nafathTransaction.NationalId,
+                        Random = nafathTransaction.RandomNumber,
+                        TransId = nafathTransaction.TransactionId,
+                        Token = token
+                    };
+
+                    var nafathCheckStatusResponse = await NafathCheckStatus(nafathCheckRequestDto);
+                    if (nafathCheckStatusResponse is not null && nafathCheckStatusResponse.Data?.Data is not null)
+                    {
+                        // Check valid status
+                        if (nafathCheckStatusResponse.Data.Data.Status == SysSettingKeyConstants.NafathStatus_COMPLETED)
+                        {
+                            response.IsValid = true; // Mark as valid status
+                            response.Message = "Transaction is valid.";
+                        }
+                        else if (nafathCheckStatusResponse.Data.Data.Status == SysSettingKeyConstants.NafathStatus_REJECTED ||
+                                 nafathCheckStatusResponse.Data.Data.Status == SysSettingKeyConstants.NafathStatus_EXPIRED)
+                        {
+                            response.Message = "Transaction is rejected or expired.";
+                        }
+                    }
+                }
+
+                return response; // Return the response object
+            }
+            catch (Exception ex)
+            {
+                _loggerManager.Log(Core.Log.Domain.Shared.Enums.LoggerType.Database,
+                    new LogDto()
+                    {
+                        Type = Core.Log.Domain.Shared.Enums.LogType.Error,
+                        Message = $"Error in CheckNafathStatus: {ex.Message}"
+                    });
+                response.Message = "An error occurred while processing the request.";
+                return response; // Return the response with error message
+            }
+        }
+
     }
 }

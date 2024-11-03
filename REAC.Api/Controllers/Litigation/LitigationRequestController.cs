@@ -142,15 +142,45 @@ public class LitigationRequestController : BaseController<LitigationRequest,
         return BadRequest();
     }
 
-    [HttpGet(nameof(GetLitigationAcceptanceOrRejectDocumentData))]
+    [HttpGet(nameof(GetLitigationArbitrationTaskAcceptanceOrRejectDocumentData))]
     [AllowAnonymous]
-    public async Task<ActionResult<LitigationAcceptOrRejectDocumentDto>> GetLitigationAcceptanceOrRejectDocumentData(Guid litigationId, Guid requestId)
+    public async Task<ActionResult<LitigationArbitrationTaskAcceptOrRejectDocumentDto>> GetLitigationArbitrationTaskAcceptanceOrRejectDocumentData(Guid litigationId, Guid? requestId = null)
     {
         if (ModelState.IsValid)
         {
-            var returnValue = await _litigationService.GetLitigationAcceptanceOrRejectDocumentData(litigationId, requestId);
+            if (requestId is not null && requestId != Guid.Empty)
+            {
 
-            return Ok(returnValue);
+                return Ok(await _litigationService.GetLitigationArbitrationTaskAcceptanceOrRejectDocumentData(litigationId, requestId));
+            }
+            else
+            {
+                return Ok(await _litigationService.GetLitigationArbitrationTaskAcceptanceOrRejectDocumentData(litigationId));
+
+            }
+
+        }
+
+        return BadRequest();
+    }
+    
+    [HttpGet(nameof(GetLitigationReconciliationTaskAcceptanceOrRejectDocumentData))]
+    [AllowAnonymous]
+    public async Task<ActionResult<LitigationReconciliationTaskAcceptOrRejectDocumentDto>> GetLitigationReconciliationTaskAcceptanceOrRejectDocumentData(Guid litigationId, Guid? requestId = null)
+    {
+        if (ModelState.IsValid)
+        {
+            if (requestId is not null && requestId != Guid.Empty)
+            {
+
+                return Ok(await _litigationService.GetLitigationReconciliationTaskAcceptanceOrRejectDocumentData(litigationId, requestId));
+            }
+            else
+            {
+                return Ok(await _litigationService.GetLitigationReconciliationTaskAcceptanceOrRejectDocumentData(litigationId));
+
+            }
+
         }
 
         return BadRequest();

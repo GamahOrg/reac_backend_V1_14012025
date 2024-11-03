@@ -293,5 +293,11 @@
         public const string Zoom_MeetingDuration = "Zoom.MeetingDuration";
 
         #endregion
+
+        #region Correspondence
+        public const string LitigationRequestCorrespondenceAdded = "LitigationRequestCorrespondenceAdded";
+        public const string LitigationRequestCorrespondenceReplyAdded = "LitigationRequestCorrespondenceReplyAdded";
+
+        #endregion
     }
 }

@@ -38,6 +38,7 @@ public partial class SysFileManager : CreationBaseEntity<Guid>
     public virtual ICollection<LitigationRequestContract> LitigationRequestContracts { get; set; } = new List<LitigationRequestContract>();
 
     public virtual ICollection<LitigationRequestCorrespondenceFile> LitigationRequestCorrespondenceFiles { get; set; } = new List<LitigationRequestCorrespondenceFile>();
+    public virtual ICollection<LitigationRequestCorrespondenceReplyFile> LitigationRequestCorrespondenceReplyFiles { get; set; } = new List<LitigationRequestCorrespondenceReplyFile>();
 
     public virtual ICollection<LitigationRequestExtendPeriodRequestFile> LitigationRequestExtendPeriodRequestFiles { get; set; } = new List<LitigationRequestExtendPeriodRequestFile>();
 

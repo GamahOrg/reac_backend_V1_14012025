@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using REAC.Application.Contracts.Dtos.Integration.GEE;
 using REAC.Application.Contracts.Dtos.Litigation;
 using REAC.Application.Contracts.Dtos.Notification;
+using REAC.Application.Contracts.Dtos.Reconciliation.Process;
 using REAC.Application.Contracts.IAppServices;
 using REAC.Application.Contracts.IAppServices.Integration;
 using REAC.Application.Contracts.IAppServices.Litigation;
@@ -45,14 +46,14 @@ namespace REAC.Application.AppServices.Litigation
             _sysSettingService = sysSettingService;
             _notificationService = notificationService;
         }
-        public async Task<BaseResponse> AddLitigationRequestArbitratorAssigningRequestsResponse(Guid litigationRequestArbitratorAssigningRequestId, LitigationRequestArbitratorAssigningRequestStatus response, CancellationToken cancellationToken)
+        public async Task<BaseResponse> AddLitigationRequestArbitratorAssigningRequestsResponse(AssigningArbitratorRequestsPayload requestPayload, CancellationToken cancellationToken)
         {
             Guid referenceId = Guid.Empty;
             _jwtReader.GetReferenceId(ref referenceId);
 
             var litigationRequestArbitratorAssigningRequest = (await _repository.GetQueryable<LitigationRequestArbitratorAssigningRequest, Guid>())
                          .Include(l => l.ArbitratorCitizen)
-                         .Where(x => x.Id == litigationRequestArbitratorAssigningRequestId).ToList().FirstOrDefault();
+                         .Where(x => x.Id == requestPayload.Id).ToList().FirstOrDefault();
 
             var litigationRequest = (await _repository.GetQueryable<LitigationRequest, Guid>())?
                         .Include(x => x.LitigationRequestArbitratorNominationLists)
@@ -67,7 +68,12 @@ namespace REAC.Application.AppServices.Litigation
             if (litigationRequestArbitratorAssigningRequest != null)
             {
                 litigationRequestArbitratorAssigningRequest.ResponseOn = DateTime.Now;
-                litigationRequestArbitratorAssigningRequest.Response = response;
+                litigationRequestArbitratorAssigningRequest.Response = requestPayload.LitigationRequestReformerAssigningRequestStatus;
+                if (!string.IsNullOrEmpty(requestPayload.RejectReason))
+                {
+                    litigationRequestArbitratorAssigningRequest.RejectReason = requestPayload.RejectReason;
+
+                }
             }
 
             if (litigationRequest != null)
@@ -80,7 +86,7 @@ namespace REAC.Application.AppServices.Litigation
 
                 var applicationNotifications = new List<SysNotificationDto>();
 
-                switch (response)
+                switch (requestPayload.LitigationRequestReformerAssigningRequestStatus)
                 {
                     case LitigationRequestArbitratorAssigningRequestStatus.Approve:
                         switch (litigationRequestArbitratorAssigningRequest.ArbitratorAssigningRequestTypeId)
@@ -351,7 +357,7 @@ namespace REAC.Application.AppServices.Litigation
                 return saveResponse;
 
 
-            return await GetLitigationRequestArbitratorAssigningRequests(litigationRequestArbitratorAssigningRequest.LitigationRequestId, litigationRequestArbitratorAssigningRequestId, cancellationToken);
+            return await GetLitigationRequestArbitratorAssigningRequests(litigationRequestArbitratorAssigningRequest.LitigationRequestId, requestPayload.Id, cancellationToken);
         }
         public async Task<BaseResponse> GetLitigationRequestArbitratorAssigningRequests(CancellationToken cancellationToken)
         {

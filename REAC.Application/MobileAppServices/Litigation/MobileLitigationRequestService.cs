@@ -18,9 +18,9 @@
             {
 
                 PagedResult<LitigationRequest> litigationRequests = null;
-
                 var litigations = await GetQueryableAsync();
                 litigations = litigations.Include(x => x.Contract);
+                litigations = litigations.Include(x => x.ApplicantCitizen);
                 litigations = litigations.Include(x => x.Contract.LitigationRequestContractType);
                 litigations = litigations.Include(x => x.Contract.FirstPartyCitizen);
                 litigations = litigations.Include(x => x.Contract.SecondPartyCitizen);
@@ -28,7 +28,7 @@
                 litigations = litigations.Include(x => x.Contract.SecondPartyFacility);
                 if (!string.IsNullOrEmpty(searchKey))
                 {
-                    litigations = litigations.Where(l => l.RequestCode.Contains(searchKey) || l.Contract.SecondPartyName.Contains(searchKey));
+                    litigations = litigations.Where(l => l.RequestCode.Contains(searchKey) || l.Contract.FirstPartyCitizen.FullName.Contains(searchKey) || l.Contract.SecondPartyCitizen.FullName.Contains(searchKey));
                 }
                 if (statuses != null & statuses.Count() > 0)
                 {
@@ -38,6 +38,8 @@
                 {
                     litigations = litigations.Where(s => types.Contains(((int)s.Contract.LitigationRequestContractTypeId)));
                 }
+
+
 
                 Guid citizenId = Guid.Empty;
                 _jwtReader.GetReferenceId(ref citizenId);
@@ -255,7 +257,8 @@
                     else
                         litigationRequestMircoDto.IsDone = "تم";
 
-                    litigationRequestMircoDto.Status = litigationRequest.InternalStatus.RequestStatus;
+                    //  litigationRequestMircoDto.Status = litigationRequest.InternalStatus.RequestStatus;
+                    litigationRequestMircoDto.Status = litigationRequest.InternalStatusId.GetHashCode().ToString();
                     litigationRequestMircoDtos.Add(litigationRequestMircoDto);
 
                 }

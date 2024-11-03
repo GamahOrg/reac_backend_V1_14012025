@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using REAC.Application.Contracts.Dtos.Integration.GEE;
 using REAC.Application.Contracts.Dtos.Litigation;
 using REAC.Application.Contracts.Dtos.Notification;
+using REAC.Application.Contracts.Dtos.Reconciliation.Process;
 using REAC.Application.Contracts.IAppServices;
 using REAC.Application.Contracts.IAppServices.Litigation;
 using REAC.Application.Contracts.IAppServices.Notification;
@@ -41,14 +42,14 @@ namespace REAC.Application.AppServices.Litigation
             _notificationService = notificationService;
             _sysSettingService = sysSettingService;
         }
-        public async Task<BaseResponse> AddLitigationRequestReformerAssigningRequestsResponse(Guid litigationRequestReformerAssigningRequestId, LitigationRequestReformerAssigningRequestStatus response, CancellationToken cancellationToken)
+        public async Task<BaseResponse> AddLitigationRequestReformerAssigningRequestsResponse(AssigningRequestsPayload requestPayload, CancellationToken cancellationToken)
         {
             Guid referenceId = Guid.Empty;
             _jwtReader.GetReferenceId(ref referenceId);
 
             var litigationRequestReformerAssigningRequest = (await _repository.GetQueryable<LitigationRequestReformerAssigningRequest, Guid>())
                             .Include(l => l.ReformerCitizen)
-                         .Where(x => x.Id == litigationRequestReformerAssigningRequestId).ToList().FirstOrDefault();
+                         .Where(x => x.Id == requestPayload.Id).ToList().FirstOrDefault();
 
             var litigationRequest = (await _repository.GetQueryable<LitigationRequest, Guid>())?
                         .Include(x => x.LitigationRequestExtendPeriodRequests)
@@ -59,7 +60,9 @@ namespace REAC.Application.AppServices.Litigation
             if (litigationRequestReformerAssigningRequest != null)
             {
                 litigationRequestReformerAssigningRequest.ResponseOn = DateTime.Now;
-                litigationRequestReformerAssigningRequest.Response = response;
+                litigationRequestReformerAssigningRequest.Response = requestPayload.LitigationRequestReformerAssigningRequestStatus;
+                if (!string.IsNullOrEmpty(requestPayload.RejectReason))
+                    litigationRequestReformerAssigningRequest.RejectReason = requestPayload.RejectReason;
             }
 
             if (litigationRequest != null)
@@ -72,7 +75,7 @@ namespace REAC.Application.AppServices.Litigation
 
                 var applicationNotifications = new List<SysNotificationDto>();
 
-                switch (response)
+                switch (requestPayload.LitigationRequestReformerAssigningRequestStatus)
                 {
                     case LitigationRequestReformerAssigningRequestStatus.Approve:
                         litigationRequest.ReformerCitizenId = referenceId;
@@ -351,7 +354,7 @@ namespace REAC.Application.AppServices.Litigation
             var saveResponse = await _repository.SaveChangesAsync(cancellationToken);
             if (!saveResponse.IsDone)
                 return saveResponse;
-            return await GetLitigationRequestReformerAssigningRequests(litigationRequestReformerAssigningRequest.LitigationRequestId, litigationRequestReformerAssigningRequestId, cancellationToken);
+            return await GetLitigationRequestReformerAssigningRequests(litigationRequestReformerAssigningRequest.LitigationRequestId, requestPayload.Id, cancellationToken);
         }
         public async Task<BaseResponse> GetLitigationRequestReformerAssigningRequests(CancellationToken cancellationToken)
         {

@@ -47,7 +47,7 @@ public class LitigationRequestReformerAssigningRequestController : ControllerBas
     {
         if (ModelState.IsValid)
         {
-            var returnValue = await _litigationRequestReformerAssigningRequest.AddLitigationRequestReformerAssigningRequestsResponse(requestPayload.Id, requestPayload.LitigationRequestReformerAssigningRequestStatus, cancellationToken);
+            var returnValue = await _litigationRequestReformerAssigningRequest.AddLitigationRequestReformerAssigningRequestsResponse(requestPayload, cancellationToken);
             return Ok(returnValue);
         }
         return BadRequest();

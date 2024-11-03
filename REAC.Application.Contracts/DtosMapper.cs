@@ -317,14 +317,20 @@ namespace REAC.Application.Contracts
             CreateMap<LitigationRequestGround, LitigationRequestGroundCreateUpdateDto>().ReverseMap();
             CreateMap<LitigationRequestGroundFile, LitigationRequestGroundFileCreateUpdateDto>().ReverseMap();
             CreateMap<LitigationRequestReconciliationReportItem, LitigationRequestReconciliationReportItemCreateUpdateDto>().ReverseMap();
-            CreateMap<LitigationRequestNote, LitigationRequestNoteCreateUpdateDto>().ReverseMap();
-            CreateMap<LitigationRequestNoteFile, LitigationRequestNoteFileCreateUpdateDto>().ReverseMap();
+            //CreateMap<LitigationRequestNote, LitigationRequestNoteCreateUpdateDto>()
+            //    .ForMember(des => des.CreatedBy,opt => opt.MapFrom(src => src.CreatedBy))
+            //    .ForMember(des => des.CreatedOn,opt => opt.MapFrom(src => src.CreatedOn))
+            //    .ForMember(des => des.UpdatedBy,opt => opt.MapFrom(src => src.UpdatedBy))
+            //    .ForMember(des => des.UpdatedOn,opt => opt.MapFrom(src => src.UpdatedOn))
+            //    .ReverseMap();
+            //CreateMap<LitigationRequestNoteFile, LitigationRequestNoteFileCreateUpdateDto>().ReverseMap();
             CreateMap<LitigationRequestReconciliationReport, LitigationRequestReconciliationReportCreateUpdateDto>().ReverseMap();
             CreateMap<LitigationRequestRequest, LitigationRequestRequestCreateUpdateDto>().ReverseMap();
             CreateMap<LitigationRequestRequestFile, LitigationRequestRequestFileCreateUpdateDto>().ReverseMap();
             CreateMap<SysFileManager, SysFileManagerCreateUpdateDto>().ReverseMap();
             CreateMap<SysLitigationRequestAmount, SysLitigationRequestAmountCreateUpdateDto>().ReverseMap();
             CreateMap<LitigationRequestSession, LitigationRequestSessionCreateUpdateDto>().ReverseMap();
+            CreateMap<LititgationRequestModificationRequest, LitigationRequestModificationRequestsDto>().ReverseMap();
             CreateMap<SysSetting, SysSettingCreateUpdateDto>().ReverseMap();
             CreateMap<SysRegistrationRequest, SysRegistrationRequestCreateUpdateDto>().ReverseMap();
             CreateMap<NafathTransaction, NafathTransactionDto>().ReverseMap();

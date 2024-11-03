@@ -548,6 +548,9 @@ namespace REAC.EntityFrameworkCore.Migrations
                     b.Property<Guid>("LitigationRequestId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("RejectReason")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("RequestOn")
                         .HasColumnType("datetime2");
 
@@ -1234,13 +1237,22 @@ namespace REAC.EntityFrameworkCore.Migrations
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<int>("LitigationRequestCorrespondenceStatusId")
+                        .HasColumnType("int");
+
                     b.Property<Guid?>("CreatedBy")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime");
 
+                    b.Property<int>("LitigationRequestCategoryId")
+                        .HasColumnType("int");
+
                     b.Property<int>("LitigationRequestCorrespondenceDestinationId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("LitigationRequestCorrespondenceStatusId")
                         .HasColumnType("int");
 
                     b.Property<Guid>("LitigationRequestId")
@@ -1249,20 +1261,24 @@ namespace REAC.EntityFrameworkCore.Migrations
                     b.Property<string>("Message")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("SerialCode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Subject")
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
-                    b.Property<Guid?>("UpdatedBy")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("UpdatedOn")
-                        .HasColumnType("datetime2");
-
                     b.HasKey("Id")
                         .HasName("PK__Litigati__3214EC07868BEDDE");
 
+                    b.HasIndex("CreatedBy");
+
+                    b.HasIndex("LitigationRequestCategoryId");
+
                     b.HasIndex("LitigationRequestCorrespondenceDestinationId");
+
+                    b.HasIndex("LitigationRequestCorrespondenceStatusId");
 
                     b.HasIndex("LitigationRequestId");
 
@@ -1300,6 +1316,61 @@ namespace REAC.EntityFrameworkCore.Migrations
                     b.HasIndex("LitigationRequestCorrespondenceId");
 
                     b.ToTable("LitigationRequestCorrespondenceFile", (string)null);
+                });
+
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Litigation.LitigationRequestCorrespondenceReply", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("LitigationRequestCorrespondenceId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ReplyMessage")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedBy");
+
+                    b.HasIndex("LitigationRequestCorrespondenceId");
+
+                    b.ToTable("LitigationRequestCorrespondenceReply");
+                });
+
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Litigation.LitigationRequestCorrespondenceReplyFile", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("FileManagerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("LitigationRequestCorrespondenceReplyId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FileManagerId");
+
+                    b.HasIndex("LitigationRequestCorrespondenceReplyId");
+
+                    b.ToTable("LitigationRequestCorrespondenceReplyFile");
                 });
 
             modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Litigation.LitigationRequestGround", b =>
@@ -1348,14 +1419,14 @@ namespace REAC.EntityFrameworkCore.Migrations
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("CitizenId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<Guid?>("CreatedBy")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
+
+                    b.Property<int>("LitigationRequestCategoryId")
+                        .HasColumnType("int");
 
                     b.Property<Guid>("LitigationRequestId")
                         .HasColumnType("uniqueidentifier");
@@ -1377,7 +1448,9 @@ namespace REAC.EntityFrameworkCore.Migrations
                     b.HasKey("Id")
                         .HasName("PK__Litigati__3214EC07C1F98E04");
 
-                    b.HasIndex("CitizenId");
+                    b.HasIndex("CreatedBy");
+
+                    b.HasIndex("LitigationRequestCategoryId");
 
                     b.HasIndex("LitigationRequestId");
 
@@ -1427,6 +1500,9 @@ namespace REAC.EntityFrameworkCore.Migrations
 
                     b.Property<Guid>("LitigationRequestId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("RejectReason")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("RequestOn")
                         .HasColumnType("datetime2");
@@ -1519,6 +1595,39 @@ namespace REAC.EntityFrameworkCore.Migrations
                     b.HasIndex("LitigationRequestId");
 
                     b.ToTable("LitigationRequestSession", (string)null);
+                });
+
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Litigation.LititgationRequestModificationRequest", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("LitigationRequestId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("LitigationRequestSessionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ModificationRequest")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedBy");
+
+                    b.HasIndex("LitigationRequestId");
+
+                    b.HasIndex("LitigationRequestSessionId");
+
+                    b.ToTable("LititgationRequestModificationRequest");
                 });
 
             modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Litigation.OtherCategory", b =>
@@ -2696,6 +2805,24 @@ namespace REAC.EntityFrameworkCore.Migrations
                         .IsUnique();
 
                     b.ToTable("SysLitigationRequestCorrespondenceDestination", (string)null);
+                });
+
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.System.SysLitigationRequestCorrespondenceStatus", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ArName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("EnName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("SysLitigationRequestCorrespondenceStatus");
                 });
 
             modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.System.SysLitigationRequestExtendPeriodRequestStatus", b =>
@@ -4351,11 +4478,25 @@ namespace REAC.EntityFrameworkCore.Migrations
 
             modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Litigation.LitigationRequestCorrespondence", b =>
                 {
+                    b.HasOne("REAC.EntityFrameworkCore.Entities.Actor.Citizen", "Citizen")
+                        .WithMany("LitigationRequestCorrespondences")
+                        .HasForeignKey("CreatedBy");
+
+                    b.HasOne("REAC.EntityFrameworkCore.Entities.System.SysLitigationRequestCategory", "LitigationRequestCategory")
+                        .WithMany("LitigationRequestCorrespondences")
+                        .HasForeignKey("LitigationRequestCategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("REAC.EntityFrameworkCore.Entities.System.SysLitigationRequestCorrespondenceDestination", "LitigationRequestCorrespondenceDestination")
                         .WithMany("LitigationRequestCorrespondences")
                         .HasForeignKey("LitigationRequestCorrespondenceDestinationId")
                         .IsRequired()
                         .HasConstraintName("FKLitigation401380");
+
+                    b.HasOne("REAC.EntityFrameworkCore.Entities.System.SysLitigationRequestCorrespondenceStatus", "LitigationRequestCorrespondenceStatus")
+                        .WithMany("LitigationRequestCorrespondences")
+                        .HasForeignKey("LitigationRequestCorrespondenceStatusId");
 
                     b.HasOne("REAC.EntityFrameworkCore.Entities.Litigation.LitigationRequest", "LitigationRequest")
                         .WithMany("LitigationRequestCorrespondences")
@@ -4363,9 +4504,15 @@ namespace REAC.EntityFrameworkCore.Migrations
                         .IsRequired()
                         .HasConstraintName("FKLitigation887015");
 
+                    b.Navigation("Citizen");
+
                     b.Navigation("LitigationRequest");
 
+                    b.Navigation("LitigationRequestCategory");
+
                     b.Navigation("LitigationRequestCorrespondenceDestination");
+
+                    b.Navigation("LitigationRequestCorrespondenceStatus");
                 });
 
             modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Litigation.LitigationRequestCorrespondenceFile", b =>
@@ -4385,6 +4532,42 @@ namespace REAC.EntityFrameworkCore.Migrations
                     b.Navigation("FileManager");
 
                     b.Navigation("LitigationRequestCorrespondence");
+                });
+
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Litigation.LitigationRequestCorrespondenceReply", b =>
+                {
+                    b.HasOne("REAC.EntityFrameworkCore.Entities.Actor.Citizen", "Citizen")
+                        .WithMany("LitigationRequestCorrespondenceReply")
+                        .HasForeignKey("CreatedBy")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("REAC.EntityFrameworkCore.Entities.Litigation.LitigationRequestCorrespondence", "LitigationRequestCorrespondence")
+                        .WithMany("LitigationRequestCorrespondenceReply")
+                        .HasForeignKey("LitigationRequestCorrespondenceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Citizen");
+
+                    b.Navigation("LitigationRequestCorrespondence");
+                });
+
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Litigation.LitigationRequestCorrespondenceReplyFile", b =>
+                {
+                    b.HasOne("REAC.EntityFrameworkCore.Entities.System.SysFileManager", "FileManager")
+                        .WithMany("LitigationRequestCorrespondenceReplyFiles")
+                        .HasForeignKey("FileManagerId")
+                        .IsRequired();
+
+                    b.HasOne("REAC.EntityFrameworkCore.Entities.Litigation.LitigationRequestCorrespondenceReply", "LitigationRequestCorrespondenceReply")
+                        .WithMany("LitigationRequestCorrespondenceReplyFiles")
+                        .HasForeignKey("LitigationRequestCorrespondenceReplyId")
+                        .IsRequired();
+
+                    b.Navigation("FileManager");
+
+                    b.Navigation("LitigationRequestCorrespondenceReply");
                 });
 
             modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Litigation.LitigationRequestGround", b =>
@@ -4419,9 +4602,15 @@ namespace REAC.EntityFrameworkCore.Migrations
 
             modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Litigation.LitigationRequestNote", b =>
                 {
-                    b.HasOne("REAC.EntityFrameworkCore.Entities.Actor.Citizen", null)
+                    b.HasOne("REAC.EntityFrameworkCore.Entities.Actor.Citizen", "Citizen")
                         .WithMany("LitigationRequestNotes")
-                        .HasForeignKey("CitizenId");
+                        .HasForeignKey("CreatedBy");
+
+                    b.HasOne("REAC.EntityFrameworkCore.Entities.System.SysLitigationRequestCategory", "LitigationRequestCategory")
+                        .WithMany("LitigationRequestNotes")
+                        .HasForeignKey("LitigationRequestCategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("REAC.EntityFrameworkCore.Entities.Litigation.LitigationRequest", "LitigationRequest")
                         .WithMany("LitigationRequestNotes")
@@ -4429,7 +4618,11 @@ namespace REAC.EntityFrameworkCore.Migrations
                         .IsRequired()
                         .HasConstraintName("FKLitigation535233");
 
+                    b.Navigation("Citizen");
+
                     b.Navigation("LitigationRequest");
+
+                    b.Navigation("LitigationRequestCategory");
                 });
 
             modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Litigation.LitigationRequestNoteFile", b =>
@@ -4509,6 +4702,33 @@ namespace REAC.EntityFrameworkCore.Migrations
                         .HasConstraintName("FKLitigationLitigationRequestSessions535233");
 
                     b.Navigation("LitigationRequest");
+                });
+
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Litigation.LititgationRequestModificationRequest", b =>
+                {
+                    b.HasOne("REAC.EntityFrameworkCore.Entities.Actor.Citizen", "Citizen")
+                        .WithMany("LitigationRequestModificationRequests")
+                        .HasForeignKey("CreatedBy")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("REAC.EntityFrameworkCore.Entities.Litigation.LitigationRequest", "LitigationRequest")
+                        .WithMany("LitigationRequestModificationRequests")
+                        .HasForeignKey("LitigationRequestId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("REAC.EntityFrameworkCore.Entities.Litigation.LitigationRequestSession", "LitigationRequestSession")
+                        .WithMany("LitigationRequestModificationRequests")
+                        .HasForeignKey("LitigationRequestSessionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Citizen");
+
+                    b.Navigation("LitigationRequest");
+
+                    b.Navigation("LitigationRequestSession");
                 });
 
             modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Litigation.OtherCategory", b =>
@@ -6133,6 +6353,12 @@ namespace REAC.EntityFrameworkCore.Migrations
 
                     b.Navigation("LitigationRequestContractSecondPartyCitizens");
 
+                    b.Navigation("LitigationRequestCorrespondenceReply");
+
+                    b.Navigation("LitigationRequestCorrespondences");
+
+                    b.Navigation("LitigationRequestModificationRequests");
+
                     b.Navigation("LitigationRequestNotes");
 
                     b.Navigation("LitigationRequestReformerAssigningRequests");
@@ -6225,6 +6451,8 @@ namespace REAC.EntityFrameworkCore.Migrations
 
                     b.Navigation("LitigationRequestGrounds");
 
+                    b.Navigation("LitigationRequestModificationRequests");
+
                     b.Navigation("LitigationRequestNotes");
 
                     b.Navigation("LitigationRequestReconciliationReports");
@@ -6246,6 +6474,13 @@ namespace REAC.EntityFrameworkCore.Migrations
             modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Litigation.LitigationRequestCorrespondence", b =>
                 {
                     b.Navigation("LitigationRequestCorrespondenceFiles");
+
+                    b.Navigation("LitigationRequestCorrespondenceReply");
+                });
+
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Litigation.LitigationRequestCorrespondenceReply", b =>
+                {
+                    b.Navigation("LitigationRequestCorrespondenceReplyFiles");
                 });
 
             modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Litigation.LitigationRequestGround", b =>
@@ -6261,6 +6496,11 @@ namespace REAC.EntityFrameworkCore.Migrations
             modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Litigation.LitigationRequestRequest", b =>
                 {
                     b.Navigation("LitigationRequestRequestFiles");
+                });
+
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Litigation.LitigationRequestSession", b =>
+                {
+                    b.Navigation("LitigationRequestModificationRequests");
                 });
 
             modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Litigation.OtherCategory", b =>
@@ -6424,6 +6664,8 @@ namespace REAC.EntityFrameworkCore.Migrations
 
                     b.Navigation("LitigationRequestCorrespondenceFiles");
 
+                    b.Navigation("LitigationRequestCorrespondenceReplyFiles");
+
                     b.Navigation("LitigationRequestExtendPeriodRequestFiles");
 
                     b.Navigation("LitigationRequestGroundFiles");
@@ -6454,6 +6696,10 @@ namespace REAC.EntityFrameworkCore.Migrations
 
             modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.System.SysLitigationRequestCategory", b =>
                 {
+                    b.Navigation("LitigationRequestCorrespondences");
+
+                    b.Navigation("LitigationRequestNotes");
+
                     b.Navigation("LitigationRequests");
                 });
 
@@ -6463,6 +6709,11 @@ namespace REAC.EntityFrameworkCore.Migrations
                 });
 
             modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.System.SysLitigationRequestCorrespondenceDestination", b =>
+                {
+                    b.Navigation("LitigationRequestCorrespondences");
+                });
+
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.System.SysLitigationRequestCorrespondenceStatus", b =>
                 {
                     b.Navigation("LitigationRequestCorrespondences");
                 });

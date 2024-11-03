@@ -188,7 +188,7 @@ namespace REAC.Application.MobileAppServices.Reconciliation
                     else
                         litigationRequestMircoDto.IsDone = "تم";
 
-                    litigationRequestMircoDto.Status = litigationRequest.ExternalStatusId.ToString();
+                    litigationRequestMircoDto.Status = litigationRequest.ExternalStatusId.GetHashCode().ToString();
                     litigationRequestMircoDtos.Add(litigationRequestMircoDto);
 
                 }

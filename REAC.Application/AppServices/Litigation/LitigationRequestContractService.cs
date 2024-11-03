@@ -13,6 +13,7 @@ using REAC.Application.Contracts.Dtos.Litigation;
 using REAC.Application.Contracts.Dtos.Litigation.Create.Contract;
 using REAC.Application.Contracts.Dtos.Litigation.Create.Defendant;
 using REAC.Application.Contracts.Dtos.Litigation.CreateUpdate.Contract;
+using REAC.Application.Contracts.Dtos.Litigation.CreateUpdate.Litigation;
 using REAC.Application.Contracts.IAppServices;
 using REAC.Application.Contracts.IAppServices.Litigation;
 using REAC.Application.Contracts.IAppServices.System;
@@ -803,6 +804,81 @@ namespace REAC.Application.AppServices.Litigation
         public Task<BaseResponse> RentIntegrate(LitigationRequestOwnerType FirstPartyCapacity, string contractNumber, string versionNumber)
         {
             throw new NotImplementedException();
+        }
+        public async Task<BaseResponse> AddModificationRequest(LitigationModificationRequestDto model)
+        {
+            try
+            {
+                Guid referenceId = Guid.Empty;
+                _jwtReader.GetReferenceId(ref referenceId);
+
+                var modifiacitonRequest = new LititgationRequestModificationRequest();
+                if (model != null)
+                {
+                    modifiacitonRequest.Id = new Guid();
+                    modifiacitonRequest.ModificationRequest = model.ModificationRequest;
+                    modifiacitonRequest.LitigationRequestSessionId = model.LitigationRequestSessionId;
+                    modifiacitonRequest.LitigationRequestId = model.LitigationRequestId;
+                    modifiacitonRequest.CreatedBy = referenceId;
+                    modifiacitonRequest.CreatedOn = DateTime.UtcNow;
+                }
+                var record = await _repository.AddAsync<LititgationRequestModificationRequest, Guid>(modifiacitonRequest);
+                var result = await _repository.SaveChangesAsync();
+                if (!result.IsDone)
+                    return result;
+
+                var data = await GetModificationRequestByLitigationRequestId(modifiacitonRequest.LitigationRequestId);
+
+                if(!data.IsDone)
+                    return data;
+
+                return new DataResponse<List<LitigationRequestModificationRequestsDto>>()
+                {
+                    IsDone = true,
+                    Message = "",
+                    Data = data.Data
+
+                };
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse() { IsDone = false , Message = "خطأ داخلي" };
+            }
+            
+
+        }
+        
+        private async Task<DataResponse<List<LitigationRequestModificationRequestsDto>>> GetModificationRequestByLitigationRequestId(Guid litigationRequestId)
+        {
+            try
+            {
+                var result = (await _repository.GetQueryable<LititgationRequestModificationRequest, Guid>())
+                    .Include(x => x.Citizen)
+                    .Where(x => x.LitigationRequestId == litigationRequestId)
+                    .OrderByDescending(x => x.CreatedOn)
+                    .AsNoTracking()
+                    .ToList();
+                    
+                    
+                if (result is null)
+                    return new DataResponse<List<LitigationRequestModificationRequestsDto>>() { IsDone = false , Message = "طلب التعديل غير موجود"};
+
+                var data = _mapper.Map<List<LitigationRequestModificationRequestsDto>>(result);
+
+                return new DataResponse<List<LitigationRequestModificationRequestsDto>>()
+                {
+                    IsDone = true,
+                    Message = "",
+                    Data = data
+
+                };
+            }
+            catch (Exception ex)
+            {
+                return new DataResponse<List<LitigationRequestModificationRequestsDto>>() { IsDone = false, Message = "خطأ داخلي" };
+            }
+
+
         }
     }
 }

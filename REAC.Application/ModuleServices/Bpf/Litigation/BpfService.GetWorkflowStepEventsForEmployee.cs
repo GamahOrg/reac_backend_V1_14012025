@@ -51,8 +51,22 @@ namespace Bpf.Application.ModuleServices
                 WorkFlowStepEventForActorShortDtos.AllowAssign = employee.AllowAssign;
                 WorkFlowStepEventForActorShortDtos.AllowReAssign = employee.AllowReAssign;
 
+
+                
+
                 processinglog?.ForEach(x =>
                 {
+                    if (x.LitigationRequest.LitigationRequestCategoryId == REAC.Domain.Shared.Enum.LitigationRequestCategory.Reconciliation)
+                    {
+                        var removeAgreement = x.WorkFlowStep.WorkFlowStepEvents
+                        .FirstOrDefault(x => x.ExternalStatusId == REAC.Domain.Shared.Enum.RequestStatus.AgreementRequestHasBeenSent);
+
+                        // Remove Agreement item from the collection
+
+                        x.WorkFlowStep.WorkFlowStepEvents.Remove(removeAgreement);
+                    }
+                    
+
                     x.WorkFlowStep.WorkFlowStepEvents.ToList().ForEach(y =>
                     {
                         bool allowAdd = true;

@@ -39,6 +39,13 @@ namespace REAC.Application.Contracts.Dtos.Integration.GEE
         public string Random { get; set; }
     }
 
+    public class NafathStatusResponse
+    {
+        public string TransactionId { get; set; }
+        public bool IsValid { get; set; }
+        public string Message { get; set; } 
+    }
+
     #endregion
 
 
