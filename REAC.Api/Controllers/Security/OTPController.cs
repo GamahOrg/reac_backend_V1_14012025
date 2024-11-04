@@ -57,7 +57,13 @@ namespace REAC.Api.Controllers.Security
         [HttpGet]
         [AllowAnonymous]
         [Route(nameof(GetZoomMeeting))]
-        public async Task<ZoomMeetingDetails?> GetZoomMeeting(long id)
-            => await _zoomService.GetMeetingById(id);
+        public async Task<BaseResponse> GetZoomMeeting(long MeetingId)
+            => await _zoomService.GetMeetingById(MeetingId);
+
+        [HttpGet]
+        [AllowAnonymous]
+        [Route(nameof(GetMeetingParticipantsById))]
+        public async Task<List<ZoomMeetingParticipantsDetails?>> GetMeetingParticipantsById(long MeetingId)
+            => await _zoomService.GetMeetingParticipantsById(MeetingId);
     }
 }

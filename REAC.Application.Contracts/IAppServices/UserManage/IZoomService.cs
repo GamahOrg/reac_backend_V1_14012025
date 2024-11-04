@@ -11,7 +11,10 @@ namespace REAC.Application.Contracts.IAppServices.UserManage
     public interface IZoomService
     {
         Task<ZoomMeting?> GenerateMeeting(string meetingTopic);
+        Task<ZoomMeting?> GenerateMeeting(string meetingTopic,DateTime meetingStartTime);
       
-        Task<ZoomMeetingDetails?> GetMeetingById(long id);
+        Task<BaseResponse> GetMeetingById(long MeetingId);
+
+        Task<List<ZoomMeetingParticipantsDetails?>> GetMeetingParticipantsById(long MeetingId);
     }
 }

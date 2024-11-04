@@ -93,6 +93,7 @@ public partial class LitigationRequestMircoForRequestSessionDto : BaseEntity<Gui
     public string RequestTypeName { get; set; } = null!;
     public DateTime SessionDatetime { get; set; }
     public string? Url { get; set; }
+    public long? MeetingId { get; set; }
 }
 
 public partial class LitigationRequestMircoForRequestReformerDto : BaseEntity<Guid>

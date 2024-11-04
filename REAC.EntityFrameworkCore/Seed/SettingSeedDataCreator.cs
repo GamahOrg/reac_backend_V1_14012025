@@ -1170,17 +1170,17 @@ namespace Ticketing.EntityFrameworkCore.SeedData
                         {
                             Id = Guid.NewGuid(),
                             Key = "Zoom.ClientID",
-                            Value = "uGLzC9GoSlim6jt97XCjnQ"
+                            Value = "sqlMYoQ320xzHiEvPYCA"
                         },new SysSetting
                         {
                             Id = Guid.NewGuid(),
                             Key = "Zoom.ClientSecret",
-                            Value = "Gwe9yLmoJ2sJrIS8fT8O312B19LESnFj"
+                            Value = "wBufFSQdMcNG6rb5l8mYn1rGLCtP0BY4"
                         },new SysSetting
                         {
                             Id = Guid.NewGuid(),
                             Key = "Zoom.AccountID",
-                            Value = "ZrKAcCt8SxS12kG_osxa-w"
+                            Value = "2u0TjNu3QsmBhBa1yYOMTw"
                         },new SysSetting
                         {
                             Id = Guid.NewGuid(),

@@ -117,7 +117,7 @@ namespace REAC.Application.ModuleServices
                         CultureInfo provider = new CultureInfo("en-US");
                         CultureInfo.CurrentCulture = provider;
                         var sessionDateGreg = DateTime.ParseExact(requestPayload.SessionDateTime.ToString(), "M/d/yyyy h:mm:ss tt", provider);
-                        _zoomMeeting = await _zoomService.GenerateMeeting($"{litigationRequest.RequestCode}_{requestPayload.SessionDateTime.ToString()}");
+                        _zoomMeeting = await _zoomService.GenerateMeeting($"{litigationRequest.RequestCode}_{requestPayload.SessionDateTime.ToString()}",sessionDateGreg);
                         sessionUrl = _zoomMeeting?.join_url;
 
                         if (litigationRequest.LitigationRequestSessions.Count == 0)
@@ -795,6 +795,7 @@ namespace REAC.Application.ModuleServices
                     litigationRequestMircoDto.RequestTypeName = litigationRequest.Contract.LitigationRequestContractType.TypeName;
                     litigationRequestMircoDto.SessionDatetime = litigationRequest.LitigationRequestSessions.OrderBy(x => x.SessionDatetime).Last().SessionDatetime;
                     litigationRequestMircoDto.Url = litigationRequest.LitigationRequestSessions.OrderBy(x => x.SessionDatetime).Last().SessionUrl;
+                    litigationRequestMircoDto.MeetingId = litigationRequest.LitigationRequestSessions.OrderBy(x => x.SessionDatetime).Last().MeetingId;
                     litigationRequestMircoDtos.Add(litigationRequestMircoDto);
                 }
             }

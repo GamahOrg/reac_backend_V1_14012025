@@ -1,5 +1,6 @@
 ﻿using Core.GenericRepository.Shared.BaseEntities;
 using REAC.Domain.Shared.Enum;
+using System.Text.Json.Serialization;
 
 namespace REAC.Application.Contracts.Dtos.Zoom;
 
@@ -17,6 +18,7 @@ public class ZoomMeting : BaseEntity<Guid>
     public string start_url { get; set; }
     public int type { get; set; }
     public string uuid { get; set; }
+
     public long id { get; set; }
     public string host_id { get; set; }
     public string host_email { get; set; }
@@ -32,10 +34,24 @@ public class ZoomMeting : BaseEntity<Guid>
 
 public class ZoomMeetingDetails : BaseEntity<Guid>
 {
-    public long id { get; set; }
-    public int duration { get; set; }
-    public int total_minutes { get; set; }
+    //public long id { get; set; }
+    public string? source { get; set; }
     public string start_time { get; set; }
+    public int total_minutes { get; set; }
     public string end_time { get; set; }
+    public int duration { get; set; }
     public int participants_count { get; set; }
+    public List<ZoomMeetingParticipantsDetails> Participants { get; set; }
+
+
+}
+
+public class ZoomMeetingParticipantsDetails : BaseEntity<Guid>
+{
+    public string name { get; set; }
+    public int total_minutes { get; set; }
+    public string join_time { get; set; }
+    public string leave_time { get; set; }
+  //  public string user_email { get; set; }
+
 }

@@ -130,7 +130,7 @@ namespace REAC.Application.ModuleServices
                     CultureInfo provider = new CultureInfo("en-US");
                     CultureInfo.CurrentCulture = provider;
                     var sessionDateGreg = DateTime.ParseExact(requestPayload.SessionDateTime.ToString(), "M/d/yyyy h:mm:ss tt", provider);
-                    var _zoomMeeting = await _zoomService.GenerateMeeting($"{litigationRequest.RequestCode}_{sessionDateGreg.ToString()}");
+                    var _zoomMeeting = await _zoomService.GenerateMeeting($"{litigationRequest.RequestCode}_{sessionDateGreg.ToString()}",sessionDateGreg);
                     var sessionUrl = _zoomMeeting?.join_url;
                     LitigationRequestSession litigationRequestSession = new LitigationRequestSession()
                     {
@@ -785,7 +785,7 @@ namespace REAC.Application.ModuleServices
                                       .Include(x => x.Contract.SecondPartyFacility)
                                       .Include(x => x.Contract.SecondPartyCitizen)
                                       .Include(x => x.Contract.LitigationRequestContractType)
-                                      .Where(x => x.LitigationRequestSessions.Any());
+                                      .Where(x => x.LitigationRequestSessions.Any(x => x.LitigationRequestSessionRequestTypeId == LitigationRequestSessionRequestType.Arbitration));
 
             litigationRequests = entitiesQuerable
                 .Where(x => x.LitigationRequestCategoryId != LitigationRequestCategory.Reconciliation & x.InternalStatusId != RequestStatus.Rejected
@@ -813,6 +813,7 @@ namespace REAC.Application.ModuleServices
                     litigationRequestMircoDto.RequestTypeName = litigationRequest.Contract.LitigationRequestContractType.TypeName;
                     litigationRequestMircoDto.SessionDatetime = litigationRequest.LitigationRequestSessions.OrderBy(x => x.SessionDatetime).Last().SessionDatetime;
                     litigationRequestMircoDto.Url = litigationRequest.LitigationRequestSessions.OrderBy(x => x.SessionDatetime).Last().SessionUrl;
+                    litigationRequestMircoDto.MeetingId = litigationRequest.LitigationRequestSessions.OrderBy(x => x.SessionDatetime).Last().MeetingId;
                     litigationRequestMircoDtos.Add(litigationRequestMircoDto);
 
                 }
