@@ -317,6 +317,10 @@ namespace REAC.Application.AppServices.Litigation
         {
             try
             {
+
+                Guid referenceId = Guid.Empty;
+                _jwtReader.GetReferenceId(ref referenceId);
+
                 var litigationRequest = (await _repository.GetQueryable<LitigationRequest, Guid>())
                           .Include(x => x.LitigationRequestCorrespondences)
                           .ThenInclude(x => x.LitigationRequestCorrespondenceReply)
@@ -355,9 +359,21 @@ namespace REAC.Application.AppServices.Litigation
 
                 var allowAdd = true;
 
+                
+
                 var request = _mapper.Map<LitigationRequestShortDto>(litigationRequest);
 
                 var correspondences = _mapper.Map<List<LitigationRequestCorrespondenceDto>>(litigationRequest?.LitigationRequestCorrespondences);
+
+                foreach(var correspondence in correspondences)
+                {
+                    if (correspondence.LitigationRequestCorrespondenceDestinationId == LitigationRequestCorrespondenceDestination.Plaintiff & litigationRequest?.Contract?.FirstPartyCitizen?.Id != referenceId)
+                        allowAdd = false;
+                    
+                    if (correspondence.LitigationRequestCorrespondenceDestinationId == LitigationRequestCorrespondenceDestination.Defendant & litigationRequest?.Contract?.SecondPartyCitizen?.Id != referenceId)
+                        allowAdd = false;
+
+                }
 
                 return new DataResponse<LitigationRequestForCorrespondencesDto>()
                 {

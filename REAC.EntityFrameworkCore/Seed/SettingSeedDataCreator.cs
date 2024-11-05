@@ -11,12 +11,12 @@ namespace Ticketing.EntityFrameworkCore.SeedData
             await context.SysSettings.AddRangeAsync(
                 new List<SysSetting>
                 {
-                    //new SysSetting
-                    //{
-                    //    Id = Guid.NewGuid(),
-                    //    Key = REAC.Domain.Shared.Constants.SysKeyConstants.SecurityApiUrl,
-                    //    Value = REAC.Domain.Shared.Constants.SysKeyConstants.SecurityApiUrl,
-                    //},
+                    new SysSetting
+                    {
+                        Id = Guid.NewGuid(),
+                        Key = "SecurityApiUrl",
+                        Value = "http://localhost:7144/",
+                    },
                     #region GEE Login Integration
 
                     new SysSetting
@@ -736,7 +736,7 @@ namespace Ticketing.EntityFrameworkCore.SeedData
                     {
                         Id = Guid.NewGuid(),
                         Key = "LitigationRequestCorrespondenceAdded",
-                        Value = "تم اضافة مراسلة رقم {CorrespondenceCode} علي الدعوي رقم {LitigationCode}  "
+                        Value = "تم اضافة مراسلة رقم {CorrespondenceCode} علي الدعوي رقم {LitigationCode}"
                     },new SysSetting
                     {
                         Id = Guid.NewGuid(),

@@ -1,5 +1,8 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Core.Security.Attributes;
+using Core.Security.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using REAC.Api.Middlewares;
 using REAC.Application.Contracts.Dtos.Litigation;
 using REAC.Application.Contracts.Dtos.Litigation.Create.Litigation;
 using REAC.Application.Contracts.Dtos.Litigation.CreateUpdate.Litigation;
@@ -16,7 +19,7 @@ namespace REAC.Api.Controllers.Litigation;
 [ApiController]
 [ApiExplorerSettings(GroupName = APISections.Litigation)]
 //[PermissionRequired(Modules.LitigationRequest)]
-[AllowAnonymous]
+//[AllowAnonymous]
 
 public class LitigationRequestController : BaseController<LitigationRequest,
        LitigationCreateUpdateDto, LitigationCreateUpdateDto
@@ -52,8 +55,9 @@ public class LitigationRequestController : BaseController<LitigationRequest,
 
         return BadRequest();
     }
+    
     [HttpGet(nameof(List))]
-    [AllowAnonymous]
+    //[AllowAnonymous]
     public async Task<ActionResult<IEnumerable<LitigationListDto>>> List([FromQuery] int pageIndex, [FromQuery] int pageSize, [FromQuery] string? searchKey, [FromQuery] LitigationListDto model)
     {
         if (ModelState.IsValid)
@@ -129,12 +133,12 @@ public class LitigationRequestController : BaseController<LitigationRequest,
     }
 
     [HttpGet(nameof(GetLitigationById))]
-    [AllowAnonymous]
     public async Task<ActionResult<IEnumerable<LitigationRequest>>> GetLitigationById(Guid litigationId)
     {
         if (ModelState.IsValid)
         {
             var returnValue = await _litigationService.Get(litigationId);
+            if(returnValue.IsDone == false) return Unauthorized(returnValue);
 
             return Ok(returnValue);
         }

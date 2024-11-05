@@ -2,7 +2,7 @@
 {
     public class SysSettingKeyConstants
     {
-        public const string SecurityApiUrl = "http://localhost:7144/"; // http://localhost:7144/
+        public const string SecurityApiUrl = "SecurityApiUrl"; // http://localhost:7144/
 
         #region Integration Keys
 

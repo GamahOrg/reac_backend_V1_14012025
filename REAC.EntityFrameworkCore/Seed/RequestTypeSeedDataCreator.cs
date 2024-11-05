@@ -105,6 +105,14 @@ namespace REAC.EntityFrameworkCore.Seed
                 {
                     Id = RequestType.LitigationAgreementRequest,
                     RequestTypeName = "طلب المشارطة",
+                },new SysRequestType
+                {
+                    Id = RequestType.LitigationRequestCorrespondence,
+                    RequestTypeName = "المراسلات",
+                },new SysRequestType
+                {
+                    Id = RequestType.LitigationRequestCorrespondenceReply,
+                    RequestTypeName = "رد المراسلات",
                 }
 
 

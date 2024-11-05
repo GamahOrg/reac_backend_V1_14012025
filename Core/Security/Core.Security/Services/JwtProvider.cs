@@ -38,6 +38,9 @@ namespace Core.Security.Services
         }
         public async Task<BaseResponse> ValidateActiveToken()
         => new DataResponse<bool> { IsDone = true, Data = await IsActiveAsync(GetCurrentAsync()) };
+        
+        public async Task<BaseResponse> ValidateActiveToken(string token)
+        => new DataResponse<bool> { IsDone = true, Data = await IsActiveAsync(token) };
 
         public async Task<AuthDto> GenerateAuthenticationTokens(User user)
         {

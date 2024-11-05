@@ -21,6 +21,7 @@ namespace REAC.Application.Contracts.Dtos.Litigation
         public string SerialCode { get; set; }
 
         public string? Message { get; set; }
+        public bool AllowAddReply { get; set; }
         public Guid? CreatedBy { get; set; }
 
         public DateTime CreatedOn { get; set; }

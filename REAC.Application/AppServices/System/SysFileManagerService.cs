@@ -15,6 +15,7 @@ using REAC.Application.Contracts.IAppServices.Litigation;
 using REAC.Application.Contracts.IAppServices.System;
 using REAC.Domain.Shared.Constants;
 using REAC.Domain.Shared.Enum;
+using REAC.Domain.Shared.Helpers;
 using REAC.EntityFrameworkCore.Entities.Litigation;
 using REAC.EntityFrameworkCore.Entities.System;
 using System.Net.Http.Headers;
@@ -78,8 +79,15 @@ namespace REAC.Application.AppServices.System
             List<FileDto> uploadedFiles = new();
             foreach (var file in files)
             {
+
+
                 if (file.Length == 0) continue;
+
+                
+
+
                 var extension = ExtractExtension(file, out var contentDisposition);
+
                 var fileName = contentDisposition!.FileName!.Trim('"');
                 // Validate file extension 
                 if (!allowedExtensions.Contains(extension.ToLower()))
@@ -87,6 +95,13 @@ namespace REAC.Application.AppServices.System
                     throw new Exception();
                     // throw new ExceptionResponse(Localizations.ThisFileTypeNotAllowed);
                 }
+
+                var maliciousResult = await FileHelper.CheckMaliciousFile(file);
+
+                if (!maliciousResult.IsDone)
+                    return maliciousResult;
+
+
                 var id = Guid.NewGuid();
                 var path = Path.Combine(SharedConstants.RootFolder, id + extension);
                 path = path.Replace(@"\", @"/");

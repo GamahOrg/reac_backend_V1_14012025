@@ -14,5 +14,6 @@ namespace Core.Security.Contracts
         Task<AuthDto> GenerateAuthenticationTokens(User user);
 
         Task<BaseResponse> ValidateActiveToken();
+        Task<BaseResponse> ValidateActiveToken(string token);
     }
 }

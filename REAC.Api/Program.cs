@@ -15,6 +15,7 @@ using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using REAC.Api;
+using REAC.Api.Middlewares;
 using REAC.Api.OptionsSetup;
 using REAC.Application.AppServices.Common;
 using REAC.Application.AppServices.Integration.GEE;
@@ -206,11 +207,12 @@ app.UseStaticFiles(new StaticFileOptions()
     RequestPath = new PathString("/Resources")
 });
 
+
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseCors(_defaultCorsPolicyName);
 
-//app.UseMiddleware<AuthMiddleware>();
+app.UseMiddleware<AuthMiddleware>();
 
 
 app.MapControllers();

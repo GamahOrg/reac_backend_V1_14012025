@@ -16,7 +16,7 @@ namespace REAC.Api.Controllers.Reconciliation.Process;
 [ApiController]
 [ApiExplorerSettings(GroupName = APISections.Reconciliation)]
 [PermissionRequired(Modules.Reconciliation)]
-[AllowAnonymous]
+//[AllowAnonymous]
 
 public class ReconciliationController : ControllerBase
 {

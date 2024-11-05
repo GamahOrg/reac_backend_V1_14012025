@@ -27,6 +27,85 @@ namespace REAC.Api.Middlewares
         /// <param name="jwtProvider"></param>
         /// <param name="settingService"></param>
         /// <returns></returns>
+        //public async Task InvokeAsync(HttpContext context, IJwtProvider jwtProvider, ISysSettingService settingService, IHttpContextAccessor httpContextAccessor)
+        //{
+        //    var endPointt = context.GetEndpoint();
+        //    if (endPointt?.Metadata?.GetMetadata<IAllowAnonymous>() is object)
+        //    {
+        //        await next(context);
+        //        return;
+        //    }
+
+
+        //    var urlResult = settingService.GetBySettingKey(SysSettingKeyConstants.SecurityApiUrl).Result;
+
+        //    if (urlResult.IsDone)
+        //    {
+        //        string? url = (urlResult as DataResponse<SysSetting>).Data?.Value;
+
+        //        using (HttpClient client = new HttpClient())
+        //        {
+        //            string token = GetCurrentTokeAsync(context);
+        //            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+        //            HttpResponseMessage response = new HttpResponseMessage();
+        //            try
+        //            {
+        //                response = await client.GetAsync(url.TrimEnd('/') + "/api/Account/ValidateActiveToken");
+        //            }
+        //            catch (Exception)
+        //            {
+        //                context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+        //                return;
+        //            }
+        //            if (response.IsSuccessStatusCode)
+        //            {
+        //                var isValidTokenResponse = await response.Content.ReadAsAsync<DataResponse<bool>>();
+        //                if (isValidTokenResponse.IsDone)
+        //                {
+        //                    var isValidToken = isValidTokenResponse.Data;
+        //                    if (isValidToken)
+        //                    {
+        //                        var mainPermissions =
+        //                        httpContextAccessor.HttpContext?.GetEndpoint()?.Metadata.GetMetadata<ControllerActionDescriptor>()?
+        //                        .ControllerTypeInfo.AsType().GetCustomAttributes(typeof(PermissionRequiredAttribute), true)
+        //                        .Cast<PermissionRequiredAttribute>().Select(x => x.Permission).ToList();
+
+        //                        var subPermissions =
+        //                        httpContextAccessor.HttpContext?.GetEndpoint()?.Metadata.GetMetadata<ControllerActionDescriptor>()?
+        //                        .ControllerTypeInfo.AsType().GetMethod(httpContextAccessor.HttpContext?.GetEndpoint()?.Metadata.GetMetadata<ControllerActionDescriptor>().ActionName)?
+        //                        .GetCustomAttributes(typeof(PermissionRequiredAttribute), true)
+        //                        .Cast<PermissionRequiredAttribute>().Select(x => x.Permission).ToList();
+
+        //                        List<string> permissions = new List<string>();
+
+        //                        foreach (var mainPermission in mainPermissions)
+        //                        {
+        //                            permissions.Add(mainPermission);
+        //                            foreach (var subPermission in subPermissions)
+        //                            {
+        //                                permissions.Add(subPermission);
+        //                                permissions.Add(mainPermission + "." + subPermission);
+        //                            }
+        //                        }
+
+        //                        var handler = new JwtSecurityTokenHandler();
+        //                        var jwtSecurityToken = handler.ReadJwtToken(token);
+
+        //                        foreach (var permission in permissions)
+        //                        {
+        //                            if (permission != null && jwtSecurityToken.Claims.Where(x => x.Value == permission).FirstOrDefault() == null)
+        //                                context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+        //                        }
+        //                        await next(context);
+        //                        return;
+        //                    }
+        //                }
+        //            }
+        //        }
+        //    }
+        //    context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+        //}
+
         public async Task InvokeAsync(HttpContext context, IJwtProvider jwtProvider, ISysSettingService settingService, IHttpContextAccessor httpContextAccessor)
         {
             var endPointt = context.GetEndpoint();
@@ -36,73 +115,62 @@ namespace REAC.Api.Middlewares
                 return;
             }
 
+            string token = GetCurrentTokeAsync(context);
 
-            var urlResult = settingService.GetBySettingKey(SysSettingKeyConstants.SecurityApiUrl).Result;
+            var isValidTokenResponse = await jwtProvider.ValidateActiveToken(token) as DataResponse<bool>;
 
-            if (urlResult.IsDone)
+            if (isValidTokenResponse.IsDone)
             {
-                string? url = (urlResult as DataResponse<SysSetting>).Data?.Value;
-
-                using (HttpClient client = new HttpClient())
+                var isValidToken = isValidTokenResponse.Data;
+                if (isValidToken)
                 {
-                    string token = GetCurrentTokeAsync(context);
-                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-                    HttpResponseMessage response = new HttpResponseMessage();
-                    try
+                    var mainPermissions =
+                    httpContextAccessor.HttpContext?.GetEndpoint()?.Metadata.GetMetadata<ControllerActionDescriptor>()?
+                    .ControllerTypeInfo.AsType().GetCustomAttributes(typeof(PermissionRequiredAttribute), true)
+                    .Cast<PermissionRequiredAttribute>().Select(x => x.Permission).ToList();
+
+                    var subPermissions =
+                    httpContextAccessor.HttpContext?.GetEndpoint()?.Metadata.GetMetadata<ControllerActionDescriptor>()?
+                    .ControllerTypeInfo.AsType().GetMethod(httpContextAccessor.HttpContext?.GetEndpoint()?.Metadata.GetMetadata<ControllerActionDescriptor>().ActionName)?
+                    .GetCustomAttributes(typeof(PermissionRequiredAttribute), true)
+                    .Cast<PermissionRequiredAttribute>().Select(x => x.Permission).ToList();
+
+                    List<string> permissions = new List<string>();
+
+                    if (mainPermissions != null)
                     {
-                        response = await client.GetAsync(url.TrimEnd('/') + "/api/Account/ValidateActiveToken");
-                    }
-                    catch (Exception)
-                    {
-                        context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
-                        return;
-                    }
-                    if (response.IsSuccessStatusCode)
-                    {
-                        var isValidTokenResponse = await response.Content.ReadAsAsync<DataResponse<bool>>();
-                        if (isValidTokenResponse.IsDone)
+
+                        foreach (var mainPermission in mainPermissions)
                         {
-                            var isValidToken = isValidTokenResponse.Data;
-                            if (isValidToken)
+                            permissions.Add(mainPermission);
+
+                            if (subPermissions != null)
                             {
-                                var mainPermissions =
-                                httpContextAccessor.HttpContext?.GetEndpoint()?.Metadata.GetMetadata<ControllerActionDescriptor>()?
-                                .ControllerTypeInfo.AsType().GetCustomAttributes(typeof(PermissionRequiredAttribute), true)
-                                .Cast<PermissionRequiredAttribute>().Select(x => x.Permission).ToList();
 
-                                var subPermissions =
-                                httpContextAccessor.HttpContext?.GetEndpoint()?.Metadata.GetMetadata<ControllerActionDescriptor>()?
-                                .ControllerTypeInfo.AsType().GetMethod(httpContextAccessor.HttpContext?.GetEndpoint()?.Metadata.GetMetadata<ControllerActionDescriptor>().ActionName)?
-                                .GetCustomAttributes(typeof(PermissionRequiredAttribute), true)
-                                .Cast<PermissionRequiredAttribute>().Select(x => x.Permission).ToList();
-
-                                List<string> permissions = new List<string>();
-
-                                foreach (var mainPermission in mainPermissions)
+                                foreach (var subPermission in subPermissions)
                                 {
-                                    permissions.Add(mainPermission);
-                                    foreach (var subPermission in subPermissions)
-                                    {
-                                        permissions.Add(subPermission);
-                                        permissions.Add(mainPermission + "." + subPermission);
-                                    }
+                                    permissions.Add(subPermission);
+                                    permissions.Add(mainPermission + "." + subPermission);
                                 }
-
-                                var handler = new JwtSecurityTokenHandler();
-                                var jwtSecurityToken = handler.ReadJwtToken(token);
-
-                                foreach (var permission in permissions)
-                                {
-                                    if (permission != null && jwtSecurityToken.Claims.Where(x => x.Value == permission).FirstOrDefault() == null)
-                                        context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
-                                }
-                                await next(context);
-                                return;
                             }
                         }
                     }
+
+                    var handler = new JwtSecurityTokenHandler();
+                    var jwtSecurityToken = handler.ReadJwtToken(token);
+
+                    foreach (var permission in permissions)
+                    {
+                        if (permission != null && jwtSecurityToken.Claims.Where(x => x.Value == permission).FirstOrDefault() == null)
+                            context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+                    }
+                    await next(context);
+                    return;
                 }
             }
+
+
+
             context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
         }
 
