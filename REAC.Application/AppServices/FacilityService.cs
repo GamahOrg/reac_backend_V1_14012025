@@ -208,7 +208,7 @@ namespace REAC.Application.AppServices
                 string code = "FAC_00000001";
 
                 if (facilityRequestList is null)
-                    code = "FAC_00000001";
+                    code = "FAC_}}";
                 else
                     code = "FAC_" + (facilityRequestList.Count() + 1).ToString("D8");
 

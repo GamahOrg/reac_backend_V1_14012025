@@ -266,22 +266,23 @@ namespace REAC.Application.AppServices.Integration.GEE
                                         {
                                             if (userAddressInfo.IsDone)
                                             {
-                                                identityStatus.UserAddressInfoUpdated = new UserAddressInfoUpdatedDto()
-                                                {
-                                                    AdditionalNumber = userAddressInfo.Data.AdditionalNumber,
-                                                    BuildingNumber = userAddressInfo.Data.BuildingNumber,
-                                                    ZipCode = userAddressInfo.Data.ZipCode,
-                                                    UnitNumber = userAddressInfo.Data.UnitNumber,
-                                                    DistrictAreaArabic = userAddressInfo.Data.DistrictAreaArabic,
-                                                    DistrictAreaEnglish = userAddressInfo.Data.DistrictAreaEnglish,
-                                                    StreetNameArabic = userAddressInfo.Data.StreetNameArabic,
-                                                    StreetNameEnglish = userAddressInfo.Data.StreetNameEnglish,
-                                                    CityNameArabic = userAddressInfo.Data.CityNameArabic,
-                                                    CityNameEnglish = userAddressInfo.Data.CityNameEnglish,
-                                                    FullName = userAddressInfo.Data.FullName,
-                                                    Latitude = userAddressInfo.Data.Latitude,
-                                                    Longitude = userAddressInfo.Data.Longitude,
-                                                };
+                                                identityStatus.UserAddressInfoUpdated = userAddressInfo.Data;
+                                                //identityStatus.UserAddressInfoUpdated = new UserAddressInfoUpdatedDto()
+                                                //{
+                                                //    AdditionalNumber = userAddressInfo.Data.AdditionalNumber,
+                                                //    BuildingNumber = userAddressInfo.Data.BuildingNumber,
+                                                //    ZipCode = userAddressInfo.Data.ZipCode,
+                                                //    UnitNumber = userAddressInfo.Data.UnitNumber,
+                                                //    DistrictAreaArabic = userAddressInfo.Data.DistrictAreaArabic,
+                                                //    DistrictAreaEnglish = userAddressInfo.Data.DistrictAreaEnglish,
+                                                //    StreetNameArabic = userAddressInfo.Data.StreetNameArabic,
+                                                //    StreetNameEnglish = userAddressInfo.Data.StreetNameEnglish,
+                                                //    CityNameArabic = userAddressInfo.Data.CityNameArabic,
+                                                //    CityNameEnglish = userAddressInfo.Data.CityNameEnglish,
+                                                //    FullName = userAddressInfo.Data.FullName,
+                                                //    Latitude = userAddressInfo.Data.Latitude,
+                                                //    Longitude = userAddressInfo.Data.Longitude,
+                                                //};
                                             }
                                         }
                                     }
@@ -388,14 +389,14 @@ namespace REAC.Application.AppServices.Integration.GEE
             }
         }
 
-        private async Task<DataResponse<UserAddressInfoUpdatedDto>> NafathGetUserAddressInfo(string token, string identiyNumber)
+        private async Task<DataResponse<List<UserAddressInfoUpdatedDto>>> NafathGetUserAddressInfo(string token, string identiyNumber)
         {
             try
             {
                 var url = _sysSetting.GetBySettingKey(SysSettingKeyConstants.NafathGetUserAddressInfo_URL).Result.Data?.Value;
 
                 if (string.IsNullOrEmpty(token) || string.IsNullOrEmpty(url))
-                    return new DataResponse<UserAddressInfoUpdatedDto>() { IsDone = false, Message = "" };
+                    return new DataResponse<List<UserAddressInfoUpdatedDto>> { IsDone = false, Message = "" };
 
                 url = string.Format(url, identiyNumber);
 
@@ -410,17 +411,17 @@ namespace REAC.Application.AppServices.Integration.GEE
 
                     //var userAddressInfo = JsonSerializer.Deserialize<NafathUserAddressInfo>(content);
                     var userAddressInfo = JsonConvert.DeserializeObject<NafathUserAddressInfo>(content);
-                    var userAddressInfoUpdated = await MapUserAddressInfoDataAsync(userAddressInfo.GetIndividualWaselAddressResponse.GetIndividualWaselAddressResult.getIndividualWaselAddressResponseDetailObject.WaselAddress.FirstOrDefault());
-                    return new DataResponse<UserAddressInfoUpdatedDto> { IsDone = true, Data = userAddressInfoUpdated.Data };
+                    var userAddressInfoUpdated = await MapUserAddressInfoDataAsync(userAddressInfo.GetIndividualWaselAddressResponse.GetIndividualWaselAddressResult.getIndividualWaselAddressResponseDetailObject.WaselAddress);
+                    return new DataResponse<List<UserAddressInfoUpdatedDto>> { IsDone = true, Data = userAddressInfoUpdated.Data };
                 }
                 else if (response.StatusCode == HttpStatusCode.Unauthorized)
-                    return new DataResponse<UserAddressInfoUpdatedDto> { IsDone = false, Message = "" };
+                    return new DataResponse<List<UserAddressInfoUpdatedDto>> { IsDone = false, Message = "" };
                 else
-                    return new DataResponse<UserAddressInfoUpdatedDto> { IsDone = false, Message = "" };
+                    return new DataResponse<List<UserAddressInfoUpdatedDto>> { IsDone = false, Message = "" };
             }
             catch (Exception e)
             {
-                return new DataResponse<UserAddressInfoUpdatedDto>() { IsDone = false, Message = e.Message + e.InnerException };
+                return new DataResponse<List<UserAddressInfoUpdatedDto>> { IsDone = false, Message = e.Message + e.InnerException };
             }
         }
         private async Task<DataResponse<UserInfoUpdatedDto>> MapUserInfoDataAsync(NafathUserInfoDto nafathUserInfoDto)
@@ -465,29 +466,51 @@ namespace REAC.Application.AppServices.Integration.GEE
             };
         }
 
-        private async Task<DataResponse<UserAddressInfoUpdatedDto>> MapUserAddressInfoDataAsync(WaselAddress nafathUserInfoDto)
+        private async Task<DataResponse<List<UserAddressInfoUpdatedDto>>> MapUserAddressInfoDataAsync(List<WaselAddress> nafathUserInfoDto)
         {
+            List<UserAddressInfoUpdatedDto> arr = new List<UserAddressInfoUpdatedDto>();
+            for (int i = 0; i < nafathUserInfoDto.Count(); i++)
+            {
+                var obj = new UserAddressInfoUpdatedDto()
+                {
+                    AdditionalNumber = nafathUserInfoDto[i].AdditionalNumber,
+                    BuildingNumber = nafathUserInfoDto[i].BuildingNumber,
+                    ZipCode = nafathUserInfoDto[i].ZipCode,
+                    UnitNumber = nafathUserInfoDto[i].UnitNumber,
+                    DistrictAreaArabic = nafathUserInfoDto[i].DistrictAreaArabic,
+                    DistrictAreaEnglish = nafathUserInfoDto[i].DistrictAreaEnglish,
+                    StreetNameArabic = nafathUserInfoDto[i].StreetNameArabic,
+                    StreetNameEnglish = nafathUserInfoDto[i].StreetNameEnglish,
+                    CityNameArabic = nafathUserInfoDto[i].CityNameArabic,
+                    CityNameEnglish = nafathUserInfoDto[i].CityNameEnglish,
+                    FullName = nafathUserInfoDto[i].FullName,
+                    Latitude = nafathUserInfoDto[i].Latitude,
+                    Longitude = nafathUserInfoDto[i].Longitude
+                };
+                arr.Add(obj);
 
-            return new DataResponse<UserAddressInfoUpdatedDto>()
+            }
+            return new DataResponse<List<UserAddressInfoUpdatedDto>>()
             {
                 IsDone = true,
-                Data = new UserAddressInfoUpdatedDto()
-                {
-                    AdditionalNumber = nafathUserInfoDto.AdditionalNumber,
-                    BuildingNumber = nafathUserInfoDto.BuildingNumber,
-                    ZipCode = nafathUserInfoDto.ZipCode,
-                    UnitNumber = nafathUserInfoDto.UnitNumber,
-                    DistrictAreaArabic = nafathUserInfoDto.DistrictAreaArabic,
-                    DistrictAreaEnglish = nafathUserInfoDto.DistrictAreaEnglish,
-                    StreetNameArabic = nafathUserInfoDto.StreetNameArabic,
-                    StreetNameEnglish = nafathUserInfoDto.StreetNameEnglish,
-                    CityNameArabic = nafathUserInfoDto.CityNameArabic,
-                    CityNameEnglish = nafathUserInfoDto.CityNameEnglish,
-                    FullName = nafathUserInfoDto.FullName,
-                    Latitude = nafathUserInfoDto.Latitude,
-                    Longitude = nafathUserInfoDto.Longitude,
+                Data=arr
+                //Data = new UserAddressInfoUpdatedDto()
+                //{
+                //    AdditionalNumber = nafathUserInfoDto.AdditionalNumber,
+                //    BuildingNumber = nafathUserInfoDto.BuildingNumber,
+                //    ZipCode = nafathUserInfoDto.ZipCode,
+                //    UnitNumber = nafathUserInfoDto.UnitNumber,
+                //    DistrictAreaArabic = nafathUserInfoDto.DistrictAreaArabic,
+                //    DistrictAreaEnglish = nafathUserInfoDto.DistrictAreaEnglish,
+                //    StreetNameArabic = nafathUserInfoDto.StreetNameArabic,
+                //    StreetNameEnglish = nafathUserInfoDto.StreetNameEnglish,
+                //    CityNameArabic = nafathUserInfoDto.CityNameArabic,
+                //    CityNameEnglish = nafathUserInfoDto.CityNameEnglish,
+                //    FullName = nafathUserInfoDto.FullName,
+                //    Latitude = nafathUserInfoDto.Latitude,
+                //    Longitude = nafathUserInfoDto.Longitude,
 
-                }
+                //}
             };
         }
         private async Task<DataResponse<NafathCheckResponseDto>> NafathCheckStatus(NafathCheckRequestDto nafathCheckRequestDto)

@@ -1,8 +1,10 @@
 ﻿using Core.Security.Attributes;
 using Core.Security.Authorization;
+using Core.Shared.Responses;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using REAC.Api.Middlewares;
+using REAC.Application.Contracts.Dtos.Integration.Wafi;
 using REAC.Application.Contracts.Dtos.Litigation;
 using REAC.Application.Contracts.Dtos.Litigation.Create.Litigation;
 using REAC.Application.Contracts.Dtos.Litigation.CreateUpdate.Litigation;
@@ -228,6 +230,11 @@ public class LitigationRequestController : BaseController<LitigationRequest,
 
         return BadRequest();
     }
+
+    [HttpGet]
+    [Route(nameof(GetWafiData))]
+    public async Task<DataResponse<WafiDataDto>> GetWafiData(string licenseNumber, string identityNumber)
+    => await _litigationService.GetWafiData(licenseNumber, identityNumber);
 
     #region AgreementRequest
     [HttpPost(nameof(AddCitizenLitigationRequestForAgreementRequestReply))]

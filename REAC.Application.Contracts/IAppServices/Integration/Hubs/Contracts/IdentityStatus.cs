@@ -9,6 +9,6 @@ namespace REAC.Application.Contracts.IAppServices.Integration.Hubs.Contracts
         public string? RefreshToken { get; set; }
         public bool IsValid { get; set; }
         public UserInfoUpdatedDto? UserInfoUpdated { get; set; }
-        public UserAddressInfoUpdatedDto? UserAddressInfoUpdated { get; set; }
+        public List<UserAddressInfoUpdatedDto>? UserAddressInfoUpdated { get; set; }
     }
 }

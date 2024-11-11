@@ -1,4 +1,5 @@
 ﻿using Core.Shared.Responses;
+using REAC.Application.Contracts.Dtos.Integration.Wafi;
 using REAC.Application.Contracts.Dtos.Litigation.Create.Litigation;
 using REAC.Application.Contracts.Dtos.Litigation.CreateUpdate.Litigation;
 using REAC.Application.Contracts.Dtos.Litigation.List;
@@ -33,6 +34,7 @@ namespace REAC.Application.Contracts.IAppServices.Litigation
 
         Task<BaseResponse> AuditngListReconciliation(int pageIndex, int pageSize, string? searchKey, AuditingListDto model);
         Task<BaseResponse> GetLitigationArbitrators(Guid requestId);
+        Task<DataResponse<WafiDataDto>> GetWafiData(string licenseNumber, string identityNumber);
 
         #region pagination
         public class PaginatedList<T>

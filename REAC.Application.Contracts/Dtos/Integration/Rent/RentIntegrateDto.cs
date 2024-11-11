@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore.Query;
 using REAC.Application.Contracts.Dtos.Integration.Party;
+using REAC.Application.Contracts.Dtos.Integration.Wafi;
 using REAC.Domain.Shared.Enum;
 using System.ComponentModel.DataAnnotations;
 
@@ -7,6 +8,7 @@ namespace REAC.Application.Contracts.Dtos.Integration.Rent
 {
     public class RentIntegrateDto
     {
+        public WafiData Wafiresponse { get; set; }
         public PartyDTO FirstPartyDto { get; set; }
         public PartyDTO SecondPartyDto { get; set; }
         public string Key { get; set; }//رقم عقد الايجار
