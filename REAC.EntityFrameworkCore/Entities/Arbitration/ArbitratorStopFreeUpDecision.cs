@@ -10,6 +10,8 @@ namespace REAC.EntityFrameworkCore.Entities.Arbitration
         public Guid CitizenId { get; set; }
         public ArbitratorStatus ArbitratorStatusId { get; set; }
         public DateTime DecisionDate { get; set; }
+        public DateTime? DecisionFrom { get; set; }
+        public DateTime? DecisionTo { get; set; }
         public StoppingReason? StoppingReason { get; set; }
         public string? LateLitigationRequestNumber { get; set; }
         public Citizen Citizen { get; set; } = null!;

@@ -23,7 +23,7 @@ namespace REAC.Application.Contracts.Dtos.Integration.Wafi
     public class Person
     {
         public string fullName { get; set; }
-        public string nidNumber { get; set; }
+        public string nidnumber { get; set; }
         public string nationality { get; set; }
         public string mobile { get; set; }
         public string email { get; set; }

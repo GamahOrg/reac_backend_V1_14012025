@@ -586,20 +586,40 @@ namespace REAC.EntityFrameworkCore.Seed
                 Email = "reEmployee2@domain.com",
                 EmailConfirmed = true,
             };
+            
+            //var defaultUser2 = new User
+            //{
+            //    Id = Guid.Parse("f83c927d-a5ee-45ca-b95b-be75d09c1e51"),
+            //    ReferenceId = Guid.Parse("ddc90d42-62b3-4a07-b20a-68b0365aec45"),
+            //    UserName = "reemp2",
+            //    Email = "reEmployee3@domain.com",
+            //    EmailConfirmed = true,
+            //};
 
             var user = await userManager.FindByEmailAsync(defaultUser.Email);
+            //var user2 = await userManager.FindByEmailAsync(defaultUser2.Email);
 
             if (user == null)
             {
                 await userManager.CreateAsync(defaultUser, "123456");
                 await context.SaveChangesAsync();
 
-                await userManager.AddToRolesAsync(defaultUser, new List<string> { Roles.SuperAdmin.ToString() });
+                await userManager.AddToRolesAsync(defaultUser, new List<string> { Roles.Employee.ToString() });
                 await context.SaveChangesAsync();
 
             }
+            
+            //if (user2 == null)
+            //{
+            //    await userManager.CreateAsync(defaultUser2, "123456");
+            //    await context.SaveChangesAsync();
 
-            await roleManger.AddPermissionClaimsForUser(Roles.SuperAdmin.ToString(), context);
+            //    await userManager.AddToRolesAsync(defaultUser2, new List<string> { Roles.Employee.ToString() });
+            //    await context.SaveChangesAsync();
+
+            //}
+
+            await roleManger.AddPermissionClaimsForUser(Roles.Employee.ToString(), context);
 
         }
         //public static async Task SeedEmployee9UserAsync(UserManager<User> userManager, RoleManager<Role> roleManger, IdentityContext context)

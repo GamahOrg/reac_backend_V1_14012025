@@ -5,6 +5,7 @@ namespace REAC.EntityFrameworkCore.Seed
 {
     public enum Roles
     {
+        Employee,
         SuperAdmin,
         OnlyView
     }
@@ -24,6 +25,10 @@ namespace REAC.EntityFrameworkCore.Seed
             if (!roleManger.Roles.Any(x => x.Name == Roles.OnlyView.ToString()))
             {
                 await roleManger.CreateAsync(new Role { Name = Roles.OnlyView.ToString() });
+            }
+            if (!roleManger.Roles.Any(x => x.Name == Roles.Employee.ToString()))
+            {
+                await roleManger.CreateAsync(new Role { Name = Roles.Employee.ToString() });
             }
         }
     }

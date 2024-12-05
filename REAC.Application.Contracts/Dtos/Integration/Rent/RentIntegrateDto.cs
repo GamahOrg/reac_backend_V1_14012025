@@ -19,6 +19,7 @@ namespace REAC.Application.Contracts.Dtos.Integration.Rent
         public Guid Id { get; set; }
 
         public Data Project { get; set; }
+        public bool IsDefendantRegistered { get; set; } = true;
     }
 
     public class WafiProjectDetails

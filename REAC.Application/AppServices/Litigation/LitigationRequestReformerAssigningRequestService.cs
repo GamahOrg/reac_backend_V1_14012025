@@ -398,11 +398,21 @@ namespace REAC.Application.AppServices.Litigation
                     {
                         foreach (var item in litigationRequest.LitigationRequestReformerAssigningRequests.Where(x => x.CitizenId == referenceId))
                         {
+                            int reconciliationPeriod = 0;
+                            int.TryParse(_sysSettingService.GetBySettingKey(SysSettingKeyConstants.Reconciliation_Period).Result.Data?.Value, out reconciliationPeriod);
+
+
+
+                            int daysPassed = (DateTime.Now - (DateTime)item.RequestOn).Days;
+                            item.LitigationRequest.ReconciliationPeriod = Math.Max(0, reconciliationPeriod - daysPassed);
+
+
                             CustomLitigationRequestMircoDto litigationRequestMircoDto = new CustomLitigationRequestMircoDto();
                             litigationRequestMircoDto.Id = item.Id;
                             litigationRequestMircoDto.RequestId = litigationRequest.Id;
                             litigationRequestMircoDto.RequestDate = litigationRequest.CreatedOn;
                             litigationRequestMircoDto.RequestCode = litigationRequest.RequestCode;
+                            litigationRequestMircoDto.ReconciliationPeriod = item.LitigationRequest.ReconciliationPeriod;
                             litigationRequestMircoDto.FirstPartyName = (litigationRequest.Contract.FirstPartyCitizen == null) ? litigationRequest.Contract.FirstPartyFacility.ArabicFacilityName : litigationRequest.Contract.FirstPartyCitizen.FullName;
                             litigationRequestMircoDto.SecondPartyName = (litigationRequest.Contract.SecondPartyCitizen == null) ? litigationRequest.Contract.SecondPartyFacility.ArabicFacilityName : litigationRequest.Contract.SecondPartyCitizen.FullName;
                             litigationRequestMircoDto.RequestTypeName = litigationRequest.Contract.LitigationRequestContractType.TypeName;
@@ -441,7 +451,7 @@ namespace REAC.Application.AppServices.Litigation
             Guid referenceId = Guid.Empty;
             _jwtReader.GetReferenceId(ref referenceId);
 
-            PagedResult<LitigationRequestReformerAssigningRequest> litigationRequests = null;
+            PagedResult<LitigationRequestReformerAssigningRequest> litigationRequestsReformerAssigningRequests = null;
 
             var entitiesQuerable = (await _repository.GetQueryable<LitigationRequestReformerAssigningRequest, Guid>())
                           .Include(x => x.ReformerCitizen)
@@ -460,7 +470,7 @@ namespace REAC.Application.AppServices.Litigation
                          .Include(x => x.LitigationRequest.Contract.LitigationRequestContractType);
 
 
-            litigationRequests = entitiesQuerable
+            litigationRequestsReformerAssigningRequests = entitiesQuerable
                 .Where(x => x.LitigationRequest.LitigationRequestStage != LitigationRequestStage.Review
                 & x.LitigationRequest.LitigationRequestCategoryId != LitigationRequestCategory.Arbitration)
                                        .OrderByDescending(x => x.LitigationRequest.CreatedOn)
@@ -470,14 +480,25 @@ namespace REAC.Application.AppServices.Litigation
 
 
             List<CustomLitigationRequestMircoAllDto> litigationRequestMircoDtos = new List<CustomLitigationRequestMircoAllDto>();
-            if (litigationRequests != null)
+            if (litigationRequestsReformerAssigningRequests != null)
             {
-                foreach (var litigationRequest in litigationRequests.Results)
+
+                int reconciliationPeriod = 0;
+                int.TryParse(_sysSettingService.GetBySettingKey(SysSettingKeyConstants.Reconciliation_Period).Result.Data?.Value, out reconciliationPeriod);
+
+
+                foreach (var litigationRequestReformerAssigningRequest in litigationRequestsReformerAssigningRequests.Results)
+                {
+                    int daysPassed = (DateTime.Now - (DateTime)litigationRequestReformerAssigningRequest.RequestOn).Days;
+                    litigationRequestReformerAssigningRequest.LitigationRequest.ReconciliationPeriod = Math.Max(0, reconciliationPeriod - daysPassed);
+                }
+                foreach (var litigationRequest in litigationRequestsReformerAssigningRequests.Results)
                 {
                     CustomLitigationRequestMircoAllDto litigationRequestMircoDto = new CustomLitigationRequestMircoAllDto();
                     litigationRequestMircoDto.Id = litigationRequest.Id;
                     litigationRequestMircoDto.RequestId = litigationRequest.Id;
                     litigationRequestMircoDto.RequestDate = litigationRequest.LitigationRequest.CreatedOn;
+                    litigationRequestMircoDto.ReconciliationPeriod = litigationRequest.LitigationRequest.ReconciliationPeriod;
                     litigationRequestMircoDto.RequestCode = litigationRequest.LitigationRequest.RequestCode;
                     litigationRequestMircoDto.FirstPartyName = (litigationRequest.LitigationRequest.Contract.FirstPartyCitizen == null) ? litigationRequest.LitigationRequest.Contract.FirstPartyFacility.ArabicFacilityName : litigationRequest.LitigationRequest.Contract.FirstPartyCitizen.FullName;
                     litigationRequestMircoDto.SecondPartyName = (litigationRequest.LitigationRequest.Contract.SecondPartyCitizen == null) ? litigationRequest.LitigationRequest.Contract.SecondPartyFacility.ArabicFacilityName : litigationRequest.LitigationRequest.Contract.SecondPartyCitizen.FullName;
@@ -512,10 +533,10 @@ namespace REAC.Application.AppServices.Litigation
                               new PagedResult<CustomLitigationRequestMircoAllDto>
                               {
                                   Results = litigationRequestMircoDtos,
-                                  CurrentPage = litigationRequests.CurrentPage,
-                                  PageCount = litigationRequests.PageCount,
-                                  PageSize = litigationRequests.PageSize,
-                                  TotalCount = litigationRequests.TotalCount
+                                  CurrentPage = litigationRequestsReformerAssigningRequests.CurrentPage,
+                                  PageCount = litigationRequestsReformerAssigningRequests.PageCount,
+                                  PageSize = litigationRequestsReformerAssigningRequests.PageSize,
+                                  TotalCount = litigationRequestsReformerAssigningRequests.TotalCount
                               },
                 IsDone = true
             };

@@ -74,7 +74,7 @@ namespace REAC.Application.AppServices.System
             if (files == null)
                 throw new ArgumentNullException(nameof(files));
 
-            var allowedExtensions = new List<string> { ".jpg", ".png", ".pdf", ".docx", ".xlsx", ".xls" };
+            var allowedExtensions = new List<string> { ".jpg", ".png", ".pdf", ".docx", ".xlsx", ".xls",".jpeg" };
             var pathToSave = CreateUploadRootFolder();
             List<FileDto> uploadedFiles = new();
             foreach (var file in files)
@@ -94,6 +94,14 @@ namespace REAC.Application.AppServices.System
                 {
                     throw new Exception();
                     // throw new ExceptionResponse(Localizations.ThisFileTypeNotAllowed);
+                }
+
+                if(extension.ToLower() == ".pdf")
+                {
+                    var pdfMaliciousResult = await FileHelper.CheckMaliciousPdf(file);
+
+                    if (!pdfMaliciousResult.IsDone)
+                        return pdfMaliciousResult;
                 }
 
                 var maliciousResult = await FileHelper.CheckMaliciousFile(file);

@@ -22,7 +22,7 @@ namespace REAC.Application.ModuleServices
             {
                 Guid referenceId = Guid.Empty;
                 _jwtReader.GetReferenceId(ref referenceId);
-
+                requestPayload.SessionDateTime = requestPayload.SessionDateTime.ToLocalTime();
                 var litigationRequest = (await _repository.GetQueryable<LitigationRequest, Guid>())?
                         .Include(x => x.LitigationRequestSessions.Where(x => x.LitigationRequestSessionRequestTypeId == LitigationRequestSessionRequestType.Arbitration))
                         .Include(x => x.ArbitratorCitizen)
@@ -44,6 +44,8 @@ namespace REAC.Application.ModuleServices
                         Message = "لا يمكن إضافة جلسة قبل تاريخ تقديم طلب الدعوى"
                     };
                 }
+                var updateResponse = new BaseResponse();
+                bool updatedSession = false;
                 if (litigationRequest.LitigationRequestSessions != null)
                 {
                     foreach (var session in litigationRequest.LitigationRequestSessions.ToList())
@@ -54,13 +56,26 @@ namespace REAC.Application.ModuleServices
                                 IsDone = false,
                                 Message = "يوجد جلسة بنفس التاريخ"
                             };
+                        if (requestPayload.SessionDateTime > session.SessionDatetime || requestPayload.SessionDateTime < session.SessionDatetime)
+                        {
 
-                        if (requestPayload.SessionDateTime < session.SessionDatetime)
-                            return new BaseResponse()
+                            session.SessionDatetime = requestPayload.SessionDateTime;
+                            updateResponse = _repository.Remove<LitigationRequestSession, Guid>(session);
+                            await _repository.SaveChangesAsync();
+                            updatedSession = true;
+                            if (!updateResponse.IsDone)
                             {
-                                IsDone = false,
-                                Message = "لا يمكن اضافة جلسة بتاريخ سابق لجلسة سابقة"
-                            };
+                                return new BaseResponse { IsDone = false, Message = "لا يمكن تعديل موعد الجلسة" };
+                            }
+                            break;
+                        }
+
+                        //if (requestPayload.SessionDateTime < session.SessionDatetime)
+                        //    return new BaseResponse()
+                        //    {
+                        //        IsDone = false,
+                        //        Message = "لا يمكن اضافة جلسة بتاريخ سابق لجلسة سابقة"
+                        //    };
 
                         if (session.SessionDatetime > DateTime.Now)
                             return new BaseResponse()
@@ -82,8 +97,8 @@ namespace REAC.Application.ModuleServices
                 if (litigationRequest?.LitigationRequestStage != LitigationRequestStage.Arbitration)
                     allowAdd = false;
 
-                if (litigationRequest?.LitigationRequestSubStage != LitigationRequestSubStage.LitigationRequestAddArbitrationSession)
-                    allowAdd = false;
+                //if (litigationRequest?.LitigationRequestSubStage != LitigationRequestSubStage.LitigationRequestAddArbitrationSession)
+                //    allowAdd = false;
 
 
                 int sessionCountValidation = 3;
@@ -98,7 +113,7 @@ namespace REAC.Application.ModuleServices
                         allowAdd = false;
                     else
                     {
-                        if (litigationRequest.LitigationRequestSessions.Count == 0)
+                        if (litigationRequest.LitigationRequestSessions.Count == 0 && updatedSession == false)
                         {
                             litigationRequest.InternalStatusId = RequestStatus.AsessionTimeHasBeenSet;
                             litigationRequest.ExternalStatusId = RequestStatus.AsessionTimeHasBeenSet;
@@ -143,7 +158,7 @@ namespace REAC.Application.ModuleServices
                         MeetingId = _zoomMeeting?.id,
                     };
 
-                    if (litigationRequest.LitigationRequestSessions.Count == 0)
+                    if (litigationRequest.LitigationRequestSessions.Count == 0 && updatedSession == false)
                     {
                         litigationRequest.InternalStatusId = RequestStatus.AsessionTimeHasBeenSet;
                         litigationRequest.ExternalStatusId = RequestStatus.AsessionTimeHasBeenSet;

@@ -6,6 +6,7 @@ using Core.Shared.Responses;
 using Microsoft.EntityFrameworkCore;
 using REAC.Application.AppServices.System;
 using REAC.Application.Contracts.Dtos.Litigation;
+using REAC.Application.Contracts.Dtos.Litigation.CreateUpdate.Litigation;
 using REAC.Application.Contracts.Dtos.Litigation.List;
 using REAC.Application.Contracts.Dtos.Notification;
 using REAC.Application.Contracts.Dtos.Reconciliation;
@@ -55,16 +56,29 @@ namespace REAC.Application.AppServices.Litigation
                 if (litigationCorrespondence == null || referenceId == Guid.Empty)
                     return new BaseResponse() { IsDone = false, Message = "غير موجود" };
 
+                var litigationRequest = (await _repository.GetQueryable<LitigationRequest, Guid>())?
+                                .Include(x => x.Contract)
+                                .ThenInclude(x => x.FirstPartyCitizen)
+                                .Include(x => x.Contract)
+                                 .ThenInclude(x => x.SecondPartyCitizen)
+                                .Include(x => x.Contract).ThenInclude(x => x.FirstPartyFacility).ThenInclude(x => x.Citizen)
+                                .Include(x => x.Contract).ThenInclude(x => x.SecondPartyFacility).ThenInclude(x => x.Citizen)
+                                .Include(x => x.ReformerCitizen)//المصلح مواطن
+                                .Include(x => x.ApplicantCitizen)
+                                .AsNoTracking()
+                                .FirstOrDefault(x => x.Id == litigationCorrespondence.LitigationRequestId);
+
                 var correspondanceObject = new LitigationRequestCorrespondence()
                 {
                     Id = new Guid(),
                     CreatedBy = referenceId,
                     CreatedOn = DateTime.Now,
-                    SerialCode = await GenerateCorrespondenceCode(),
+                    SerialCode = await GenerateCorrespondenceCode(litigationCorrespondence.LitigationRequestId),
                     LitigationRequestId = litigationCorrespondence.LitigationRequestId,
                     Subject = litigationCorrespondence.Subject,
                     Message = litigationCorrespondence.Message,
-                    LitigationRequestCategoryId = litigationCorrespondence.LitigationRequestCategoryId,
+                    LitigationRequestCategoryId = litigationRequest.LitigationRequestStage == LitigationRequestStage.Reconciliation ? LitigationRequestCategory.Reconciliation 
+                    : litigationRequest.LitigationRequestStage == LitigationRequestStage.Arbitration ? LitigationRequestCategory.Arbitration : litigationCorrespondence.LitigationRequestCategoryId,
                     LitigationRequestCorrespondenceStatusId = CorrespondenceStatus.NotRepliedOn,
                     LitigationRequestCorrespondenceDestinationId = (LitigationRequestCorrespondenceDestination)litigationCorrespondence.LitigationRequestCorrespondenceDestinationId,
                 };
@@ -103,17 +117,7 @@ namespace REAC.Application.AppServices.Litigation
                     return saveResponse;
 
                 // Send Notifications
-                var litigationRequest = (await _repository.GetQueryable<LitigationRequest, Guid>())?
-                                .Include(x => x.Contract)
-                                .ThenInclude(x => x.FirstPartyCitizen)
-                                .Include(x => x.Contract)
-                                 .ThenInclude(x => x.SecondPartyCitizen)
-                                .Include(x => x.Contract).ThenInclude(x => x.FirstPartyFacility).ThenInclude(x => x.Citizen)
-                                .Include(x => x.Contract).ThenInclude(x => x.SecondPartyFacility).ThenInclude(x => x.Citizen)
-                                .Include(x => x.ReformerCitizen)//المصلح مواطن
-                                .Include(x => x.ApplicantCitizen)
-                                .AsNoTracking()
-                                .FirstOrDefault(x => x.Id == litigationCorrespondence.LitigationRequestId);
+                
                 if (litigationRequest != null)
                 {
                     var msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.LitigationRequestCorrespondenceAdded).Result.Data?.Value;
@@ -142,17 +146,20 @@ namespace REAC.Application.AppServices.Litigation
             try
             {
                 var litigationRequest = (await _repository.GetQueryable<LitigationRequest, Guid>())
-                          .Include(x => x.LitigationRequestCorrespondences.Where(l => litigationRequestCategoryIds.Contains((int)l.LitigationRequestCategoryId)))
+                          .Include(x => x.LitigationRequestCorrespondences.Where(l => litigationRequestCategoryIds.Contains((int)l.LitigationRequestCategoryId)).OrderByDescending(l => l.CreatedOn))
                           .ThenInclude(x => x.Citizen)
-                          .Include(x => x.LitigationRequestCorrespondences.Where(l => litigationRequestCategoryIds.Contains((int)l.LitigationRequestCategoryId)))
+                          .Include(x => x.LitigationRequestCorrespondences.Where(l => litigationRequestCategoryIds.Contains((int)l.LitigationRequestCategoryId)).OrderByDescending(l => l.CreatedOn))
                           .ThenInclude(x => x.LitigationRequestCorrespondenceStatus)
-                          .Include(x => x.LitigationRequestCorrespondences.Where(l => litigationRequestCategoryIds.Contains((int)l.LitigationRequestCategoryId)))
+                          .Include(x => x.LitigationRequestCorrespondences.Where(l => litigationRequestCategoryIds.Contains((int)l.LitigationRequestCategoryId)).OrderByDescending(l => l.CreatedOn))
                           .ThenInclude(x => x.LitigationRequestCorrespondenceFiles)
                           .ThenInclude(x => x.FileManager)
-                          .Include(x => x.LitigationRequestCorrespondences.Where(l => litigationRequestCategoryIds.Contains((int)l.LitigationRequestCategoryId)))
+                          .Include(x => x.LitigationRequestCorrespondences.Where(l => litigationRequestCategoryIds.Contains((int)l.LitigationRequestCategoryId)).OrderByDescending(l => l.CreatedOn))
                           .ThenInclude(x => x.LitigationRequestCorrespondenceReply)
                           .ThenInclude(x => x.LitigationRequestCorrespondenceReplyFiles)
                           .ThenInclude(x => x.FileManager)
+                          .Include(x => x.LitigationRequestCorrespondences.Where(l => litigationRequestCategoryIds.Contains((int)l.LitigationRequestCategoryId)).OrderByDescending(l => l.CreatedOn))
+                          .ThenInclude(x => x.LitigationRequestCorrespondenceReply)
+                          .ThenInclude(x => x.Citizen)
                           .Include(x => x.Area)
                           .Include(x => x.City)
                           .Include(x => x.LitigationRequestReconciliationReports)
@@ -173,7 +180,10 @@ namespace REAC.Application.AppServices.Litigation
                           .Include(x => x.Contract.SecondPartyFacility)
                           .Include(x => x.Contract.SecondPartyCitizen)
                           .Include(x => x.Contract.LitigationRequestContractType)
+                          .AsNoTracking()
                           .FirstOrDefault(x => x.Id == litigationRequestId);
+
+                          
 
 
                 if (litigationRequest == null)
@@ -211,6 +221,7 @@ namespace REAC.Application.AppServices.Litigation
                     .Include(x => x.Citizen)
                     .Include(x => x.LitigationRequestCorrespondenceFiles)
                     .ThenInclude(x => x.FileManager)
+                    .Include(x => x.LitigationRequestCorrespondenceStatus)
                     .Include(x => x.LitigationRequestCorrespondenceReply)
                     .ThenInclude(x => x.LitigationRequestCorrespondenceReplyFiles)
                     .ThenInclude(x => x.FileManager)
@@ -321,14 +332,28 @@ namespace REAC.Application.AppServices.Litigation
                 Guid referenceId = Guid.Empty;
                 _jwtReader.GetReferenceId(ref referenceId);
 
+                var destination = GetCorrespondenceDestination(litigationRequestId, referenceId);
+
                 var litigationRequest = (await _repository.GetQueryable<LitigationRequest, Guid>())
-                          .Include(x => x.LitigationRequestCorrespondences)
+                          .Include(x => x.LitigationRequestCorrespondences
+                          .Where(l => 
+                          (l.LitigationRequestCategoryId == LitigationRequestCategory.Reconciliation && l.LitigationRequestCorrespondenceDestinationId == LitigationRequestCorrespondenceDestination.BothOfThem || l.LitigationRequestCorrespondenceDestinationId == (LitigationRequestCorrespondenceDestination)destination.Result)
+                          || (l.LitigationRequestCategoryId == LitigationRequestCategory.Arbitration)
+                          ))
                           .ThenInclude(x => x.LitigationRequestCorrespondenceReply)
                           .ThenInclude(x => x.LitigationRequestCorrespondenceReplyFiles)
                           .ThenInclude(x => x.FileManager)
-                          .Include(x => x.LitigationRequestCorrespondences)
+                          .Include(x => x.LitigationRequestCorrespondences
+                          .Where(l =>
+                          (l.LitigationRequestCategoryId == LitigationRequestCategory.Reconciliation && l.LitigationRequestCorrespondenceDestinationId == LitigationRequestCorrespondenceDestination.BothOfThem || l.LitigationRequestCorrespondenceDestinationId == (LitigationRequestCorrespondenceDestination)destination.Result)
+                          || (l.LitigationRequestCategoryId == LitigationRequestCategory.Arbitration)
+                          ))
                           .ThenInclude(x => x.Citizen)
-                          .Include(x => x.LitigationRequestCorrespondences)
+                          .Include(x => x.LitigationRequestCorrespondences
+                          .Where(l =>
+                          (l.LitigationRequestCategoryId == LitigationRequestCategory.Reconciliation && l.LitigationRequestCorrespondenceDestinationId == LitigationRequestCorrespondenceDestination.BothOfThem || l.LitigationRequestCorrespondenceDestinationId == (LitigationRequestCorrespondenceDestination)destination.Result)
+                          || (l.LitigationRequestCategoryId == LitigationRequestCategory.Arbitration)
+                          ))
                           .ThenInclude(x => x.LitigationRequestCorrespondenceFiles)
                           .ThenInclude(x => x.FileManager)
                           .Include(x => x.Area)
@@ -367,12 +392,17 @@ namespace REAC.Application.AppServices.Litigation
 
                 foreach(var correspondence in correspondences)
                 {
-                    if (correspondence.LitigationRequestCorrespondenceDestinationId == LitigationRequestCorrespondenceDestination.Plaintiff & litigationRequest?.Contract?.FirstPartyCitizen?.Id != referenceId)
-                        allowAdd = false;
-                    
-                    if (correspondence.LitigationRequestCorrespondenceDestinationId == LitigationRequestCorrespondenceDestination.Defendant & litigationRequest?.Contract?.SecondPartyCitizen?.Id != referenceId)
-                        allowAdd = false;
+                    if (correspondence.LitigationRequestCategoryId == LitigationRequestCategory.Arbitration & correspondence.LitigationRequestCorrespondenceDestinationId == LitigationRequestCorrespondenceDestination.Plaintiff & (litigationRequest?.Contract?.FirstPartyCitizenId == referenceId || litigationRequest?.Contract?.FirstPartyFacilityId == referenceId))
+                        correspondence.AllowAddReply = true;
 
+                    if (correspondence.LitigationRequestCategoryId == LitigationRequestCategory.Arbitration & correspondence.LitigationRequestCorrespondenceDestinationId == LitigationRequestCorrespondenceDestination.Defendant & (litigationRequest?.Contract?.SecondPartyCitizenId == referenceId || litigationRequest?.Contract?.SecondPartyCitizenId == referenceId))
+                        correspondence.AllowAddReply = true;
+
+                    if (correspondence.LitigationRequestCategoryId == LitigationRequestCategory.Arbitration & correspondence.LitigationRequestCorrespondenceDestinationId == LitigationRequestCorrespondenceDestination.BothOfThem)
+                        correspondence.AllowAddReply = true;
+
+                    if (correspondence.LitigationRequestCategoryId == LitigationRequestCategory.Reconciliation)
+                        correspondence.AllowAddReply = true;
                 }
 
                 return new DataResponse<LitigationRequestForCorrespondencesDto>()
@@ -506,23 +536,45 @@ namespace REAC.Application.AppServices.Litigation
         {
             try
             {
+                Guid referenceId = Guid.Empty;
+                _jwtReader.GetReferenceId(ref referenceId);
+
                 var litigationRequestId = (await _repository.GetQueryable<LitigationRequestCorrespondence, Guid>())
                     .AsNoTracking()
-                    .FirstOrDefault(x => x.Id == correspondenceId)?.LitigationRequestId;
+                    .First(x => x.Id == correspondenceId).LitigationRequestId;
+
+                var destination = GetCorrespondenceDestination(litigationRequestId, referenceId);
+
 
                 var litigationRequest = (await _repository.GetQueryable<LitigationRequest, Guid>())
-                          .Include(x => x.LitigationRequestCorrespondences)
+                          .Include(x => x.LitigationRequestCorrespondences.Where(l =>
+                          (l.LitigationRequestCategoryId == LitigationRequestCategory.Reconciliation && l.LitigationRequestCorrespondenceDestinationId == LitigationRequestCorrespondenceDestination.BothOfThem || l.LitigationRequestCorrespondenceDestinationId == (LitigationRequestCorrespondenceDestination)destination.Result)
+                          || (l.LitigationRequestCategoryId == LitigationRequestCategory.Arbitration && l.LitigationRequestCorrespondenceDestinationId == LitigationRequestCorrespondenceDestination.BothOfThem)
+                          ))
                           .ThenInclude(x => x.LitigationRequestCorrespondenceReply)
                           .ThenInclude(x => x.LitigationRequestCorrespondenceReplyFiles)
                           .ThenInclude(x => x.FileManager)
-                          .Include(x => x.LitigationRequestCorrespondences)
+                          .Include(x => x.LitigationRequestCorrespondences.Where(l =>
+                          (l.LitigationRequestCategoryId == LitigationRequestCategory.Reconciliation && l.LitigationRequestCorrespondenceDestinationId == LitigationRequestCorrespondenceDestination.BothOfThem || l.LitigationRequestCorrespondenceDestinationId == (LitigationRequestCorrespondenceDestination)destination.Result)
+                          || (l.LitigationRequestCategoryId == LitigationRequestCategory.Arbitration && l.LitigationRequestCorrespondenceDestinationId == LitigationRequestCorrespondenceDestination.BothOfThem)
+                          ))
                           .ThenInclude(x => x.LitigationRequestCorrespondenceReply)
                           .ThenInclude(x => x.Citizen)
-                          .Include(x => x.LitigationRequestCorrespondences)
+                          .Include(x => x.LitigationRequestCorrespondences.Where(l =>
+                          (l.LitigationRequestCategoryId == LitigationRequestCategory.Reconciliation && l.LitigationRequestCorrespondenceDestinationId == LitigationRequestCorrespondenceDestination.BothOfThem || l.LitigationRequestCorrespondenceDestinationId == (LitigationRequestCorrespondenceDestination)destination.Result)
+                          || (l.LitigationRequestCategoryId == LitigationRequestCategory.Arbitration && l.LitigationRequestCorrespondenceDestinationId == LitigationRequestCorrespondenceDestination.BothOfThem)
+                          ))
                           .ThenInclude(x => x.Citizen)
-                          .Include(x => x.LitigationRequestCorrespondences)
+                          .Include(x => x.LitigationRequestCorrespondences.Where(l =>
+                          (l.LitigationRequestCategoryId == LitigationRequestCategory.Reconciliation && l.LitigationRequestCorrespondenceDestinationId == LitigationRequestCorrespondenceDestination.BothOfThem || l.LitigationRequestCorrespondenceDestinationId == (LitigationRequestCorrespondenceDestination)destination.Result)
+                          || (l.LitigationRequestCategoryId == LitigationRequestCategory.Arbitration && l.LitigationRequestCorrespondenceDestinationId == LitigationRequestCorrespondenceDestination.BothOfThem)
+                          ))
                           .ThenInclude(x => x.LitigationRequestCorrespondenceFiles)
                           .ThenInclude(x => x.FileManager)
+                          .Include(x => x.Contract.FirstPartyFacility)
+                          .Include(x => x.Contract.FirstPartyCitizen)
+                          .Include(x => x.Contract.SecondPartyFacility)
+                          .Include(x => x.Contract.SecondPartyCitizen)
                           .AsNoTracking()
                           .FirstOrDefault(x => x.Id == litigationRequestId);
 
@@ -531,6 +583,20 @@ namespace REAC.Application.AppServices.Litigation
 
                 var correspondences = _mapper.Map<List<LitigationRequestCorrespondenceDto>>(litigationRequest?.LitigationRequestCorrespondences);
 
+                foreach (var correspondence in correspondences)
+                {
+                    if (correspondence.LitigationRequestCategoryId == LitigationRequestCategory.Arbitration & correspondence.LitigationRequestCorrespondenceDestinationId == LitigationRequestCorrespondenceDestination.Plaintiff & (litigationRequest?.Contract?.FirstPartyCitizenId == referenceId || litigationRequest?.Contract?.FirstPartyFacilityId == referenceId))
+                        correspondence.AllowAddReply = true;
+                    
+                    if (correspondence.LitigationRequestCategoryId == LitigationRequestCategory.Arbitration & correspondence.LitigationRequestCorrespondenceDestinationId == LitigationRequestCorrespondenceDestination.Defendant & (litigationRequest?.Contract?.SecondPartyCitizenId == referenceId || litigationRequest?.Contract?.SecondPartyCitizenId == referenceId))
+                        correspondence.AllowAddReply = true;
+                    
+                    if (correspondence.LitigationRequestCategoryId == LitigationRequestCategory.Arbitration & correspondence.LitigationRequestCorrespondenceDestinationId == LitigationRequestCorrespondenceDestination.BothOfThem)
+                        correspondence.AllowAddReply = true;
+
+                    if (correspondence.LitigationRequestCategoryId == LitigationRequestCategory.Reconciliation)
+                        correspondence.AllowAddReply = true;
+                }
 
                 return new DataResponse<List<LitigationRequestCorrespondenceDto>>()
                 {
@@ -742,10 +808,10 @@ namespace REAC.Application.AppServices.Litigation
         #endregion
 
         #region Helpers
-        public async Task<string> GenerateCorrespondenceCode()
+        private async Task<string> GenerateCorrespondenceCode(Guid litigationRequestId)
         {
             var correspondenceList = (await _repository.GetQueryable<LitigationRequestCorrespondence, Guid>())
-                .Where(x => !string.IsNullOrEmpty(x.SerialCode))
+                .Where(x => !string.IsNullOrEmpty(x.SerialCode) && x.LitigationRequestId == litigationRequestId)
                 .ToList();
 
 
@@ -757,6 +823,24 @@ namespace REAC.Application.AppServices.Litigation
                 code = "MS-" + (correspondenceList.Count() + 1).ToString("D4");
 
             return code;
+        }
+
+        private async Task<int> GetCorrespondenceDestination(Guid litigationRequestId, Guid referenceId)
+        {
+            var litigationRequest = (await _repository.GetQueryable<LitigationRequest, Guid>())
+                          .Include(x => x.Contract.FirstPartyFacility)
+                          .Include(x => x.Contract.FirstPartyCitizen)
+                          .Include(x => x.Contract.SecondPartyFacility)
+                          .Include(x => x.Contract.SecondPartyCitizen)
+                .FirstOrDefault(x => x.Id == litigationRequestId);
+
+            if(litigationRequest is null)
+                return 0;
+
+            var destination = litigationRequest.Contract.FirstPartyCitizenId == referenceId | litigationRequest.Contract.FirstPartyFacilityId == referenceId ? 1
+                : litigationRequest.Contract.SecondPartyCitizenId == referenceId | litigationRequest.Contract.SecondPartyFacilityId == referenceId ? 2 : 0; 
+            
+            return destination;
         }
         #endregion
 

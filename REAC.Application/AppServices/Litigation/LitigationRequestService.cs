@@ -1,4 +1,4 @@
-﻿using AutoMapper;using Azure.Core;using Core.GenericRepository.BaseRepository;using Core.GenericRepository.Shared.Pagging;using Core.Log.Application.Contracts.Dto;using Core.Log.Application.Contracts.IAppServices;using Core.Security.Entities;using Core.Shared.Responses;using Microsoft.AspNetCore.Identity;using Microsoft.EntityFrameworkCore;using Microsoft.Extensions.DependencyInjection;using Microsoft.Identity.Client;using Microsoft.IdentityModel.Tokens;using REAC.Application.Contracts.Dtos.Integration.GEE;using REAC.Application.Contracts.Dtos.Integration.Party;using REAC.Application.Contracts.Dtos.Integration.Rent;using REAC.Application.Contracts.Dtos.Integration.Wafi;using REAC.Application.Contracts.Dtos.Litigation;using REAC.Application.Contracts.Dtos.Litigation.Create.Litigation;using REAC.Application.Contracts.Dtos.Litigation.CreateUpdate.Litigation;using REAC.Application.Contracts.Dtos.Litigation.Get;using REAC.Application.Contracts.Dtos.Litigation.List;using REAC.Application.Contracts.Dtos.Notification;using REAC.Application.Contracts.Dtos.Reconciliation.Process;using REAC.Application.Contracts.Dtos.Wpf.Business;using REAC.Application.Contracts.Dtos.Zoom;using REAC.Application.Contracts.IAppServices;using REAC.Application.Contracts.IAppServices.Integration;using REAC.Application.Contracts.IAppServices.Litigation;using REAC.Application.Contracts.IAppServices.Notification;using REAC.Application.Contracts.IAppServices.System;using REAC.Application.Contracts.IAppServices.Wpf.System;using REAC.Application.Contracts.IModuleServices;using REAC.Domain.Shared.Constants;using REAC.Domain.Shared.Enum;using REAC.EntityFrameworkCore.Entities;using REAC.EntityFrameworkCore.Entities.Actor;using REAC.EntityFrameworkCore.Entities.Litigation;using REAC.EntityFrameworkCore.Entities.System;using REAC.EntityFrameworkCore.Entities.Wpf.Business;using REAC.EntityFrameworkCore.Seed.Integration;using System.Globalization;using System.Net;using System.Net.Http.Headers;using System.Net.Http.Json;using System.Text;using System.Text.Json;using static REAC.Application.Contracts.IAppServices.Litigation.ILitigationRequestService;namespace REAC.Application.AppServices.Litigation{    public partial class LitigationRequestService : BasicService<LitigationRequest, Guid>, ILitigationRequestService    {        private readonly REACDBContext _context;
+﻿using AutoMapper;using Azure.Core;using Core.GenericRepository.BaseRepository;using Core.GenericRepository.Shared.Pagging;using Core.Log.Application.Contracts.Dto;using Core.Log.Application.Contracts.IAppServices;using Core.Security.Entities;using Core.Shared.Responses;using Microsoft.AspNetCore.Identity;using Microsoft.EntityFrameworkCore;using Microsoft.Extensions.DependencyInjection;using Microsoft.Identity.Client;using Microsoft.IdentityModel.Tokens;using REAC.Application.Contracts.Dtos.Integration.GEE;using REAC.Application.Contracts.Dtos.Integration.Party;using REAC.Application.Contracts.Dtos.Integration.Rent;using REAC.Application.Contracts.Dtos.Integration.Wafi;using REAC.Application.Contracts.Dtos.Litigation;using REAC.Application.Contracts.Dtos.Litigation.Create.Litigation;using REAC.Application.Contracts.Dtos.Litigation.CreateUpdate.Litigation;using REAC.Application.Contracts.Dtos.Litigation.Get;using REAC.Application.Contracts.Dtos.Litigation.List;using REAC.Application.Contracts.Dtos.Notification;using REAC.Application.Contracts.Dtos.Reconciliation.Process;using REAC.Application.Contracts.Dtos.Wpf.Business;using REAC.Application.Contracts.Dtos.Zoom;using REAC.Application.Contracts.IAppServices;using REAC.Application.Contracts.IAppServices.Integration;using REAC.Application.Contracts.IAppServices.Litigation;using REAC.Application.Contracts.IAppServices.Notification;using REAC.Application.Contracts.IAppServices.System;using REAC.Application.Contracts.IAppServices.Wpf.System;using REAC.Application.Contracts.IModuleServices;using REAC.Domain.Shared.Constants;using REAC.Domain.Shared.Enum;using REAC.EntityFrameworkCore.Entities;using REAC.EntityFrameworkCore.Entities.Actor;using REAC.EntityFrameworkCore.Entities.Arbitration;using REAC.EntityFrameworkCore.Entities.Litigation;using REAC.EntityFrameworkCore.Entities.System;using REAC.EntityFrameworkCore.Entities.Wpf.Business;using REAC.EntityFrameworkCore.Seed.Integration;using System.Globalization;using System.Net;using System.Net.Http.Headers;using System.Net.Http.Json;using System.Text;using System.Text.Json;using static REAC.Application.Contracts.IAppServices.Litigation.ILitigationRequestService;namespace REAC.Application.AppServices.Litigation{    public partial class LitigationRequestService : BasicService<LitigationRequest, Guid>, ILitigationRequestService    {        private readonly REACDBContext _context;
         private readonly IJwtReader _jwtReader;
         private readonly IServiceProvider _serviceProvider;
         private readonly IFacilityService _facilityService;        private readonly UserManager<User> _userManager;        private readonly ISysEmployeeService _employeeService;
@@ -74,7 +74,11 @@
         }        public async Task<BaseResponse> ReformerList(int pageIndex, int pageSize, string? searchKey, LitigationListDto model)        {            var litigations = await GetQueryableAsync();            litigations = litigations.Include(x => x.Contract);            litigations = litigations.Include(x => x.Contract.LitigationRequestContractType);            litigations = litigations.Include(x => x.Contract.FirstPartyCitizen);            litigations = litigations.Include(x => x.Contract.SecondPartyCitizen);            litigations = litigations.Include(x => x.Contract.FirstPartyFacility);            litigations = litigations.Include(x => x.Contract.SecondPartyFacility);            Guid citizenId = Guid.Empty;            _jwtReader.GetReferenceId(ref citizenId);            litigations = litigations.Where(x => x.ReformerCitizenId == citizenId);            litigations = litigations.OrderByDescending(x => x.CreatedOn);            var list = _mapper.Map<List<LitigationListDto>>(litigations);            var result = await PaginatedList<LitigationListDto>.CreateAsync(list, pageIndex, pageSize);            return new DataResponse<PaginatedList<LitigationListDto>>()            {                Data = result,                IsDone = true            };        }        public async Task<BaseResponse> AuditngList(int pageIndex, int pageSize, string? searchKey, AuditingListDto model)        {
             //var logdenUser = Guid.Parse("1c1b6018-69c8-43f5-b5b1-72cea64d0f9f");/*_jwtReader.GetUserId();*/
             PagedResult<LitigationRequest> litigationRequests = null;
-            var litigations = await GetQueryableAsync();            litigations = litigations.Include(x => x.Contract);            litigations = litigations.Include(x => x.Contract.LitigationRequestContractType);            litigations = litigations.Include(x => x.Contract.FirstPartyCitizen);            litigations = litigations.Include(x => x.Contract.SecondPartyCitizen);            litigations = litigations.Include(x => x.Contract.FirstPartyFacility);            litigations = litigations.Include(x => x.Contract.SecondPartyFacility);            litigations = litigations.Include(x => x.InternalStatus);            if (!string.IsNullOrEmpty(searchKey))            {                litigations = litigations.Where(l => l.RequestCode.Contains(searchKey) || l.Contract.SecondPartyName.Contains(searchKey));            }            if (model.InternalStatusId.HasValue)            {                litigations = litigations.Where(l => l.InternalStatusId == model.InternalStatusId.Value);            }            if (model.LitigationRequestContractTypeId.HasValue)            {                litigations = litigations.Where(l => l.Contract.LitigationRequestContractTypeId == model.LitigationRequestContractTypeId.Value);            }            Guid employeeId = Guid.Empty;            _jwtReader.GetReferenceId(ref employeeId);
+            var litigations = await GetQueryableAsync();            litigations = litigations.Include(x => x.Contract);            litigations = litigations.Include(x => x.Contract.LitigationRequestContractType);            litigations = litigations.Include(x => x.Contract.FirstPartyCitizen);            litigations = litigations.Include(x => x.Contract.SecondPartyCitizen);            litigations = litigations.Include(x => x.Contract.FirstPartyFacility);            litigations = litigations.Include(x => x.Contract.SecondPartyFacility);            litigations = litigations.Include(x => x.InternalStatus);
+
+
+
+            if (!string.IsNullOrEmpty(searchKey))            {                litigations = litigations.Where(l => l.RequestCode.Contains(searchKey) || l.Contract.SecondPartyName.Contains(searchKey));            }            if (model.InternalStatusId.HasValue)            {                litigations = litigations.Where(l => l.InternalStatusId == model.InternalStatusId.Value);            }            if (model.LitigationRequestContractTypeId.HasValue)            {                litigations = litigations.Where(l => l.Contract.LitigationRequestContractTypeId == model.LitigationRequestContractTypeId.Value);            }            Guid employeeId = Guid.Empty;            _jwtReader.GetReferenceId(ref employeeId);
 
             var employee = (await _repository.GetQueryable<SysEmployee, Guid>())?.Where(x => x.Id == employeeId).FirstOrDefault();
             if (employee == null)
@@ -87,15 +91,27 @@
                 litigations = litigations.Where(x => x.WorkFlowProcessingLogs.Where(t => t.EmployeeId == employeeId).Count() > 0);
             }
 
-            litigations = litigations.OrderByDescending(x => x.CreatedOn);            litigations = litigations.Where(x => x.InternalStatusId != RequestStatus.SaveAsDraft && x.InternalStatusId != RequestStatus.AcceptanceOfTheReconciliationReport && x.InternalStatusId != RequestStatus.ReconciliationWasNotMadeAndMoveToArbitration);
+            litigations = litigations.OrderByDescending(x => x.CreatedOn);            litigations = litigations.Where(x => x.LitigationRequestStage == LitigationRequestStage.Review && x.InternalStatusId != RequestStatus.SaveAsDraft && x.InternalStatusId != RequestStatus.AcceptanceOfTheReconciliationReport && x.InternalStatusId != RequestStatus.ReconciliationWasNotMadeAndMoveToArbitration);
 
             litigationRequests = litigations.OrderByDescending(x => x.CreatedOn)
                                             .AsSplitQuery()
                                             .AsNoTracking()
                                             .GetPaged(pageIndex, pageSize);
+            if (litigationRequests is not null)
+            {
+                int reviewPeriod = 0;
+                int.TryParse(_sysSettingService.GetBySettingKey(SysSettingKeyConstants.Review_Period).Result.Data?.Value, out reviewPeriod);
 
 
-            var list = _mapper.Map<List<LitigationListDto>>(litigationRequests.Results);            return new DataResponse<PagedResult<LitigationListDto>>
+                foreach (var litigation in litigationRequests.Results)
+                {
+                    int daysPassed = (DateTime.Now - litigation.CreatedOn).Days;
+
+                    litigation.PretenderRating = Math.Max(0, reviewPeriod - daysPassed);
+                }            }
+
+            var list = _mapper.Map<List<LitigationListDto>>(litigationRequests.Results);
+            return new DataResponse<PagedResult<LitigationListDto>>
             {
                 Data =
                   new PagedResult<LitigationListDto>
@@ -184,7 +200,8 @@
                 RejectReason = assigningRequest.RejectReason
             };
 
-            return new DataResponse<LitigationArbitrationTaskAcceptOrRejectDocumentDto> { Data = response, IsDone = true };        }                public async Task<BaseResponse> GetLitigationArbitrationTaskAcceptanceOrRejectDocumentData(Guid litigationId)        {            Guid citizenId = Guid.Empty;            _jwtReader.GetReferenceId(ref citizenId);            var litigationRequest = (await _repository.GetQueryable<LitigationRequest, Guid>())
+            return new DataResponse<LitigationArbitrationTaskAcceptOrRejectDocumentDto> { Data = response, IsDone = true };        }
+        public async Task<BaseResponse> GetLitigationArbitrationTaskAcceptanceOrRejectDocumentData(Guid litigationId)        {            Guid citizenId = Guid.Empty;            _jwtReader.GetReferenceId(ref citizenId);            var litigationRequest = (await _repository.GetQueryable<LitigationRequest, Guid>())
                          .Include(x => x.ArbitratorCitizen)
                          .Include(x => x.LitigationRequestArbitratorAssigningRequests)
                          .Include(x => x.LitigationRequestAmount)
@@ -277,10 +294,11 @@
                 FirstPartyName = (litigationRequest.Contract.FirstPartyCitizen == null) ? litigationRequest.Contract.FirstPartyFacility.ArabicFacilityName : litigationRequest.Contract.FirstPartyCitizen.FullName,
                 SecondPartyName = (litigationRequest.Contract.SecondPartyCitizen == null) ? litigationRequest.Contract.SecondPartyFacility.ArabicFacilityName : litigationRequest.Contract.SecondPartyCitizen.FullName,
                 RejectReason = assigningRequest.RejectReason
-                
+
             };
 
-            return new DataResponse<LitigationReconciliationTaskAcceptOrRejectDocumentDto> { Data = response, IsDone = true };        }                public async Task<BaseResponse> GetLitigationReconciliationTaskAcceptanceOrRejectDocumentData(Guid litigationId)        {            Guid citizenId = Guid.Empty;            _jwtReader.GetReferenceId(ref citizenId);            var litigationRequest = (await _repository.GetQueryable<LitigationRequest, Guid>())
+            return new DataResponse<LitigationReconciliationTaskAcceptOrRejectDocumentDto> { Data = response, IsDone = true };        }
+        public async Task<BaseResponse> GetLitigationReconciliationTaskAcceptanceOrRejectDocumentData(Guid litigationId)        {            Guid citizenId = Guid.Empty;            _jwtReader.GetReferenceId(ref citizenId);            var litigationRequest = (await _repository.GetQueryable<LitigationRequest, Guid>())
                          .Include(x => x.ArbitratorCitizen)
                          .Include(x => x.LitigationRequestReformerAssigningRequests)
                          .Include(x => x.LitigationRequestAmount)
@@ -327,20 +345,21 @@
 
             return new DataResponse<LitigationReconciliationTaskAcceptOrRejectDocumentDto> { Data = response, IsDone = true };        }        public async Task<int> GetLitigationsCountByType(LitigationRequestContractType contractType)        {            var quarble = await GetQueryableAsync();            int count = 0;            switch (contractType)            {                case LitigationRequestContractType.Rent:                    count = quarble.Where(x => x.RequestCode.StartsWith('R')).Count();                    break;                case LitigationRequestContractType.Properties:                    count = quarble.Where(x => x.RequestCode.StartsWith('O')).Count();                    break;                case LitigationRequestContractType.Wafi:                    count = quarble.Where(x => x.RequestCode[0] == 'W').Count();                    break;                case LitigationRequestContractType.RealEstateBrokerage:                    count = quarble.Where(x => x.RequestCode[0] == 'B').Count();                    break;                case LitigationRequestContractType.OtherServices:                    count = quarble.Where(x => x.RequestCode[0] == 'N').Count();                    break;            }            return count;        }        public async Task<BaseResponse> GetLitigationPartiesDetails(Guid litigationId)        {            try            {                var quarble = await GetQueryableAsync();                var result = quarble.Include(x => x.Contract)                    .Include(x => x.LitigationRequestCategory)                    .Include(x => x.Area)                    .Include(x => x.City)                    .Include(x => x.ApplicantCitizen)                    .Include(x => x.Contract.SecondPartyCitizen)                                    .Include(x => x.Contract.SecondPartyCitizen.Nationality)                    .Include(x => x.Contract.FirstPartyCitizen)                                    .Include(x => x.Contract.FirstPartyCitizen.Nationality)                    .Include(x => x.Contract.SecondPartyFacility)                    .Include(x => x.Contract.FirstPartyFacility)                    .Include(x => x.Contract.AssociationRegistrationCertificateFile)                    .Include(x => x.Contract.FoundingLetterFile)                    .Include(x => x.Contract.InternalRegulationsFile)                    .Include(x => x.Contract.ContractFile)                    .Include(x => x.LitigationRequestRequests)                    .Include(x => x.SysExemptionReductionCategory)                    .Include(x => x.LitigationRequestGrounds)                    .ThenInclude(x => x.LitigationRequestGroundFiles)                    .FirstOrDefault(x => x.Id == litigationId);                if (result == null)                    return new BaseResponse() { IsDone = false, Message = "Not Found" };                LitigationPartiesDetailsDto litigationPartiesDetailsDto = new LitigationPartiesDetailsDto();                litigationPartiesDetailsDto.FirstPartyDto = new PartyDTO();                litigationPartiesDetailsDto.SecondPartyDto = new PartyDTO();                if (result.Contract.FirstPartyCitizenId.HasValue)                {                    litigationPartiesDetailsDto.FirstPartyDto.Nationality = result.Contract.FirstPartyCitizen.Nationality.NationalityName;                    litigationPartiesDetailsDto.FirstPartyDto.FullName = result.Contract.FirstPartyCitizen.FullName;                    litigationPartiesDetailsDto.FirstPartyDto.Mobile = result.Contract.FirstPartyCitizen.Mobile;                    litigationPartiesDetailsDto.FirstPartyDto.Email = result.Contract.FirstPartyCitizen.Email;                    litigationPartiesDetailsDto.FirstPartyDto.FullName = result.Contract.FirstPartyCitizen.FullName;                    litigationPartiesDetailsDto.FirstPartyDto.AgencyNumber = "1234567890";                    litigationPartiesDetailsDto.FirstPartyDto.CitizenId = result.Contract.FirstPartyCitizen.Id;                    litigationPartiesDetailsDto.FirstPartyDto.BirthDate = result.Contract.FirstPartyCitizen.BirthDate;                    litigationPartiesDetailsDto.FirstPartyDto.IdentityNumber = result.Contract.FirstPartyCitizen.IdentityNumber;                    litigationPartiesDetailsDto.FirstPartyDto.IsPretender = true;                    litigationPartiesDetailsDto.FirstPartyDto.Capacity = result.Contract.FirstPartyCapacity;                    litigationPartiesDetailsDto.FirstPartyDto.NationalAddress = result.Contract.FirstPartyCitizen.NationalAddress;                    litigationPartiesDetailsDto.FirstPartyDto.AgancyAttachment = result.LitigationRequestOwnerTypeId == LitigationRequestOwnerType.LawyerForIndividual ? new SysFileManagerCreateUpdateDto { Id = Guid.Parse("e86953a3-c747-49f4-b817-21592334321f"), FileDescription = "FileDescription", FilePath = "reac/e86953a3-c747-49f4-b817-21592334321f.png", FileType = "Pdf" } : null;                    litigationPartiesDetailsDto.FirstPartyDto.LawLicenseAttachment = result.LitigationRequestOwnerTypeId == LitigationRequestOwnerType.LawyerForIndividual ? ((result.ApplicantCitizen.LawLicenseFile != null) ? new SysFileManagerCreateUpdateDto { Id = result.ApplicantCitizen.LawLicenseFile.Id, FileDescription = result.ApplicantCitizen.LawLicenseFile.FileDescription, FilePath = result.ApplicantCitizen.LawLicenseFile.FilePath, FileType = result.ApplicantCitizen.LawLicenseFile.FileType } : null) : null;                    litigationPartiesDetailsDto.FirstPartyDto.EstablishmentContract = result.LitigationRequestOwnerTypeId == LitigationRequestOwnerType.CompanyRepresentative ? new SysFileManagerCreateUpdateDto { Id = Guid.Parse("e86953a3-c747-49f4-b817-21592334321f"), FileDescription = "FileDescription", FilePath = "reac/e86953a3-c747-49f4-b817-21592334321f.png", FileType = "Pdf" } : null;                }                if (result.Contract.FirstPartyFacilityId.HasValue)                {                    litigationPartiesDetailsDto.FirstPartyDto.IsPretender = true;                    litigationPartiesDetailsDto.FirstPartyDto.LawLicenseExpirationDate = result.ApplicantCitizen.LawyerLicenseExpirationDate;                    litigationPartiesDetailsDto.FirstPartyDto.LawLicenseNumber = result.ApplicantCitizen.LawyerLicenseNumber;                    litigationPartiesDetailsDto.FirstPartyDto.Capacity = result.Contract.FirstPartyCapacity;                    litigationPartiesDetailsDto.FirstPartyDto.FacilityName = result.Contract?.FirstPartyFacility?.ArabicFacilityName;                    litigationPartiesDetailsDto.FirstPartyDto.FacilityNumber = result.Contract?.FirstPartyFacility?.Facility700Number;                    litigationPartiesDetailsDto.FirstPartyDto.CommercialRegistrationNo = result.Contract.FirstPartyFacility.CommercialRegisterNumber;                    litigationPartiesDetailsDto.FirstPartyDto.AgencyNumber = "1234567890";                }                if (result.Contract.SecondPartyCitizenId.HasValue)                {                    litigationPartiesDetailsDto.SecondPartyDto.Nationality = result.Contract.SecondPartyCitizen?.Nationality?.NationalityName;                    litigationPartiesDetailsDto.SecondPartyDto.FullName = result.Contract.SecondPartyCitizen.FullName;                    litigationPartiesDetailsDto.SecondPartyDto.Mobile = result.Contract.SecondPartyCitizen.Mobile;                    litigationPartiesDetailsDto.SecondPartyDto.Email = result.Contract.SecondPartyCitizen.Email;                    litigationPartiesDetailsDto.SecondPartyDto.FullName = result.Contract.SecondPartyCitizen.FullName;                    litigationPartiesDetailsDto.SecondPartyDto.AgencyNumber = "1234567890";                    litigationPartiesDetailsDto.SecondPartyDto.CitizenId = result.Contract.SecondPartyCitizen.Id;                    litigationPartiesDetailsDto.SecondPartyDto.BirthDate = result.Contract.SecondPartyCitizen.BirthDate;                    litigationPartiesDetailsDto.SecondPartyDto.IdentityNumber = result.Contract.SecondPartyCitizen.IdentityNumber;                    litigationPartiesDetailsDto.SecondPartyDto.IsPretender = false;                    litigationPartiesDetailsDto.SecondPartyDto.Capacity = result.Contract.SecondPartyCapacity;                    litigationPartiesDetailsDto.SecondPartyDto.NationalAddress = result.Contract.SecondPartyCitizen.NationalAddress;                    litigationPartiesDetailsDto.SecondPartyDto.AgancyAttachment = result.LitigationRequestOwnerTypeId == LitigationRequestOwnerType.LawyerForIndividual ? new SysFileManagerCreateUpdateDto { Id = Guid.Parse("e86953a3-c747-49f4-b817-21592334321f"), FileDescription = "FileDescription", FilePath = "reac/e86953a3-c747-49f4-b817-21592334321f.png", FileType = "Pdf" } : null;                    litigationPartiesDetailsDto.SecondPartyDto.LawLicenseAttachment = result.LitigationRequestOwnerTypeId == LitigationRequestOwnerType.LawyerForIndividual ? ((result.ApplicantCitizen.LawLicenseFile != null) ? new SysFileManagerCreateUpdateDto { Id = result.ApplicantCitizen.LawLicenseFile.Id, FileDescription = result.ApplicantCitizen.LawLicenseFile.FileDescription, FilePath = result.ApplicantCitizen.LawLicenseFile.FilePath, FileType = result.ApplicantCitizen.LawLicenseFile.FileType } : null) : null;                    litigationPartiesDetailsDto.SecondPartyDto.EstablishmentContract = result.LitigationRequestOwnerTypeId == LitigationRequestOwnerType.CompanyRepresentative ? new SysFileManagerCreateUpdateDto { Id = Guid.Parse("e86953a3-c747-49f4-b817-21592334321f"), FileDescription = "FileDescription", FilePath = "reac/e86953a3-c747-49f4-b817-21592334321f.png", FileType = "Pdf" } : null;                }                if (result.Contract.SecondPartyFacilityId.HasValue)                {                    litigationPartiesDetailsDto.FirstPartyDto.IsPretender = false;                    litigationPartiesDetailsDto.SecondPartyDto.LawLicenseExpirationDate = result.ApplicantCitizen.LawyerLicenseExpirationDate;                    litigationPartiesDetailsDto.SecondPartyDto.LawLicenseNumber = result.ApplicantCitizen.LawyerLicenseNumber;                    litigationPartiesDetailsDto.SecondPartyDto.Capacity = result.Contract.SecondPartyCapacity;                    litigationPartiesDetailsDto.SecondPartyDto.FacilityName = result.Contract?.SecondPartyFacility?.ArabicFacilityName;                    litigationPartiesDetailsDto.SecondPartyDto.FacilityNumber = result.Contract.SecondPartyFacility.Facility700Number;                    litigationPartiesDetailsDto.SecondPartyDto.CommercialRegistrationNo = result.Contract.SecondPartyFacility.CommercialRegisterNumber;                    litigationPartiesDetailsDto.SecondPartyDto.AgencyNumber = "1234567890";                }                litigationPartiesDetailsDto.Key = result.Contract.ContractKey;                litigationPartiesDetailsDto.SubKey = result.Contract.VersionNumber;                litigationPartiesDetailsDto.ContractAddress = result.ContractAddress;
                 //litigationPartiesDetailsDto.AssociationName = "جمعية";
-                litigationPartiesDetailsDto.Id = result.ContractId;                litigationPartiesDetailsDto.LitigationRequestOwnerType = result.LitigationRequestOwnerTypeId;                if (result.Contract.ContractFile != null)                {                    litigationPartiesDetailsDto.ContractFile = new SysFileManagerCreateUpdateDto()                    {                        Id = result.Contract.ContractFile.Id,                        FileType = result.Contract.ContractFile.FileType,                        FileDescription = result.Contract.ContractFile.FileDescription,                        FilePath = result.Contract.ContractFile.FilePath,                    };                }                if (result.Contract.AssociationRegistrationCertificateFile != null)                {                    litigationPartiesDetailsDto.AssociationRegistrationCertificateFile = new SysFileManagerCreateUpdateDto()                    {                        Id = result.Contract.AssociationRegistrationCertificateFile.Id,                        FileType = result.Contract.AssociationRegistrationCertificateFile.FileType,                        FileDescription = result.Contract.AssociationRegistrationCertificateFile.FileDescription,                        FilePath = result.Contract.AssociationRegistrationCertificateFile.FilePath,                    };                }                if (result.Contract.FoundingLetterFile != null)                {                    litigationPartiesDetailsDto.FoundingLetterFile = new SysFileManagerCreateUpdateDto()                    {                        Id = result.Contract.FoundingLetterFile.Id,                        FileType = result.Contract.FoundingLetterFile.FileType,                        FileDescription = result.Contract.FoundingLetterFile.FileDescription,                        FilePath = result.Contract.FoundingLetterFile.FilePath,                    };                }                if (result.Contract.InternalRegulationsFile != null)                {                    litigationPartiesDetailsDto.InternalRegulationsFile = new SysFileManagerCreateUpdateDto()                    {                        Id = result.Contract.InternalRegulationsFile.Id,                        FileType = result.Contract.InternalRegulationsFile.FileType,                        FileDescription = result.Contract.InternalRegulationsFile.FileDescription,                        FilePath = result.Contract.InternalRegulationsFile.FilePath,                    };                }                foreach (var item in result.LitigationRequestRequests)                {                    litigationPartiesDetailsDto.Requests.Add(item);                }                foreach (var item in result.LitigationRequestGrounds)                {                    litigationPartiesDetailsDto.References.Add(item);                }                return new DataResponse<LitigationPartiesDetailsDto>() { Data = litigationPartiesDetailsDto, IsDone = true };            }            catch (Exception ex)            {                return new ExceptionResponse()                {                    IsDone = false,                    Exception = ex.Message + "\n" + ex.ToString()                };            }        }        public async Task<BaseResponse> GetLitigationDetails(Guid litigationId)        {            try            {                var quarble = await GetQueryableAsync();                var result = quarble.Include(x => x.Contract)                    .Include(x => x.LitigationRequestCategory)                    .Include(x => x.LitigationRequestSessions)                    .Include(x => x.Area)                    .Include(x => x.City)                    .Include(x => x.ExemptionReductionFile)                    .Include(x => x.ApplicantCitizen)                    .Include(x => x.Contract.SecondPartyCitizen)                    .Include(x => x.SysExemptionReductionCategory)                    .Include(x => x.ExemptionReductionFile)                    .Include(x => x.Contract.FirstPartyCitizen).Include(x => x.LitigationRequestRequests)                    .Include(x => x.LitigationRequestGrounds).ThenInclude(x => x.LitigationRequestGroundFiles).ThenInclude(x => x.FileManager)                    .FirstOrDefault(x => x.Id == litigationId);                var mapped = _mapper.Map<LitigationDetailsDto>(result);                if (result.LitigationRequestRequests != null)                {                    foreach (var item in result.LitigationRequestRequests)                    {                        mapped.Requests.Add(new LitigationRequestRequestCreateUpdateDto()                        {                            Id = item.Id,                            RequestContent = item.RequestContent                        });                    }                }                mapped.References = new List<LitigationRequestGroundCreateUpdateDto>();                if (result.LitigationRequestGrounds != null)                {                    foreach (var item in result.LitigationRequestGrounds)                    {                        LitigationRequestGroundCreateUpdateDto litigationRequestGroundCreateUpdateDto = new LitigationRequestGroundCreateUpdateDto();                        litigationRequestGroundCreateUpdateDto.Id = item.Id;                        litigationRequestGroundCreateUpdateDto.Title = item.Title;                        litigationRequestGroundCreateUpdateDto.ReferenceFiles = new List<SysFileManagerCreateUpdateDto>();                        if (item.LitigationRequestGroundFiles != null)                        {                            foreach (var fileItem in item.LitigationRequestGroundFiles)                            {                                if (fileItem.FileManager != null)                                {                                    litigationRequestGroundCreateUpdateDto.ReferenceFiles.Add(new SysFileManagerCreateUpdateDto()                                    {                                        Id = fileItem.FileManager.Id,                                        FileDescription = fileItem.FileManager.FileDescription,                                        FileType = fileItem.FileManager.FileType,                                        FilePath = fileItem.FileManager.FilePath,                                    });                                }                            }                        }                        mapped.References.Add(litigationRequestGroundCreateUpdateDto);                    }                }                if (result.SysExemptionReductionCategory != null)                {                    mapped.ExemptionReductionCategory = new Contracts.Dtos.System.LitigationRequestCategoryDtos.SysExemptionReductionCategoryCreateUpdateDto()                    {                        Id = result.SysExemptionReductionCategory.Id,                        ExemptionReductionCategoryName = result.SysExemptionReductionCategory.ExemptionReductionCategoryName                    };                }                if (result.ExemptionReductionFile != null)                {                    mapped.ExemptionReductionFile = new SysFileManagerCreateUpdateDto()                    {                        Id = result.ExemptionReductionFile.Id,                        FileType = result.ExemptionReductionFile.FileType,                        FileDescription = result.ExemptionReductionFile.FileDescription,                        FilePath = result.ExemptionReductionFile.FilePath,                    };                }                return new DataResponse<LitigationDetailsDto> { Data = mapped, IsDone = true };            }            catch (Exception ex) { return new ExceptionResponse() { Exception = ex.Message + "\b" + ex.ToString(), IsDone = false }; };        }        public async Task<BaseResponse> CreateLitigationRequest(LitigationRequestDto litigationRequestDto)        {            Guid citizenId = Guid.Empty;            _jwtReader.GetReferenceId(ref citizenId);            switch (litigationRequestDto.ContractType)            {                case LitigationRequestContractType.Rent:                    return await ValidateRentContract(litigationRequestDto, citizenId);                case LitigationRequestContractType.Properties:                    return await ValidatePropertiesContract(litigationRequestDto, citizenId);                case LitigationRequestContractType.Wafi:                    return await ValidateWafiContract(litigationRequestDto, citizenId);                case LitigationRequestContractType.RealEstateBrokerage:                    return await ValidateRealEstateBrokerageContract(litigationRequestDto, citizenId);                case LitigationRequestContractType.OtherServices:                    return await ValidateOtherServicesContract(litigationRequestDto, citizenId);                default:                    throw new NotImplementedException();            }        }        public async Task<BaseResponse> ValidateRentContract(LitigationRequestDto litigationRequestDto, Guid userId)        {            var contracts = ContractIntegration.GetContracts().Where(t => t.ContractKey == litigationRequestDto.key && t.VersionNumber == litigationRequestDto.SubKey && t.LitigationRequestContractTypeId == LitigationRequestContractType.Rent).ToList();            if (!contracts.Any())                return new BaseResponse() { IsDone = false, Message = "بيانات العقد غير صحيحة" };            LitigationRequestContract litigationRequestContract = new LitigationRequestContract()            {                Id = Guid.NewGuid(),                LitigationRequestContractTypeId = LitigationRequestContractType.Rent,                ContractKey = litigationRequestDto.key,                VersionNumber = litigationRequestDto.SubKey,            };            if (!(await ValidateContractParties(litigationRequestDto, userId, contracts, litigationRequestContract)).IsDone)                return new BaseResponse() { IsDone = false, Message = "بيانات العقد غير صحيحة" };            LitigationRequest litigationRequest = new LitigationRequest()            {                Id = Guid.NewGuid(),                ContractId = litigationRequestContract.Id,                ApplicantCitizenId = userId,                LitigationRequestOwnerTypeId = litigationRequestDto.LitigationRequestOwnerType,                InternalStatusId = RequestStatus.SaveAsDraft,                ExternalStatusId = RequestStatus.SaveAsDraft,                Fees = 0,                IsPaid = false,                CreatedOn = DateTime.Now,                IsSent = false,                ContractAddress = "شارع القصر - الرياض"            };            await _repository.AddAsync<LitigationRequestContract, Guid>(litigationRequestContract);            await _repository.AddAsync<LitigationRequest, Guid>(litigationRequest);            var saveResponse = await _repository.SaveChangesAsync();            if (saveResponse.IsDone)            {                litigationRequest = (await _repository.GetQueryable<LitigationRequest, Guid>())                          .Include(x => x.ApplicantCitizen)                          .Include(x => x.ApplicantCitizen.LawLicenseFile)                          .Include(x => x.ApplicantCitizen.IdentityFile)                          .Include(x => x.Contract)                          .Include(x => x.Contract.FirstPartyCitizen)                          .Include(x => x.Contract.FirstPartyCitizen.Nationality)                          .Include(x => x.Contract.FirstPartyCitizen.FromDelegators)                          .Include(x => x.Contract.SecondPartyCitizen)                          .Include(x => x.Contract.SecondPartyCitizen.Nationality)                          .Include(x => x.Contract.SecondPartyCitizen.FromDelegators)                          .Include(x => x.Contract.FirstPartyFacility)                          .Include(x => x.Contract.FirstPartyFacility.Delegators)                          .Include(x => x.Contract.SecondPartyFacility)                          .Include(x => x.Contract.SecondPartyFacility.Delegators)                          .AsNoTracking()                          .Where(x => x.Id == litigationRequest.Id).ToList().FirstOrDefault();                return await ReturnLitigationRequestDto(litigationRequest);            }            else                return saveResponse;        }        private async Task<BaseResponse> ReturnLitigationRequestDto(LitigationRequest litigationRequest, string SecondPartyNationalId = "")        {                        RentIntegrateDto rentIntegrateDto = new RentIntegrateDto()            {                FirstPartyDto = new PartyDTO()                {                    IdentityNumber = (litigationRequest.Contract.FirstPartyCitizen == null) ? null : litigationRequest.Contract.FirstPartyCitizen.IdentityNumber,                    NationalAddress = (litigationRequest.Contract.FirstPartyCitizen == null) ? null : litigationRequest.Contract.FirstPartyCitizen.NationalAddress,                    CommercialRegistrationNo = (litigationRequest.Contract.FirstPartyFacility != null) ? litigationRequest.Contract.FirstPartyFacility.CommercialRegisterNumber : null,                    FacilityName = (litigationRequest.Contract.FirstPartyFacility == null) ? null : litigationRequest.Contract.FirstPartyFacility.ArabicFacilityName,                    Nationality = (litigationRequest.Contract.FirstPartyCitizen == null) ? null : litigationRequest.Contract.FirstPartyCitizen.Nationality.NationalityName,                    FullName = (litigationRequest.Contract.FirstPartyCitizen == null) ? null : litigationRequest.Contract.FirstPartyCitizen.FullName,                    Mobile = (litigationRequest.Contract.FirstPartyCitizen == null) ? null : litigationRequest.Contract.FirstPartyCitizen.Mobile,                    Email = (litigationRequest.Contract.FirstPartyCitizen == null) ? null : litigationRequest.Contract.FirstPartyCitizen.Email,                    FacilityNumber = (litigationRequest.Contract.FirstPartyFacility != null) ? litigationRequest.Contract.FirstPartyFacility.Facility700Number : null,                    CommercialRegisterNumber = (litigationRequest.Contract.FirstPartyFacility != null) ? litigationRequest.Contract.FirstPartyFacility.CommercialRegisterNumber : null,                    BirthDate = (litigationRequest.Contract.FirstPartyCitizen != null) ? litigationRequest.Contract.FirstPartyCitizen.BirthDate : null,                    Capacity = litigationRequest.Contract.FirstPartyCapacity,                    IsPretender = true,                    LawLicenseNumber = litigationRequest.ApplicantCitizen.LawyerLicenseNumber,                    LawLicenseExpirationDate = litigationRequest.ApplicantCitizen.LawyerLicenseExpirationDate,                    AgencyNumber = "1234567890", // (litigationRequest.LitigationRequestOwnerTypeId == LitigationRequestOwnerType.Lawyer) || (litigationRequest.LitigationRequestOwnerTypeId == LitigationRequestOwnerType.Agent ) ? litigationRequest.Contract. : null,
+                litigationPartiesDetailsDto.Id = result.ContractId;                litigationPartiesDetailsDto.LitigationRequestOwnerType = result.LitigationRequestOwnerTypeId;                if (result.Contract.ContractFile != null)                {                    litigationPartiesDetailsDto.ContractFile = new SysFileManagerCreateUpdateDto()                    {                        Id = result.Contract.ContractFile.Id,                        FileType = result.Contract.ContractFile.FileType,                        FileDescription = result.Contract.ContractFile.FileDescription,                        FilePath = result.Contract.ContractFile.FilePath,                    };                }                if (result.Contract.AssociationRegistrationCertificateFile != null)                {                    litigationPartiesDetailsDto.AssociationRegistrationCertificateFile = new SysFileManagerCreateUpdateDto()                    {                        Id = result.Contract.AssociationRegistrationCertificateFile.Id,                        FileType = result.Contract.AssociationRegistrationCertificateFile.FileType,                        FileDescription = result.Contract.AssociationRegistrationCertificateFile.FileDescription,                        FilePath = result.Contract.AssociationRegistrationCertificateFile.FilePath,                    };                }                if (result.Contract.FoundingLetterFile != null)                {                    litigationPartiesDetailsDto.FoundingLetterFile = new SysFileManagerCreateUpdateDto()                    {                        Id = result.Contract.FoundingLetterFile.Id,                        FileType = result.Contract.FoundingLetterFile.FileType,                        FileDescription = result.Contract.FoundingLetterFile.FileDescription,                        FilePath = result.Contract.FoundingLetterFile.FilePath,                    };                }                if (result.Contract.InternalRegulationsFile != null)                {                    litigationPartiesDetailsDto.InternalRegulationsFile = new SysFileManagerCreateUpdateDto()                    {                        Id = result.Contract.InternalRegulationsFile.Id,                        FileType = result.Contract.InternalRegulationsFile.FileType,                        FileDescription = result.Contract.InternalRegulationsFile.FileDescription,                        FilePath = result.Contract.InternalRegulationsFile.FilePath,                    };                }                foreach (var item in result.LitigationRequestRequests)                {                    litigationPartiesDetailsDto.Requests.Add(item);                }                foreach (var item in result.LitigationRequestGrounds)                {                    litigationPartiesDetailsDto.References.Add(item);                }                return new DataResponse<LitigationPartiesDetailsDto>() { Data = litigationPartiesDetailsDto, IsDone = true };            }            catch (Exception ex)            {                return new ExceptionResponse()                {                    IsDone = false,                    Exception = ex.Message + "\n" + ex.ToString()                };            }        }        public async Task<BaseResponse> GetLitigationDetails(Guid litigationId)        {            try            {                var quarble = await GetQueryableAsync();                var result = quarble.Include(x => x.Contract)                    .Include(x => x.LitigationRequestCategory)                    .Include(x => x.LitigationRequestSessions)                    .Include(x => x.Area)                    .Include(x => x.City)                    .Include(x => x.ExemptionReductionFile)                    .Include(x => x.ApplicantCitizen)                    .Include(x => x.Contract.SecondPartyCitizen)                    .Include(x => x.SysExemptionReductionCategory)                    .Include(x => x.ExemptionReductionFile)                    .Include(x => x.Contract.FirstPartyCitizen).Include(x => x.LitigationRequestRequests)                    .Include(x => x.LitigationRequestGrounds).ThenInclude(x => x.LitigationRequestGroundFiles).ThenInclude(x => x.FileManager)                    .FirstOrDefault(x => x.Id == litigationId);                var mapped = _mapper.Map<LitigationDetailsDto>(result);                if (result.LitigationRequestRequests != null)                {                    foreach (var item in result.LitigationRequestRequests)                    {                        mapped.Requests.Add(new LitigationRequestRequestCreateUpdateDto()                        {                            Id = item.Id,                            RequestContent = item.RequestContent                        });                    }                }                mapped.References = new List<LitigationRequestGroundCreateUpdateDto>();                if (result.LitigationRequestGrounds != null)                {                    foreach (var item in result.LitigationRequestGrounds)                    {                        LitigationRequestGroundCreateUpdateDto litigationRequestGroundCreateUpdateDto = new LitigationRequestGroundCreateUpdateDto();                        litigationRequestGroundCreateUpdateDto.Id = item.Id;                        litigationRequestGroundCreateUpdateDto.Title = item.Title;                        litigationRequestGroundCreateUpdateDto.ReferenceFiles = new List<SysFileManagerCreateUpdateDto>();                        if (item.LitigationRequestGroundFiles != null)                        {                            foreach (var fileItem in item.LitigationRequestGroundFiles)                            {                                if (fileItem.FileManager != null)                                {                                    litigationRequestGroundCreateUpdateDto.ReferenceFiles.Add(new SysFileManagerCreateUpdateDto()                                    {                                        Id = fileItem.FileManager.Id,                                        FileDescription = fileItem.FileManager.FileDescription,                                        FileType = fileItem.FileManager.FileType,                                        FilePath = fileItem.FileManager.FilePath,                                    });                                }                            }                        }                        mapped.References.Add(litigationRequestGroundCreateUpdateDto);                    }                }                if (result.SysExemptionReductionCategory != null)                {                    mapped.ExemptionReductionCategory = new Contracts.Dtos.System.LitigationRequestCategoryDtos.SysExemptionReductionCategoryCreateUpdateDto()                    {                        Id = result.SysExemptionReductionCategory.Id,                        ExemptionReductionCategoryName = result.SysExemptionReductionCategory.ExemptionReductionCategoryName                    };                }                if (result.ExemptionReductionFile != null)                {                    mapped.ExemptionReductionFile = new SysFileManagerCreateUpdateDto()                    {                        Id = result.ExemptionReductionFile.Id,                        FileType = result.ExemptionReductionFile.FileType,                        FileDescription = result.ExemptionReductionFile.FileDescription,                        FilePath = result.ExemptionReductionFile.FilePath,                    };                }                return new DataResponse<LitigationDetailsDto> { Data = mapped, IsDone = true };            }            catch (Exception ex) { return new ExceptionResponse() { Exception = ex.Message + "\b" + ex.ToString(), IsDone = false }; };        }        public async Task<BaseResponse> CreateLitigationRequest(LitigationRequestDto litigationRequestDto)        {            Guid citizenId = Guid.Empty;            _jwtReader.GetReferenceId(ref citizenId);            switch (litigationRequestDto.ContractType)            {                case LitigationRequestContractType.Rent:                    return await ValidateRentContract(litigationRequestDto, citizenId);                case LitigationRequestContractType.Properties:                    return await ValidatePropertiesContract(litigationRequestDto, citizenId);                case LitigationRequestContractType.Wafi:                    return await ValidateWafiContract(litigationRequestDto, citizenId);                case LitigationRequestContractType.RealEstateBrokerage:                    return await ValidateRealEstateBrokerageContract(litigationRequestDto, citizenId);                case LitigationRequestContractType.OtherServices:                    return await ValidateOtherServicesContract(litigationRequestDto, citizenId);                default:                    throw new NotImplementedException();            }        }        public async Task<BaseResponse> ValidateRentContract(LitigationRequestDto litigationRequestDto, Guid userId)        {            var contracts = ContractIntegration.GetContracts().Where(t => t.ContractKey == litigationRequestDto.key && t.VersionNumber == litigationRequestDto.SubKey && t.LitigationRequestContractTypeId == LitigationRequestContractType.Rent).ToList();            if (!contracts.Any())                return new BaseResponse() { IsDone = false, Message = "بيانات العقد غير صحيحة" };            LitigationRequestContract litigationRequestContract = new LitigationRequestContract()            {                Id = Guid.NewGuid(),                LitigationRequestContractTypeId = LitigationRequestContractType.Rent,                ContractKey = litigationRequestDto.key,                VersionNumber = litigationRequestDto.SubKey,            };            if (!(await ValidateContractParties(litigationRequestDto, userId, contracts, litigationRequestContract)).IsDone)                return new BaseResponse() { IsDone = false, Message = "بيانات العقد غير صحيحة" };            LitigationRequest litigationRequest = new LitigationRequest()            {                Id = Guid.NewGuid(),                ContractId = litigationRequestContract.Id,                ApplicantCitizenId = userId,                LitigationRequestOwnerTypeId = litigationRequestDto.LitigationRequestOwnerType,                InternalStatusId = RequestStatus.SaveAsDraft,                ExternalStatusId = RequestStatus.SaveAsDraft,                Fees = 0,                IsPaid = false,                CreatedOn = DateTime.Now,                IsSent = false,                ContractAddress = "شارع القصر - الرياض"            };            await _repository.AddAsync<LitigationRequestContract, Guid>(litigationRequestContract);            await _repository.AddAsync<LitigationRequest, Guid>(litigationRequest);            var saveResponse = await _repository.SaveChangesAsync();            if (saveResponse.IsDone)            {                litigationRequest = (await _repository.GetQueryable<LitigationRequest, Guid>())                          .Include(x => x.ApplicantCitizen)                          .Include(x => x.ApplicantCitizen.LawLicenseFile)                          .Include(x => x.ApplicantCitizen.IdentityFile)                          .Include(x => x.Contract)                          .Include(x => x.Contract.FirstPartyCitizen)                          .Include(x => x.Contract.FirstPartyCitizen.Nationality)                          .Include(x => x.Contract.FirstPartyCitizen.FromDelegators)                          .Include(x => x.Contract.SecondPartyCitizen)                          .Include(x => x.Contract.SecondPartyCitizen.Nationality)                          .Include(x => x.Contract.SecondPartyCitizen.FromDelegators)                          .Include(x => x.Contract.FirstPartyFacility)                          .Include(x => x.Contract.FirstPartyFacility.Delegators)                          .Include(x => x.Contract.SecondPartyFacility)                          .Include(x => x.Contract.SecondPartyFacility.Delegators)                          .AsNoTracking()                          .Where(x => x.Id == litigationRequest.Id).ToList().FirstOrDefault();                return await ReturnLitigationRequestDto(litigationRequest);            }            else                return saveResponse;        }        private async Task<BaseResponse> ReturnLitigationRequestDto(LitigationRequest litigationRequest, string SecondPartyNationalId = "")        {
+            RentIntegrateDto rentIntegrateDto = new RentIntegrateDto()            {                FirstPartyDto = new PartyDTO()                {                    IdentityNumber = (litigationRequest.Contract.FirstPartyCitizen == null) ? null : litigationRequest.Contract.FirstPartyCitizen.IdentityNumber,                    NationalAddress = (litigationRequest.Contract.FirstPartyCitizen == null) ? null : litigationRequest.Contract.FirstPartyCitizen.NationalAddress,                    CommercialRegistrationNo = (litigationRequest.Contract.FirstPartyFacility != null) ? litigationRequest.Contract.FirstPartyFacility.CommercialRegisterNumber : null,                    FacilityName = (litigationRequest.Contract.FirstPartyFacility == null) ? null : litigationRequest.Contract.FirstPartyFacility.ArabicFacilityName,                    Nationality = (litigationRequest.Contract.FirstPartyCitizen == null) ? null : litigationRequest.Contract.FirstPartyCitizen.Nationality.NationalityName,                    FullName = (litigationRequest.Contract.FirstPartyCitizen == null) ? null : litigationRequest.Contract.FirstPartyCitizen.FullName,                    Mobile = (litigationRequest.Contract.FirstPartyCitizen == null) ? null : litigationRequest.Contract.FirstPartyCitizen.Mobile,                    Email = (litigationRequest.Contract.FirstPartyCitizen == null) ? null : litigationRequest.Contract.FirstPartyCitizen.Email,                    FacilityNumber = (litigationRequest.Contract.FirstPartyFacility != null) ? litigationRequest.Contract.FirstPartyFacility.Facility700Number : null,                    CommercialRegisterNumber = (litigationRequest.Contract.FirstPartyFacility != null) ? litigationRequest.Contract.FirstPartyFacility.CommercialRegisterNumber : null,                    BirthDate = (litigationRequest.Contract.FirstPartyCitizen != null) ? litigationRequest.Contract.FirstPartyCitizen.BirthDate : null,                    Capacity = litigationRequest.Contract.FirstPartyCapacity,                    IsPretender = true,                    LawLicenseNumber = litigationRequest.ApplicantCitizen.LawyerLicenseNumber,                    LawLicenseExpirationDate = litigationRequest.ApplicantCitizen.LawyerLicenseExpirationDate,                    AgencyNumber = "1234567890", // (litigationRequest.LitigationRequestOwnerTypeId == LitigationRequestOwnerType.Lawyer) || (litigationRequest.LitigationRequestOwnerTypeId == LitigationRequestOwnerType.Agent ) ? litigationRequest.Contract. : null,
                     AgancyAttachment = litigationRequest.LitigationRequestOwnerTypeId == LitigationRequestOwnerType.LawyerForIndividual ? new SysFileManagerCreateUpdateDto { Id = Guid.Parse("e86953a3-c747-49f4-b817-21592334321f"), FileDescription = "FileDescription", FilePath = "reac/e86953a3-c747-49f4-b817-21592334321f.png", FileType = "Pdf" } : null,                    LawLicenseAttachment = litigationRequest.LitigationRequestOwnerTypeId == LitigationRequestOwnerType.LawyerForIndividual ? ((litigationRequest.ApplicantCitizen.LawLicenseFile != null) ? new SysFileManagerCreateUpdateDto { Id = litigationRequest.ApplicantCitizen.LawLicenseFile.Id, FileDescription = litigationRequest.ApplicantCitizen.LawLicenseFile.FileDescription, FilePath = litigationRequest.ApplicantCitizen.LawLicenseFile.FilePath, FileType = litigationRequest.ApplicantCitizen.LawLicenseFile.FileType } : null) : null,                    EstablishmentContract = litigationRequest.LitigationRequestOwnerTypeId == LitigationRequestOwnerType.CompanyRepresentative ? new SysFileManagerCreateUpdateDto { Id = Guid.Parse("e86953a3-c747-49f4-b817-21592334321f"), FileDescription = "FileDescription", FilePath = "reac/e86953a3-c747-49f4-b817-21592334321f.png", FileType = "Pdf" } : null,                },                SecondPartyDto = new PartyDTO()                {                    IdentityNumber = (litigationRequest.Contract.SecondPartyCitizen == null) ? null : litigationRequest.Contract.SecondPartyCitizen.IdentityNumber,                    NationalAddress = (litigationRequest.Contract.SecondPartyCitizen == null) ? null : litigationRequest.Contract.SecondPartyCitizen.NationalAddress,                    CommercialRegistrationNo = (litigationRequest.Contract.SecondPartyFacility != null) ? litigationRequest.Contract.SecondPartyFacility.CommercialRegisterNumber : null,                    FacilityName = (litigationRequest.Contract.SecondPartyFacility != null) ? litigationRequest.Contract.SecondPartyFacility.ArabicFacilityName : null,                    Nationality = (litigationRequest.Contract.SecondPartyCitizen == null) ? null : (litigationRequest.Contract.SecondPartyCitizen.Nationality == null) ? null : litigationRequest.Contract.SecondPartyCitizen.Nationality.NationalityName,                    FullName = (litigationRequest.Contract.SecondPartyCitizen == null) ? null : litigationRequest.Contract.SecondPartyCitizen.FullName,                    Mobile = (litigationRequest.Contract.SecondPartyCitizen == null) ? null : litigationRequest.Contract.SecondPartyCitizen.Mobile,                    Email = (litigationRequest.Contract.SecondPartyCitizen == null) ? null : litigationRequest.Contract.SecondPartyCitizen.Email,                    FacilityNumber = (litigationRequest.Contract.SecondPartyFacility != null) ? litigationRequest.Contract.SecondPartyFacility.Facility700Number : null,                    CommercialRegisterNumber = (litigationRequest.Contract.SecondPartyFacility != null) ? litigationRequest.Contract.SecondPartyFacility.CommercialRegisterNumber : null,                    BirthDate = (litigationRequest.Contract.SecondPartyCitizen != null) ? litigationRequest.Contract.SecondPartyCitizen.BirthDate : null,                    Capacity = litigationRequest.Contract.SecondPartyCapacity,                    IsPretender = false,                    LawLicenseNumber = litigationRequest.ApplicantCitizen.LawyerLicenseNumber,                    LawLicenseExpirationDate = litigationRequest.ApplicantCitizen.LawyerLicenseExpirationDate,                    AgencyNumber = "1234567890", // (litigationRequest.LitigationRequestOwnerTypeId == LitigationRequestOwnerType.Lawyer) || (litigationRequest.LitigationRequestOwnerTypeId == LitigationRequestOwnerType.Agent ) ? litigationRequest.Contract. : null,
-                    AgancyAttachment = litigationRequest.LitigationRequestOwnerTypeId == LitigationRequestOwnerType.LawyerForIndividual ? new SysFileManagerCreateUpdateDto { Id = Guid.Parse("e86953a3-c747-49f4-b817-21592334321f"), FileDescription = "FileDescription", FilePath = "reac/e86953a3-c747-49f4-b817-21592334321f.png", FileType = "Pdf" } : null,                    LawLicenseAttachment = litigationRequest.LitigationRequestOwnerTypeId == LitigationRequestOwnerType.LawyerForIndividual ? ((litigationRequest.ApplicantCitizen.LawLicenseFile != null) ? new SysFileManagerCreateUpdateDto { Id = litigationRequest.ApplicantCitizen.LawLicenseFile.Id, FileDescription = litigationRequest.ApplicantCitizen.LawLicenseFile.FileDescription, FilePath = litigationRequest.ApplicantCitizen.LawLicenseFile.FilePath, FileType = litigationRequest.ApplicantCitizen.LawLicenseFile.FileType } : null) : null,                    EstablishmentContract = litigationRequest.LitigationRequestOwnerTypeId == LitigationRequestOwnerType.CompanyRepresentative ? new SysFileManagerCreateUpdateDto { Id = Guid.Parse("e86953a3-c747-49f4-b817-21592334321f"), FileDescription = "FileDescription", FilePath = "reac/e86953a3-c747-49f4-b817-21592334321f.png", FileType = "Pdf" } : null,                },                Key = litigationRequest.Contract.ContractKey,                SubKey = litigationRequest.Contract.VersionNumber,                LitigationRequestOwnerType = litigationRequest.LitigationRequestOwnerTypeId,                ContractAddress = litigationRequest.ContractAddress,                Id = litigationRequest.ContractId            };            if(litigationRequest.Contract.LitigationRequestContractTypeId == LitigationRequestContractType.Wafi)
+                    AgancyAttachment = litigationRequest.LitigationRequestOwnerTypeId == LitigationRequestOwnerType.LawyerForIndividual ? new SysFileManagerCreateUpdateDto { Id = Guid.Parse("e86953a3-c747-49f4-b817-21592334321f"), FileDescription = "FileDescription", FilePath = "reac/e86953a3-c747-49f4-b817-21592334321f.png", FileType = "Pdf" } : null,                    LawLicenseAttachment = litigationRequest.LitigationRequestOwnerTypeId == LitigationRequestOwnerType.LawyerForIndividual ? ((litigationRequest.ApplicantCitizen.LawLicenseFile != null) ? new SysFileManagerCreateUpdateDto { Id = litigationRequest.ApplicantCitizen.LawLicenseFile.Id, FileDescription = litigationRequest.ApplicantCitizen.LawLicenseFile.FileDescription, FilePath = litigationRequest.ApplicantCitizen.LawLicenseFile.FilePath, FileType = litigationRequest.ApplicantCitizen.LawLicenseFile.FileType } : null) : null,                    EstablishmentContract = litigationRequest.LitigationRequestOwnerTypeId == LitigationRequestOwnerType.CompanyRepresentative ? new SysFileManagerCreateUpdateDto { Id = Guid.Parse("e86953a3-c747-49f4-b817-21592334321f"), FileDescription = "FileDescription", FilePath = "reac/e86953a3-c747-49f4-b817-21592334321f.png", FileType = "Pdf" } : null,                },                Key = litigationRequest.Contract.ContractKey,                SubKey = litigationRequest.Contract.VersionNumber,                LitigationRequestOwnerType = litigationRequest.LitigationRequestOwnerTypeId,                ContractAddress = litigationRequest.ContractAddress,                Id = litigationRequest.ContractId            };            if (litigationRequest.Contract.LitigationRequestContractTypeId == LitigationRequestContractType.Wafi)
             {
                 var wafiResult = await WafiGetUserInfo(litigationRequest.Contract.ContractKey);
 
-                if(wafiResult is not null)
+                if (wafiResult is not null)
                 {
                     if (wafiResult.IsDone)
                     {
                         rentIntegrateDto.Project = wafiResult.Data;
                     }
                 }
-                
+
             }
             if (litigationRequest.Contract.LitigationRequestContractTypeId == LitigationRequestContractType.Wafi)
             {
@@ -435,8 +454,31 @@
                 var citizen = (await _repository.GetQueryable<Citizen, Guid>())
                                                 .Where(x => x.IdentityNumber == litigationRequestDto.SecondPartyNationalId)
                                                 .ToList();
+
+                if (!citizen.Any() && (string.IsNullOrEmpty(litigationRequestDto.SecondPartyName) && string.IsNullOrEmpty(litigationRequestDto.SecondPartyPhone)) && litigationRequestDto.ContractType != LitigationRequestContractType.Wafi)
+                {
+
+                    return new DataResponse<RentIntegrateDto>()
+                    {
+                        IsDone = false,
+                        Data = new RentIntegrateDto() { IsDefendantRegistered = false },
+                        Message = "من فضلك أدخل بيانات المدعي عليه"
+                    };
+                }
+                else if (!citizen.Any() && (string.IsNullOrEmpty(litigationRequestDto.SecondPartyName) && string.IsNullOrEmpty(litigationRequestDto.SecondPartyPhone)) && litigationRequestDto.ContractType == LitigationRequestContractType.Wafi)
+                {
+                    var addDefendantFromWafi = await AddDefendantFromWafi(litigationRequestDto);
+
+                    if (!addDefendantFromWafi.IsDone)
+                        return addDefendantFromWafi;
+
+                    goto TryGetCitizenAgian;
+                }
+
+
                 if (!citizen.Any())
                 {
+
                     User user = new User { UserName = litigationRequestDto.SecondPartyNationalId.Trim(), Email = null, EmailConfirmed = true };
                     var identityUser = await _userManager.CreateAsync(user, "123456");
                     if (!identityUser.Succeeded || identityUser.Errors.Any())
@@ -551,6 +593,7 @@
                               .Where(x => x.Id == litigationRequest.Id).ToList().FirstOrDefault();
 
                     newlitigationRequest.ReconciliationPeriod = newlitigationRequest.Contract.LitigationRequestContractType.ReconciliationPeriod;
+                    newlitigationRequest.PretenderRating = 10;
                     var newSaveResponse = await _repository.SaveChangesAsync();
                     if (saveResponse.IsDone)
                     {
@@ -571,6 +614,167 @@
                 };
             }
         }
+
+        private async Task<BaseResponse> AddDefendantFromWafi(CreateLitigationRequestNoIntegrationDto litigationRequestDto)
+        {
+            try
+            {
+                var wafiData = await GetWafiData(litigationRequestDto.key, litigationRequestDto.SecondPartyNationalId);
+
+                if (!wafiData.IsDone)
+                    return new BaseResponse() { IsDone = false, Message = "حدث خطأ في التكامل مع وافي" };
+
+                if(wafiData?.Data?.data is null)
+                    return new DataResponse<RentIntegrateDto>()
+                    {
+                        IsDone = false,
+                        Data = new RentIntegrateDto() { IsDefendantRegistered = false },
+                        Message = "من فضلك أدخل بيانات المدعي عليه"
+                    };
+
+
+                if (litigationRequestDto.SecondPartyCapacityId is not null)
+                {
+                    switch (litigationRequestDto.SecondPartyCapacityId)
+                    {
+                        case (int)WafiRequestOwnerType.Accountant:
+
+                            if (wafiData?.Data?.data?.accountant is null)
+                                return new BaseResponse() { IsDone = false, Message = "حدث خطأ في التكامل مع وافي" };
+
+                            User accountantUser = new User { UserName = litigationRequestDto.SecondPartyNationalId.Trim(), Email = null, EmailConfirmed = true };
+                            var accountantIdentityUser = await _userManager.CreateAsync(accountantUser, "123456");
+                            if (!accountantIdentityUser.Succeeded || accountantIdentityUser.Errors.Any())
+                                return new BaseResponse() { IsDone = false, Message = "خطأ داخلي" };
+
+                            var accountant =  new Citizen()
+                            {
+                                Id = Guid.NewGuid(),
+                                FullName = wafiData.Data.data.accountant.fullName,
+                                Mobile = wafiData.Data.data.accountant.mobile,
+                                IdentityNumber = litigationRequestDto.SecondPartyNationalId,
+                                IsDraftAccount = true,
+                                UserId = accountantUser.Id
+                            };
+                            await _repository.AddAsync<Citizen, Guid>(accountant);
+                            await _repository.SaveChangesAsync();
+                            accountantUser.ReferenceId = accountant.Id;
+                            var updateAccountantUser = await _userManager.UpdateAsync(accountantUser);
+                            if (!updateAccountantUser.Succeeded || updateAccountantUser.Errors.Any())
+                                return new BaseResponse() { IsDone = false };
+
+                            return new BaseResponse() { IsDone = true };
+
+
+                        case (int)WafiRequestOwnerType.EngineeringConsultant:
+
+                            if (wafiData?.Data?.data?.engineeringConsultant is null)
+                                return new BaseResponse() { IsDone = false, Message = "حدث خطأ في التكامل مع وافي" };
+
+                            User consultantUser = new User { UserName = litigationRequestDto.SecondPartyNationalId.Trim(), Email = null, EmailConfirmed = true };
+                            var consultantIdentityUser = await _userManager.CreateAsync(consultantUser, "123456");
+                            if (!consultantIdentityUser.Succeeded || consultantIdentityUser.Errors.Any())
+                                return new BaseResponse() { IsDone = false, Message = "خطأ داخلي" };
+
+                            var consultant = new Citizen()
+                            {
+                                Id = Guid.NewGuid(),
+                                FullName = wafiData.Data.data.engineeringConsultant.fullName,
+                                Mobile = wafiData.Data.data.engineeringConsultant.mobile,
+                                IdentityNumber = litigationRequestDto.SecondPartyNationalId,
+                                IsDraftAccount = true,
+                                UserId = consultantUser.Id
+                            };
+
+                            await _repository.AddAsync<Citizen, Guid>(consultant);
+
+                            await _repository.SaveChangesAsync();
+                            consultantUser.ReferenceId = consultant.Id;
+                            var consultantUpdateUser = await _userManager.UpdateAsync(consultantUser);
+                            if (!consultantUpdateUser.Succeeded || consultantUpdateUser.Errors.Any())
+                                return new BaseResponse() { IsDone = false };
+
+                            return new BaseResponse() { IsDone = true };
+
+
+                        case (int)WafiRequestOwnerType.RealStateDeveloper:
+
+                            if (wafiData?.Data?.data?.developer is null)
+                                return new BaseResponse() { IsDone = false, Message = "حدث خطأ في التكامل مع وافي" };
+
+                            User developerUser = new User { UserName = litigationRequestDto.SecondPartyNationalId.Trim(), Email = null, EmailConfirmed = true };
+                            var identityUser3 = await _userManager.CreateAsync(developerUser, "123456");
+                            if (!identityUser3.Succeeded || identityUser3.Errors.Any())
+                                return new BaseResponse() { IsDone = false, Message = "خطأ داخلي" };
+
+                            var developer = new Citizen()
+                            {
+                                Id = Guid.NewGuid(),
+                                FullName = wafiData.Data.data.developer.fullName,
+                                Mobile = wafiData.Data.data.developer.mobile,
+                                IdentityNumber = litigationRequestDto.SecondPartyNationalId,
+                                IsDraftAccount = true,
+                                UserId = developerUser.Id
+                            };
+
+                            await _repository.AddAsync<Citizen, Guid>(developer);
+
+                            await _repository.SaveChangesAsync();
+                            developerUser.ReferenceId = developer.Id;
+                            var developerUpdateUser = await _userManager.UpdateAsync(developerUser);
+                            if (!developerUpdateUser.Succeeded || developerUpdateUser.Errors.Any())
+                                return new BaseResponse() { IsDone = false };
+
+                            return new BaseResponse() { IsDone = true };
+
+
+                    }
+                }
+                else
+                {
+                    if (wafiData?.Data?.data?.developer is null)
+                        return new BaseResponse() { IsDone = false, Message = "حدث خطأ في التكامل مع وافي" };
+
+                    User developerUser = new User { UserName = litigationRequestDto.SecondPartyNationalId.Trim(), Email = null, EmailConfirmed = true };
+                    var identityUser3 = await _userManager.CreateAsync(developerUser, "123456");
+                    if (!identityUser3.Succeeded || identityUser3.Errors.Any())
+                        return new BaseResponse() { IsDone = false, Message = "خطأ داخلي" };
+
+                    var developer = new Citizen()
+                    {
+                        Id = Guid.NewGuid(),
+                        FullName = wafiData.Data.data.developer.fullName,
+                        Mobile = wafiData.Data.data.developer.mobile,
+                        IdentityNumber = litigationRequestDto.SecondPartyNationalId,
+                        IsDraftAccount = true,
+                        UserId = developerUser.Id
+                    };
+
+                    await _repository.AddAsync<Citizen, Guid>(developer);
+
+                    await _repository.SaveChangesAsync();
+                    developerUser.ReferenceId = developer.Id;
+                    var developerUpdateUser = await _userManager.UpdateAsync(developerUser);
+                    if (!developerUpdateUser.Succeeded || developerUpdateUser.Errors.Any())
+                        return new BaseResponse() { IsDone = false };
+
+                    return new BaseResponse() { IsDone = true };
+
+                }
+
+                return new BaseResponse() { IsDone = false, Message = "خطأ في البيانات المدخله" };
+
+
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse() { IsDone = false, Message = "خطأ داخلي" };
+
+            }
+
+
+        }
+
         public async Task<BaseResponse> GetLitigationArbitrators(Guid requestId)
         {
             var newlitigationRequest = (await _repository.GetQueryable<LitigationRequest, Guid>())
@@ -733,13 +937,17 @@
                          .Include(x => x.Contract.FoundingLetterFile)
                          .Include(x => x.Contract.InternalRegulationsFile)
                          .Include(x => x.Contract.FirstPartyFacility)
-                         .Include(x => x.Contract.FirstPartyCitizen)
+                         .Include(x => x.Contract.FirstPartyCitizen.Nationality)
                          .Include(x => x.Contract.SecondPartyFacility)
-                         .Include(x => x.Contract.SecondPartyCitizen)
+                         .Include(x => x.Contract.SecondPartyCitizen.Nationality)
                          .Include(x => x.Contract.LitigationRequestContractType)
+                         .Include(x => x.LitigationRequestRequests)
 
-                         .Where(x => x.Id == requestId).ToList().FirstOrDefault();
-
+                         .Where(x => x.Id == requestId).AsNoTracking().ToList().FirstOrDefault();
+            if (litigationRequest == null)
+            {
+                return new BaseResponse { IsDone = false, Message = "No Litigation for this id " };
+            }
             var request = _mapper.Map<LitigationRequestShortDto>(litigationRequest);
 
 
@@ -853,6 +1061,15 @@
                             litigationRequest.PlaintiffAgreementRequestResponse = agreementRequestStatus;
                             litigationRequest.PlaintiffAgreementRequestResponseOn = DateTime.Now;
                             isDone = true;
+
+                            await _repository.AddAsync<WorkFlowLog, Guid>(new WorkFlowLog()
+                            {
+                                Id = Guid.NewGuid(),
+                                CreatedOn = DateTime.Now,
+                                RequestId = litigationRequest.Id,
+                                ShowForApplicant = false,
+                                LogMessage = agreementRequestStatus == ApproveRejectStatus.Approve ? "تم قبول المشارطة من قبل مقدم الطلب" : "تم رفض المشارطة من قبل مقدم الطلب"
+                            });
                         }
                     }
                 }
@@ -868,6 +1085,15 @@
                                 litigationRequest.PlaintiffAgreementRequestResponse = agreementRequestStatus;
                                 litigationRequest.PlaintiffAgreementRequestResponseOn = DateTime.Now;
                                 isDone = true;
+
+                                await _repository.AddAsync<WorkFlowLog, Guid>(new WorkFlowLog()
+                                {
+                                    Id = Guid.NewGuid(),
+                                    CreatedOn = DateTime.Now,
+                                    RequestId = litigationRequest.Id,
+                                    ShowForApplicant = false,
+                                    LogMessage = agreementRequestStatus == ApproveRejectStatus.Approve ? "تم قبول المشارطة من قبل المدعي" : "تم رفض المشارطة من قبل المدعي"
+                                });
                             }
                         }
                     }
@@ -884,6 +1110,15 @@
                                 litigationRequest.DefendantAgreementRequestResponse = agreementRequestStatus;
                                 litigationRequest.DefendantAgreementRequestResponseOn = DateTime.Now;
                                 isDone = true;
+
+                                await _repository.AddAsync<WorkFlowLog, Guid>(new WorkFlowLog()
+                                {
+                                    Id = Guid.NewGuid(),
+                                    CreatedOn = DateTime.Now,
+                                    RequestId = litigationRequest.Id,
+                                    ShowForApplicant = false,
+                                    LogMessage = agreementRequestStatus == ApproveRejectStatus.Approve ? "تم قبول المشارطة من قبل المدعي عليه" : "تم رفض المشارطة من قبل المدعي عليه"
+                                });
                             }
                         }
                     }
@@ -900,6 +1135,15 @@
                                 litigationRequest.PlaintiffAgreementRequestResponse = agreementRequestStatus;
                                 litigationRequest.PlaintiffAgreementRequestResponseOn = DateTime.Now;
                                 isDone = true;
+
+                                await _repository.AddAsync<WorkFlowLog, Guid>(new WorkFlowLog()
+                                {
+                                    Id = Guid.NewGuid(),
+                                    CreatedOn = DateTime.Now,
+                                    RequestId = litigationRequest.Id,
+                                    ShowForApplicant = false,
+                                    LogMessage = agreementRequestStatus == ApproveRejectStatus.Approve ? "تم قبول المشارطة من قبل المدعي" : "تم رفض المشارطة من قبل المدعي"
+                                });
                             }
                         }
                     }
@@ -916,6 +1160,15 @@
                                 litigationRequest.DefendantAgreementRequestResponse = agreementRequestStatus;
                                 litigationRequest.DefendantAgreementRequestResponseOn = DateTime.Now;
                                 isDone = true;
+
+                                await _repository.AddAsync<WorkFlowLog, Guid>(new WorkFlowLog()
+                                {
+                                    Id = Guid.NewGuid(),
+                                    CreatedOn = DateTime.Now,
+                                    RequestId = litigationRequest.Id,
+                                    ShowForApplicant = false,
+                                    LogMessage = agreementRequestStatus == ApproveRejectStatus.Approve ? "تم قبول المشارطة من قبل المدعي عليه" : "تم رفض المشارطة من قبل المدعي عليه"
+                                });
                             }
                         }
                     }
@@ -938,7 +1191,7 @@
                         var msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.LitigationRequest_Reject_Agreement).Result.Data?.Value;
                         msg = msg.Replace("{LitigationCode}", litigationRequest.RequestCode);
 
-                        SendNotificationMSWithDefendant(msg, litigationRequest, RequestType.LitigationAgreementRequest, "رفض طلب المشارطة");
+                        await SendNotificationMSWithDefendant(msg, litigationRequest, RequestType.LitigationAgreementRequest, "رفض طلب المشارطة");
                     }
                     catch { }
                 }
@@ -1130,13 +1383,13 @@
 
             }
 
-            _notificationService.SendNotifications(objEmail, objSms, lstNotification);
+            await _notificationService.SendNotifications(objEmail, objSms, lstNotification);
 
         }
 
         public async Task<DataResponse<WafiDataDto>> GetWafiData(string licenseNumber, string identityNumber)
         {
-              string accessToken = await GetAccessToken();
+            string accessToken = await GetAccessToken();
 
             HttpClient httpclient = new HttpClient();
             try
@@ -1144,9 +1397,9 @@
                 httpclient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
 
-                var apiUrl = $"https://wafiservicesapi.rega.gov.sa/api/REAC/GetLicenseProjectPartiesData?licenseNumber={Uri.EscapeDataString(licenseNumber)}/أ&identityNumber={identityNumber}";
-               // var apiUrl=" https://wafiservicesapi.rega.gov.sa/api/REAC/GetLicenseProjectPartiesData?licenseNumber=2/أ&identityNumber=1003643689";
-                 httpclient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+                var apiUrl = $"https://wafiservicesapi.rega.gov.sa/api/REAC/GetLicenseProjectPartiesData?licenseNumber={Uri.EscapeDataString(licenseNumber)}&identityNumber={identityNumber}";
+                // var apiUrl=" https://wafiservicesapi.rega.gov.sa/api/REAC/GetLicenseProjectPartiesData?licenseNumber=2/أ&identityNumber=1003643689";
+                httpclient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 
 
                 var response = await httpclient.GetAsync(apiUrl);
@@ -1203,21 +1456,21 @@
 
                     if (response.IsSuccessStatusCode)
                     {
-                        
+
                         var token = JsonSerializer.Deserialize<WafiLoginDto>(responseBody);
-                        
+
                         return token != null ? token.data.accessToken : "";
                     }
                     else
                     {
-                        
+
                         throw new Exception($"Login failed: {response.StatusCode}, Response: {responseBody}");
                     }
                 }
                 catch (HttpRequestException e)
                 {
                     Console.WriteLine($"Request error: {e.Message}");
-                    throw; 
+                    throw;
                 }
             }
         }

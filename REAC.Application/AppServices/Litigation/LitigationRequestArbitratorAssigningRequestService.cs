@@ -21,6 +21,7 @@ using REAC.EntityFrameworkCore.Entities.Arbitration;
 using REAC.EntityFrameworkCore.Entities.Litigation;
 using REAC.EntityFrameworkCore.Entities.System;
 using REAC.EntityFrameworkCore.Entities.Wpf.Business;
+using System.Collections.Generic;
 
 namespace REAC.Application.AppServices.Litigation
 {
@@ -399,11 +400,21 @@ namespace REAC.Application.AppServices.Litigation
                     foreach (var litigationRequestArbitratorAssigningRequest in litigationRequest.LitigationRequestArbitratorAssigningRequests
                         .Where(x => x.CitizenId == referenceId).OrderByDescending(x => x.RequestOn))
                     {
+                        int arbitrationPeriod = 0;
+                        int.TryParse(_sysSettingService.GetBySettingKey(SysSettingKeyConstants.Arbitration_Period).Result.Data?.Value, out arbitrationPeriod);
+
+
+                       
+                        int daysPassed = (DateTime.Now - litigationRequestArbitratorAssigningRequest.RequestOn).Days;
+                        litigationRequestArbitratorAssigningRequest.LitigationRequest.ArbitrationPeriod = Math.Max(0, arbitrationPeriod - daysPassed);
+
+
                         CustomLitigationRequestMircoArbitratorDto litigationRequestMircoDto = new CustomLitigationRequestMircoArbitratorDto();
                         litigationRequestMircoDto.Id = litigationRequestArbitratorAssigningRequest.Id;
                         litigationRequestMircoDto.RequestId = litigationRequest.Id;
                         litigationRequestMircoDto.RequestDate = litigationRequest.CreatedOn;
                         litigationRequestMircoDto.RequestCode = litigationRequest.RequestCode;
+                        litigationRequestMircoDto.ArbitrationPeriod = litigationRequestArbitratorAssigningRequest.LitigationRequest.ArbitrationPeriod;
                         litigationRequestMircoDto.ArbitratorAssigningRequestType = litigationRequestArbitratorAssigningRequest.ArbitratorAssigningRequestTypeId;
                         litigationRequestMircoDto.FirstPartyName = (litigationRequest.Contract.FirstPartyCitizen == null) ? litigationRequest.Contract.FirstPartyFacility.ArabicFacilityName : litigationRequest.Contract.FirstPartyCitizen.FullName;
                         litigationRequestMircoDto.SecondPartyName = (litigationRequest.Contract.SecondPartyCitizen == null) ? litigationRequest.Contract.SecondPartyFacility.ArabicFacilityName : litigationRequest.Contract.SecondPartyCitizen.FullName;
@@ -447,7 +458,7 @@ namespace REAC.Application.AppServices.Litigation
             Guid referenceId = Guid.Empty;
             _jwtReader.GetReferenceId(ref referenceId);
 
-            PagedResult<LitigationRequestArbitratorAssigningRequest> litigationRequests = null;
+            PagedResult<LitigationRequestArbitratorAssigningRequest> litigationRequestArbitratorAssigningRequests = null;
 
             var entitiesQuerable = (await _repository.GetQueryable<LitigationRequestArbitratorAssigningRequest, Guid>())
                          .Include(x => x.ArbitratorCitizen)
@@ -467,7 +478,7 @@ namespace REAC.Application.AppServices.Litigation
                          .Include(x => x.LitigationRequest.Contract.LitigationRequestContractType);
 
 
-            litigationRequests = entitiesQuerable.Where(x => x.LitigationRequest.LitigationRequestStage
+            litigationRequestArbitratorAssigningRequests = entitiesQuerable.Where(x => x.LitigationRequest.LitigationRequestStage
             == LitigationRequestStage.Arbitration)
                                        .OrderByDescending(x => x.LitigationRequest.CreatedOn)
                                        .AsSplitQuery()
@@ -477,15 +488,25 @@ namespace REAC.Application.AppServices.Litigation
 
 
             List<CustomLitigationRequestMircoArbitratorAllDto> litigationRequestMircoDtos = new List<CustomLitigationRequestMircoArbitratorAllDto>();
-            if (litigationRequests != null)
+            if (litigationRequestArbitratorAssigningRequests != null)
             {
-                foreach (var litigationRequest in litigationRequests.Results)
+                int arbitrationPeriod = 0;
+                int.TryParse(_sysSettingService.GetBySettingKey(SysSettingKeyConstants.Arbitration_Period).Result.Data?.Value, out arbitrationPeriod);
+
+
+                foreach (var litigationRequestArbitratorAssigningRequest in litigationRequestArbitratorAssigningRequests.Results)
+                {
+                    int daysPassed = (DateTime.Now - litigationRequestArbitratorAssigningRequest.RequestOn).Days;
+                    litigationRequestArbitratorAssigningRequest.LitigationRequest.ArbitrationPeriod = Math.Max(0, arbitrationPeriod - daysPassed);
+                }
+                foreach (var litigationRequest in litigationRequestArbitratorAssigningRequests.Results)
                 {
                     CustomLitigationRequestMircoArbitratorAllDto litigationRequestMircoDto = new CustomLitigationRequestMircoArbitratorAllDto();
                     litigationRequestMircoDto.Id = litigationRequest.Id;
                     litigationRequestMircoDto.RequestId = litigationRequest.LitigationRequest.Id;
                     litigationRequestMircoDto.RequestDate = litigationRequest.LitigationRequest.CreatedOn;
                     litigationRequestMircoDto.RequestCode = litigationRequest.LitigationRequest.RequestCode;
+                    litigationRequestMircoDto.ArbitrationPeriod = litigationRequest.LitigationRequest.ArbitrationPeriod;
                     litigationRequestMircoDto.ArbitratorAssigningRequestType = litigationRequest.ArbitratorAssigningRequestTypeId;
                     litigationRequestMircoDto.FirstPartyName = (litigationRequest.LitigationRequest.Contract.FirstPartyCitizen == null) ? litigationRequest.LitigationRequest.Contract.FirstPartyFacility.ArabicFacilityName : litigationRequest.LitigationRequest.Contract.FirstPartyCitizen.FullName;
                     litigationRequestMircoDto.SecondPartyName = (litigationRequest.LitigationRequest.Contract.SecondPartyCitizen == null) ? litigationRequest.LitigationRequest.Contract.SecondPartyFacility.ArabicFacilityName : litigationRequest.LitigationRequest.Contract.SecondPartyCitizen.FullName;
@@ -525,10 +546,10 @@ namespace REAC.Application.AppServices.Litigation
                               new PagedResult<CustomLitigationRequestMircoArbitratorAllDto>
                               {
                                   Results = litigationRequestMircoDtos,
-                                  CurrentPage = litigationRequests.CurrentPage,
-                                  PageCount = litigationRequests.PageCount,
-                                  PageSize = litigationRequests.PageSize,
-                                  TotalCount = litigationRequests.TotalCount
+                                  CurrentPage = litigationRequestArbitratorAssigningRequests.CurrentPage,
+                                  PageCount = litigationRequestArbitratorAssigningRequests.PageCount,
+                                  PageSize = litigationRequestArbitratorAssigningRequests.PageSize,
+                                  TotalCount = litigationRequestArbitratorAssigningRequests.TotalCount
                               },
                 IsDone = true
             };

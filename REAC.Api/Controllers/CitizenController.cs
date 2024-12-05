@@ -102,6 +102,54 @@ public class CitizenController : ControllerBase
 
         return BadRequest();
     }
+    
+    [HttpPost(nameof(ActivateReformerAccount))]
+    public async Task<ActionResult> ActivateReformerAccount(ReformerFreeUpDecisionCreateDto reformerFreeUpDecisionCreateDto)
+    {
+        if (ModelState.IsValid)
+        {
+            var returnValue = await _citizenService.ActivateReformerAccount(reformerFreeUpDecisionCreateDto);
+            return Ok(returnValue);
+        }
+
+        return BadRequest();
+    }
+    
+    [HttpPost(nameof(ActivateArbitratorAccount))]
+    public async Task<ActionResult> ActivateArbitratorAccount(ArbitratorFreeUpDecisionCreateDto reformerFreeUpDecisionCreateDto)
+    {
+        if (ModelState.IsValid)
+        {
+            var returnValue = await _citizenService.ActivateArbitratorAccount(reformerFreeUpDecisionCreateDto);
+            return Ok(returnValue);
+        }
+
+        return BadRequest();
+    }
+
+    [HttpPost(nameof(DeActivateReformerAccount))]
+    public async Task<ActionResult> DeActivateReformerAccount(ReformerStopDecisionCreateDto reformerStopDecisionCreateDto)
+    {
+        if (ModelState.IsValid)
+        {
+            var returnValue = await _citizenService.DeActivateReformerAccount(reformerStopDecisionCreateDto);
+            return Ok(returnValue);
+        }
+
+        return BadRequest();
+    }
+    
+    [HttpPost(nameof(DeActivateArbitratorAccount))]
+    public async Task<ActionResult> DeActivateArbitratorAccount(ArbitratorStopDecisionCreateDto reformerStopDecisionCreateDto)
+    {
+        if (ModelState.IsValid)
+        {
+            var returnValue = await _citizenService.DeActivateArbitratorAccount(reformerStopDecisionCreateDto);
+            return Ok(returnValue);
+        }
+
+        return BadRequest();
+    }
 
 
     [HttpGet(nameof(GetCitizenBankAccount))]

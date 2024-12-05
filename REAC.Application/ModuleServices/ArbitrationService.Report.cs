@@ -256,6 +256,7 @@ namespace REAC.Application.ModuleServices
         public async Task<BaseResponse> GetLitigationRequestForReport(Guid requestId, CancellationToken cancellationToken)
         {
             var litigationRequest = (await _repository.GetQueryable<LitigationRequest, Guid>())
+                         .Include(x => x.ArbitratorCitizen)
                          .Include(x => x.Area)
                          .Include(x => x.City)
                          .Include(x => x.LitigationRequestSessions)

@@ -166,6 +166,7 @@ namespace REAC.Application.ModuleServices
             _jwtReader.GetReferenceId(ref referenceId);
 
             var litigationRequest = (await _repository.GetQueryable<LitigationRequest, Guid>())
+                         .Include(x => x.ReformerCitizen)
                          .Include(x => x.Area)
                          .Include(x => x.City)
                          .Include(x => x.LitigationRequestSessions)

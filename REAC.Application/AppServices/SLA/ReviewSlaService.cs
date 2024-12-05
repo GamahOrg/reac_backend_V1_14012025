@@ -8,6 +8,7 @@ using REAC.Application.Contracts.IAppServices.SLA;
 using REAC.Application.Contracts.IAppServices.System;
 using REAC.Domain.Shared.Constants;
 using REAC.Domain.Shared.Enum;
+using REAC.EntityFrameworkCore.Entities.Arbitration;
 using REAC.EntityFrameworkCore.Entities.Litigation;
 using REAC.EntityFrameworkCore.Entities.System;
 using REAC.EntityFrameworkCore.Entities.Wpf.Business;
@@ -72,7 +73,7 @@ namespace REAC.Application.AppServices.SLA
 
                                     foreach (var employeeWorkFlowProcessingLog in employeeWorkFlowProcessingLogs)
                                     {
-                                        if (employeeWorkFlowProcessingLog.IsFinished)
+                                        if (employeeWorkFlowProcessingLog.IsFinished & employeeWorkFlowProcessingLog.FinishedOn is not null)
                                         {
                                             totalReviewHours += (employeeWorkFlowProcessingLog.FinishedOn - employeeWorkFlowProcessingLog.CreatedOn).Value.TotalHours;
                                         }
@@ -152,7 +153,7 @@ namespace REAC.Application.AppServices.SLA
 
                                     foreach (var employeeWorkFlowProcessingLog in employeeWorkFlowProcessingLogs)
                                     {
-                                        if (employeeWorkFlowProcessingLog.IsFinished)
+                                        if (employeeWorkFlowProcessingLog.IsFinished & employeeWorkFlowProcessingLog.FinishedOn is not null)
                                         {
                                             totalReviewHours += (employeeWorkFlowProcessingLog.FinishedOn - employeeWorkFlowProcessingLog.CreatedOn).Value.TotalHours;
                                         }
@@ -189,6 +190,7 @@ namespace REAC.Application.AppServices.SLA
                                                     litigationRequest.IsReminderForReviewerManagerSent = false;
 
                                                     employeeWorkFlowProcessingLogs.LastOrDefault().IsFinished = true;
+                                                    employeeWorkFlowProcessingLogs.LastOrDefault().FinishedOn = DateTime.Now;
 
                                                     WorkFlowProcessingLog workFlowProcessingLog = new WorkFlowProcessingLog();
                                                     workFlowProcessingLog.Id = Guid.NewGuid();
@@ -436,7 +438,7 @@ namespace REAC.Application.AppServices.SLA
 
                             if (reminderForapplicantFirstPeriod > 0)
                             {
-                                if (litigationRequest.IsReminderForApplicantSent != true)
+                                if (litigationRequest.IsReminderForApplicantSent != true | litigationRequest.IsReminderForApplicantSent is null)
                                 {
                                     if (totalReviewHours >= reminderForapplicantFirstPeriod)
                                     {
@@ -450,6 +452,7 @@ namespace REAC.Application.AppServices.SLA
                                         {
                                             var msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.SLA_FinishNotes).Result.Data?.Value;
                                             msg = msg.Replace("{LitigationCode}", litigationRequest.RequestCode);
+                                            msg = msg.Replace("{ExpirationDate}", $"{(reminderForApplicantSecondPeriod - (int)totalReviewHours)/24}");
 
 
                                             List<SysNotificationDto> notifications = new List<SysNotificationDto>()
@@ -685,7 +688,7 @@ namespace REAC.Application.AppServices.SLA
 
                         if (firstAgreementRequestForRequest > 0)
                         {
-                            if (litigationRequest.IsReminderForAgreementRequestForRequestSent != true)
+                            if ( litigationRequest.IsReminderForAgreementRequestForRequestSent is null || litigationRequest.IsReminderForAgreementRequestForRequestSent != true)
                             {
                                 if (totalReviewHours >= secondAgreementRequestForForRequest)
                                 {
@@ -899,6 +902,15 @@ namespace REAC.Application.AppServices.SLA
                                     var msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.SLA_AgreementCancelled).Result.Data?.Value;
                                     msg = msg.Replace("{LitigationCode}", litigationRequest.RequestCode);
 
+                                    await _repository.AddAsync<WorkFlowLog, Guid>(new WorkFlowLog()
+                                    {
+                                        Id = Guid.NewGuid(),
+                                        CreatedOn = DateTime.Now,
+                                        RequestId = litigationRequest.Id,
+                                        ShowForApplicant = false,
+                                        LogMessage = msg
+                                    });
+
                                     var deptAdminInfoReview = await _employeeService.GetAdminsByDepartmentType(DepartmentType.Review);
 
 
@@ -964,6 +976,36 @@ namespace REAC.Application.AppServices.SLA
                                         });
                                         emails.Add(litigationRequest.Contract.FirstPartyFacility.Citizen.Email);
                                         recipients.Add(litigationRequest.Contract.FirstPartyFacility.Citizen.Mobile);
+                                    };
+                                    if (litigationRequest?.Contract?.SecondPartyCitizen != null)
+                                    {
+                                        notifications.Add(new SysNotificationDto
+                                        {
+                                            ActorId = (Guid)litigationRequest.Contract.SecondPartyCitizenId,
+                                            RequestId = litigationRequest.Id,
+                                            CreatedOn = DateTime.Now,
+                                            RequestTypeId = RequestType.LitigationRequest,
+                                            ActorTypeId = NotificationActorType.Plaintiff,
+                                            Message = msg
+                                        });
+                                        emails.Add(litigationRequest.Contract.SecondPartyCitizen.Email);
+                                        recipients.Add(litigationRequest.Contract.SecondPartyCitizen.Mobile);
+
+
+                                    };
+                                    if (litigationRequest?.Contract?.SecondPartyFacility != null)
+                                    {
+                                        notifications.Add(new SysNotificationDto
+                                        {
+                                            ActorId = (Guid)litigationRequest.Contract.SecondPartyFacility.CitizenId,
+                                            RequestId = litigationRequest.Id,
+                                            CreatedOn = DateTime.Now,
+                                            RequestTypeId = RequestType.LitigationRequest,
+                                            ActorTypeId = NotificationActorType.Plaintiff,
+                                            Message = msg
+                                        });
+                                        emails.Add(litigationRequest.Contract.SecondPartyFacility.Citizen.Email);
+                                        recipients.Add(litigationRequest.Contract.SecondPartyFacility.Citizen.Mobile);
                                     };
 
 

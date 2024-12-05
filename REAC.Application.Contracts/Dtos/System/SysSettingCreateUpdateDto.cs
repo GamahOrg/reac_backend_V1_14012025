@@ -1,6 +1,6 @@
 ﻿using Core.GenericRepository.Shared.BaseEntities;
 
-namespace REAC.EntityFrameworkCore.Entities.System;
+namespace REAC.Application.Contracts.Dtos.System;
 
 public partial class SysSettingCreateUpdateDto : BaseEntity<Guid>
 {

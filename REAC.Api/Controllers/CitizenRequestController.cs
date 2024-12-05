@@ -1,10 +1,12 @@
-﻿using Core.Security.Attributes;
+﻿using AutoMapper;
+using Core.Security.Attributes;
 using Core.Security.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using REAC.Application.Contracts.Dtos.CitizenRequests;
 using REAC.Application.Contracts.IAppServices;
 using REAC.Domain.Shared.Constants;
 using REAC.Domain.Shared.Enum;
+using REAC.EntityFrameworkCore.Entities.Actor;
 
 namespace REAC.Api.Controllers.Litigation;
 
@@ -16,10 +18,11 @@ namespace REAC.Api.Controllers.Litigation;
 public class CitizenRequestController : ControllerBase
 {
 
-
+    protected IMapper _mapper;
     private readonly ICitizenRequestService _citizenRequestService;
-    public CitizenRequestController(ICitizenRequestService citizenRequestService)
+    public CitizenRequestController(ICitizenRequestService citizenRequestService, IMapper mapper)
     {
+        _mapper = mapper;
         _citizenRequestService = citizenRequestService;
     }
 
@@ -62,6 +65,7 @@ public class CitizenRequestController : ControllerBase
     {
         if (ModelState.IsValid)
         {
+            //var request = _mapper.Map<CitizenRequest>(citizenRequestCreateUpdateDto);
             var returnValue = await _citizenRequestService.SaveCitizenRequest(citizenRequestCreateUpdateDto);
             return Ok(returnValue);
         }

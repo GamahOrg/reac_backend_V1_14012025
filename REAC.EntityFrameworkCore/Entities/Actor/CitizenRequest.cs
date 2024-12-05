@@ -24,6 +24,14 @@ public partial class CitizenRequest : BaseEntity<Guid>
     public Guid? ArbitratorClassId { get; set; }
     public string? Brief { get; set; }
 
+    //مصلح
+    public bool IsRegisteredReconciliationCenter { get; set; }
+    public bool IspassedRealEstateProgram { get; set; }
+    public bool HaveArbitrationxperience { get; set; }
+    public bool HaveHostingExperience { get; set; }
+    public string? ExperiencedInArbitrationFields { get; set; }
+    public string? ExperiencedInHousingstatuses { get; set; }
+    public string? About { get; set; }
 
 
     public CitizenRequestStatus StatusId { get; set; }
@@ -38,6 +46,9 @@ public partial class CitizenRequest : BaseEntity<Guid>
     public virtual ICollection<CitizenRequestAcademicDegreeFile> CitizenRequestAcademicDegreeFiles { get; set; } = new List<CitizenRequestAcademicDegreeFile>();
     public virtual ICollection<CitizenRequestFreelanceWorkDocumentFile> CitizenRequestFreelanceWorkDocumentFiles { get; set; } = new List<CitizenRequestFreelanceWorkDocumentFile>();
     public virtual ICollection<CitizenRequestExperienceCertificate> CitizenRequestExperienceCertificates { get; set; } = new List<CitizenRequestExperienceCertificate>();
+    public virtual ICollection<CitizenRequestReconciliationCenterDegreeFile> CitizenRequestReconciliationCenterDegreeFiles { get; set; } = new List<CitizenRequestReconciliationCenterDegreeFile>();
+    public virtual ICollection<CitizenRequestProgramRealEstateInstituteFile> CitizenRequestProgramRealEstateInstituteFiles { get; set; } = new List<CitizenRequestProgramRealEstateInstituteFile>();
+    public virtual ICollection<CitizenRequestCVFile> CitizenRequestCVFiles { get; set; } = new List<CitizenRequestCVFile>();
     public virtual ICollection<CitizenRequestNote> CitizenRequestNotes { get; set; } = new List<CitizenRequestNote>();
 }
 

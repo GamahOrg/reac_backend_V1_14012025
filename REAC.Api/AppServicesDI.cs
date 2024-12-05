@@ -57,6 +57,7 @@ namespace REAC.Api
             services.AddScoped<IReviewSlaService, ReviewSlaService>();
             services.AddScoped<IReconciliationSlaService, ReconciliationSlaService>();
             services.AddScoped<IArbitrationSlaService, ArbitrationSlaService>();
+            services.AddScoped<ISysVacationRequestService, SysVacationRequestService>();
 
 
             services.AddScoped<ICitizenRequestService, CitizenRequestService>();

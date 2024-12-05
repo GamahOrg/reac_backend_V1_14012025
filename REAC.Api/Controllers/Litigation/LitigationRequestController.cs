@@ -83,7 +83,7 @@ public class LitigationRequestController : BaseController<LitigationRequest,
         return BadRequest();
     }
     [HttpGet(nameof(AuditngList))]
-    [AllowAnonymous]
+    //[AllowAnonymous]
     public async Task<ActionResult<IEnumerable<AuditingListDto>>> AuditngList([FromQuery] int pageIndex, [FromQuery] int pageSize, [FromQuery] string? searchKey, [FromQuery] AuditingListDto model)
     {
         if (ModelState.IsValid)

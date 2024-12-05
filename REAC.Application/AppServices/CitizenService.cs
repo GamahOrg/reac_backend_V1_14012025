@@ -6,6 +6,7 @@ using Core.Shared.Responses;
 using Microsoft.EntityFrameworkCore;
 using REAC.Application.Contracts.Dtos.Citizen;
 using REAC.Application.Contracts.Dtos.Integration.GEE;
+using REAC.Application.Contracts.Dtos.Litigation.CreateUpdate.Litigation;
 using REAC.Application.Contracts.Dtos.Notification;
 using REAC.Application.Contracts.IAppServices;
 using REAC.Application.Contracts.IAppServices.Notification;
@@ -389,6 +390,9 @@ namespace REAC.Application.AppServices
 
         }
 
+
+        #region Backoffice
+
         public async Task<BaseResponse> AddArbitratorFreeUpDecision(ArbitratorFreeUpDecisionCreateDto arbitratorFreeUpDecisionCreateDto)
         {
             try
@@ -694,7 +698,7 @@ namespace REAC.Application.AppServices
 
                 }
 
-                
+
                 var deptAdminInfoReconciliation = await _employeeService.GetAdminsByDepartmentType(DepartmentType.Reconciliation);
                 var msg = "";
                 var applicationNotifications = new List<SysNotificationDto>();
@@ -784,6 +788,408 @@ namespace REAC.Application.AppServices
             }
 
         }
+
+
+        #endregion
+
+        public async Task<BaseResponse> ActivateArbitratorAccount(ArbitratorFreeUpDecisionCreateDto arbitratorFreeUpDecisionCreateDto)
+        {
+            try
+            {
+
+                var citizen = (await _repository.GetQueryable<Citizen, Guid>())?
+                     .Where(x => x.Id == arbitratorFreeUpDecisionCreateDto.CitizenId)
+                     .SingleOrDefault();
+                var deptAdminInfoArbitration = await _employeeService.GetAdminsByDepartmentType(DepartmentType.Arbitration);
+                var msg = "";
+                var applicationNotifications = new List<SysNotificationDto>();
+
+                if (citizen == null)
+                    return new BaseResponse()
+                    {
+                        IsDone = false,
+                        Message = "محكم غير موجود"
+                    };
+
+                citizen.ArbitratorStatusId = ArbitratorStatus.Certified;
+
+                ArbitratorStopFreeUpDecision arbitratorStopFreeUpDecision = new ArbitratorStopFreeUpDecision();
+                arbitratorStopFreeUpDecision.CitizenId = arbitratorFreeUpDecisionCreateDto.CitizenId;
+                arbitratorStopFreeUpDecision.ArbitratorStatusId = ArbitratorStatus.Certified;
+                arbitratorStopFreeUpDecision.DecisionDate = arbitratorFreeUpDecisionCreateDto.DecisionDate;
+                await _repository.AddAsync<ArbitratorStopFreeUpDecision, int>(arbitratorStopFreeUpDecision);
+                var saveResponse = await _repository.SaveChangesAsync();
+                if (!saveResponse.IsDone)
+                    return saveResponse;
+
+                // Send Notification
+                // تم إعادة تحرير المحكم
+
+                try
+                {
+                    msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.Arbitrator_Activate).Result.Data?.Value;
+                    msg = msg.Replace("{CitizenName}", citizen.FullName);
+                    applicationNotifications.Add(new SysNotificationDto()
+                    {
+                        ActorId = citizen.Id,
+                        CreatedOn = DateTime.Now,
+                        ActorTypeId = NotificationActorType.Arbitrator,
+                        IsViewed = false,
+                        ViewedOn = null,
+                        RequestId = citizen.Id,
+                        RequestTypeId = RequestType.StopFreeUpArbitrator,
+                        Message = msg
+                    });
+
+                    applicationNotifications.Add(new SysNotificationDto()
+                    {
+                        ActorId = deptAdminInfoArbitration.Data.Id,
+                        CreatedOn = DateTime.Now,
+                        ActorTypeId = NotificationActorType.Employee,
+                        IsViewed = false,
+                        ViewedOn = null,
+                        RequestId = citizen.Id,
+                        RequestTypeId = RequestType.StopFreeUpArbitrator,
+                        Message = msg
+                    });
+
+                    var notificationResultUpdatedArbitrator = await _notificationService.SendNotifications(
+                        new SendEmailDto()
+                        {
+                            To = new List<string>() { citizen.Email, deptAdminInfoArbitration.Data.Email },
+                            Subject = "Arbitrator Activated",
+                            Body = msg
+                        },
+                        new SMSRequestDto()
+                        {
+                            message_text = msg,
+                            recipients = new List<string>() { citizen.Mobile, deptAdminInfoArbitration.Data.Mobile },
+                            notification_type = "SMS",
+
+                        },
+                        applicationNotifications
+                        );
+                }
+                catch (Exception ex)
+                {
+
+                }
+
+                return new DataResponse<CitizenArbitratorDetailShortDto>() { IsDone = true, Data = new CitizenArbitratorDetailShortDto() { ArbitratorStatusId = ArbitratorStatus.Certified }, Message = " تم تفعيل الحساب كمحكم" };
+
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse() { IsDone = true, Message = "خطأ داخلي" };
+
+            }
+        }
+
+        public async Task<BaseResponse> DeActivateArbitratorAccount(ArbitratorStopDecisionCreateDto arbitratorStopDecisionCreateDto)
+        {
+            try
+            {
+                var citizen = (await _repository.GetQueryable<Citizen, Guid>())?
+                      .Where(x => x.Id == arbitratorStopDecisionCreateDto.CitizenId)
+                      .SingleOrDefault();
+                var deptAdminInfoArbitration = await _employeeService.GetAdminsByDepartmentType(DepartmentType.Arbitration);
+                var msg = "";
+                var applicationNotifications = new List<SysNotificationDto>();
+                if (citizen == null)
+                    return new BaseResponse()
+                    {
+                        IsDone = false,
+                        Message = "محكم غير موجود"
+                    };
+
+                var litigationRequestArbitratorAssigningRequest = (await _repository.GetQueryable<LitigationRequestArbitratorAssigningRequest, Guid>())
+                    .Include(x => x.LitigationRequest)
+                .Any(l => l.CitizenId == arbitratorStopDecisionCreateDto.CitizenId && l.Response == LitigationRequestArbitratorAssigningRequestStatus.Approve 
+                && l.LitigationRequest.LitigationRequestStage == LitigationRequestStage.Arbitration && l.LitigationRequest.LitigationRequestSubStage != LitigationRequestSubStage.JudgmentDecisionIssued);
+
+                if (litigationRequestArbitratorAssigningRequest)
+                    return new BaseResponse() { IsDone = false, Message = "لا يمكن قبول الطلب لوجود دعوي لم تنته بعد من فترة التحكيم" };
+
+                citizen.ArbitratorStatusId = ArbitratorStatus.Stopped;
+
+
+                ArbitratorStopFreeUpDecision arbitratorStopFreeUpDecision = new ArbitratorStopFreeUpDecision();
+                arbitratorStopFreeUpDecision.CitizenId = citizen.Id;
+                arbitratorStopFreeUpDecision.ArbitratorStatusId = ArbitratorStatus.Stopped;
+                arbitratorStopFreeUpDecision.DecisionDate = arbitratorStopDecisionCreateDto.DecisionDate;
+                arbitratorStopFreeUpDecision.DecisionFrom = arbitratorStopDecisionCreateDto.DecisionFrom;
+                arbitratorStopFreeUpDecision.DecisionTo = arbitratorStopDecisionCreateDto.DecisionTo;
+                arbitratorStopFreeUpDecision.LateLitigationRequestNumber = arbitratorStopDecisionCreateDto.LateLitigationRequestNumber;
+                arbitratorStopFreeUpDecision.StoppingReason = arbitratorStopDecisionCreateDto.StoppingReason;
+                await _repository.AddAsync<ArbitratorStopFreeUpDecision, int>(arbitratorStopFreeUpDecision);
+                var saveResponse = await _repository.SaveChangesAsync();
+                if (!saveResponse.IsDone)
+                    return saveResponse;
+
+                // Send Notification
+                // تم إقاف تحرير المحكم
+
+                try
+                {
+                    msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.Arbitrator_DeActivate).Result.Data?.Value;
+                    msg = msg.Replace("{CitizenName}", citizen.FullName);
+                    applicationNotifications.Add(new SysNotificationDto()
+                    {
+                        ActorId = citizen.Id,
+                        CreatedOn = DateTime.Now,
+                        ActorTypeId = NotificationActorType.Arbitrator,
+                        IsViewed = false,
+                        ViewedOn = null,
+                        RequestId = citizen.Id,
+                        RequestTypeId = RequestType.StopFreeUpArbitrator,
+                        Message = msg
+                    });
+
+                    applicationNotifications.Add(new SysNotificationDto()
+                    {
+                        ActorId = deptAdminInfoArbitration.Data.Id,
+                        CreatedOn = DateTime.Now,
+                        ActorTypeId = NotificationActorType.Employee,
+                        IsViewed = false,
+                        ViewedOn = null,
+                        RequestId = citizen.Id,
+                        RequestTypeId = RequestType.StopFreeUpArbitrator,
+                        Message = msg
+                    });
+
+                    var notificationResultUpdatedArbitrator = await _notificationService.SendNotifications(
+                        new SendEmailDto()
+                        {
+                            To = new List<string>() { citizen.Email, deptAdminInfoArbitration.Data.Email },
+                            Subject = "Arbitrator DeActivated",
+                            Body = msg
+                        },
+                        new SMSRequestDto()
+                        {
+                            message_text = msg,
+                            recipients = new List<string>() { citizen.Mobile, deptAdminInfoArbitration.Data.Mobile },
+                            notification_type = "SMS",
+
+                        },
+                        applicationNotifications
+                        );
+                }
+                catch (Exception ex)
+                {
+
+                }
+
+
+                return new DataResponse<CitizenArbitratorDetailShortDto>() { IsDone = true, Data = new CitizenArbitratorDetailShortDto() { ArbitratorStatusId = ArbitratorStatus.Stopped }, Message = " تم الغاء تفعيل الحساب كمحكم" };
+
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse() { IsDone = false, Message = "خطأ داخلي" };
+
+            }
+
+
+        }
+
+
+        public async Task<BaseResponse> DeActivateReformerAccount(ReformerStopDecisionCreateDto reformerStopDecisionCreateDto)
+        {
+            try
+            {
+                var citizen = (await _repository.GetQueryable<Citizen, Guid>())?
+                    .Where(x => x.Id == reformerStopDecisionCreateDto.CitizenId)
+                    .SingleOrDefault();
+
+                if (citizen == null)
+                    return new BaseResponse()
+                    {
+                        IsDone = false,
+                        Message = "مصلح غير موجود"
+                    };
+
+                var litigationRequest = (await _repository.GetQueryable<LitigationRequest, Guid>())
+                .Any(l => (l.ExternalStatusId != RequestStatus.Cancelled | l.InternalStatusId != RequestStatus.Cancelled) 
+                & l.LitigationRequestStage == LitigationRequestStage.Reconciliation & l.ReformerCitizenId == reformerStopDecisionCreateDto.CitizenId);
+
+                if (litigationRequest)
+                    return new BaseResponse() { IsDone = false, Message = "لا يمكن قبول الطلب لوجود دعوي لم تنته بعد من فترة الصُلح" };
+
+                var deptAdminInfoReconciliation = await _employeeService.GetAdminsByDepartmentType(DepartmentType.Reconciliation);
+                var msg = "";
+                var applicationNotifications = new List<SysNotificationDto>();
+                
+
+                citizen.ReformerStatusId = ReformerStatus.Stopped;
+
+                ReformerStopFreeUpDecision ReformerStopFreeUpDecision = new ReformerStopFreeUpDecision();
+                ReformerStopFreeUpDecision.CitizenId = reformerStopDecisionCreateDto.CitizenId;
+                ReformerStopFreeUpDecision.ReformerStatusId = ReformerStatus.Stopped;
+                ReformerStopFreeUpDecision.DecisionDate = DateTime.Now;
+                ReformerStopFreeUpDecision.LateLitigationRequestNumber = reformerStopDecisionCreateDto.LateLitigationRequestNumber;
+                ReformerStopFreeUpDecision.StoppingReason = reformerStopDecisionCreateDto.StoppingReason;
+                ReformerStopFreeUpDecision.DecisionFrom = reformerStopDecisionCreateDto.DecisionFrom;
+                ReformerStopFreeUpDecision.DecisionTo = reformerStopDecisionCreateDto.DecisionTo;
+                await _repository.AddAsync<ReformerStopFreeUpDecision, int>(ReformerStopFreeUpDecision);
+                var saveResponse = await _repository.SaveChangesAsync();
+                if (!saveResponse.IsDone)
+                    return saveResponse;
+
+                // Send Notification
+                // تم إيقاف المصلح
+
+                try
+                {
+                    msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.Reformer_DeActivate).Result.Data?.Value;
+                    msg = msg.Replace("{CitizenName}", citizen.FullName);
+                    applicationNotifications.Add(new SysNotificationDto()
+                    {
+                        ActorId = citizen.Id,
+                        CreatedOn = DateTime.Now,
+                        ActorTypeId = NotificationActorType.Reformer,
+                        IsViewed = false,
+                        ViewedOn = null,
+                        RequestId = citizen.Id,
+                        RequestTypeId = RequestType.StopFreeUpReformer,
+                        Message = msg
+                    });
+
+                    applicationNotifications.Add(new SysNotificationDto()
+                    {
+                        ActorId = deptAdminInfoReconciliation.Data.Id,
+                        CreatedOn = DateTime.Now,
+                        ActorTypeId = NotificationActorType.Employee,
+                        IsViewed = false,
+                        ViewedOn = null,
+                        RequestId = citizen.Id,
+                        RequestTypeId = RequestType.StopFreeUpArbitrator,
+                        Message = msg
+                    });
+
+                    var notificationResultUpdatedArbitrator = await _notificationService.SendNotifications(
+                        new SendEmailDto()
+                        {
+                            To = new List<string>() { citizen.Email, deptAdminInfoReconciliation.Data.Email },
+                            Subject = "Reformer DeActivated",
+                            Body = msg
+                        },
+                        new SMSRequestDto()
+                        {
+                            message_text = msg,
+                            recipients = new List<string>() { citizen.Mobile, deptAdminInfoReconciliation.Data.Mobile },
+                            notification_type = "SMS",
+
+                        },
+                        applicationNotifications
+                        );
+                }
+                catch (Exception ex)
+                {
+
+                }
+
+                return new DataResponse<CitizenReformerDetailShortDto>() { IsDone = true , Data = new CitizenReformerDetailShortDto() { ReformerStatusId = ReformerStatus.Stopped}, Message = " تم إلغاء تفعيل الحساب كمصلح" };
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse() { IsDone = false, Message = "خطأ داخلي" };
+
+            }
+
+        }
+
+        public async Task<BaseResponse> ActivateReformerAccount(ReformerFreeUpDecisionCreateDto reformerFreeUpDecisionCreateDto)
+        {
+            try
+            {
+                var citizen = (await _repository.GetQueryable<Citizen, Guid>())?
+                    .Where(x => x.Id == reformerFreeUpDecisionCreateDto.CitizenId)
+                    .SingleOrDefault();
+                var deptAdminInfoReconciliation = await _employeeService.GetAdminsByDepartmentType(DepartmentType.Reconciliation);
+                var msg = "";
+                var applicationNotifications = new List<SysNotificationDto>();
+                if (citizen == null)
+                    return new BaseResponse()
+                    {
+                        IsDone = false,
+                        Message = "مصلح غير موجود"
+                    };
+
+                citizen.ReformerStatusId = ReformerStatus.Certified;
+
+                ReformerStopFreeUpDecision ReformerStopFreeUpDecision = new ReformerStopFreeUpDecision();
+                ReformerStopFreeUpDecision.CitizenId = reformerFreeUpDecisionCreateDto.CitizenId;
+                ReformerStopFreeUpDecision.ReformerStatusId = ReformerStatus.Certified;
+                ReformerStopFreeUpDecision.DecisionDate = reformerFreeUpDecisionCreateDto.DecisionDate;
+                await _repository.AddAsync<ReformerStopFreeUpDecision, int>(ReformerStopFreeUpDecision);
+                var saveResponse = await _repository.SaveChangesAsync();
+                if (!saveResponse.IsDone)
+                    return saveResponse;
+
+                // Send Notification
+                // تم إعادة تحرير المصلح
+
+                try
+                {
+                    msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.Reformer_Activate).Result.Data?.Value;
+                    msg = msg.Replace("{CitizenName}", citizen.FullName);
+                    applicationNotifications.Add(new SysNotificationDto()
+                    {
+                        ActorId = citizen.Id,
+                        CreatedOn = DateTime.Now,
+                        ActorTypeId = NotificationActorType.Reformer,
+                        IsViewed = false,
+                        ViewedOn = null,
+                        RequestId = citizen.Id,
+                        RequestTypeId = RequestType.StopFreeUpReformer,
+                        Message = msg
+                    });
+
+                    applicationNotifications.Add(new SysNotificationDto()
+                    {
+                        ActorId = deptAdminInfoReconciliation.Data.Id,
+                        CreatedOn = DateTime.Now,
+                        ActorTypeId = NotificationActorType.Employee,
+                        IsViewed = false,
+                        ViewedOn = null,
+                        RequestId = citizen.Id,
+                        RequestTypeId = RequestType.StopFreeUpReformer,
+                        Message = msg
+                    });
+
+                    var notificationResultUpdatedArbitrator = await _notificationService.SendNotifications(
+                        new SendEmailDto()
+                        {
+                            To = new List<string>() { citizen.Email, deptAdminInfoReconciliation.Data.Email },
+                            Subject = "Reformer Activated",
+                            Body = msg
+                        },
+                        new SMSRequestDto()
+                        {
+                            message_text = msg,
+                            recipients = new List<string>() { citizen.Mobile, deptAdminInfoReconciliation.Data.Mobile },
+                            notification_type = "SMS",
+
+                        },
+                        applicationNotifications
+                        );
+                }
+                catch (Exception ex)
+                {
+
+                }
+
+                return new DataResponse<CitizenReformerDetailShortDto>() { IsDone = true, Data = new CitizenReformerDetailShortDto() { ReformerStatusId = ReformerStatus.Certified }, Message = "تم تفعيل الحساب كمصلح" };
+
+
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse() { IsDone = true, Message = "خطأ داخلي" };
+
+            }
+        }
+
 
         public async Task<BaseResponse> GetReformersDecisions(int pageIndex, int pageSize, CancellationToken cancellationToken = default)
         {

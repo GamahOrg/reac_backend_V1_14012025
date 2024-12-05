@@ -210,6 +210,16 @@ namespace Ticketing.EntityFrameworkCore.SeedData
                     new SysSetting
                     {
                         Id = Guid.NewGuid(),
+                        Key = "Arbitration.Period",
+                        Value = "30",
+                    },new SysSetting
+                    {
+                        Id = Guid.NewGuid(),
+                        Key = "Review.Period",
+                        Value = "10",
+                    },new SysSetting
+                    {
+                        Id = Guid.NewGuid(),
                         Key = "Reconciliation.Period",
                         Value = "30",
                     },
@@ -925,7 +935,7 @@ namespace Ticketing.EntityFrameworkCore.SeedData
                         {
                             Id = Guid.NewGuid(),
                             Key = "SLA.FinishNotes",
-                            Value = "يرجى سرعة معالجة كافة الملاحظات على الدعوى رقم {LitigationCode}"
+                            Value = "يرجى سرعة معالجة كافة الملاحظات على الدعوى رقم {LitigationCode} خلال {ExpirationDate} ايام والا ستصبح ملغاة"
                         },new SysSetting
                         {
                             Id = Guid.NewGuid(),
@@ -950,7 +960,7 @@ namespace Ticketing.EntityFrameworkCore.SeedData
                         {
                             Id = Guid.NewGuid(),
                             Key = "SLA.FinishReconciliation.WarnReconciliationAdmin",
-                            Value = "يرجى العلم أن المصلح تجاوز الفترة المسموح بها للصلح على الدعوى رقم {LitigationCode}"
+                            Value = "يرجى العلم أن المصلح {ReformerName} تجاوز الفترة المسموح بها للصلح على الدعوى رقم {LitigationCode}"
                         },new SysSetting
                         {
                             Id = Guid.NewGuid(),
@@ -980,7 +990,7 @@ namespace Ticketing.EntityFrameworkCore.SeedData
                         {
                             Id = Guid.NewGuid(),
                             Key = "SLA.ReconciliationTask.ReAssigned",
-                            Value = "يرجى العلم أن الرد على مهمة الصلح للمصلح على الدعوى رقم {LitigationCode} قد تجاوز مهلته القصوى وتم إلغاؤها وارسال مهمة جديدة للمصلح"
+                            Value = "يرجى العلم أن الرد على مهمة الصلح للمصلح {PreviousReformer} على الدعوى رقم {LitigationCode} قد تجاوز مهلته القصوى وتم إلغاؤها وارسال مهمة جديدة للمصلح {CurrentReformer}"
                         },new SysSetting
                         {
                             Id = Guid.NewGuid(),

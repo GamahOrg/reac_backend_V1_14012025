@@ -106,6 +106,7 @@ namespace REAC.Application.AppServices.SLA
                                 {
                                     var msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.SLA_FinishReconciliation_WarnReconciliationAdmin).Result.Data?.Value;
                                     msg = msg?.Replace("{LitigationCode}", litigationRequest?.RequestCode);
+                                    msg = msg?.Replace("{ReformerName}", litigationRequest?.ReformerCitizen?.FullName);
 
                                     await SendNotificationMS(msg, litigationRequest, "المصلح تجاوز الفترة المسموح بها", NotificationActorType.Employee, RequestType.LitigationRequest,
                                        false, false, true);
@@ -263,17 +264,44 @@ namespace REAC.Application.AppServices.SLA
                                 {
                                     litigationRequestReformerAssigningRequest.LitigationRequest.IsLitigationRequestReformerAssigningRequestResponsePeriodSent = true;
 
-                                    // litigationRequestReformerAssigningRequest.CitizenId
-                                    // Send Notification for reformer
-                                    // Mail - Sms - Application Notification
-                                    // يرجى سرعة الرد على طلب مهمة الصلح على الدعوى رقم ......
+                                    
                                     try
                                     {
+
                                         var msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.SLA_ReconciliationTask_PleaseReply).Result.Data?.Value;
                                         msg = msg?.Replace("{LitigationCode}", litigationRequestReformerAssigningRequest.LitigationRequest?.RequestCode);
+                                        var objEmail = new SendEmailDto()
+                                        {
+                                            Body = msg,
+                                            Subject = "سرعة الرد على طلب مهمة الصلح",
+                                            To = new List<string>()
+                                        {
+                                            litigationRequestReformerAssigningRequest.ReformerCitizen.Email
+                                        }
+                                        };
 
-                                        await SendNotificationMS(msg, litigationRequestReformerAssigningRequest.LitigationRequest, "سرعة الرد على طلب مهمة الصلح", NotificationActorType.Reformer, RequestType.ReformerTaskrequests,
-                                           false, true);
+                                        var objSms = new Contracts.Dtos.Integration.GEE.SMSRequestDto()
+                                        {
+                                            message_text = msg,
+                                            recipients = new List<string>() { litigationRequestReformerAssigningRequest.ReformerCitizen.Mobile },
+                                            notification_type = "SMS",
+                                        };
+
+                                        var lstNotification = new List<SysNotificationDto>()
+                                    {
+                                        new SysNotificationDto()
+                                        {
+                                            ActorId = litigationRequestReformerAssigningRequest.CitizenId,
+                                            CreatedOn = DateTime.Now,
+                                            ActorTypeId = NotificationActorType.Reformer,
+                                            IsViewed = false,
+                                            ViewedOn = null,
+                                            RequestId = litigationRequestReformerAssigningRequest.LitigationRequestId,
+                                            RequestTypeId = RequestType.ReformerTaskrequests,
+                                            Message = msg
+                                        }
+                                    };
+                                        await _notificationService.SendNotifications(objEmail, objSms, lstNotification);
                                     }
                                     catch (Exception e)
                                     {
@@ -319,9 +347,9 @@ namespace REAC.Application.AppServices.SLA
                                         notification_type = "SMS",
                                     };
 
-                                    var lstNotification = new List<Contracts.Dtos.Notification.SysNotificationDto>()
+                                    var lstNotification = new List<SysNotificationDto>()
                                     {
-                                        new Contracts.Dtos.Notification.SysNotificationDto()
+                                        new SysNotificationDto()
                                         {
                                             ActorId = litigationRequestReformerAssigningRequest.CitizenId,
                                             CreatedOn = DateTime.Now,
@@ -431,6 +459,8 @@ namespace REAC.Application.AppServices.SLA
                                                 {
                                                     var msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.SLA_ReconciliationTask_ReAssigned).Result.Data?.Value;
                                                     msg = msg?.Replace("{LitigationCode}", litigationRequestReformerAssigningRequest.LitigationRequest?.RequestCode);
+                                                    msg = msg?.Replace("{PreviousReformer}", litigationRequestReformerAssigningRequest.ReformerCitizen.FullName);
+                                                    msg = msg?.Replace("{CurrentReformer}", reformer.FullName);
 
                                                     await SendNotificationMS(msg, litigationRequestReformerAssigningRequest.LitigationRequest, "الرد على مهمة الصلح للمصلح", NotificationActorType.Employee, RequestType.LitigationRequest,
                                                        false, false, true);

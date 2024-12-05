@@ -68,6 +68,8 @@ namespace REAC.Application.Contracts.Dtos.Citizen
         public Guid? LawLicenseFileId { get; set; }
         public virtual SysFileManagerCreateUpdateDto? IdentityFile { get; set; }
         public virtual SysFileManagerCreateUpdateDto? LawLicenseFile { get; set; }
+        public virtual ReformerStatus? ReformerStatusId { get; set; }
+        public virtual ArbitratorStatus? ArbitratorStatusId { get; set; }
 
     }
 

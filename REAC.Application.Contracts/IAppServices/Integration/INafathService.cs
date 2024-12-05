@@ -13,6 +13,6 @@ namespace REAC.Application.Contracts.IAppServices.Integration
         Task<DataResponse<NafathResponseDto>> Nafath(NafathRequestDto nafathRequestDto, CancellationToken cancellationToken);
         Task CheckNafathStatus();
 
-        Task<NafathStatusResponse> CheckStatus(string transactionId);
+        Task<BaseResponse> CheckStatusForMobile(string transactionId);
     }
 }

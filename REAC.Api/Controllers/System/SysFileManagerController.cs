@@ -39,7 +39,7 @@ public class SysFileManagerController : BaseController<SysFileManager,
 
     [HttpPost]
     [DisableRequestSizeLimit]
-    [AllowAnonymous]
+    //[AllowAnonymous]
     [Route(nameof(Upload))]
     public async Task<IActionResult> Upload([FromForm] UploadFilesDto input)
     {

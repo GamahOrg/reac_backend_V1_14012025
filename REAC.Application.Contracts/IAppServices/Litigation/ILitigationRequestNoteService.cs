@@ -9,5 +9,8 @@ namespace REAC.Application.Contracts.IAppServices.Litigation
         Task<BaseResponse> AddLitigationNote(LitigationRequestNoteCreateUpdateDto litigationNote);
         Task<BaseResponse> GetLitigationNotes(Guid litigationRequestId, int[] litigationRequestCategoryIds);
         Task<BaseResponse> EditLitigationNote(LitigationRequestNoteCreateUpdateDto litigationNote);
+
+        Task<BaseResponse> GetLitigationRequestNotesForBackoffice(int pageIndex, int pageSize, int litigationRequestCategoryId);
+        Task<BaseResponse> GetLitigationNotesByLitigationRequestIdForBackoffice(Guid litigationRequestId);
     }
 }

@@ -8,5 +8,6 @@ namespace REAC.Application.Contracts.IAppServices.System
     {
         Task<DataResponse<SysEmployee>> GetAdminsByDepartmentType(DepartmentType deptType);
         Task<DataResponse<SysEmployee>> GetEmployeeByDepartmentType(DepartmentType deptType);
+        Task<DataResponse<List<SysEmployee>>> GetAllEmployeeByDepartmentType(DepartmentType deptType);
     }
 }

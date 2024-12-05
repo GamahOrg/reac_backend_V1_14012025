@@ -47,4 +47,7 @@ public partial class SysFileManager : CreationBaseEntity<Guid>
     public virtual ICollection<LitigationRequestNoteFile> LitigationRequestNoteFiles { get; set; } = new List<LitigationRequestNoteFile>();
 
     public virtual ICollection<LitigationRequestRequestFile> LitigationRequestRequestFiles { get; set; } = new List<LitigationRequestRequestFile>();
+    public virtual ICollection<CitizenRequestCVFile> CitizenRequestCVFiles { get; set; } = new List<CitizenRequestCVFile>();
+    public virtual ICollection<CitizenRequestReconciliationCenterDegreeFile> CitizenRequestReconciliationCenterDegreeFiles { get; set; } = new List<CitizenRequestReconciliationCenterDegreeFile>();
+    public virtual ICollection<CitizenRequestProgramRealEstateInstituteFile> CitizenRequestProgramRealEstateInstituteFiles { get; set; } = new List<CitizenRequestProgramRealEstateInstituteFile>();
 }

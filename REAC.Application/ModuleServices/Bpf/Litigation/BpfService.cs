@@ -67,6 +67,7 @@ namespace Bpf.Application.ModuleServices
                     .ThenInclude(x => x.Department)
                     .ThenInclude(x => x.SysEmployees
                     .OrderBy(x => x.WorkFlowProcessingLogs.Count(x => x.IsFinished)).ThenBy(x => x.IsAdmin))
+                    .ThenInclude(x => x.EmployeeVacationRequests)
                     .FirstOrDefault();
 
             #region ValidateWorkflow
@@ -140,7 +141,12 @@ namespace Bpf.Application.ModuleServices
                             {
                                 case DepartmentDistributionMode.AutoDistribution:
                                     // Get Employee id by min requests
-                                    workFlowProcessingLog.EmployeeId = step.Department.SysEmployees.Where(x => x.IsAdmin == false).FirstOrDefault()?.Id;
+                                    var employee = step.Department.SysEmployees.Where(x => x.IsAdmin == false);
+                                    //var empId = employee.Where(x => x.EmployeeVacationRequests.All(v => v.IsApproved == null || v.IsApproved == false)
+                                    // || !x.EmployeeVacationRequests.Any(v => v.IsApproved == true && (v.StartDate <= DateTime.Today && v.EndDate >= DateTime.Today))).FirstOrDefault()?.Id;
+
+                                    var empId = employee.FirstOrDefault()?.Id;
+                                    workFlowProcessingLog.EmployeeId = empId;
                                     break;
                                 case DepartmentDistributionMode.ManualDistribution:
                                     //no employee

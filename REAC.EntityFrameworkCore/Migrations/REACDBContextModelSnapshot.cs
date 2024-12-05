@@ -219,6 +219,9 @@ namespace REAC.EntityFrameworkCore.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("About")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("AcademicDegreeName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -242,7 +245,25 @@ namespace REAC.EntityFrameworkCore.Migrations
                     b.Property<int?>("ExperienceYears")
                         .HasColumnType("int");
 
+                    b.Property<string>("ExperiencedInArbitrationFields")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ExperiencedInHousingstatuses")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("HaveArbitrationxperience")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("HaveHostingExperience")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsRegisteredReconciliationCenter")
+                        .HasColumnType("bit");
+
                     b.Property<bool>("IsVolunteerApproval")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IspassedRealEstateProgram")
                         .HasColumnType("bit");
 
                     b.Property<DateTime>("RequestOn")
@@ -287,6 +308,30 @@ namespace REAC.EntityFrameworkCore.Migrations
                     b.HasIndex("CitizenRequestId");
 
                     b.ToTable("CitizenRequestAcademicDegreeFile", (string)null);
+                });
+
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Actor.CitizenRequestCVFile", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("CVFileId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("CitizenRequestCVFilesId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("CitizenRequestId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CitizenRequestCVFilesId");
+
+                    b.HasIndex("CitizenRequestId");
+
+                    b.ToTable("CitizenRequestCVFile");
                 });
 
             modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Actor.CitizenRequestExperienceCertificate", b =>
@@ -388,6 +433,54 @@ namespace REAC.EntityFrameworkCore.Migrations
                     b.ToTable("CitizenRequestNote", (string)null);
                 });
 
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Actor.CitizenRequestProgramRealEstateInstituteFile", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("CitizenRequestId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("ProgramRealEstateDocumentFileId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("RealEstateInstituteFileId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CitizenRequestId");
+
+                    b.HasIndex("ProgramRealEstateDocumentFileId");
+
+                    b.ToTable("CitizenRequestProgramRealEstateInstituteFiles");
+                });
+
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Actor.CitizenRequestReconciliationCenterDegreeFile", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("CitizenRequestId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ReconciliationCenterDegreeFileId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("ReconciliationCenterFileId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CitizenRequestId");
+
+                    b.HasIndex("ReconciliationCenterFileId");
+
+                    b.ToTable("CitizenRequestReconciliationCenterDegreeFiles");
+                });
+
             modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Arbitration.ArbitratorStopFreeUpDecision", b =>
                 {
                     b.Property<int>("Id")
@@ -403,6 +496,12 @@ namespace REAC.EntityFrameworkCore.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("DecisionDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DecisionFrom")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DecisionTo")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("LateLitigationRequestNumber")
@@ -1237,9 +1336,6 @@ namespace REAC.EntityFrameworkCore.Migrations
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("LitigationRequestCorrespondenceStatusId")
-                        .HasColumnType("int");
-
                     b.Property<Guid?>("CreatedBy")
                         .HasColumnType("uniqueidentifier");
 
@@ -1252,7 +1348,7 @@ namespace REAC.EntityFrameworkCore.Migrations
                     b.Property<int>("LitigationRequestCorrespondenceDestinationId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("LitigationRequestCorrespondenceStatusId")
+                    b.Property<int>("LitigationRequestCorrespondenceStatusId")
                         .HasColumnType("int");
 
                     b.Property<Guid>("LitigationRequestId")
@@ -1958,6 +2054,12 @@ namespace REAC.EntityFrameworkCore.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("DecisionDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DecisionFrom")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DecisionTo")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("LateLitigationRequestNumber")
@@ -3991,6 +4093,23 @@ namespace REAC.EntityFrameworkCore.Migrations
                     b.Navigation("CitizenRequest");
                 });
 
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Actor.CitizenRequestCVFile", b =>
+                {
+                    b.HasOne("REAC.EntityFrameworkCore.Entities.System.SysFileManager", "CitizenRequestCVFiles")
+                        .WithMany("CitizenRequestCVFiles")
+                        .HasForeignKey("CitizenRequestCVFilesId");
+
+                    b.HasOne("REAC.EntityFrameworkCore.Entities.Actor.CitizenRequest", "CitizenRequest")
+                        .WithMany("CitizenRequestCVFiles")
+                        .HasForeignKey("CitizenRequestId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CitizenRequest");
+
+                    b.Navigation("CitizenRequestCVFiles");
+                });
+
             modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Actor.CitizenRequestExperienceCertificate", b =>
                 {
                     b.HasOne("REAC.EntityFrameworkCore.Entities.Actor.CitizenRequest", "CitizenRequest")
@@ -4052,6 +4171,40 @@ namespace REAC.EntityFrameworkCore.Migrations
                         .HasConstraintName("FKCitizenRequestCitizenRequestNotes231388");
 
                     b.Navigation("CitizenRequest");
+                });
+
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Actor.CitizenRequestProgramRealEstateInstituteFile", b =>
+                {
+                    b.HasOne("REAC.EntityFrameworkCore.Entities.Actor.CitizenRequest", "CitizenRequest")
+                        .WithMany("CitizenRequestProgramRealEstateInstituteFiles")
+                        .HasForeignKey("CitizenRequestId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("REAC.EntityFrameworkCore.Entities.System.SysFileManager", "ProgramRealEstateDocumentFile")
+                        .WithMany("CitizenRequestProgramRealEstateInstituteFiles")
+                        .HasForeignKey("ProgramRealEstateDocumentFileId");
+
+                    b.Navigation("CitizenRequest");
+
+                    b.Navigation("ProgramRealEstateDocumentFile");
+                });
+
+            modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Actor.CitizenRequestReconciliationCenterDegreeFile", b =>
+                {
+                    b.HasOne("REAC.EntityFrameworkCore.Entities.Actor.CitizenRequest", "CitizenRequest")
+                        .WithMany("CitizenRequestReconciliationCenterDegreeFiles")
+                        .HasForeignKey("CitizenRequestId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("REAC.EntityFrameworkCore.Entities.System.SysFileManager", "ReconciliationCenterFile")
+                        .WithMany("CitizenRequestReconciliationCenterDegreeFiles")
+                        .HasForeignKey("ReconciliationCenterFileId");
+
+                    b.Navigation("CitizenRequest");
+
+                    b.Navigation("ReconciliationCenterFile");
                 });
 
             modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Arbitration.ArbitratorStopFreeUpDecision", b =>
@@ -4496,7 +4649,9 @@ namespace REAC.EntityFrameworkCore.Migrations
 
                     b.HasOne("REAC.EntityFrameworkCore.Entities.System.SysLitigationRequestCorrespondenceStatus", "LitigationRequestCorrespondenceStatus")
                         .WithMany("LitigationRequestCorrespondences")
-                        .HasForeignKey("LitigationRequestCorrespondenceStatusId");
+                        .HasForeignKey("LitigationRequestCorrespondenceStatusId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("REAC.EntityFrameworkCore.Entities.Litigation.LitigationRequest", "LitigationRequest")
                         .WithMany("LitigationRequestCorrespondences")
@@ -6380,11 +6535,17 @@ namespace REAC.EntityFrameworkCore.Migrations
                 {
                     b.Navigation("CitizenRequestAcademicDegreeFiles");
 
+                    b.Navigation("CitizenRequestCVFiles");
+
                     b.Navigation("CitizenRequestExperienceCertificates");
 
                     b.Navigation("CitizenRequestFreelanceWorkDocumentFiles");
 
                     b.Navigation("CitizenRequestNotes");
+
+                    b.Navigation("CitizenRequestProgramRealEstateInstituteFiles");
+
+                    b.Navigation("CitizenRequestReconciliationCenterDegreeFiles");
                 });
 
             modelBuilder.Entity("REAC.EntityFrameworkCore.Entities.Actor.CitizenRequestExperienceCertificate", b =>
@@ -6638,9 +6799,15 @@ namespace REAC.EntityFrameworkCore.Migrations
 
                     b.Navigation("CitizenRequestAcademicDegreeFiles");
 
+                    b.Navigation("CitizenRequestCVFiles");
+
                     b.Navigation("CitizenRequestExperienceCertificateFiles");
 
                     b.Navigation("CitizenRequestFreelanceWorkDocumentFiles");
+
+                    b.Navigation("CitizenRequestProgramRealEstateInstituteFiles");
+
+                    b.Navigation("CitizenRequestReconciliationCenterDegreeFiles");
 
                     b.Navigation("DelegationRequests");
 

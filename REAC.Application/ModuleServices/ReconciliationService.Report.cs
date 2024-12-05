@@ -129,6 +129,7 @@ namespace REAC.Application.ModuleServices
         public async Task<BaseResponse> GetLitigationRequestForReport(Guid requestId, CancellationToken cancellationToken)
         {
             var litigationRequest = (await _repository.GetQueryable<LitigationRequest, Guid>())
+                         .Include(x => x.ReformerCitizen)
                          .Include(x => x.Area)
                          .Include(x => x.City)
                          .Include(x => x.LitigationRequestSessions)
@@ -152,8 +153,8 @@ namespace REAC.Application.ModuleServices
                          .Include(x => x.Contract.SecondPartyFacility)
                          .Include(x => x.Contract.SecondPartyCitizen)
                          .Include(x => x.Contract.LitigationRequestContractType)
-
-                         .Where(x => x.Id == requestId).ToList().FirstOrDefault();
+                         .AsNoTracking()
+                         .FirstOrDefault(x => x.Id == requestId);
 
             var request = _mapper.Map<LitigationRequestShortDto>(litigationRequest);
 

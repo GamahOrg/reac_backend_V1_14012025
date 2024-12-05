@@ -26,6 +26,7 @@ using REAC.Application.Contracts.Dtos.System.LitigationRequestCorrespondenceDest
 using REAC.Application.Contracts.Dtos.System.LitigationRequestExtendPeriodRequestStatusDtos;
 using REAC.Application.Contracts.Dtos.System.LitigationRequestOwnerTypeDtos;
 using REAC.Application.Contracts.Dtos.System.LitigationRequestStatusDtos;
+using REAC.Application.Contracts.Dtos.System.VacationDtos;
 using REAC.Application.Contracts.Dtos.Wpf.Business.WorkFlowLog;
 using REAC.Application.Contracts.Dtos.Wpf.Business.WorkFlowProcessingLog;
 using REAC.Application.Contracts.Dtos.Wpf.System;
@@ -168,6 +169,7 @@ namespace REAC.Application.Contracts
             CreateMap<Delegator, FacilityDelegatorCreateUpdateDto>().ReverseMap();
             CreateMap<LitigationRequest, LitigationRequestCreateUpdateDto>().ReverseMap();
             CreateMap<LitigationRequestContract, LitigationRequestContractCreateUpdateDto>().ReverseMap();
+            CreateMap<LitigationRequestContract, LitigationRequestContractShortDto>().ReverseMap();
             CreateMap<LitigationRequestCorrespondence, LitigationRequestCorrespondenceCreateUpdateDto>().ReverseMap();
             CreateMap<LitigationRequestCorrespondenceFile, LitigationRequestCorrespondenceFileCreateUpdateDto>().ReverseMap();
             CreateMap<LitigationRequestExtendPeriodRequest, LitigationRequestExtendPeriodRequestGetDto>().ReverseMap();
@@ -209,6 +211,10 @@ namespace REAC.Application.Contracts
             CreateMap<SysFileManager, SysFileManagerCreateUpdateDto>().ReverseMap();
             CreateMap<SysLitigationRequestAmount, SysLitigationRequestAmountCreateUpdateDto>().ReverseMap();
             CreateMap<SysSetting, SysSettingCreateUpdateDto>().ReverseMap();
+            CreateMap<SysVacationRequest, SysVacationRequestCreateUpdateDto>()
+                .ForMember(des => des.ApprovedBy, opt => opt.MapFrom(src => src.SysApprovedByEmployee.EmployeeName))
+                .ForMember(des => des.EmployeeName, opt => opt.MapFrom(src => src.SysEmployee.EmployeeName))
+                .ReverseMap();
             CreateMap<SysRegistrationRequest, SysRegistrationRequestCreateUpdateDto>().ReverseMap();
 
             #region Litigation Contract

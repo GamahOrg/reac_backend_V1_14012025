@@ -177,6 +177,9 @@ namespace REAC.Application.AppServices
                     .Include(x => x.SysArbitratorClass)
                     .Include(x => x.SysArea)
                     .Include(x => x.CitizenRequestAcademicDegreeFiles).ThenInclude(x => x.AcademicDegreeFile)
+                    .Include(x => x.CitizenRequestExperienceCertificates)
+                    .Include(x => x.CitizenRequestProgramRealEstateInstituteFiles)
+                    .Include(x => x.CitizenRequestCVFiles)
                     .Include(x => x.CitizenRequestNotes)
                     .Include(x => x.CitizenRequestFreelanceWorkDocumentFiles).ThenInclude(x => x.FreelanceWorkDocumentFile)
                     .Include(x => x.CitizenRequestExperienceCertificates).ThenInclude(x => x.CitizenRequestExperienceCertificateFiles)
@@ -295,6 +298,87 @@ namespace REAC.Application.AppServices
                         }
                     }
                 }
+
+                #endregion
+
+                #region CitizenRequestReconciliationCenterDegreeFiles
+
+                var deleteCitizenRequestReconciliationCenterDegreeFiles = citizenRequests.CitizenRequestReconciliationCenterDegreeFiles
+                    .Where(x => !citizenRequestCreateUpdateDto.CitizenRequestReconciliationCenterDegreeFiles.Any(y => y.Id == x.Id));
+
+                _repository.RemoveRange<CitizenRequestReconciliationCenterDegreeFile, Guid>(deleteCitizenRequestReconciliationCenterDegreeFiles);
+                response = await _repository.SaveChangesAsync();
+                if (!response.IsDone) return response;
+
+                foreach (var citizenRequestReconciliationCenterDegreeDocument in citizenRequestCreateUpdateDto.CitizenRequestReconciliationCenterDegreeFiles)
+                {
+                    if (citizenRequestReconciliationCenterDegreeDocument.Id == Guid.Empty)
+                    {
+                        await _repository.AddAsync<CitizenRequestReconciliationCenterDegreeFile, Guid>(new CitizenRequestReconciliationCenterDegreeFile
+                        {
+                            Id = Guid.NewGuid(),
+                            CitizenRequestId = citizenRequests.Id,
+                            ReconciliationCenterDegreeFileId = citizenRequestReconciliationCenterDegreeDocument.ReconciliationCenterDegreeFileId
+                        });
+                        response = await _repository.SaveChangesAsync();
+                        if (!response.IsDone) return response;
+                    }
+                }
+
+
+                #endregion
+
+                #region CitizenRequestRealStateProgramFiles
+
+                var deleteRealStateProgramCenterDegreeFiles = citizenRequests.CitizenRequestProgramRealEstateInstituteFiles
+                    .Where(x => !citizenRequestCreateUpdateDto.CitizenRequestProgramRealEstateInstituteFiles.Any(y => y.Id == x.Id));
+
+                _repository.RemoveRange<CitizenRequestProgramRealEstateInstituteFile, Guid>(deleteRealStateProgramCenterDegreeFiles);
+                response = await _repository.SaveChangesAsync();
+                if (!response.IsDone) return response;
+
+                foreach (var citizenRequesRealStateProgramDegreeDocument in citizenRequestCreateUpdateDto.CitizenRequestProgramRealEstateInstituteFiles)
+                {
+                    if (citizenRequesRealStateProgramDegreeDocument.Id == Guid.Empty)
+                    {
+                        await _repository.AddAsync<CitizenRequestProgramRealEstateInstituteFile, Guid>(new CitizenRequestProgramRealEstateInstituteFile
+                        {
+                            Id = Guid.NewGuid(),
+                            CitizenRequestId = citizenRequests.Id,
+                            RealEstateInstituteFileId = citizenRequesRealStateProgramDegreeDocument.ProgramRealEstateInstituteFileId
+                        });
+                        response = await _repository.SaveChangesAsync();
+                        if (!response.IsDone) return response;
+                    }
+                }
+
+
+                #endregion
+
+                #region CitizenRequestCVFiles
+
+                var deleteCVFiles = citizenRequests.CitizenRequestCVFiles
+                    .Where(x => !citizenRequestCreateUpdateDto.CitizenRequestCVFiles.Any(y => y.Id == x.Id));
+
+                _repository.RemoveRange<CitizenRequestCVFile, Guid>(deleteCVFiles);
+                response = await _repository.SaveChangesAsync();
+                if (!response.IsDone) return response;
+
+                foreach (var citizenRequesCvDocument in citizenRequestCreateUpdateDto.CitizenRequestCVFiles)
+                {
+                    if (citizenRequesCvDocument.Id == Guid.Empty)
+                    {
+                        await _repository.AddAsync<CitizenRequestCVFile, Guid>(new CitizenRequestCVFile
+                        {
+                            Id = Guid.NewGuid(),
+                            CitizenRequestId = citizenRequests.Id,
+                            CVFileId = citizenRequesCvDocument.CVFileId
+                        });
+                        response = await _repository.SaveChangesAsync();
+                        if (!response.IsDone) return response;
+                    }
+                }
+
 
                 #endregion
 

@@ -1,4 +1,5 @@
 ﻿using Core.GenericRepository.Shared.BaseEntities;
+using REAC.EntityFrameworkCore.Entities.System;
 
 namespace REAC.Application.Contracts.Dtos.Citizen
 {
@@ -15,6 +16,7 @@ namespace REAC.Application.Contracts.Dtos.Citizen
         public string? WorkTelephone { get; set; }
 
         public string? Fax { get; set; }
+        public CitizenNationalityDto Nationality { get; set; } = null!;
 
         public string Email { get; set; } = null!;
 

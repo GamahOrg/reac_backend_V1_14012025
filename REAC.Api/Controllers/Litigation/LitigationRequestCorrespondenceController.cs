@@ -14,7 +14,7 @@ namespace REAC.Api.Controllers.Litigation;
 [Route("api/[controller]")]
 [ApiController]
 [ApiExplorerSettings(GroupName = APISections.Litigation)]
-[PermissionRequired(Modules.LitigationRequest)]
+//[PermissionRequired(Modules.LitigationRequest)]
 
 public class LitigationRequestCorrespondenceController : BaseController<LitigationRequestCorrespondence,
        LitigationRequestCorrespondenceCreateUpdateDto, LitigationRequestCorrespondenceCreateUpdateDto
@@ -83,7 +83,7 @@ public class LitigationRequestCorrespondenceController : BaseController<Litigati
     }
 
     [HttpPost("AddLitigationCorrespondenceReply")]
-    public async Task<IActionResult> AddLitigationCorrespondence([FromBody] LitigationRequestCorrespondenceReplyCreateUpdateDto model)
+    public async Task<IActionResult> AddLitigationCorrespondenceReply([FromBody] LitigationRequestCorrespondenceReplyCreateUpdateDto model)
     {
         if (ModelState.IsValid)
         {

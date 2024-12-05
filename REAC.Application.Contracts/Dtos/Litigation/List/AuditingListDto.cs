@@ -12,7 +12,7 @@ namespace REAC.Application.Contracts.Dtos.Litigation.List
         public DateTime? AssignedOn { get; set; }
         public string? FirstPartyName { get; set; }
         public string? SecondPartyName { get; set; }
-        public int? AuditngRemaningDays { get; set; }
+        public int? PretenderRating { get; set; }
         public RequestStatus? InternalStatusId { get; set; }
         public string? InternalStatus { get; set; }
 

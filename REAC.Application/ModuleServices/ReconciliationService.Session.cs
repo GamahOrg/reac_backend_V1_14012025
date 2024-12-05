@@ -22,6 +22,7 @@ namespace REAC.Application.ModuleServices
             {
                 Guid referenceId = Guid.Empty;
                 _jwtReader.GetReferenceId(ref referenceId);
+                requestPayload.SessionDateTime = requestPayload.SessionDateTime.ToLocalTime();
                 var msg = "";
                 var sessionUrl = "";
                 var _zoomMeeting=new ZoomMeting();
@@ -38,6 +39,25 @@ namespace REAC.Application.ModuleServices
                         .Where(x => x.Id == requestPayload.RequestId)
                         .Single();
 
+                int ReformerReminderForReconciliationSecondPeriod = 0;
+                int.TryParse(_sysSettingService.GetBySettingKey(SysSettingKeyConstants.SLA_ReformerReminderForReconciliationSecondPeriod).Result.Data?.Value, out ReformerReminderForReconciliationSecondPeriod);
+
+                if (ReformerReminderForReconciliationSecondPeriod > 0)
+                {
+                    double totalReviewHours = 0;
+
+                    totalReviewHours += (DateTime.Now - litigationRequest.StartReconciliationDate).Value.TotalHours;
+                    if (totalReviewHours >= ReformerReminderForReconciliationSecondPeriod)
+                    {
+                        return new BaseResponse()
+                        {
+                            IsDone = false,
+                            Message = " المصلح تجاوز الفترة المسموح بها للصلح على الدعوى"
+                        };
+                    }
+                }
+
+
                 if (requestPayload.SessionDateTime < litigationRequest.SentOn)
                 {
                     return new BaseResponse()
@@ -46,6 +66,8 @@ namespace REAC.Application.ModuleServices
                         Message = "لا يمكن إضافة جلسة قبل تاريخ تقديم طلب الدعوى"
                     };
                 }
+                var updateResponse = new BaseResponse();
+                bool updatedSession= false;
                 if (litigationRequest.LitigationRequestSessions != null)
                 {
                     foreach (var session in litigationRequest.LitigationRequestSessions.ToList())
@@ -56,13 +78,26 @@ namespace REAC.Application.ModuleServices
                                 IsDone = false,
                                 Message = "يوجد جلسة بنفس التاريخ"
                             };
-
-                        if (requestPayload.SessionDateTime < session.SessionDatetime)
-                            return new BaseResponse()
+                        if (requestPayload.SessionDateTime > session.SessionDatetime || requestPayload.SessionDateTime < session.SessionDatetime)
+                        {
+                            
+                            session.SessionDatetime = requestPayload.SessionDateTime;   
+                             updateResponse = _repository.Remove<LitigationRequestSession, Guid>(session);
+                            await _repository.SaveChangesAsync();
+                            updatedSession = true;
+                            if (!updateResponse.IsDone)
                             {
-                                IsDone = false,
-                                Message = "لا يمكن اضافة جلسة بتاريخ سابق لجلسة سابقة"
-                            };
+                                return new BaseResponse { IsDone = false, Message = "لا يمكن تعديل موعد الجلسة" };
+                            } 
+                            break; 
+                        }
+
+                        //if (requestPayload.SessionDateTime < session.SessionDatetime)
+                        //    return new BaseResponse()
+                        //    {
+                        //        IsDone = false,
+                        //        Message = "لا يمكن اضافة جلسة بتاريخ سابق لجلسة سابقة"
+                        //    };
 
                         if (session.SessionDatetime > DateTime.Now)
                             return new BaseResponse()
@@ -120,7 +155,7 @@ namespace REAC.Application.ModuleServices
                         _zoomMeeting = await _zoomService.GenerateMeeting($"{litigationRequest.RequestCode}_{requestPayload.SessionDateTime.ToString()}",sessionDateGreg);
                         sessionUrl = _zoomMeeting?.join_url;
 
-                        if (litigationRequest.LitigationRequestSessions.Count == 0)
+                        if (litigationRequest.LitigationRequestSessions.Count == 0 && updatedSession == false)
                         {
                             litigationRequest.InternalStatusId = RequestStatus.AsessionTimeHasBeenSet;
                             litigationRequest.ExternalStatusId = RequestStatus.AsessionTimeHasBeenSet;
@@ -196,12 +231,14 @@ namespace REAC.Application.ModuleServices
                         MeetingId = _zoomMeeting?.id,
                     };
 
+                  
+                        await _repository.AddAsync<LitigationRequestSession, Guid>(litigationRequestSession);
 
-                    await _repository.AddAsync<LitigationRequestSession, Guid>(litigationRequestSession);
+                        var repositorySaveResponse = await _repository.SaveChangesAsync(new CancellationToken());
+                        if (!repositorySaveResponse.IsDone)
+                            return repositorySaveResponse;
+                    
 
-                    var repositorySaveResponse = await _repository.SaveChangesAsync(new CancellationToken());
-                    if (!repositorySaveResponse.IsDone)
-                        return repositorySaveResponse;
                 }
                 else
                 {
@@ -360,7 +397,7 @@ namespace REAC.Application.ModuleServices
                 objSms.recipients.Add(litigationRequest?.Contract?.SecondPartyFacility?.Citizen?.Mobile);
 
             }
-            _notificationService.SendNotifications(objEmail, objSms, lstNotification);
+            await _notificationService.SendNotifications(objEmail, objSms, lstNotification);
 
         }
         public async Task<BaseResponse> GetLitigationRequestForSession(Guid requestId, CancellationToken cancellationToken)

@@ -94,7 +94,9 @@
 
 
         public const string Arbitration_ExpirationDateHours = "Arbitration.ExpirationDateHours";
+        public const string Arbitration_Period = "Arbitration.Period";
         public const string Reconciliation_Period = "Reconciliation.Period";
+        public const string Review_Period = "Review.Period";
         public const string Reconciliation_Request_Study_Period = "Reconciliation.Request.Study.Period";
         public const string Reconciliation_Request_Process_Notes_Period = "Reconciliation.Request.Process.Notes.Period";
         public const string Reconciliation_Reformer_Approve_Mission_Period = "Reconciliation.Reformer.Approve.Mission.Period";

@@ -2,6 +2,7 @@
 using REAC.Application.Contracts.Dtos.Arbitration;
 using REAC.Application.Contracts.Dtos.Citizen;
 using REAC.Application.Contracts.Dtos.CitizenRequests;
+using REAC.Application.Contracts.Dtos.CitizenRequests.CreateUpdate;
 using REAC.Application.Contracts.Dtos.Delegator;
 using REAC.Application.Contracts.Dtos.Facility;
 using REAC.Application.Contracts.Dtos.Integration.Nafath;
@@ -231,11 +232,15 @@ namespace REAC.Application.Contracts
             CreateMap<CitizenRequestAcademicDegreeFile, CitizenRequestAcademicDegreeFileCreateUpdateDto>().ReverseMap();
             CreateMap<CitizenRequestExperienceCertificate, CitizenRequestExperienceCertificateCreateUpdateDto>().ReverseMap();
             CreateMap<CitizenRequestFreelanceWorkDocumentFile, CitizenRequestFreelanceWorkDocumentFileFullDataDto>().ReverseMap();
+            CreateMap<CitizenRequestReconciliationCenterDegreeFile, CitizenRequestReconciliationCenterDegreeFileCreateUpdateDto>().ReverseMap();
+            CreateMap<CitizenRequestProgramRealEstateInstituteFile, CitizenRequestCitizenRequestProgramRealEstateInstituteFileCreateUpdateDto>().ReverseMap();
+            CreateMap<CitizenRequestCVFile, CitizenRequestCVFileCreateUpdateDto>().ReverseMap();
             CreateMap<CitizenRequestAcademicDegreeFile, CitizenRequestAcademicDegreeFileFullDataDto>().ReverseMap();
             CreateMap<CitizenRequestExperienceCertificate, CitizenRequestExperienceCertificateFullDataDto>().ReverseMap();
             CreateMap<CitizenRequestExperienceCertificateFile, CitizenRequestExperienceCertificateFileFullDataDto>().ReverseMap();
             CreateMap<CitizenRequestExperienceCertificateFile, CitizenRequestExperienceCertificateFileCreateUpdateDto>().ReverseMap();
             CreateMap<CitizenRequestNote, CitizenRequestNoteCreateUpdateDto>().ReverseMap();
+            CreateMap<SysNationality, CitizenNationalityDto>().ReverseMap();
 
             CreateMap<SysBank, SysBankCreateUpdateDto>().ReverseMap();
             CreateMap<SysMeetingLocation, SysMeetingLocationCreateUpdateDto>().ReverseMap();

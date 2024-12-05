@@ -91,6 +91,34 @@ namespace Ticketing.EntityFrameworkCore.SeedData
                                      }
                                  }
                             }
+                            //,new SysEmployee()
+                            //{
+                            //     Id = Guid.Parse("ddc90d42-62b3-4a07-b20a-68b0365aec45"),
+                            //     CreatedOn = DateTime.Now,
+                            //     Email = "Con2@Employee.com",
+                            //     EmployeeName = "موظف تدقيق 2",
+                            //     IsActive = true,
+                            //     IsLocked = false,
+                            //     IsDeleted = false,
+                            //     AllowAssign = true,
+                            //     AllowReAssign= true,
+                            //     IsAdmin = false,
+                            //     Mobile = "0558800225",
+                            //     UserId = new Guid("f83c927d-a5ee-45ca-b95b-be75d09c1e51"),
+                            //     Translations = new List<SysEmployeeTranslation>()
+                            //     {
+                            //         new SysEmployeeTranslation()
+                            //         {
+                            //             EmployeeName = "Conciliation Department Employee 2",
+                            //             LanguageCode=Constants.EnglishLanguage
+                            //         },
+                            //         new SysEmployeeTranslation()
+                            //         {
+                            //             EmployeeName = "موظف تدقيق 2",
+                            //             LanguageCode=Constants.ArabicLanguage
+                            //         }
+                            //     }
+                            //}
                         }
                     },
                     new SysDepartment

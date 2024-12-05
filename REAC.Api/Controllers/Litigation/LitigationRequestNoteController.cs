@@ -68,5 +68,21 @@ public class LitigationRequestNoteController : BaseController<LitigationRequestN
 
     #endregion
 
+    #region Backoffice
+
+    [HttpGet("GetLitigationRequestNotesForBackoffice")]
+    public async Task<IActionResult> GetLitigationRequestNotesForBackoffice(int pageIndex, int pageSize, int litigationRequestCategoryId)
+    {
+        if (ModelState.IsValid)
+        {
+            var returnValue = await _litigationNoteService.GetLitigationRequestNotesForBackoffice(pageIndex,pageSize,litigationRequestCategoryId);
+            return Ok(returnValue);
+        }
+
+        return BadRequest();
+    }
+
+
+    #endregion
 
 }

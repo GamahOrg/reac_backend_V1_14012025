@@ -267,22 +267,7 @@ namespace REAC.Application.AppServices.Integration.GEE
                                             if (userAddressInfo.IsDone)
                                             {
                                                 identityStatus.UserAddressInfoUpdated = userAddressInfo.Data;
-                                                //identityStatus.UserAddressInfoUpdated = new UserAddressInfoUpdatedDto()
-                                                //{
-                                                //    AdditionalNumber = userAddressInfo.Data.AdditionalNumber,
-                                                //    BuildingNumber = userAddressInfo.Data.BuildingNumber,
-                                                //    ZipCode = userAddressInfo.Data.ZipCode,
-                                                //    UnitNumber = userAddressInfo.Data.UnitNumber,
-                                                //    DistrictAreaArabic = userAddressInfo.Data.DistrictAreaArabic,
-                                                //    DistrictAreaEnglish = userAddressInfo.Data.DistrictAreaEnglish,
-                                                //    StreetNameArabic = userAddressInfo.Data.StreetNameArabic,
-                                                //    StreetNameEnglish = userAddressInfo.Data.StreetNameEnglish,
-                                                //    CityNameArabic = userAddressInfo.Data.CityNameArabic,
-                                                //    CityNameEnglish = userAddressInfo.Data.CityNameEnglish,
-                                                //    FullName = userAddressInfo.Data.FullName,
-                                                //    Latitude = userAddressInfo.Data.Latitude,
-                                                //    Longitude = userAddressInfo.Data.Longitude,
-                                                //};
+                                               
                                             }
                                         }
                                     }
@@ -580,91 +565,165 @@ namespace REAC.Application.AppServices.Integration.GEE
             return new DataResponse<NafathRequestBodyDto> { Data = nafathRequestBodyDto, IsDone = true };
         }
 
-        public async Task<NafathStatusResponse> CheckStatus(string transactionId)
+        public async Task<BaseResponse> CheckStatusForMobile(string transactionId)
         {
-            var response = new NafathStatusResponse
-            {
-                TransactionId = transactionId,
-                IsValid = false,
-                Message = "Transaction not processed."
-            };
-
             try
             {
                 var token = (await _gEELoginService.Login()).Data?.Access_token;
                 if (token is null)
-                {
-                    _loggerManager.Log(Core.Log.Domain.Shared.Enums.LoggerType.Database,
-                       new LogDto()
+                    _loggerManager.Log(Core.Log.Domain.Shared.Enums.LoggerType.Database
+                       , new LogDto()
                        {
                            Type = Core.Log.Domain.Shared.Enums.LogType.Error,
                            Message = "get access token from API GEE error"
                        });
-                    response.Message = "Unable to get access token.";
-                    return response; // Return response with failure message
-                }
 
-                var nafathCheckList = _nafathTransactionService.GettAll();
-                if (nafathCheckList is not null && nafathCheckList.Any())
+                var nafathCheckItem = _nafathTransactionService.GettAll().FirstOrDefault(x => x.TransactionId == transactionId);
+
+                if (nafathCheckItem is null)
+                    return new BaseResponse() { IsDone = false, Message = "لا يوجد بيانات لهذا الرقم" };
+
+                var removeList = new List<NafathTransaction>();
+
+
+                if (nafathCheckItem.RequestExpired < DateTime.Now)
                 {
-                    // Find the specific transaction based on TransactionId
-                    var nafathTransaction = nafathCheckList.FirstOrDefault(nt => nt.TransactionId == transactionId);
-                    if (nafathTransaction == null)
+                    IdentityStatus identityStatus = new IdentityStatus()
                     {
-                        _loggerManager.Log(Core.Log.Domain.Shared.Enums.LoggerType.Database,
-                           new LogDto()
-                           {
-                               Type = Core.Log.Domain.Shared.Enums.LogType.Error,
-                               Message = $"Transaction with ID {transactionId} not found."
-                           });
-                        return response; // Transaction not found
-                    }
-
-                    if (nafathTransaction.RequestExpired < DateTime.Now)
-                    {
-                        response.Message = "Request has expired.";
-                        return response; // Request expired
-                    }
-
-                    NafathCheckRequestDto nafathCheckRequestDto = new NafathCheckRequestDto()
-                    {
-                        Id = nafathTransaction.NationalId,
-                        Random = nafathTransaction.RandomNumber,
-                        TransId = nafathTransaction.TransactionId,
-                        Token = token
+                        TransactionId = nafathCheckItem.TransactionId,
+                        IsValid = false,
+                        Token = null,
+                        UserInfoUpdated = null,
                     };
+                    removeList.Add(nafathCheckItem);
+                    return new DataResponse<IdentityStatus>() { IsDone = true, Data = identityStatus, Message = "Token Expired" };
+                }
 
-                    var nafathCheckStatusResponse = await NafathCheckStatus(nafathCheckRequestDto);
-                    if (nafathCheckStatusResponse is not null && nafathCheckStatusResponse.Data?.Data is not null)
+                NafathCheckRequestDto nafathCheckRequestDto = new NafathCheckRequestDto()
+                {
+                    Id = nafathCheckItem.NationalId,
+                    Random = nafathCheckItem.RandomNumber,
+                    TransId = nafathCheckItem.TransactionId,
+                    Token = token
+                };
+
+                var nafathCheckStatusResponse = (await NafathCheckStatus(nafathCheckRequestDto));
+                if (nafathCheckStatusResponse is not null && nafathCheckStatusResponse.Data is not null)
+                {
+                    if (nafathCheckStatusResponse.Data?.Data?.Status == SysSettingKeyConstants.NafathStatus_COMPLETED
+                        && nafathCheckStatusResponse.Data?.Data?.AccessToken is not null)
                     {
-                        // Check valid status
-                        if (nafathCheckStatusResponse.Data.Data.Status == SysSettingKeyConstants.NafathStatus_COMPLETED)
+                        if (nafathCheckItem.AccessToken is not null && nafathCheckItem.RefreshToken is not null)
                         {
-                            response.IsValid = true; // Mark as valid status
-                            response.Message = "Transaction is valid.";
+                            IdentityStatus identityStatusWithToken = new IdentityStatus()
+                            {
+                                TransactionId = nafathCheckItem.TransactionId,
+                                IsValid = true,
+                                Token = nafathCheckItem.AccessToken,
+                                RefreshToken = nafathCheckItem.RefreshToken,
+                                UserInfoUpdated = new UserInfoUpdatedDto()
+                                {
+                                    IsDraftAccount = nafathCheckItem.IsDraftAccount,
+                                    IsLawye = nafathCheckItem.IsLawye,
+                                    IsArbitrator = nafathCheckItem.IsArbitrator,
+                                    IsReformer = nafathCheckItem.IsReformer,
+                                }
+                            };
+
+                            removeList.Add(nafathCheckItem);
+                            return new DataResponse<IdentityStatus>() { IsDone = true, Data = identityStatusWithToken };
+
                         }
-                        else if (nafathCheckStatusResponse.Data.Data.Status == SysSettingKeyConstants.NafathStatus_REJECTED ||
-                                 nafathCheckStatusResponse.Data.Data.Status == SysSettingKeyConstants.NafathStatus_EXPIRED)
+
+                        IdentityStatus identityStatus = new IdentityStatus();
+
+                        var userInfo = await NafathGetUserInfo(nafathCheckStatusResponse.Data.Data.AccessToken);
+
+                        if (!string.IsNullOrEmpty(token) && nafathCheckRequestDto is not null)
                         {
-                            response.Message = "Transaction is rejected or expired.";
+                            if (!string.IsNullOrEmpty(nafathCheckRequestDto.Id))
+                            {
+                                var userAddressInfo = await NafathGetUserAddressInfo(token, nafathCheckRequestDto.Id);
+
+                                if (userAddressInfo is not null)
+                                {
+                                    if (userAddressInfo.IsDone)
+                                    {
+                                        identityStatus.UserAddressInfoUpdated = userAddressInfo.Data;
+                                        
+                                    }
+                                }
+                            }
+
                         }
+
+
+                        if (userInfo.IsDone)
+                        {
+
+                            identityStatus.TransactionId = nafathCheckItem.TransactionId;
+                            identityStatus.IsValid = true;
+                            identityStatus.Token = nafathCheckItem.AccessToken;
+                            identityStatus.RefreshToken = nafathCheckItem.RefreshToken;
+                            identityStatus.UserInfoUpdated = new UserInfoUpdatedDto()
+                            {
+                                IsDraftAccount = nafathCheckItem.IsDraftAccount,
+                                IsLawye = nafathCheckItem.IsLawye,
+                                IsArbitrator = nafathCheckItem.IsArbitrator,
+                                IsReformer = nafathCheckItem.IsReformer,
+                                DateOfBirth = userInfo.Data?.DateOfBirth,
+                                FirstName = userInfo.Data?.FirstName,
+                                FullName = userInfo.Data?.FullName,
+                                Gender = userInfo.Data?.Gender,
+                                NationalId = userInfo.Data?.NationalId,
+                                NationalIdExpiryDate = userInfo.Data?.NationalIdExpiryDate,
+                                Nationality = userInfo.Data?.Nationality,
+                                NationalityId = userInfo.Data?.NationalityId,
+                            };
+
+
+                            removeList.Add(nafathCheckItem);
+                            return new DataResponse<IdentityStatus>() { IsDone = true, Data = identityStatus };
+
+                        }
+
+                    }
+
+                    if (nafathCheckStatusResponse.Data?.Data?.Status == SysSettingKeyConstants.NafathStatus_REJECTED
+                    || nafathCheckStatusResponse.Data?.Data?.Status == SysSettingKeyConstants.NafathStatus_EXPIRED)
+                    {
+                        IdentityStatus identityStatus = new IdentityStatus()
+                        {
+                            TransactionId = nafathCheckItem.TransactionId,
+                            IsValid = false,
+                        };
+
+                        removeList.Add(nafathCheckItem);
+                        return new DataResponse<IdentityStatus>() { IsDone = true, Data = identityStatus };
+
                     }
                 }
 
-                return response; // Return the response object
-            }
-            catch (Exception ex)
-            {
-                _loggerManager.Log(Core.Log.Domain.Shared.Enums.LoggerType.Database,
-                    new LogDto()
+                if (removeList.Any())
+                {
+                    foreach (var nafathTransaction in removeList)
                     {
-                        Type = Core.Log.Domain.Shared.Enums.LogType.Error,
-                        Message = $"Error in CheckNafathStatus: {ex.Message}"
-                    });
-                response.Message = "An error occurred while processing the request.";
-                return response; // Return the response with error message
+                        _nafathTransactionService.Remove(nafathTransaction);
+                    }
+                }
+                return new BaseResponse() { IsDone = false, Message = "حدث خطأ او لم يتم تفعيل الرقم السري" };
+
+
+
+            }
+            catch (Exception)
+            {
+                return new BaseResponse() { IsDone = false, Message = "خطأ داخلي" };
+
             }
         }
+
+
 
     }
 }

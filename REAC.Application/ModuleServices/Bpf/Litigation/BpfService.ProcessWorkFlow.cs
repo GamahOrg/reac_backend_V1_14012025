@@ -221,6 +221,7 @@ namespace Bpf.Application.ModuleServices
                                                            .OrderBy(x => x.WorkFlowProcessingLogs
                                                            .Count(x => x.IsFinished))
                                                            .ThenBy(x => x.IsAdmin))
+                                                           .ThenInclude(x => x.EmployeeVacationRequests)
                                                            .Single();
 
                                 await ExecuteWorkFlowStep(specificworkFlowStep,
@@ -263,8 +264,10 @@ namespace Bpf.Application.ModuleServices
                         try
                         {
                             msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.LitigationRequest_Creation_Resent).Result.Data?.Value;
+                            int reminderForApplicantSecondPeriod = 0;
+                            int.TryParse(_sysSettingService.GetBySettingKey(SysSettingKeyConstants.SLA_SecondEditReminderForForRequestApplicant).Result.Data?.Value, out reminderForApplicantSecondPeriod);
                             msg = msg.Replace("{LitigationCode}", litigationRequest.RequestCode);
-                            msg = msg.Replace("{ExpirationDate}", "5");
+                            msg = msg.Replace("{ExpirationDate}", $"{reminderForApplicantSecondPeriod/24}");
                             SendNotificationMSPlaintiff(msg, litigationRequest, RequestType.LitigationRequest, "Litigation Request Resent");
                         }
                         catch (Exception)

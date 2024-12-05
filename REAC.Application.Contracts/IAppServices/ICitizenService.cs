@@ -36,5 +36,9 @@ namespace REAC.Application.Contracts.IAppServices
         Task<BaseResponse> AddReformerFreeUpDecision(ReformerFreeUpDecisionCreateDto reformerFreeUpDecisionCreateDto);
         Task<BaseResponse> AddReformerStopDecision(ReformerStopDecisionCreateDto reformerStopDecisionCreateDto);
 
+        Task<BaseResponse> DeActivateReformerAccount(ReformerStopDecisionCreateDto reformerStopDecisionCreateDto);
+        Task<BaseResponse> ActivateReformerAccount(ReformerFreeUpDecisionCreateDto reformerFreeUpDecisionCreateDto);
+        Task<BaseResponse> DeActivateArbitratorAccount(ArbitratorStopDecisionCreateDto arbitratorStopDecisionCreateDto);
+        Task<BaseResponse> ActivateArbitratorAccount(ArbitratorFreeUpDecisionCreateDto arbitratorFreeUpDecisionCreateDto);
     }
 }

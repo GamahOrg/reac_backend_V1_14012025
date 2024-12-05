@@ -13,6 +13,7 @@ namespace REAC.Application.Contracts.Dtos.Litigation.CreateUpdate.Litigation
         public Guid? FirstPartyFacilityId { get; set; }
         public Guid? FirstPartyIndividualId { get; set; }
         public string? SecondPartyCapacity { get; set; }
+        public int? SecondPartyCapacityId { get; set; }
         public string? SecondPartyNationalId { get; set; }
         public string? SecondPartyPhone { get; set; }
         public string? SecondPartyName { get; set; }

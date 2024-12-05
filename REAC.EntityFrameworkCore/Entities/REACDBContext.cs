@@ -45,6 +45,7 @@ public partial class REACDBContext : DbContext
     public virtual DbSet<LitigationRequestArbitratorList> LitigationRequestArbitratorLists { get; set; }
 
     public virtual DbSet<SysArbitratorStatus> SysArbitratorStatuses { get; set; }
+    public virtual DbSet<SysLitigationRequestCorrespondenceStatus> SysLitigationRequestCorrespondenceStatus { get; set; }
 
     public virtual DbSet<SysReformerStatus> SysReformerStatuses { get; set; }
     public virtual DbSet<CitizenBankAccount> CitizenBankAccounts { get; set; }
@@ -69,6 +70,8 @@ public partial class REACDBContext : DbContext
     public virtual DbSet<CitizenRequest> CitizenRequests { get; set; }
     public virtual DbSet<CitizenRequestAcademicDegreeFile> CitizenRequestAcademicDegreeFiles { get; set; }
     public virtual DbSet<CitizenRequestFreelanceWorkDocumentFile> CitizenRequestFreelanceWorkDocumentFiles { get; set; }
+    public virtual DbSet<CitizenRequestProgramRealEstateInstituteFile> CitizenRequestProgramRealEstateInstituteFiles { get; set; }
+    public virtual DbSet<CitizenRequestReconciliationCenterDegreeFile> CitizenRequestReconciliationCenterDegreeFiles { get; set; }
     public virtual DbSet<CitizenRequestExperienceCertificate> CitizenRequestExperienceCertificates { get; set; }
     public virtual DbSet<CitizenRequestExperienceCertificateFile> CitizenRequestExperienceCertificateFiles { get; set; }
     public virtual DbSet<SysCitizenRequestType> SysCitizenRequestType { get; set; }
