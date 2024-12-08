@@ -17,6 +17,7 @@ using REAC.Application.Contracts.Dtos.System.EmployeeDtos;
 using REAC.Application.Contracts.Dtos.System.VacationDtos;
 using iText.Kernel.Geom;
 using REAC.Domain.Shared.Enum;
+using SysVacationRequestCreateUpdateDto = REAC.Application.Contracts.Dtos.System.VacationDtos.SysVacationRequestCreateUpdateDto;
 
 namespace REAC.Application.AppServices.System
 {

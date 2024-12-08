@@ -38,6 +38,7 @@ using REAC.EntityFrameworkCore.Entities.Reconciliation;
 using REAC.EntityFrameworkCore.Entities.System;
 using REAC.EntityFrameworkCore.Entities.Wpf.Business;
 using System.Globalization;
+using SysVacationRequestCreateUpdateDto = REAC.Application.Contracts.Dtos.System.VacationDtos.SysVacationRequestCreateUpdateDto;
 
 namespace REAC.Application.Contracts
 {
