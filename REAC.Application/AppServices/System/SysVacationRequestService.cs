@@ -31,7 +31,7 @@ namespace REAC.Application.AppServices.System
             _employeeService = employeeService;
         }
 
-        public async Task<BaseResponse> CreateVacationAsync(SysVacationRequestCreateUpdateDto holidayRequest)
+        public async Task<BaseResponse> CreateVacationAsync(REAC.Application.Contracts.Dtos.System.VacationDtos.SysVacationRequestCreateUpdateDto holidayRequest)
         {
             try
             {
