@@ -11,7 +11,7 @@ namespace REAC.Application.Contracts.IAppServices.System
 
         Task<BaseResponse> EmployeeList(int pageIndex, int pageSize);
         Task<BaseResponse> AdminList(int pageIndex, int pageSize);
-        Task<BaseResponse> CreateVacationAsync(SysVacationRequestCreateUpdateDto holidayRequest);
+        Task<BaseResponse> CreateVacationAsync(REAC.Application.Contracts.Dtos.System.VacationDtos.SysVacationRequestCreateUpdateDto holidayRequest);
         Task<BaseResponse> ProcessVacationRequestAsync(Guid requestId, bool result);
     }
 }
