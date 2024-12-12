@@ -123,6 +123,7 @@ namespace REAC.Mobile
             services.AddScoped<ISMSService, SMSService>();
             services.AddScoped<IOTPService, OTPService>();
             services.AddSingleton<INafathTransactionService, NafathTransactionService>();
+            services.AddSingleton<INafathAgreementRequestService, NafathAgreementRequestService>();
 
             services.AddScoped<IJwtReader, JwtReader>();
 

@@ -25,6 +25,7 @@ namespace REAC.Application.Contracts.Dtos.Litigation
         public string FirstPartyName { get; set; }
         public string SecondPartyName { get; set; }
         public string? RejectReason { get; set; }
+        public string? SigntureFile { get; set; }
     }
     
     public class LitigationReconciliationTaskAcceptOrRejectDocumentDto

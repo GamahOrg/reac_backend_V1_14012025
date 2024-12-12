@@ -37,5 +37,21 @@ namespace REAC.Application.AppServices.System
                 Message = response.Message
             };
         }
+        
+        public async  Task<BaseResponse> GetOrderedListAsync()
+        {
+            var response = (await _repository.GetQueryable<SysLitigationRequestAmount, Guid>())
+                .OrderBy(x => x.Fees).ToList();
+                
+            List<SysLitigationRequestAmountCreateUpdateDto> entityDtos
+                = _mapper.Map<List<SysLitigationRequestAmountCreateUpdateDto>>
+                ((response));
+            return new DataResponse<List<SysLitigationRequestAmountCreateUpdateDto>>()
+            {
+                IsDone = true,
+                Data = entityDtos,
+                
+            };
+        }
     }
 }

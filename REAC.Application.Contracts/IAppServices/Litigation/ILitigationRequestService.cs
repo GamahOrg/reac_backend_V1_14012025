@@ -62,6 +62,9 @@ namespace REAC.Application.Contracts.IAppServices.Litigation
         }
         #endregion
 
-        
+
+        Task<BaseResponse> CallNafathForAgreementRequestReply(Guid requestId, ApproveRejectStatus agreementRequestStatus);
+
+
     }
 }

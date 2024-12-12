@@ -49,5 +49,7 @@ public enum RequestStatus
     AgreementRequestHasBeenRejected = 23,
     ///<summary>ملغاة</summary>
     Cancelled = 24,
+    ///<summary>الصلح بواسطة منصة تراضى </summary>
+    ReconciliationOnTradyPlatform = 25,
 }
 

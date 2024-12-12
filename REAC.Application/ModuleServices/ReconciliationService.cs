@@ -6,6 +6,7 @@ using REAC.Application.Contracts.Dtos.Notification;
 using REAC.Application.Contracts.Dtos.Reconciliation.Process;
 using REAC.Application.Contracts.Dtos.Wpf.Business;
 using REAC.Application.Contracts.IAppServices;
+using REAC.Application.Contracts.IAppServices.Integration;
 using REAC.Application.Contracts.IAppServices.Notification;
 using REAC.Application.Contracts.IAppServices.System;
 using REAC.Application.Contracts.IAppServices.UserManage;
@@ -29,6 +30,7 @@ namespace REAC.Application.ModuleServices
         private readonly INotificationService _notificationService;
         private readonly ISysSettingService _sysSettingService;
         private readonly IZoomService _zoomService;
+        private readonly INafathService _nafathService;
 
         public ReconciliationService(IEntityRepository repository,
                           ISysSettingService sysSettingService,
@@ -37,7 +39,8 @@ namespace REAC.Application.ModuleServices
                           IJwtReader jwtReader,
                           INotificationService notificationService,
                           ISysEmployeeService employeeService,
-                          IZoomService zoomService)
+                          IZoomService zoomService,
+                          INafathService nafathService)
 
         {
             _mapper = mapper;
@@ -47,6 +50,7 @@ namespace REAC.Application.ModuleServices
             _sysSettingService = sysSettingService;
             _employeeService = employeeService;
             _zoomService = zoomService;
+            _nafathService = nafathService;
         }
 
         public async Task<BaseResponse> Assign(AssignRequestPayload assignRequestPayload, CancellationToken cancellationToken)
@@ -300,6 +304,7 @@ namespace REAC.Application.ModuleServices
             var msg = "";
             var litigationRequest = (await _repository.GetQueryable<LitigationRequest, Guid>()).Include(x => x.Area).Include(x => x.City)
                           .Include(x => x.ApplicantCitizen)
+                          .Include(x => x.ReformerCitizen)
                           .Include(x => x.Contract)
                           .Include(x => x.Contract.FirstPartyFacility)
                           .Include(x => x.Contract.FirstPartyCitizen)
@@ -402,7 +407,7 @@ namespace REAC.Application.ModuleServices
                         {
                             msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.LitigationRequest_Decision_ReconciliationWasNotMade).Result.Data?.Value;
                             msg = msg.Replace("{LitigationCode}", litigationRequest.RequestCode);
-                            SendNotificationMSWithAllTypes(msg, litigationRequest, "Citizen Litigation Request For Report Reply Added");
+                            await SendNotificationMSWithAllTypes(msg, litigationRequest, "Citizen Litigation Request For Report Reply Added");
                         }
                         catch (Exception e)
                         { }

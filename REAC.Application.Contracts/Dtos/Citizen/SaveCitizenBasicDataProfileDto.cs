@@ -63,6 +63,7 @@ namespace REAC.Application.Contracts.Dtos.Citizen
         public Guid? IdentityFileId { get; set; }
 
         public Guid? LawLicenseFileId { get; set; }
+        public Guid? SigntureFileId { get; set; }
 
     }
 }

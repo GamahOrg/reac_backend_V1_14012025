@@ -1,8 +1,11 @@
 ﻿using Core.Shared.Responses;
 using Microsoft.EntityFrameworkCore;
+using REAC.Application.Contracts.Dtos.Litigation.CreateUpdate.Litigation;
+using REAC.Application.Contracts.Dtos.Integration.GEE;
 using REAC.Application.Contracts.Dtos.Reconciliation.Process;
 using REAC.Domain.Shared.Constants;
 using REAC.Domain.Shared.Enum;
+using REAC.EntityFrameworkCore.Entities.Actor;
 using REAC.EntityFrameworkCore.Entities.Litigation;
 using REAC.EntityFrameworkCore.Entities.Reconciliation;
 using REAC.EntityFrameworkCore.Entities.Wpf.Business;
@@ -40,10 +43,137 @@ namespace REAC.Application.ModuleServices
                     };
 
                 bool allowAdd = true;
-
+                var msg = string.Empty;
                 if (litigationRequest.LitigationRequestReconciliationReports.Count() > 0)
                     allowAdd = false;
 
+                // Reconcilition is done => old flow 
+                // Reconcilition is  not done => check with category and move to arbitiration 
+                // giving up or trady platform => notify and edit the request
+                switch (requestPayload.ReconciliationRequestDecisionStatus)
+                {
+                    case ReconciliationRequestDecision.ReconciliationWasMade:
+                        //litigationRequest.InternalStatusId = RequestStatus.ReconciliationWasMade;
+                        //litigationRequest.ExternalStatusId = RequestStatus.ReconciliationWasMade;
+                        //litigationRequest.IsActive = false;
+                        litigationRequest.LitigationRequestSubStage = LitigationRequestSubStage.LitigationRequestReportAdded;
+                        litigationRequest.InternalStatusId = RequestStatus.TheMinutesOfTheMeetingWereWritten;
+                        litigationRequest.ExternalStatusId = RequestStatus.TheMinutesOfTheMeetingWereWritten;
+                        litigationRequest.IsMinutesOfMeetingApprovalRequired = true;
+                        litigationRequest.LitigationRequestSubStage = LitigationRequestSubStage.LitigationRequestReformerDecisionAdded;
+                        // Send Notification
+                        // تم الصلح
+                        // تم إضافة محضر الصلح
+                        try
+                        {
+                            //msg = (await _sysSettingService.GetBySettingKey(SysSettingKeyConstants.Reconciliation_Report_Creation)).Data?.ToString();
+                            msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.Reconciliation_Request_Added).Result.Data?.Value;
+                            msg = msg.Replace("{LitigationCode}", litigationRequest.RequestCode);
+                            await SendNotificationMSWithAllTypes(msg, litigationRequest, "Reconciliation Request Added");
+                        }
+                        catch (Exception e)
+                        { }
+                        break;
+                    case ReconciliationRequestDecision.WaiverOfRight:
+                        litigationRequest.InternalStatusId = RequestStatus.WaiverOfRight;
+                        litigationRequest.ExternalStatusId = RequestStatus.WaiverOfRight;
+                        litigationRequest.IsActive = false;
+                        litigationRequest.IsFinished = true;
+                        litigationRequest.LitigationRequestSubStage = LitigationRequestSubStage.LitigationRequestReformerDecisionAdded;
+                        // Send Notification
+                        // تم التنازل عن الحق
+                        try
+                        {
+                            msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.LitigationRequest_Decision_WaiverOfRight).Result.Data?.Value;
+                            msg = msg.Replace("{LitigationCode}", litigationRequest.RequestCode);
+                            await SendNotificationMSWithAllTypes(msg, litigationRequest, "Reconciliation Litigation Request For Report Reply Added");
+                        }
+                        catch (Exception e)
+                        { }
+                        break;
+               
+                    case ReconciliationRequestDecision.WaiverOfTheLitigation:
+                        litigationRequest.InternalStatusId = RequestStatus.WaiverOfTheLitigation;
+                        litigationRequest.ExternalStatusId = RequestStatus.WaiverOfTheLitigation;
+                        litigationRequest.IsActive = false;
+                        litigationRequest.IsFinished = true;
+                        litigationRequest.LitigationRequestSubStage = LitigationRequestSubStage.LitigationRequestReformerDecisionAdded;
+                        // Send Notification
+                        // تم التنازل عن الدعوى
+                        try
+                        {
+                            msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.LitigationRequest_Decision_WaiverOfTheLitigation).Result.Data?.Value;
+                            msg = msg.Replace("{LitigationCode}", litigationRequest.RequestCode);
+                            await SendNotificationMSWithAllTypes(msg, litigationRequest, "Decision of reconciliation was added");
+                        }
+                        catch (Exception e)
+                        { }
+                        break;
+                    case ReconciliationRequestDecision.ReconciliationOnTradyPlatform:
+                        //if (litigationRequest.LitigationRequestCategoryId == LitigationRequestCategory.ReconciliationAndArbitration)
+                        //{
+                            litigationRequest.InternalStatusId = RequestStatus.ReconciliationOnTradyPlatform;
+                            litigationRequest.ExternalStatusId = RequestStatus.ReconciliationOnTradyPlatform;
+                            litigationRequest.IsActive = false;
+                            litigationRequest.IsFinished = true;
+                            litigationRequest.LitigationRequestSubStage = LitigationRequestSubStage.LitigationRequestReformerDecisionAdded;
+                        // Send Notification
+                        //  الصلح بواسطة منصة تراضى 
+                        try
+                        {
+                            msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.ReconciliationOnTradyPlatform).Result.Data?.Value;
+                            msg = msg.Replace("{LitigationCode}", litigationRequest.RequestCode);
+                            await SendNotificationMSWithAllTypes(msg, litigationRequest, "Reconciliation Litigation Request For Report Reply Added");
+                            }
+                            catch (Exception e)
+                            {
+
+
+                            }
+                        //}
+                        break;
+                    case ReconciliationRequestDecision.ReconciliationWasNotMade:
+                        if (litigationRequest.LitigationRequestCategoryId == LitigationRequestCategory.ReconciliationAndArbitration)
+                        {
+                            litigationRequest.InternalStatusId = RequestStatus.ReconciliationWasNotMadeAndMoveToArbitration;
+                            litigationRequest.ExternalStatusId = RequestStatus.ReconciliationWasNotMadeAndMoveToArbitration;
+                            litigationRequest.LitigationRequestStage = LitigationRequestStage.Arbitration;
+                            litigationRequest.LitigationRequestSubStage = LitigationRequestSubStage.ArbitratorSelectionPeriod;
+                            // Send Notification
+                            //عدم الصلح  
+                            try
+                            {
+                                msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.LitigationRequest_Decision_ReconciliationWasNotMadeAndMoveToArbitration).Result.Data?.Value;
+                                msg = msg.Replace("{LitigationCode}", litigationRequest.RequestCode);
+                                await SendNotificationMSWithAllTypes(msg, litigationRequest, "Reconciliation Litigation Request For Report Reply Added");
+                            }
+                            catch (Exception e)
+                            {
+
+
+                            }
+                        }
+                        else
+                        {
+                            litigationRequest.InternalStatusId = RequestStatus.ReconciliationWasNotMade;
+                            litigationRequest.ExternalStatusId = RequestStatus.ReconciliationWasNotMade;
+                            litigationRequest.IsActive = false;
+                            litigationRequest.IsFinished = true;
+
+                            // Send Notification
+                            // عدم الصلح
+
+                            try
+                            {
+                                msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.LitigationRequest_Decision_ReconciliationWasNotMade).Result.Data?.Value;
+                                msg = msg.Replace("{LitigationCode}", litigationRequest.RequestCode);
+                                await SendNotificationMSWithAllTypes(msg, litigationRequest, "Reconciliation Litigation Request For Report Reply Added");
+                            }
+                            catch (Exception e)
+                            { }
+                        }
+                        break;
+                }
                 if (allowAdd)
                 {
                     LitigationRequestReconciliationReport litigationRequestReconciliationReport = new LitigationRequestReconciliationReport()
@@ -69,11 +199,7 @@ namespace REAC.Application.ModuleServices
 
                         });
                     }
-
-                    litigationRequest.LitigationRequestSubStage = LitigationRequestSubStage.LitigationRequestReportAdded;
-                    litigationRequest.InternalStatusId = RequestStatus.TheMinutesOfTheMeetingWereWritten;
-                    litigationRequest.ExternalStatusId = RequestStatus.TheMinutesOfTheMeetingWereWritten;
-                    litigationRequest.IsMinutesOfMeetingApprovalRequired = true;
+                    
 
                     await _repository.AddAsync<LitigationRequestReconciliationReport, Guid>(litigationRequestReconciliationReport);
 
@@ -83,28 +209,14 @@ namespace REAC.Application.ModuleServices
                         CreatedOn = DateTime.Now,
                         RequestId = litigationRequest.Id,
                         ShowForApplicant = false,
-                        LogMessage = "تم إضافة محصر الصلح"
+                        LogMessage = "تم إضافة محضر الصلح"
                     });
 
 
                     var repositorySaveResponse = await _repository.SaveChangesAsync(new CancellationToken());
                     if (!repositorySaveResponse.IsDone)
                         return repositorySaveResponse;
-                    string msg = (await _sysSettingService.GetBySettingKey(SysSettingKeyConstants.Reconciliation_Report_Creation)).Data?.ToString();
-
-                    // Send Notification
-                    // تم إضافة محضر الصلح
-                    try
-                    {
-                        msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.Reconciliation_Request_Added).Result.Data?.Value;
-                        msg = msg.Replace("{LitigationCode}", litigationRequest.RequestCode);
-                        await SendNotificationMSWithAllTypes(msg, litigationRequest, "Reconciliation Request Added");
-                    }
-                    catch (Exception e)
-                    {
-
-
-                    }
+                    
                 }
                 else
                 {
@@ -338,5 +450,39 @@ namespace REAC.Application.ModuleServices
         }
         #endregion
 
+
+        #region Nafath
+        public async Task<BaseResponse> CallNafathForReconciliationReport(Guid requestId, ApproveRejectStatus agreementRequestStatus)
+        {
+            try
+            {
+                Guid referenceId = Guid.Empty;
+                _jwtReader.GetReferenceId(ref referenceId);
+                var litigationRequest = (await _repository.GetQueryable<LitigationRequest, Guid>())
+                              .AsNoTracking()
+                              .FirstOrDefault(x => x.Id == requestId);
+                var citizen = (await _repository.GetQueryable<Citizen, Guid>())
+                              .AsNoTracking()
+                              .FirstOrDefault(x => x.Id == referenceId);
+                if (litigationRequest is not null & citizen is not null)
+                {
+                    var nafathReconciliationReportResponse = await _nafathService.NafathReconciliationReport(
+                         new NafathRequestDto() { IsRegister = false, NationalId = citizen.IdentityNumber },
+                         new NafathReconciliationReportTransactionDto()
+                         {
+                             LitigationRequestId = litigationRequest.Id,
+                             NationalId = citizen.IdentityNumber,
+                             RequestMinutesOfMeetingApprovalStatus = agreementRequestStatus
+                         });
+                    return nafathReconciliationReportResponse;
+                }
+                return new BaseResponse() { IsDone = false, Message = "خطأ في البيانات المدخله" };
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse() { IsDone = false, Message = "خطأ داخلي" };
+            }
+        }
+        #endregion
     }
 }

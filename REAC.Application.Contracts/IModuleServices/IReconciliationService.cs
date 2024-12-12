@@ -48,6 +48,6 @@ namespace REAC.Application.ModuleServices
         Task<BaseResponse> GetLitigationRequestExtendPeriodForEmployee(int pageIndex, int pageSize, CancellationToken cancellationToken);
         #endregion
 
-
+        Task<BaseResponse> CallNafathForReconciliationReport(Guid requestId, ApproveRejectStatus agreementRequestStatus);
     }
 }

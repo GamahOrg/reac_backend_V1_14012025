@@ -27,8 +27,9 @@ public class SysLitigationRequestAmountController : BaseController<SysLitigation
     }
     [AllowAnonymous]
     [HttpGet("Get")]
-    public override Task<IActionResult> Get(CancellationToken cancellationToken)
+    public override async Task<IActionResult> Get(CancellationToken cancellationToken)
     {
-        return base.Get(cancellationToken);
+        var returnValue = await _amountService.GetOrderedListAsync();
+        return  Ok(returnValue);
     }
 }

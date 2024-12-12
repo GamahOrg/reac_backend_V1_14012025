@@ -105,6 +105,12 @@ namespace Ticketing.EntityFrameworkCore.SeedData
                         Key = "NafathGetUserInfo_URL",
                         Value = "https://api-test.rega.gov.sa/v1/iam/identityServices/userInfo",
                     },
+                    new SysSetting
+                    {
+                        Id = Guid.NewGuid(),
+                        Key = "GEENafathCheckEnableNafathToken",
+                        Value = "false",
+                    },
 
                     #endregion
 
@@ -752,6 +758,12 @@ namespace Ticketing.EntityFrameworkCore.SeedData
                         Id = Guid.NewGuid(),
                         Key = "LitigationRequestCorrespondenceReplyAdded",
                         Value = "تم اضافة رد علي المراسلة رقم {CorrespondenceCode} علي الدعوي رقم {LitigationCode}"
+                    }
+                    ,new SysSetting
+                    {
+                        Id = Guid.NewGuid(),
+                        Key = "LitigationRequest.Decision.WaiverOfTheLitigation",
+                        Value = "تم الصلح بواسطة منصة تراضى لدعوي رقم {LitigationCode}",
                     },
 	                #endregion
                   

@@ -233,6 +233,8 @@ app.Use(async (context, next) =>
 // Seed Data
 await app.Services.Seed();
 app.MapHub<IdentityHub>("/identity-hub");
+app.MapHub<LitigationRequestAgreementHub>("/litigation-request-agreement-hub");
+app.MapHub<NafathReconciliationReportHub>("/reconciliation-report-hub");
 app.MapHub<NotificationHub>("/notification-hub");
 
 app.Run();

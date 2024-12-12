@@ -32,6 +32,7 @@ using REAC.Application.Contracts.IAppServices.Wpf.System;
 using REAC.Application.Contracts.IModuleServices;
 using REAC.Application.ModuleServices;
 using CitizenService = REAC.Application.AppServices.CitizenService;
+using ILitigationRequestReconciliationReportService = REAC.Application.Contracts.IAppServices.Litigation.ILitigationRequestReconciliationReportService;
 namespace REAC.Api
 {
     public static class AppServicesDi
@@ -77,6 +78,8 @@ namespace REAC.Api
             services.AddScoped<IDelegatorService, DelegatorService>();
             services.AddScoped<ISysExemptionReductionCategoryService, SysExemptionReductionCategoryService>();
             services.AddScoped<ILitigationRequestService, LitigationRequestService>();
+            services.AddScoped<ILitigationRequestAgreementRequestService, LitigationRequestAgreementRequestService>();
+            services.AddScoped<ILitigationRequestReconciliationReportService, Application.AppServices.Litigation.LitigationRequestReconciliationReportService>();
             services.AddScoped<IUserProviderService, LitigationRequestContractService>();
             services.AddScoped<ILitigationRequestCorrespondenceService, LitigationRequestCorrespondenceService>();
             services.AddScoped<ILitigationRequestCorrespondenceFileService, LitigationRequestCorrespondenceFileService>();
@@ -125,6 +128,8 @@ namespace REAC.Api
             services.AddScoped<IOTPService, OTPService>();
             services.AddScoped<IZoomService, ZoomService>();
             services.AddSingleton<INafathTransactionService, NafathTransactionService>();
+            services.AddSingleton<INafathAgreementRequestService, NafathAgreementRequestService>();
+            services.AddSingleton<INafathReconciliationReportService, NafathReconciliationReportService>();
 
             services.AddScoped<IJwtReader, JwtReader>();
             services.AddScoped<IZoomService, ZoomService>();

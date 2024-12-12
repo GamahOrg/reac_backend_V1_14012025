@@ -216,6 +216,7 @@ namespace REAC.Application.AppServices
                     .Include(x => x.Gender).Include(x => x.City)
                     .Include(x => x.Area)
                     .Include(x => x.IdentityFile)
+                    .Include(x => x.SigntureFile)
                     .Include(x => x.LawLicenseFile)
                     .Include(x => x.Nationality)
                     .AsNoTracking().Where(x => x.Id == referenceId)
@@ -266,6 +267,7 @@ namespace REAC.Application.AppServices
             citizen.LawLicenseFileId = citizenBasicDataProfileDto.LawLicenseFileId;
 
             citizen.IdentityFileId = citizenBasicDataProfileDto.IdentityFileId;
+            citizen.SigntureFileId = citizenBasicDataProfileDto.SigntureFileId;
             citizen.HomeTelephone = citizenBasicDataProfileDto.HomeTelephone;
             citizen.WorkTelephone = citizenBasicDataProfileDto.WorkTelephone;
 

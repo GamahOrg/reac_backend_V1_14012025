@@ -65,6 +65,7 @@
         #region Get User Info
 
         public const string NafathGetUserInfo_URL = "NafathGetUserInfo_URL";
+        public const string GEENafathEnableNafathToken_Key = "GEENafathCheckEnableNafathToken";
 
         #endregion
 
@@ -187,6 +188,7 @@
         public const string LitigationRequest_Decision_WaiverOfRight = "LitigationRequest.Decision.WaiverOfRight";
         public const string LitigationRequest_Decision_ReconciliationWasMade = "LitigationRequest.Decision.ReconciliationWasMade";
         public const string LitigationRequest_Decision_WaiverOfTheLitigation = "LitigationRequest.Decision.WaiverOfTheLitigation";
+        public const string ReconciliationOnTradyPlatform = "LitigationRequest.Decision.ReconciliationOnTradyPlatform";
         public const string LitigationRequest_Decision_ReconciliationWasNotMadeAndMoveToArbitration = "LitigationRequest.Decision.ReconciliationWasNotMadeAndMoveToArbitration";
         public const string LitigationRequest_Decision_ReconciliationWasNotMade = "LitigationRequest.Decision.ReconciliationWasNotMade";
         public const string LitigationRequest_Accept_Agreement = "LitigationRequest.Accept.Agreement";

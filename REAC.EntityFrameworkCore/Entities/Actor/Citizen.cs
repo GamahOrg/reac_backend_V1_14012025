@@ -22,6 +22,7 @@ public partial class Citizen : BaseEntity<Guid>
     public string? NationalAddress { get; set; }
     public Guid? PassCitizenId { get; set; }
     public Guid? IdentityFileId { get; set; }
+    public Guid? SigntureFileId { get; set; }
     public string? Employer { get; set; } = null!;
     public string Mobile { get; set; } = null!;
     public string? HomeTelephone { get; set; }
@@ -77,6 +78,7 @@ public partial class Citizen : BaseEntity<Guid>
     public virtual SysNationality? Nationality { get; set; }
     public virtual SysFileManager? IdentityFile { get; set; }
     public virtual SysFileManager? LawLicenseFile { get; set; }
+    public virtual SysFileManager? SigntureFile { get; set; }
     public virtual ICollection<LitigationRequest> ArbitratorLitigationRequests { get; set; } = new List<LitigationRequest>();
     public virtual ICollection<LitigationRequestArbitratorAssigningRequest> LitigationRequestArbitratorAssigningRequests { get; set; } = new List<LitigationRequestArbitratorAssigningRequest>();
 

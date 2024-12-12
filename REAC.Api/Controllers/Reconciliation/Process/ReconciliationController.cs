@@ -174,7 +174,9 @@ public class ReconciliationController : ControllerBase
     {
         if (ModelState.IsValid)
         {
-            var returnValue = await _reconciliationService.AddCitizenLitigationRequestForReportReply(requestId, minutesOfMeetingApprovalStatus, cancellationToken);
+            //var returnValue = await _reconciliationService.AddCitizenLitigationRequestForReportReply(requestId, minutesOfMeetingApprovalStatus, cancellationToken);
+            var returnValue = await _reconciliationService.CallNafathForReconciliationReport(requestId, minutesOfMeetingApprovalStatus);
+
             return Ok(returnValue);
         }
 

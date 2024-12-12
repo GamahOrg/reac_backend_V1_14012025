@@ -138,6 +138,9 @@ namespace REAC.EntityFrameworkCore.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
+                    b.Property<Guid?>("SigntureFileId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("Street")
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
@@ -179,6 +182,8 @@ namespace REAC.EntityFrameworkCore.Migrations
                     b.HasIndex("NationalityId");
 
                     b.HasIndex("ReformerStatusId");
+
+                    b.HasIndex("SigntureFileId");
 
                     b.ToTable("Citizen", (string)null);
                 });
@@ -3991,6 +3996,10 @@ namespace REAC.EntityFrameworkCore.Migrations
                         .HasForeignKey("ReformerStatusId")
                         .HasConstraintName("FKCSysReformerStatusCitizen92459");
 
+                    b.HasOne("REAC.EntityFrameworkCore.Entities.System.SysFileManager", "SigntureFile")
+                        .WithMany()
+                        .HasForeignKey("SigntureFileId");
+
                     b.Navigation("Area");
 
                     b.Navigation("City");
@@ -4006,6 +4015,8 @@ namespace REAC.EntityFrameworkCore.Migrations
                     b.Navigation("LitigationCompanyRepresentative");
 
                     b.Navigation("Nationality");
+
+                    b.Navigation("SigntureFile");
 
                     b.Navigation("SysArbitratorStatus");
 

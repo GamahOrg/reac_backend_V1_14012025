@@ -448,6 +448,25 @@ public partial class LitigationRequestStatusSeedDataCreator
                                 LanguageCode = Constants.ArabicLanguage
                             }
                         }
+                    },
+                    new SysLitigationRequestStatus
+                    {
+                        Id = Domain.Shared.Enum.RequestStatus.ReconciliationOnTradyPlatform,
+                        RequestStatus = "تم الصلح بواسظة منصة تراضى ",
+                        CreatedOn = DateTime.Now,
+                        Translations=new List<SysLitigationRequestStatusTranslation>
+                        {
+                            new SysLitigationRequestStatusTranslation
+                            {
+                                RequestStatus = "The Reconciliation on Trady platform",
+                                LanguageCode = Constants.EnglishLanguage
+                            },
+                            new SysLitigationRequestStatusTranslation
+                            {
+                                RequestStatus = "تم الصلح بواسطة منصة تراضى ",
+                                LanguageCode = Constants.ArabicLanguage
+                            }
+                        }
                     }
 
 

@@ -15,7 +15,9 @@ using REAC.Application.Contracts.Dtos.Integration.Nafath;
 using REAC.Application.Contracts.Dtos.UserManage;
 using REAC.Application.Contracts.IAppServices.Integration;
 using REAC.Application.Contracts.IAppServices.Integration.Hubs.Contracts;
+using REAC.Application.Contracts.IAppServices.Litigation;
 using REAC.Application.Contracts.IAppServices.System;
+using REAC.Application.ModuleServices;
 using REAC.Domain.Shared.Constants;
 using REAC.EntityFrameworkCore.Entities.Actor;
 using REAC.EntityFrameworkCore.Entities.Integration;
@@ -24,6 +26,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Net;
 using System.Net.Http.Json;
 using System.Text;
+using static Dapper.SqlMapper;
 using JsonSerializer = System.Text.Json.JsonSerializer;
 
 
@@ -36,12 +39,17 @@ namespace REAC.Application.AppServices.Integration.GEE
         private readonly IEntityRepository _repository;
         private readonly IGEELoginService _gEELoginService;
         private readonly IHubContext<IdentityHub, IIdentityClient> _identityHub;
+        private readonly IHubContext<LitigationRequestAgreementHub, ILitigationRequestAgreementStatusClient> _litigationRequestAgreementHub;
         private readonly INafathTransactionService _nafathTransactionService;
+        private readonly INafathAgreementRequestService _nafathAgreementRequestService;
+        private readonly ILitigationRequestAgreementRequestService _agreementRequestService;
         private readonly UserManager<User> _userManager;
         private readonly ILoggerManager _loggerManager;
-
+        private readonly INafathReconciliationReportService _nafathReconciliationReportService;
+        private readonly ILitigationRequestReconciliationReportService _litigationRequestReconciliationReportService;
+        private readonly IHubContext<NafathReconciliationReportHub, INafathReconciliationReportStatus> _nafathReconciliationReportHub;
         public NafathService(ISysSettingService sysSetting, IAccountService accountService, IEntityRepository repository, IGEELoginService gEELoginService, IHubContext<IdentityHub, IIdentityClient> identityHub,
-            INafathTransactionService nafathTransactionService, UserManager<User> userManager, ILoggerManager loggerManager)
+            INafathTransactionService nafathTransactionService, INafathAgreementRequestService nafathAgreementRequestService, UserManager<User> userManager, ILoggerManager loggerManager, IHubContext<LitigationRequestAgreementHub, ILitigationRequestAgreementStatusClient> litigationRequestAgreementHub, ILitigationRequestAgreementRequestService agreementRequestService, INafathReconciliationReportService nafathReconciliationReportService, IHubContext<NafathReconciliationReportHub, INafathReconciliationReportStatus> nafathReconciliationReportHub, ILitigationRequestReconciliationReportService litigationRequestReconciliationReportService)
         {
             _sysSetting = sysSetting;
             _accountService = accountService;
@@ -49,8 +57,14 @@ namespace REAC.Application.AppServices.Integration.GEE
             _gEELoginService = gEELoginService;
             _identityHub = identityHub;
             _nafathTransactionService = nafathTransactionService;
+            _nafathAgreementRequestService = nafathAgreementRequestService;
             _userManager = userManager;
             _loggerManager = loggerManager;
+            _litigationRequestAgreementHub = litigationRequestAgreementHub;
+            _agreementRequestService = agreementRequestService;
+            _nafathReconciliationReportService = nafathReconciliationReportService;
+            _nafathReconciliationReportHub = nafathReconciliationReportHub;
+            _litigationRequestReconciliationReportService = litigationRequestReconciliationReportService;
         }
 
         public async Task<DataResponse<NafathResponseDto>> Nafath(NafathRequestDto nafathRequestDto, CancellationToken cancellationToken)
@@ -247,7 +261,7 @@ namespace REAC.Application.AppServices.Integration.GEE
 
                                 IdentityStatus identityStatus = new IdentityStatus();
 
-                                var userInfo = await NafathGetUserInfo(nafathCheckStatusResponse.Data.Data.AccessToken);
+                                var userInfo = await NafathGetUserInfo(nafathCheckStatusResponse.Data.Data.AccessToken, token);
 
                                 _loggerManager.Log(Core.Log.Domain.Shared.Enums.LoggerType.Database
                                 , new LogDto()
@@ -267,7 +281,7 @@ namespace REAC.Application.AppServices.Integration.GEE
                                             if (userAddressInfo.IsDone)
                                             {
                                                 identityStatus.UserAddressInfoUpdated = userAddressInfo.Data;
-                                               
+
                                             }
                                         }
                                     }
@@ -338,18 +352,29 @@ namespace REAC.Application.AppServices.Integration.GEE
 
         }
 
-        private async Task<DataResponse<UserInfoUpdatedDto>> NafathGetUserInfo(string token)
+        private async Task<DataResponse<UserInfoUpdatedDto>> NafathGetUserInfo(string nafathToken, string loginToken)
         {
             try
             {
                 var url = _sysSetting.GetBySettingKey(SysSettingKeyConstants.NafathGetUserInfo_URL).Result.Data?.Value;
+                var enableNafathToken = bool.Parse(_sysSetting.GetBySettingKey(SysSettingKeyConstants.GEENafathEnableNafathToken_Key).Result.Data?.Value);
 
-                if (string.IsNullOrEmpty(token) || string.IsNullOrEmpty(url))
+                if (string.IsNullOrEmpty(nafathToken) || string.IsNullOrEmpty(loginToken) || string.IsNullOrEmpty(url))
                     return new DataResponse<UserInfoUpdatedDto>() { IsDone = false, Message = "" };
 
                 var client = new HttpClient();
                 var request = new HttpRequestMessage(HttpMethod.Get, url);
-                request.Headers.Add("Authorization", $"Bearer {token}");
+
+                if (enableNafathToken)
+                {
+                    request.Headers.Add("Authorization", $"Bearer {loginToken}");
+                    request.Headers.Add("nafath-token", $"{nafathToken}");
+                }
+                else
+                {
+                    request.Headers.Add("Authorization", $"Bearer {nafathToken}");
+                }
+                //request.Headers.Add("Authorization", $"Bearer {token}");
                 var response = await client.SendAsync(request);
 
                 if (response.IsSuccessStatusCode)
@@ -478,7 +503,7 @@ namespace REAC.Application.AppServices.Integration.GEE
             return new DataResponse<List<UserAddressInfoUpdatedDto>>()
             {
                 IsDone = true,
-                Data=arr
+                Data = arr
                 //Data = new UserAddressInfoUpdatedDto()
                 //{
                 //    AdditionalNumber = nafathUserInfoDto.AdditionalNumber,
@@ -637,7 +662,7 @@ namespace REAC.Application.AppServices.Integration.GEE
 
                         IdentityStatus identityStatus = new IdentityStatus();
 
-                        var userInfo = await NafathGetUserInfo(nafathCheckStatusResponse.Data.Data.AccessToken);
+                        var userInfo = await NafathGetUserInfo(nafathCheckStatusResponse.Data.Data.AccessToken, token);
 
                         if (!string.IsNullOrEmpty(token) && nafathCheckRequestDto is not null)
                         {
@@ -650,7 +675,7 @@ namespace REAC.Application.AppServices.Integration.GEE
                                     if (userAddressInfo.IsDone)
                                     {
                                         identityStatus.UserAddressInfoUpdated = userAddressInfo.Data;
-                                        
+
                                     }
                                 }
                             }
@@ -724,6 +749,326 @@ namespace REAC.Application.AppServices.Integration.GEE
         }
 
 
+        #region Agreement Request Otp
+
+        public async Task<DataResponse<NafathResponseDto>> NafathAgreementRequest(NafathRequestDto nafathRequestDto, NafathAgreementRequestTransactionsDto listInput)
+        {
+            try
+            {
+                if (nafathRequestDto is null)
+                    return new DataResponse<NafathResponseDto> { IsDone = false, Message = "" };
+
+                var token = (await _gEELoginService.Login()).Data?.Access_token;
+                if (token is null)
+                    return new DataResponse<NafathResponseDto> { IsDone = false, Message = "" };
+
+                var requestBody = await GetNafathSettingsData(nafathRequestDto.NationalId);
+                if (!requestBody.IsDone || requestBody.Data is null)
+                    return new DataResponse<NafathResponseDto>() { IsDone = false, Message = "" };
+
+                var url = _sysSetting.GetByIntegrationKey(SysSettingKeyConstants.Nafath_URL).Result.Data?.FirstOrDefault()?.Value;
+                if (string.IsNullOrEmpty(url))
+                    return new DataResponse<NafathResponseDto>() { IsDone = false, Message = "" };
+
+                var client = new HttpClient();
+                var request = new HttpRequestMessage(HttpMethod.Post, url);
+                request.Headers.Add("Authorization", $"Bearer {token}");
+                var body = JsonConvert.SerializeObject(requestBody.Data);
+                var content = new StringContent(body, Encoding.UTF8, "application/json");
+                request.Content = content;
+                var response = await client.SendAsync(request);
+
+                var x = response.Content.ReadAsStringAsync();
+                NafathResponseDto? nafathResponse = new NafathResponseDto();
+                if (response.IsSuccessStatusCode)
+                {
+                    nafathResponse.Data = await response.Content.ReadFromJsonAsync<NafathResponseDataDto>();
+
+                    if (nafathResponse.Data is not null && nafathResponse.Data.Random is not null && nafathResponse.Data.TransId is not null)
+                    {
+                        NafathAgreementRequestTransactionsDto nafathTransaction = new NafathAgreementRequestTransactionsDto()
+                        {
+                            LitigationRequestId = listInput.LitigationRequestId,
+                            NationalId = listInput.NationalId,
+                            AgreementStatus = listInput.AgreementStatus,
+                            TransactionId = nafathResponse.Data.TransId,
+                            //TransactionId = "456",
+                            RandomNumber = nafathResponse.Data.Random,
+                            //RandomNumber = "15",
+                            RequestExpired = DateTime.Now.AddMinutes(2),
+                            AgreementStatusOn = DateTime.Now
+                        };
+                        _nafathAgreementRequestService.Add(nafathTransaction);
+                    }
+                    //return new DataResponse<NafathResponseDto> { IsDone = true, Data = 
+                    //    new NafathResponseDto()
+                    //    {
+                    //        Data = new NafathResponseDataDto()
+                    //        {
+                    //            Random = "15",
+                    //            TransId = "456"
+                    //        }
+                    //    }
+                    //    };
+
+                    return new DataResponse<NafathResponseDto> { IsDone = true, Data = nafathResponse };
+                }
+                else
+                {
+                    var jsonResponse = await response.Content.ReadAsStringAsync();
+                    if (!string.IsNullOrEmpty(jsonResponse))
+                    {
+                        nafathResponse.Error = await response.Content.ReadFromJsonAsync<NafathResponseErrorDto>();
+                    }
+
+                    return new DataResponse<NafathResponseDto> { IsDone = false, Message = nafathResponse.Error?.Message ?? nafathResponse.Error?.Code ?? "", Data = nafathResponse };
+                }
+            }
+            catch (Exception e)
+            {
+                return new DataResponse<NafathResponseDto>() { IsDone = false, Message = "خطأ في الاتصال بنفاذ" };
+            }
+        }
+
+
+        public async Task CheckNafathAgreementRequestStatus()
+        {
+            try
+            {
+                var token = (await _gEELoginService.Login()).Data?.Access_token;
+                if (token is null)
+                    _loggerManager.Log(Core.Log.Domain.Shared.Enums.LoggerType.Database
+                       , new LogDto()
+                       {
+                           Type = Core.Log.Domain.Shared.Enums.LogType.Error,
+                           Message = "get access token from API GEE error"
+                       });
+
+                var nafathCheckList = _nafathAgreementRequestService.GetAll();
+                var removeList = new List<NafathAgreementRequestTransactionsDto>();
+                if (nafathCheckList is not null && nafathCheckList.Any())
+                {
+                    foreach (var nafathTransaction in nafathCheckList)
+                    {
+                        if (nafathTransaction.RequestExpired < DateTime.Now)
+                        {
+
+                            removeList.Add(nafathTransaction);
+                            await _litigationRequestAgreementHub.Clients.Group(nafathTransaction.TransactionId).ReceivedLitigationRequestAgreementStatus(new BaseResponse() { IsDone = false, Message = "صلاحية الرقم منتهيه" });
+                            continue;
+                        }
+
+                        NafathCheckRequestDto nafathCheckRequestDto = new NafathCheckRequestDto()
+                        {
+                            Id = nafathTransaction.NationalId,
+                            Random = nafathTransaction.RandomNumber,
+                            TransId = nafathTransaction.TransactionId,
+                            Token = token
+                        };
+
+                        var nafathCheckStatusResponse = (await NafathCheckStatus(nafathCheckRequestDto));
+                        //var nafathCheckStatusResponse = new DataResponse<NafathCheckResponseDto>()
+                        //{
+                        //    IsDone = true,
+                        //    Data = new NafathCheckResponseDto() { Data = new NafathCheckResponseDataDto() { Status = SysSettingKeyConstants.NafathStatus_COMPLETED , AccessToken = "123" }, Error = null } 
+                        //};
+                        if (nafathCheckStatusResponse is not null && nafathCheckStatusResponse.Data is not null)
+                        {
+                            if (nafathCheckStatusResponse.Data?.Data?.Status == SysSettingKeyConstants.NafathStatus_COMPLETED
+                                && nafathCheckStatusResponse.Data?.Data?.AccessToken is not null)
+                            {
+                                var addCitizenLitigationRequestForAgreementRequestReplyReturnValue = await _agreementRequestService.AddCitizenLitigationRequestForAgreementRequestReply(nafathTransaction.LitigationRequestId, nafathTransaction.NationalId, nafathTransaction.AgreementStatus);
+
+
+                                await _litigationRequestAgreementHub.Clients.Group(nafathTransaction.TransactionId).ReceivedLitigationRequestAgreementStatus(addCitizenLitigationRequestForAgreementRequestReplyReturnValue);
+
+                                removeList.Add(nafathTransaction);
+                                continue;
+
+                            }
+
+                            if (nafathCheckStatusResponse.Data?.Data?.Status == SysSettingKeyConstants.NafathStatus_REJECTED
+                            || nafathCheckStatusResponse.Data?.Data?.Status == SysSettingKeyConstants.NafathStatus_EXPIRED)
+                            {
+
+                                removeList.Add(nafathTransaction);
+                                await _litigationRequestAgreementHub.Clients.Group(nafathTransaction.TransactionId).ReceivedLitigationRequestAgreementStatus(new BaseResponse() { IsDone = false, Message = "صلاحية الرقم منتهيه" });
+                                continue;
+                            }
+                        }
+                    }
+
+                    if (removeList.Any())
+                    {
+                        foreach (var nafathTransaction in removeList)
+                        {
+                            _nafathAgreementRequestService.Remove(nafathTransaction);
+                        }
+                    }
+                }
+
+            }
+            catch (Exception)
+            {
+            }
+
+        }
+        #endregion
+
+
+        #region Reconciliation Report Otp
+        public async Task<DataResponse<NafathResponseDto>> NafathReconciliationReport(NafathRequestDto nafathRequestDto, NafathReconciliationReportTransactionDto listInput)
+        {
+            try
+            {
+                if (nafathRequestDto is null)
+                    return new DataResponse<NafathResponseDto> { IsDone = false, Message = "" };
+                var token = (await _gEELoginService.Login()).Data?.Access_token;
+                if (token is null)
+                    return new DataResponse<NafathResponseDto> { IsDone = false, Message = "" };
+                var requestBody = await GetNafathSettingsData(nafathRequestDto.NationalId);
+                if (!requestBody.IsDone || requestBody.Data is null)
+                    return new DataResponse<NafathResponseDto>() { IsDone = false, Message = "" };
+                var url = _sysSetting.GetByIntegrationKey(SysSettingKeyConstants.Nafath_URL).Result.Data?.FirstOrDefault()?.Value;
+                if (string.IsNullOrEmpty(url))
+                    return new DataResponse<NafathResponseDto>() { IsDone = false, Message = "" };
+                var client = new HttpClient();
+                var request = new HttpRequestMessage(HttpMethod.Post, url);
+                request.Headers.Add("Authorization", $"Bearer {token}");
+                var body = JsonConvert.SerializeObject(requestBody.Data);
+                var content = new StringContent(body, Encoding.UTF8, "application/json");
+                request.Content = content;
+                var response = await client.SendAsync(request);
+                var x = response.Content.ReadAsStringAsync();
+                NafathResponseDto? nafathResponse = new NafathResponseDto();
+                if (response.IsSuccessStatusCode)
+                {
+                    nafathResponse.Data = await response.Content.ReadFromJsonAsync<NafathResponseDataDto>();
+                    if (nafathResponse.Data is not null && nafathResponse.Data.Random is not null && nafathResponse.Data.TransId is not null)
+                    {
+                        NafathReconciliationReportTransactionDto nafathTransaction = new NafathReconciliationReportTransactionDto()
+                        {
+                            LitigationRequestId = listInput.LitigationRequestId,
+                            NationalId = listInput.NationalId,
+                            RequestMinutesOfMeetingApprovalStatus = listInput.RequestMinutesOfMeetingApprovalStatus,
+                            TransactionId = nafathResponse.Data.TransId,
+                            //TransactionId = "456",
+                            RandomNumber = nafathResponse.Data.Random,
+                            //RandomNumber = "15",
+                            RequestExpired = DateTime.Now.AddMinutes(2),
+                            RequestMinutesOfMeetingApprovalOn = DateTime.Now
+                        };
+                        _nafathReconciliationReportService.Add(nafathTransaction);
+                    }
+                    //return new DataResponse<NafathResponseDto>
+                    //{
+                    //    IsDone = true,
+                    //    Data =
+                    //    new NafathResponseDto()
+                    //    {
+                    //        Data = new NafathResponseDataDto()
+                    //        {
+                    //            Random = "15",
+                    //            TransId = "456"
+                    //        }
+                    //    }
+                    //};
+
+                    return new DataResponse<NafathResponseDto> { IsDone = true, Data = nafathResponse };
+
+                }
+                else
+                {
+                    var jsonResponse = await response.Content.ReadAsStringAsync();
+                    if (!string.IsNullOrEmpty(jsonResponse))
+                    {
+                        nafathResponse.Error = await response.Content.ReadFromJsonAsync<NafathResponseErrorDto>();
+                    }
+                    return new DataResponse<NafathResponseDto> { IsDone = false, Message = nafathResponse.Error?.Message ?? nafathResponse.Error?.Code ?? "", Data = nafathResponse };
+                }
+            }
+            catch (Exception e)
+            {
+                return new DataResponse<NafathResponseDto>() { IsDone = false, Message = "خطأ في الاتصال بنفاذ" };
+            }
+        }
+
+
+
+        public async Task CheckNafathReconciliationReportStatus()
+        {
+            try
+            {
+                var token = (await _gEELoginService.Login()).Data?.Access_token;
+                if (token is null)
+                    _loggerManager.Log(Core.Log.Domain.Shared.Enums.LoggerType.Database
+                       , new LogDto()
+                       {
+                           Type = Core.Log.Domain.Shared.Enums.LogType.Error,
+                           Message = "get access token from API GEE error"
+                       });
+                var nafathCheckList = _nafathReconciliationReportService.GetAll();
+                var removeList = new List<NafathReconciliationReportTransactionDto>();
+                if (nafathCheckList is not null && nafathCheckList.Any())
+                {
+                    foreach (var nafathTransaction in nafathCheckList)
+                    {
+                        if (nafathTransaction.RequestExpired < DateTime.Now)
+                        {
+                            removeList.Add(nafathTransaction);
+                            await _nafathReconciliationReportHub.Clients.Group(nafathTransaction.TransactionId).ReceivedNafathReconciliationReportStatus(new BaseResponse() { IsDone = false, Message = "صلاحية الرقم منتهيه" });
+                            continue;
+                        }
+                        NafathCheckRequestDto nafathCheckRequestDto = new NafathCheckRequestDto()
+                        {
+                            Id = nafathTransaction.NationalId,
+                            Random = nafathTransaction.RandomNumber,
+                            TransId = nafathTransaction.TransactionId,
+                            Token = token
+                        };
+                        var nafathCheckStatusResponse = (await NafathCheckStatus(nafathCheckRequestDto));
+                        //var nafathCheckStatusResponse = new DataResponse<NafathCheckResponseDto>()
+                        //{
+                        //    IsDone = true,
+                        //    Data = new NafathCheckResponseDto() { Data = new NafathCheckResponseDataDto() { Status = SysSettingKeyConstants.NafathStatus_COMPLETED, AccessToken = "123" }, Error = null }
+                        //};
+                        if (nafathCheckStatusResponse is not null && nafathCheckStatusResponse.Data is not null)
+                        {
+                            if (nafathCheckStatusResponse.Data?.Data?.Status == SysSettingKeyConstants.NafathStatus_COMPLETED
+                                && nafathCheckStatusResponse.Data?.Data?.AccessToken is not null)
+                            {
+                                var addCitizenLitigationRequestForReportReply = await _litigationRequestReconciliationReportService.AddCitizenLitigationRequestForReportReply(nafathTransaction.LitigationRequestId, nafathTransaction.NationalId, nafathTransaction.RequestMinutesOfMeetingApprovalStatus);
+
+                                await _nafathReconciliationReportHub.Clients.Group(nafathTransaction.TransactionId).ReceivedNafathReconciliationReportStatus(addCitizenLitigationRequestForReportReply);
+                                removeList.Add(nafathTransaction);
+                                continue;
+                            }
+                            if (nafathCheckStatusResponse.Data?.Data?.Status == SysSettingKeyConstants.NafathStatus_REJECTED
+                            || nafathCheckStatusResponse.Data?.Data?.Status == SysSettingKeyConstants.NafathStatus_EXPIRED)
+                            {
+                                removeList.Add(nafathTransaction);
+                                await _nafathReconciliationReportHub.Clients.Group(nafathTransaction.TransactionId).ReceivedNafathReconciliationReportStatus(new BaseResponse() { IsDone = false, Message = "صلاحية الرقم منتهيه" });
+                                continue;
+                            }
+                        }
+                    }
+                    if (removeList.Any())
+                    {
+                        foreach (var nafathTransaction in removeList)
+                        {
+                            _nafathReconciliationReportService.Remove(nafathTransaction);
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+            }
+        }
+
+
+
+        #endregion
 
     }
 }
