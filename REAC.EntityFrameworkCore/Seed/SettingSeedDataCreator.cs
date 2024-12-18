@@ -762,7 +762,7 @@ namespace Ticketing.EntityFrameworkCore.SeedData
                     ,new SysSetting
                     {
                         Id = Guid.NewGuid(),
-                        Key = "LitigationRequest.Decision.WaiverOfTheLitigation",
+                        Key = "LitigationRequest.Decision.ReconciliationOnTradyPlatform",
                         Value = "تم الصلح بواسطة منصة تراضى لدعوي رقم {LitigationCode}",
                     },
 	                #endregion

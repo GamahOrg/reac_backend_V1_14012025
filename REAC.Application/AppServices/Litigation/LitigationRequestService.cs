@@ -741,6 +741,7 @@ namespace REAC.Application.AppServices.Litigation
         {
             var litigationRequest = (await _repository.GetQueryable<LitigationRequest, Guid>())
                          .Include(x => x.ReformerCitizen)
+                         .ThenInclude(x => x.SigntureFile)
                          .Include(x => x.LitigationRequestReformerAssigningRequests)
                          .ThenInclude(x => x.ReformerCitizen)
                          .Include(x => x.LitigationRequestAmount)
@@ -767,6 +768,14 @@ namespace REAC.Application.AppServices.Litigation
 
             var assigningRequest = litigationRequest.LitigationRequestReformerAssigningRequests.FirstOrDefault(l => l.Id == requestId);
 
+            string base64String = string.Empty;
+            if (!string.IsNullOrEmpty(litigationRequest.ReformerCitizen?.SigntureFile?.FilePath))
+            {
+                string inputFilePath = Path.Combine(Directory.GetCurrentDirectory(), litigationRequest.ReformerCitizen?.SigntureFile?.FilePath);
+                // Read file and convert to Base64
+                byte[] fileBytes = File.ReadAllBytes(inputFilePath);
+                base64String = Convert.ToBase64String(fileBytes);
+            }
 
 
             var response = new LitigationReconciliationTaskAcceptOrRejectDocumentDto()
@@ -787,7 +796,8 @@ namespace REAC.Application.AppServices.Litigation
                 RequestTypeId = litigationRequest.Contract.LitigationRequestContractType.Id.GetHashCode(),
                 FirstPartyName = (litigationRequest.Contract.FirstPartyCitizen == null) ? litigationRequest.Contract.FirstPartyFacility.ArabicFacilityName : litigationRequest.Contract.FirstPartyCitizen.FullName,
                 SecondPartyName = (litigationRequest.Contract.SecondPartyCitizen == null) ? litigationRequest.Contract.SecondPartyFacility.ArabicFacilityName : litigationRequest.Contract.SecondPartyCitizen.FullName,
-                RejectReason = assigningRequest.RejectReason
+                RejectReason = assigningRequest.RejectReason,
+                SigntureFile = base64String
 
             };
 
@@ -823,9 +833,18 @@ namespace REAC.Application.AppServices.Litigation
                 return new BaseResponse() { IsDone = false, Message = "Not Found" };
 
             var citizenInfo = (await _repository.GetQueryable<Citizen, Guid>())
+                .Include(x => x.SigntureFile)
                 .AsNoTracking()
                 .FirstOrDefault(x => x.Id == citizenId);
 
+            string base64String = string.Empty;
+            if (!string.IsNullOrEmpty(citizenInfo?.SigntureFile?.FilePath))
+            {
+                string inputFilePath = Path.Combine(Directory.GetCurrentDirectory(), citizenInfo?.SigntureFile?.FilePath);
+                // Read file and convert to Base64
+                byte[] fileBytes = File.ReadAllBytes(inputFilePath);
+                 base64String = Convert.ToBase64String(fileBytes);
+            }
 
             var response = new LitigationReconciliationTaskAcceptOrRejectDocumentDto()
             {
@@ -840,8 +859,8 @@ namespace REAC.Application.AppServices.Litigation
                 ReformerAssigningCost = litigationRequest.LitigationRequestAmount?.Fees.ToString(),
                 RequestTypeId = litigationRequest.Contract.LitigationRequestContractType.Id.GetHashCode(),
                 FirstPartyName = (litigationRequest.Contract.FirstPartyCitizen == null) ? litigationRequest.Contract.FirstPartyFacility.ArabicFacilityName : litigationRequest.Contract.FirstPartyCitizen.FullName,
-                SecondPartyName = (litigationRequest.Contract.SecondPartyCitizen == null) ? litigationRequest.Contract.SecondPartyFacility.ArabicFacilityName : litigationRequest.Contract.SecondPartyCitizen.FullName
-
+                SecondPartyName = (litigationRequest.Contract.SecondPartyCitizen == null) ? litigationRequest.Contract.SecondPartyFacility.ArabicFacilityName : litigationRequest.Contract.SecondPartyCitizen.FullName,
+                SigntureFile = base64String
             };
 
             return new DataResponse<LitigationReconciliationTaskAcceptOrRejectDocumentDto> { Data = response, IsDone = true };

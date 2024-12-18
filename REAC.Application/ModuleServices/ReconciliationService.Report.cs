@@ -242,12 +242,12 @@ namespace REAC.Application.ModuleServices
         {
             var litigationRequest = (await _repository.GetQueryable<LitigationRequest, Guid>())
                          .Include(x => x.ReformerCitizen)
+                         .ThenInclude(x=>x.SigntureFile)
                          .Include(x => x.Area)
                          .Include(x => x.City)
                          .Include(x => x.LitigationRequestSessions)
                          .Include(x => x.LitigationRequestReconciliationReports)
                          .ThenInclude(x => x.LitigationRequestMeetingReconciliationItems)
-
                          .Include(x => x.ApplicantCitizen)
                          .Include(x => x.InternalStatus)
                          .Include(x => x.ExternalStatus)
@@ -262,13 +262,43 @@ namespace REAC.Application.ModuleServices
                          .Include(x => x.Contract.InternalRegulationsFile)
                          .Include(x => x.Contract.FirstPartyFacility)
                          .Include(x => x.Contract.FirstPartyCitizen)
+                         .ThenInclude(x => x.SigntureFile)
                          .Include(x => x.Contract.SecondPartyFacility)
                          .Include(x => x.Contract.SecondPartyCitizen)
+                         .ThenInclude(x => x.SigntureFile)
                          .Include(x => x.Contract.LitigationRequestContractType)
                          .AsNoTracking()
                          .FirstOrDefault(x => x.Id == requestId);
 
             var request = _mapper.Map<LitigationRequestShortDto>(litigationRequest);
+            string base64ReformerSignture = string.Empty;
+            if (!string.IsNullOrEmpty(litigationRequest?.ReformerCitizen?.SigntureFile?.FilePath))
+            {
+                string inputFilePath = Path.Combine(Directory.GetCurrentDirectory(), litigationRequest?.ReformerCitizen?.SigntureFile?.FilePath);
+                // Read file and convert to Base64
+                byte[] fileBytes = File.ReadAllBytes(inputFilePath);
+                base64ReformerSignture = Convert.ToBase64String(fileBytes);
+                request.ReformerCitizen.SigntureFile = base64ReformerSignture;
+            }
+
+            string base64FirstPartySignture = string.Empty;
+            if (!string.IsNullOrEmpty(litigationRequest?.Contract?.FirstPartyCitizen?.SigntureFile?.FilePath))
+            {
+                string inputFilePath = Path.Combine(Directory.GetCurrentDirectory(), litigationRequest?.Contract?.FirstPartyCitizen?.SigntureFile?.FilePath);
+                // Read file and convert to Base64
+                byte[] fileBytes = File.ReadAllBytes(inputFilePath);
+                base64FirstPartySignture = Convert.ToBase64String(fileBytes);
+                request.ReformerCitizen.SigntureFile = base64FirstPartySignture;
+            }
+            string base64SecondPartySignture = string.Empty;
+            if (!string.IsNullOrEmpty(litigationRequest?.Contract?.SecondPartyCitizen?.SigntureFile?.FilePath))
+            {
+                string inputFilePath = Path.Combine(Directory.GetCurrentDirectory(), litigationRequest?.Contract?.SecondPartyCitizen?.SigntureFile?.FilePath);
+                // Read file and convert to Base64
+                byte[] fileBytes = File.ReadAllBytes(inputFilePath);
+                base64SecondPartySignture = Convert.ToBase64String(fileBytes);
+                request.ReformerCitizen.SigntureFile = base64SecondPartySignture;
+            }
 
             var reports = _mapper.Map<List<LitigationRequestReconciliationReportCreateUpdateDto>>(litigationRequest?.LitigationRequestReconciliationReports);
 
