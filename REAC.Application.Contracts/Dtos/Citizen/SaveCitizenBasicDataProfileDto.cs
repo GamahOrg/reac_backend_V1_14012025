@@ -27,7 +27,7 @@ namespace REAC.Application.Contracts.Dtos.Citizen
         public string GenderName { get; set; }
 
 
-        public string Employer { get; set; } = null!;
+        public string? Employer { get; set; } = null!;
 
         public string Mobile { get; set; } = null!;
 
