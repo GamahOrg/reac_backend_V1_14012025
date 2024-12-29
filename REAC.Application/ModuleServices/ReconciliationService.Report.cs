@@ -240,6 +240,13 @@ namespace REAC.Application.ModuleServices
         }
         public async Task<BaseResponse> GetLitigationRequestForReport(Guid requestId, CancellationToken cancellationToken)
         {
+
+            Guid referenceId = Guid.Empty;
+            _jwtReader.GetReferenceId(ref referenceId);
+
+            if (referenceId == Guid.Empty)
+                return new BaseResponse() { IsDone = false, Message = "غير مصرح" };
+
             var litigationRequest = (await _repository.GetQueryable<LitigationRequest, Guid>())
                          .Include(x => x.ReformerCitizen)
                          .ThenInclude(x=>x.SigntureFile)
@@ -248,6 +255,7 @@ namespace REAC.Application.ModuleServices
                          .Include(x => x.LitigationRequestSessions)
                          .Include(x => x.LitigationRequestReconciliationReports)
                          .ThenInclude(x => x.LitigationRequestMeetingReconciliationItems)
+                .Include(x => x.LitigationRequestReformerAssigningRequests)
                          .Include(x => x.ApplicantCitizen)
                          .Include(x => x.InternalStatus)
                          .Include(x => x.ExternalStatus)
@@ -268,8 +276,12 @@ namespace REAC.Application.ModuleServices
                          .ThenInclude(x => x.SigntureFile)
                          .Include(x => x.Contract.LitigationRequestContractType)
                          .AsNoTracking()
-                         .FirstOrDefault(x => x.Id == requestId);
-
+                         .FirstOrDefault(x => x.Id == requestId
+                         &&
+                       x.LitigationRequestReformerAssigningRequests.Any(l => l.CitizenId == referenceId) & x.Id == requestId
+                         );
+            if (litigationRequest == null)
+                return new BaseResponse() { IsDone = false, Message = "غير مصرح" };
             var request = _mapper.Map<LitigationRequestShortDto>(litigationRequest);
             string base64ReformerSignture = string.Empty;
             if (!string.IsNullOrEmpty(litigationRequest?.ReformerCitizen?.SigntureFile?.FilePath))

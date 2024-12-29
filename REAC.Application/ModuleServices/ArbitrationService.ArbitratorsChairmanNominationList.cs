@@ -872,8 +872,12 @@ namespace REAC.Application.ModuleServices
                             .Include(x => x.Contract.SecondPartyFacility)
                             .Include(x => x.Contract.SecondPartyCitizen)
                             .Include(x => x.Contract.LitigationRequestContractType)
-                            .Where(x => x.Id == requestId).ToList().FirstOrDefault();
-
+                            .Where(x => x.Id == requestId
+                            & x.LitigationRequestArbitratorLists.Any(l => l.ArbitratorCitizenId == referenceId)
+                            ).ToList().FirstOrDefault();
+            
+            if (litigationRequest == null)
+                return new BaseResponse() { IsDone = false, Message = "طلب غير موجود" };
 
             var request = _mapper.Map<LitigationRequestShortDto>(litigationRequest);
 

@@ -167,6 +167,38 @@ namespace REAC.Api.Middlewares
                     await next(context);
                     return;
                 }
+
+                //if (isValidToken)
+                //{
+                //    var subPermissions =
+                //    httpContextAccessor.HttpContext?
+                //    .GetEndpoint()?.Metadata
+                //    .GetMetadata<ControllerActionDescriptor>()?.ControllerTypeInfo.AsType()
+                //    .GetMethod(httpContextAccessor.HttpContext?
+                //    .GetEndpoint()?.Metadata.GetMetadata<ControllerActionDescriptor>().ActionName)?
+                //    .GetCustomAttributes(typeof(PermissionRequiredAttribute), true)
+                //    .Cast<PermissionRequiredAttribute>().Select(x => x.Permission).ToList();
+
+                //    var handler = new JwtSecurityTokenHandler();
+                //    var jwtSecurityToken = handler.ReadJwtToken(token);
+
+                //    if (subPermissions != null)
+                //    {
+                //        foreach (var permission in subPermissions)
+                //        {
+                //            if (permission != null && jwtSecurityToken.Claims.All(x => x.Value != permission.ToString()))
+                //            {
+                //                // If permission not found in claims, return Unauthorized
+                //                context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+                //                return;
+                //            }
+                //        }
+                //    }
+
+                //    await next(context);
+                //    return;
+                //}
+
             }
 
 

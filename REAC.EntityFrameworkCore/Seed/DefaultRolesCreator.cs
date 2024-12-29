@@ -7,7 +7,17 @@ namespace REAC.EntityFrameworkCore.Seed
     {
         Employee,
         SuperAdmin,
-        OnlyView
+        OnlyView,
+
+        // New Roles
+
+        ReEmployee,
+        ReAdmin,
+        CoAdmin,
+        Reformer,
+        ArAdmin,
+        Arbitrator,
+        Citizen
     }
     public static class DefaultRolesCreator
     {
@@ -25,6 +35,37 @@ namespace REAC.EntityFrameworkCore.Seed
             if (!roleManger.Roles.Any(x => x.Name == Roles.OnlyView.ToString()))
             {
                 await roleManger.CreateAsync(new Role { Name = Roles.OnlyView.ToString() });
+            }
+            if (!roleManger.Roles.Any(x => x.Name == Roles.Employee.ToString()))
+            {
+                await roleManger.CreateAsync(new Role { Name = Roles.Employee.ToString() });
+            }
+            
+
+            // New Roles
+            if (!roleManger.Roles.Any(x => x.Name == Roles.Employee.ToString()))
+            {
+                await roleManger.CreateAsync(new Role { Name = Roles.Employee.ToString() });
+            }
+            if (!roleManger.Roles.Any(x => x.Name == Roles.Employee.ToString()))
+            {
+                await roleManger.CreateAsync(new Role { Name = Roles.Employee.ToString() });
+            }
+            if (!roleManger.Roles.Any(x => x.Name == Roles.Employee.ToString()))
+            {
+                await roleManger.CreateAsync(new Role { Name = Roles.Employee.ToString() });
+            }
+            if (!roleManger.Roles.Any(x => x.Name == Roles.Employee.ToString()))
+            {
+                await roleManger.CreateAsync(new Role { Name = Roles.Employee.ToString() });
+            }
+            if (!roleManger.Roles.Any(x => x.Name == Roles.Employee.ToString()))
+            {
+                await roleManger.CreateAsync(new Role { Name = Roles.Employee.ToString() });
+            }
+            if (!roleManger.Roles.Any(x => x.Name == Roles.Employee.ToString()))
+            {
+                await roleManger.CreateAsync(new Role { Name = Roles.Employee.ToString() });
             }
             if (!roleManger.Roles.Any(x => x.Name == Roles.Employee.ToString()))
             {

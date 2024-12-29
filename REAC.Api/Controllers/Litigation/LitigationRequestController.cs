@@ -140,6 +140,20 @@ public class LitigationRequestController : BaseController<LitigationRequest,
         if (ModelState.IsValid)
         {
             var returnValue = await _litigationService.Get(litigationId);
+            //if(returnValue.IsDone == false) return Unauthorized(returnValue);
+
+            return Ok(returnValue);
+        }
+
+        return BadRequest();
+    }
+    
+    [HttpGet(nameof(GetLitigationByIdForEmployee))]
+    public async Task<ActionResult<IEnumerable<LitigationRequest>>> GetLitigationByIdForEmployee(Guid litigationId)
+    {
+        if (ModelState.IsValid)
+        {
+            var returnValue = await _litigationService.GetLitigationByIdForEmployee(litigationId);
             if(returnValue.IsDone == false) return Unauthorized(returnValue);
 
             return Ok(returnValue);

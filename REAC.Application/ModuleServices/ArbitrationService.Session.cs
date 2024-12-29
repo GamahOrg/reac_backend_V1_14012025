@@ -366,6 +366,10 @@ namespace REAC.Application.ModuleServices
             if (requestId == Guid.Empty)
                 return new BaseResponse() { IsDone = false, Message = "Not Found" };
 
+            Guid referenceId = Guid.Empty;
+            _jwtReader.GetReferenceId(ref referenceId);
+
+
             var litigationRequest = (await _repository.GetQueryable<LitigationRequest, Guid>())
                           .Include(x => x.Area)
                           .Include(x => x.City)
@@ -374,6 +378,7 @@ namespace REAC.Application.ModuleServices
                           .ThenInclude(x => x.Citizen)
                           .Include(x => x.LitigationRequestReconciliationReports)
                           .Include(x => x.ApplicantCitizen)
+                          .Include(x => x.LitigationRequestArbitratorsChairmanNominationLists)
                           .Include(x => x.InternalStatus)
                           .Include(x => x.ExternalStatus)
                           .Include(x => x.LitigationRequestAmount)
@@ -390,10 +395,12 @@ namespace REAC.Application.ModuleServices
                           .Include(x => x.Contract.SecondPartyFacility)
                           .Include(x => x.Contract.SecondPartyCitizen)
                           .Include(x => x.Contract.LitigationRequestContractType).AsNoTracking()
-                          .Where(x => x.Id == requestId).ToList().FirstOrDefault();
+                          .Where(x => x.Id == requestId
+                          & x.ArbitratorCitizenId == referenceId
+                          ).ToList().FirstOrDefault();
 
             if (litigationRequest == null)
-                return new BaseResponse() { IsDone = false, Message = "Not Found" };
+                return new BaseResponse() { IsDone = false, Message = "طلب غير موجود" };
 
             var request = _mapper.Map<LitigationRequestShortDto>(litigationRequest);
 

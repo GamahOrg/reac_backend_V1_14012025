@@ -1,0 +1,15 @@
+C:\Users\admin\source\repos\BackEndLast\Core\GenericRepository\Core.GenericRepository.Shared\bin\Release\net8.0\Core.GenericRepository.Shared.deps.json
+C:\Users\admin\source\repos\BackEndLast\Core\GenericRepository\Core.GenericRepository.Shared\bin\Release\net8.0\Core.GenericRepository.Shared.dll
+C:\Users\admin\source\repos\BackEndLast\Core\GenericRepository\Core.GenericRepository.Shared\bin\Release\net8.0\Core.GenericRepository.Shared.pdb
+C:\Users\admin\source\repos\BackEndLast\Core\GenericRepository\Core.GenericRepository.Shared\bin\Release\net8.0\Core.Shared.dll
+C:\Users\admin\source\repos\BackEndLast\Core\GenericRepository\Core.GenericRepository.Shared\bin\Release\net8.0\Core.Shared.pdb
+C:\Users\admin\source\repos\BackEndLast\Core\GenericRepository\Core.GenericRepository.Shared\obj\Release\net8.0\Core.GenericRepository.Shared.csproj.AssemblyReference.cache
+C:\Users\admin\source\repos\BackEndLast\Core\GenericRepository\Core.GenericRepository.Shared\obj\Release\net8.0\Core.GenericRepository.Shared.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\admin\source\repos\BackEndLast\Core\GenericRepository\Core.GenericRepository.Shared\obj\Release\net8.0\Core.GenericRepository.Shared.AssemblyInfoInputs.cache
+C:\Users\admin\source\repos\BackEndLast\Core\GenericRepository\Core.GenericRepository.Shared\obj\Release\net8.0\Core.GenericRepository.Shared.AssemblyInfo.cs
+C:\Users\admin\source\repos\BackEndLast\Core\GenericRepository\Core.GenericRepository.Shared\obj\Release\net8.0\Core.GenericRepository.Shared.csproj.CoreCompileInputs.cache
+C:\Users\admin\source\repos\BackEndLast\Core\GenericRepository\Core.GenericRepository.Shared\obj\Release\net8.0\Core.Gen.D2B07346.Up2Date
+C:\Users\admin\source\repos\BackEndLast\Core\GenericRepository\Core.GenericRepository.Shared\obj\Release\net8.0\Core.GenericRepository.Shared.dll
+C:\Users\admin\source\repos\BackEndLast\Core\GenericRepository\Core.GenericRepository.Shared\obj\Release\net8.0\refint\Core.GenericRepository.Shared.dll
+C:\Users\admin\source\repos\BackEndLast\Core\GenericRepository\Core.GenericRepository.Shared\obj\Release\net8.0\Core.GenericRepository.Shared.pdb
+C:\Users\admin\source\repos\BackEndLast\Core\GenericRepository\Core.GenericRepository.Shared\obj\Release\net8.0\ref\Core.GenericRepository.Shared.dll

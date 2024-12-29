@@ -255,6 +255,10 @@ namespace REAC.Application.ModuleServices
         }
         public async Task<BaseResponse> GetLitigationRequestForReport(Guid requestId, CancellationToken cancellationToken)
         {
+            Guid referenceId = Guid.Empty;
+            _jwtReader.GetReferenceId(ref referenceId);
+
+
             var litigationRequest = (await _repository.GetQueryable<LitigationRequest, Guid>())
                          .Include(x => x.ArbitratorCitizen)
                          .Include(x => x.Area)
@@ -279,7 +283,18 @@ namespace REAC.Application.ModuleServices
                          .Include(x => x.Contract.SecondPartyFacility)
                          .Include(x => x.Contract.SecondPartyCitizen)
                          .Include(x => x.Contract.LitigationRequestContractType)
-                         .Where(x => x.Id == requestId).AsNoTracking().ToList().FirstOrDefault();
+                         .Where(x => x.Id == requestId
+                         & x.ArbitratorCitizenId == referenceId
+                         | x.ApplicantCitizenId == referenceId
+                      |
+                      x.Contract.FirstPartyCitizenId == referenceId & x.Id == requestId
+                      |
+                        x.Contract.SecondPartyCitizenId == referenceId & x.Id == requestId
+                      |
+                       x.Contract.FirstPartyFacility.CitizenId == referenceId & x.Id == requestId
+                      |
+                      x.Contract.SecondPartyFacility.CitizenId == referenceId & x.Id == requestId
+                         ).AsNoTracking().ToList().FirstOrDefault();
 
             if (litigationRequest == null)
                 return new BaseResponse() { IsDone = false, Message = "طلب غير موجود" };

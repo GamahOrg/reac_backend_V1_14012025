@@ -1,0 +1,17 @@
+C:\Users\admin\source\repos\BackEndLast\Core\GenericRepository\Core.GenericRepository\bin\Debug\net8.0\Core.GenericRepository.deps.json
+C:\Users\admin\source\repos\BackEndLast\Core\GenericRepository\Core.GenericRepository\bin\Debug\net8.0\Core.GenericRepository.dll
+C:\Users\admin\source\repos\BackEndLast\Core\GenericRepository\Core.GenericRepository\bin\Debug\net8.0\Core.GenericRepository.pdb
+C:\Users\admin\source\repos\BackEndLast\Core\GenericRepository\Core.GenericRepository\bin\Debug\net8.0\Core.GenericRepository.Shared.dll
+C:\Users\admin\source\repos\BackEndLast\Core\GenericRepository\Core.GenericRepository\bin\Debug\net8.0\Core.Shared.dll
+C:\Users\admin\source\repos\BackEndLast\Core\GenericRepository\Core.GenericRepository\bin\Debug\net8.0\Core.GenericRepository.Shared.pdb
+C:\Users\admin\source\repos\BackEndLast\Core\GenericRepository\Core.GenericRepository\bin\Debug\net8.0\Core.Shared.pdb
+C:\Users\admin\source\repos\BackEndLast\Core\GenericRepository\Core.GenericRepository\obj\Debug\net8.0\Core.GenericRepository.csproj.AssemblyReference.cache
+C:\Users\admin\source\repos\BackEndLast\Core\GenericRepository\Core.GenericRepository\obj\Debug\net8.0\Core.GenericRepository.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\admin\source\repos\BackEndLast\Core\GenericRepository\Core.GenericRepository\obj\Debug\net8.0\Core.GenericRepository.AssemblyInfoInputs.cache
+C:\Users\admin\source\repos\BackEndLast\Core\GenericRepository\Core.GenericRepository\obj\Debug\net8.0\Core.GenericRepository.AssemblyInfo.cs
+C:\Users\admin\source\repos\BackEndLast\Core\GenericRepository\Core.GenericRepository\obj\Debug\net8.0\Core.GenericRepository.csproj.CoreCompileInputs.cache
+C:\Users\admin\source\repos\BackEndLast\Core\GenericRepository\Core.GenericRepository\obj\Debug\net8.0\Core.Gen.9527AE16.Up2Date
+C:\Users\admin\source\repos\BackEndLast\Core\GenericRepository\Core.GenericRepository\obj\Debug\net8.0\Core.GenericRepository.dll
+C:\Users\admin\source\repos\BackEndLast\Core\GenericRepository\Core.GenericRepository\obj\Debug\net8.0\refint\Core.GenericRepository.dll
+C:\Users\admin\source\repos\BackEndLast\Core\GenericRepository\Core.GenericRepository\obj\Debug\net8.0\Core.GenericRepository.pdb
+C:\Users\admin\source\repos\BackEndLast\Core\GenericRepository\Core.GenericRepository\obj\Debug\net8.0\ref\Core.GenericRepository.dll

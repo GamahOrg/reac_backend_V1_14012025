@@ -405,6 +405,12 @@ namespace REAC.Application.ModuleServices
             if (requestId == Guid.Empty)
                 return new BaseResponse() { IsDone = false, Message = "Not Found" };
 
+            Guid referenceId = Guid.Empty;
+            _jwtReader.GetReferenceId(ref referenceId);
+
+            if (referenceId == Guid.Empty)
+                return new BaseResponse() { IsDone = false, Message = "غير مصرح" };
+
             var litigationRequest = (await _repository.GetQueryable<LitigationRequest, Guid>())
                           .Include(x => x.Area)
                           .Include(x => x.City)
@@ -415,6 +421,7 @@ namespace REAC.Application.ModuleServices
                           .Include(x => x.ApplicantCitizen)
                           .Include(x => x.InternalStatus)
                           .Include(x => x.ExternalStatus)
+                .Include(x => x.LitigationRequestReformerAssigningRequests)
                           .Include(x => x.LitigationRequestAmount)
                           .Include(x => x.LitigationRequestCategory)
                           .Include(x => x.SysExemptionReductionCategory)
@@ -429,10 +436,13 @@ namespace REAC.Application.ModuleServices
                           .Include(x => x.Contract.SecondPartyFacility)
                           .Include(x => x.Contract.SecondPartyCitizen)
                           .Include(x => x.Contract.LitigationRequestContractType)
-                          .Where(x => x.Id == requestId).ToList().FirstOrDefault();
+                          .Where(x => x.Id == requestId &&
+                       x.LitigationRequestReformerAssigningRequests.Any( l => l.CitizenId == referenceId) & x.Id == requestId
+
+                          ).ToList().FirstOrDefault();
 
             if (litigationRequest == null)
-                return new BaseResponse() { IsDone = false, Message = "Not Found" };
+                return new BaseResponse() { IsDone = false, Message = "غير مصرح" };
 
             var request = _mapper.Map<LitigationRequestShortDto>(litigationRequest);
 

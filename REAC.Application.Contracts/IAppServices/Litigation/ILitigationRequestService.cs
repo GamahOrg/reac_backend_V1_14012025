@@ -65,6 +65,10 @@ namespace REAC.Application.Contracts.IAppServices.Litigation
 
         Task<BaseResponse> CallNafathForAgreementRequestReply(Guid requestId, ApproveRejectStatus agreementRequestStatus);
 
+        #region BackOffice
 
+        Task<BaseResponse> GetLitigationByIdForEmployee(Guid litigationId);
+
+        #endregion
     }
 }
