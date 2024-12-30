@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Core.Log.Domain.Shared")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+12ae7db73c6e29c795edc76ab972a460dbcd23ad")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d09c3d05b7b043c1d682f979fbfa643c968d6979")]
 [assembly: System.Reflection.AssemblyProductAttribute("Core.Log.Domain.Shared")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Core.Log.Domain.Shared")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

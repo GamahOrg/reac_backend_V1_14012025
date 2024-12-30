@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\admin\\source\\repos\\BackEndLast\\Core\\Log\\Core.Log.Application\\Core.Log.Application.csproj": {}
+    "D:\\Asga-work\\REAC\\BackEnd\\Core\\Log\\Core.Log.Application\\Core.Log.Application.csproj": {}
   },
   "projects": {
-    "C:\\Users\\admin\\source\\repos\\BackEndLast\\Core\\Core.Shared\\Core.Shared.csproj": {
+    "D:\\Asga-work\\REAC\\BackEnd\\Core\\Core.Shared\\Core.Shared.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\admin\\source\\repos\\BackEndLast\\Core\\Core.Shared\\Core.Shared.csproj",
+        "projectUniqueName": "D:\\Asga-work\\REAC\\BackEnd\\Core\\Core.Shared\\Core.Shared.csproj",
         "projectName": "Core.Shared",
-        "projectPath": "C:\\Users\\admin\\source\\repos\\BackEndLast\\Core\\Core.Shared\\Core.Shared.csproj",
-        "packagesPath": "C:\\Users\\admin\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\admin\\source\\repos\\BackEndLast\\Core\\Core.Shared\\obj\\",
+        "projectPath": "D:\\Asga-work\\REAC\\BackEnd\\Core\\Core.Shared\\Core.Shared.csproj",
+        "packagesPath": "C:\\Users\\Windows10\\.nuget\\packages\\",
+        "outputPath": "D:\\Asga-work\\REAC\\BackEnd\\Core\\Core.Shared\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\admin\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Windows10\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -69,20 +69,20 @@
         }
       }
     },
-    "C:\\Users\\admin\\source\\repos\\BackEndLast\\Core\\Core\\Core.csproj": {
+    "D:\\Asga-work\\REAC\\BackEnd\\Core\\Core\\Core.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\admin\\source\\repos\\BackEndLast\\Core\\Core\\Core.csproj",
+        "projectUniqueName": "D:\\Asga-work\\REAC\\BackEnd\\Core\\Core\\Core.csproj",
         "projectName": "Core",
-        "projectPath": "C:\\Users\\admin\\source\\repos\\BackEndLast\\Core\\Core\\Core.csproj",
-        "packagesPath": "C:\\Users\\admin\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\admin\\source\\repos\\BackEndLast\\Core\\Core\\obj\\",
+        "projectPath": "D:\\Asga-work\\REAC\\BackEnd\\Core\\Core\\Core.csproj",
+        "packagesPath": "C:\\Users\\Windows10\\.nuget\\packages\\",
+        "outputPath": "D:\\Asga-work\\REAC\\BackEnd\\Core\\Core\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\admin\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Windows10\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -98,17 +98,17 @@
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
-              "C:\\Users\\admin\\source\\repos\\BackEndLast\\Core\\Core.Shared\\Core.Shared.csproj": {
-                "projectPath": "C:\\Users\\admin\\source\\repos\\BackEndLast\\Core\\Core.Shared\\Core.Shared.csproj"
+              "D:\\Asga-work\\REAC\\BackEnd\\Core\\Core.Shared\\Core.Shared.csproj": {
+                "projectPath": "D:\\Asga-work\\REAC\\BackEnd\\Core\\Core.Shared\\Core.Shared.csproj"
               },
-              "C:\\Users\\admin\\source\\repos\\BackEndLast\\Core\\GenericRepository\\Core.GenericRepository\\Core.GenericRepository.csproj": {
-                "projectPath": "C:\\Users\\admin\\source\\repos\\BackEndLast\\Core\\GenericRepository\\Core.GenericRepository\\Core.GenericRepository.csproj"
+              "D:\\Asga-work\\REAC\\BackEnd\\Core\\GenericRepository\\Core.GenericRepository\\Core.GenericRepository.csproj": {
+                "projectPath": "D:\\Asga-work\\REAC\\BackEnd\\Core\\GenericRepository\\Core.GenericRepository\\Core.GenericRepository.csproj"
               },
-              "C:\\Users\\admin\\source\\repos\\BackEndLast\\Core\\Log\\Core.Log.Application.Contracts\\Core.Log.Application.Contracts.csproj": {
-                "projectPath": "C:\\Users\\admin\\source\\repos\\BackEndLast\\Core\\Log\\Core.Log.Application.Contracts\\Core.Log.Application.Contracts.csproj"
+              "D:\\Asga-work\\REAC\\BackEnd\\Core\\Log\\Core.Log.Application.Contracts\\Core.Log.Application.Contracts.csproj": {
+                "projectPath": "D:\\Asga-work\\REAC\\BackEnd\\Core\\Log\\Core.Log.Application.Contracts\\Core.Log.Application.Contracts.csproj"
               },
-              "C:\\Users\\admin\\source\\repos\\BackEndLast\\REAC.Domain.Shared\\REAC.Domain.Shared.csproj": {
-                "projectPath": "C:\\Users\\admin\\source\\repos\\BackEndLast\\REAC.Domain.Shared\\REAC.Domain.Shared.csproj"
+              "D:\\Asga-work\\REAC\\BackEnd\\REAC.Domain.Shared\\REAC.Domain.Shared.csproj": {
+                "projectPath": "D:\\Asga-work\\REAC\\BackEnd\\REAC.Domain.Shared\\REAC.Domain.Shared.csproj"
               }
             }
           }
@@ -169,20 +169,20 @@
         }
       }
     },
-    "C:\\Users\\admin\\source\\repos\\BackEndLast\\Core\\GenericRepository\\Core.GenericRepository.Shared\\Core.GenericRepository.Shared.csproj": {
+    "D:\\Asga-work\\REAC\\BackEnd\\Core\\GenericRepository\\Core.GenericRepository.Shared\\Core.GenericRepository.Shared.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\admin\\source\\repos\\BackEndLast\\Core\\GenericRepository\\Core.GenericRepository.Shared\\Core.GenericRepository.Shared.csproj",
+        "projectUniqueName": "D:\\Asga-work\\REAC\\BackEnd\\Core\\GenericRepository\\Core.GenericRepository.Shared\\Core.GenericRepository.Shared.csproj",
         "projectName": "Core.GenericRepository.Shared",
-        "projectPath": "C:\\Users\\admin\\source\\repos\\BackEndLast\\Core\\GenericRepository\\Core.GenericRepository.Shared\\Core.GenericRepository.Shared.csproj",
-        "packagesPath": "C:\\Users\\admin\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\admin\\source\\repos\\BackEndLast\\Core\\GenericRepository\\Core.GenericRepository.Shared\\obj\\",
+        "projectPath": "D:\\Asga-work\\REAC\\BackEnd\\Core\\GenericRepository\\Core.GenericRepository.Shared\\Core.GenericRepository.Shared.csproj",
+        "packagesPath": "C:\\Users\\Windows10\\.nuget\\packages\\",
+        "outputPath": "D:\\Asga-work\\REAC\\BackEnd\\Core\\GenericRepository\\Core.GenericRepository.Shared\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\admin\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Windows10\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -198,8 +198,8 @@
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
-              "C:\\Users\\admin\\source\\repos\\BackEndLast\\Core\\Core.Shared\\Core.Shared.csproj": {
-                "projectPath": "C:\\Users\\admin\\source\\repos\\BackEndLast\\Core\\Core.Shared\\Core.Shared.csproj"
+              "D:\\Asga-work\\REAC\\BackEnd\\Core\\Core.Shared\\Core.Shared.csproj": {
+                "projectPath": "D:\\Asga-work\\REAC\\BackEnd\\Core\\Core.Shared\\Core.Shared.csproj"
               }
             }
           }
@@ -244,20 +244,20 @@
         }
       }
     },
-    "C:\\Users\\admin\\source\\repos\\BackEndLast\\Core\\GenericRepository\\Core.GenericRepository\\Core.GenericRepository.csproj": {
+    "D:\\Asga-work\\REAC\\BackEnd\\Core\\GenericRepository\\Core.GenericRepository\\Core.GenericRepository.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\admin\\source\\repos\\BackEndLast\\Core\\GenericRepository\\Core.GenericRepository\\Core.GenericRepository.csproj",
+        "projectUniqueName": "D:\\Asga-work\\REAC\\BackEnd\\Core\\GenericRepository\\Core.GenericRepository\\Core.GenericRepository.csproj",
         "projectName": "Core.GenericRepository",
-        "projectPath": "C:\\Users\\admin\\source\\repos\\BackEndLast\\Core\\GenericRepository\\Core.GenericRepository\\Core.GenericRepository.csproj",
-        "packagesPath": "C:\\Users\\admin\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\admin\\source\\repos\\BackEndLast\\Core\\GenericRepository\\Core.GenericRepository\\obj\\",
+        "projectPath": "D:\\Asga-work\\REAC\\BackEnd\\Core\\GenericRepository\\Core.GenericRepository\\Core.GenericRepository.csproj",
+        "packagesPath": "C:\\Users\\Windows10\\.nuget\\packages\\",
+        "outputPath": "D:\\Asga-work\\REAC\\BackEnd\\Core\\GenericRepository\\Core.GenericRepository\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\admin\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Windows10\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -273,8 +273,8 @@
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
-              "C:\\Users\\admin\\source\\repos\\BackEndLast\\Core\\GenericRepository\\Core.GenericRepository.Shared\\Core.GenericRepository.Shared.csproj": {
-                "projectPath": "C:\\Users\\admin\\source\\repos\\BackEndLast\\Core\\GenericRepository\\Core.GenericRepository.Shared\\Core.GenericRepository.Shared.csproj"
+              "D:\\Asga-work\\REAC\\BackEnd\\Core\\GenericRepository\\Core.GenericRepository.Shared\\Core.GenericRepository.Shared.csproj": {
+                "projectPath": "D:\\Asga-work\\REAC\\BackEnd\\Core\\GenericRepository\\Core.GenericRepository.Shared\\Core.GenericRepository.Shared.csproj"
               }
             }
           }
@@ -331,20 +331,20 @@
         }
       }
     },
-    "C:\\Users\\admin\\source\\repos\\BackEndLast\\Core\\Log\\Core.Log.Application.Contracts\\Core.Log.Application.Contracts.csproj": {
+    "D:\\Asga-work\\REAC\\BackEnd\\Core\\Log\\Core.Log.Application.Contracts\\Core.Log.Application.Contracts.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\admin\\source\\repos\\BackEndLast\\Core\\Log\\Core.Log.Application.Contracts\\Core.Log.Application.Contracts.csproj",
+        "projectUniqueName": "D:\\Asga-work\\REAC\\BackEnd\\Core\\Log\\Core.Log.Application.Contracts\\Core.Log.Application.Contracts.csproj",
         "projectName": "Core.Log.Application.Contracts",
-        "projectPath": "C:\\Users\\admin\\source\\repos\\BackEndLast\\Core\\Log\\Core.Log.Application.Contracts\\Core.Log.Application.Contracts.csproj",
-        "packagesPath": "C:\\Users\\admin\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\admin\\source\\repos\\BackEndLast\\Core\\Log\\Core.Log.Application.Contracts\\obj\\",
+        "projectPath": "D:\\Asga-work\\REAC\\BackEnd\\Core\\Log\\Core.Log.Application.Contracts\\Core.Log.Application.Contracts.csproj",
+        "packagesPath": "C:\\Users\\Windows10\\.nuget\\packages\\",
+        "outputPath": "D:\\Asga-work\\REAC\\BackEnd\\Core\\Log\\Core.Log.Application.Contracts\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\admin\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Windows10\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -360,11 +360,11 @@
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
-              "C:\\Users\\admin\\source\\repos\\BackEndLast\\Core\\GenericRepository\\Core.GenericRepository.Shared\\Core.GenericRepository.Shared.csproj": {
-                "projectPath": "C:\\Users\\admin\\source\\repos\\BackEndLast\\Core\\GenericRepository\\Core.GenericRepository.Shared\\Core.GenericRepository.Shared.csproj"
+              "D:\\Asga-work\\REAC\\BackEnd\\Core\\GenericRepository\\Core.GenericRepository.Shared\\Core.GenericRepository.Shared.csproj": {
+                "projectPath": "D:\\Asga-work\\REAC\\BackEnd\\Core\\GenericRepository\\Core.GenericRepository.Shared\\Core.GenericRepository.Shared.csproj"
               },
-              "C:\\Users\\admin\\source\\repos\\BackEndLast\\Core\\Log\\Core.Log.Domain.Shared\\Core.Log.Domain.Shared.csproj": {
-                "projectPath": "C:\\Users\\admin\\source\\repos\\BackEndLast\\Core\\Log\\Core.Log.Domain.Shared\\Core.Log.Domain.Shared.csproj"
+              "D:\\Asga-work\\REAC\\BackEnd\\Core\\Log\\Core.Log.Domain.Shared\\Core.Log.Domain.Shared.csproj": {
+                "projectPath": "D:\\Asga-work\\REAC\\BackEnd\\Core\\Log\\Core.Log.Domain.Shared\\Core.Log.Domain.Shared.csproj"
               }
             }
           }
@@ -403,20 +403,20 @@
         }
       }
     },
-    "C:\\Users\\admin\\source\\repos\\BackEndLast\\Core\\Log\\Core.Log.Application\\Core.Log.Application.csproj": {
+    "D:\\Asga-work\\REAC\\BackEnd\\Core\\Log\\Core.Log.Application\\Core.Log.Application.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\admin\\source\\repos\\BackEndLast\\Core\\Log\\Core.Log.Application\\Core.Log.Application.csproj",
+        "projectUniqueName": "D:\\Asga-work\\REAC\\BackEnd\\Core\\Log\\Core.Log.Application\\Core.Log.Application.csproj",
         "projectName": "Core.Log.Application",
-        "projectPath": "C:\\Users\\admin\\source\\repos\\BackEndLast\\Core\\Log\\Core.Log.Application\\Core.Log.Application.csproj",
-        "packagesPath": "C:\\Users\\admin\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\admin\\source\\repos\\BackEndLast\\Core\\Log\\Core.Log.Application\\obj\\",
+        "projectPath": "D:\\Asga-work\\REAC\\BackEnd\\Core\\Log\\Core.Log.Application\\Core.Log.Application.csproj",
+        "packagesPath": "C:\\Users\\Windows10\\.nuget\\packages\\",
+        "outputPath": "D:\\Asga-work\\REAC\\BackEnd\\Core\\Log\\Core.Log.Application\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\admin\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Windows10\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -432,14 +432,14 @@
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
-              "C:\\Users\\admin\\source\\repos\\BackEndLast\\Core\\Core\\Core.csproj": {
-                "projectPath": "C:\\Users\\admin\\source\\repos\\BackEndLast\\Core\\Core\\Core.csproj"
+              "D:\\Asga-work\\REAC\\BackEnd\\Core\\Core\\Core.csproj": {
+                "projectPath": "D:\\Asga-work\\REAC\\BackEnd\\Core\\Core\\Core.csproj"
               },
-              "C:\\Users\\admin\\source\\repos\\BackEndLast\\Core\\Log\\Core.Log.Application.Contracts\\Core.Log.Application.Contracts.csproj": {
-                "projectPath": "C:\\Users\\admin\\source\\repos\\BackEndLast\\Core\\Log\\Core.Log.Application.Contracts\\Core.Log.Application.Contracts.csproj"
+              "D:\\Asga-work\\REAC\\BackEnd\\Core\\Log\\Core.Log.Application.Contracts\\Core.Log.Application.Contracts.csproj": {
+                "projectPath": "D:\\Asga-work\\REAC\\BackEnd\\Core\\Log\\Core.Log.Application.Contracts\\Core.Log.Application.Contracts.csproj"
               },
-              "C:\\Users\\admin\\source\\repos\\BackEndLast\\Core\\Log\\Core.Log.EntityFrameworkCore\\Core.Log.EntityFrameworkCore.csproj": {
-                "projectPath": "C:\\Users\\admin\\source\\repos\\BackEndLast\\Core\\Log\\Core.Log.EntityFrameworkCore\\Core.Log.EntityFrameworkCore.csproj"
+              "D:\\Asga-work\\REAC\\BackEnd\\Core\\Log\\Core.Log.EntityFrameworkCore\\Core.Log.EntityFrameworkCore.csproj": {
+                "projectPath": "D:\\Asga-work\\REAC\\BackEnd\\Core\\Log\\Core.Log.EntityFrameworkCore\\Core.Log.EntityFrameworkCore.csproj"
               }
             }
           }
@@ -478,20 +478,20 @@
         }
       }
     },
-    "C:\\Users\\admin\\source\\repos\\BackEndLast\\Core\\Log\\Core.Log.Domain.Shared\\Core.Log.Domain.Shared.csproj": {
+    "D:\\Asga-work\\REAC\\BackEnd\\Core\\Log\\Core.Log.Domain.Shared\\Core.Log.Domain.Shared.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\admin\\source\\repos\\BackEndLast\\Core\\Log\\Core.Log.Domain.Shared\\Core.Log.Domain.Shared.csproj",
+        "projectUniqueName": "D:\\Asga-work\\REAC\\BackEnd\\Core\\Log\\Core.Log.Domain.Shared\\Core.Log.Domain.Shared.csproj",
         "projectName": "Core.Log.Domain.Shared",
-        "projectPath": "C:\\Users\\admin\\source\\repos\\BackEndLast\\Core\\Log\\Core.Log.Domain.Shared\\Core.Log.Domain.Shared.csproj",
-        "packagesPath": "C:\\Users\\admin\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\admin\\source\\repos\\BackEndLast\\Core\\Log\\Core.Log.Domain.Shared\\obj\\",
+        "projectPath": "D:\\Asga-work\\REAC\\BackEnd\\Core\\Log\\Core.Log.Domain.Shared\\Core.Log.Domain.Shared.csproj",
+        "packagesPath": "C:\\Users\\Windows10\\.nuget\\packages\\",
+        "outputPath": "D:\\Asga-work\\REAC\\BackEnd\\Core\\Log\\Core.Log.Domain.Shared\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\admin\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Windows10\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -543,20 +543,20 @@
         }
       }
     },
-    "C:\\Users\\admin\\source\\repos\\BackEndLast\\Core\\Log\\Core.Log.EntityFrameworkCore\\Core.Log.EntityFrameworkCore.csproj": {
+    "D:\\Asga-work\\REAC\\BackEnd\\Core\\Log\\Core.Log.EntityFrameworkCore\\Core.Log.EntityFrameworkCore.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\admin\\source\\repos\\BackEndLast\\Core\\Log\\Core.Log.EntityFrameworkCore\\Core.Log.EntityFrameworkCore.csproj",
+        "projectUniqueName": "D:\\Asga-work\\REAC\\BackEnd\\Core\\Log\\Core.Log.EntityFrameworkCore\\Core.Log.EntityFrameworkCore.csproj",
         "projectName": "Core.Log.EntityFrameworkCore",
-        "projectPath": "C:\\Users\\admin\\source\\repos\\BackEndLast\\Core\\Log\\Core.Log.EntityFrameworkCore\\Core.Log.EntityFrameworkCore.csproj",
-        "packagesPath": "C:\\Users\\admin\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\admin\\source\\repos\\BackEndLast\\Core\\Log\\Core.Log.EntityFrameworkCore\\obj\\",
+        "projectPath": "D:\\Asga-work\\REAC\\BackEnd\\Core\\Log\\Core.Log.EntityFrameworkCore\\Core.Log.EntityFrameworkCore.csproj",
+        "packagesPath": "C:\\Users\\Windows10\\.nuget\\packages\\",
+        "outputPath": "D:\\Asga-work\\REAC\\BackEnd\\Core\\Log\\Core.Log.EntityFrameworkCore\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\admin\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Windows10\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -572,8 +572,8 @@
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
-              "C:\\Users\\admin\\source\\repos\\BackEndLast\\Core\\GenericRepository\\Core.GenericRepository\\Core.GenericRepository.csproj": {
-                "projectPath": "C:\\Users\\admin\\source\\repos\\BackEndLast\\Core\\GenericRepository\\Core.GenericRepository\\Core.GenericRepository.csproj"
+              "D:\\Asga-work\\REAC\\BackEnd\\Core\\GenericRepository\\Core.GenericRepository\\Core.GenericRepository.csproj": {
+                "projectPath": "D:\\Asga-work\\REAC\\BackEnd\\Core\\GenericRepository\\Core.GenericRepository\\Core.GenericRepository.csproj"
               }
             }
           }
@@ -612,20 +612,20 @@
         }
       }
     },
-    "C:\\Users\\admin\\source\\repos\\BackEndLast\\REAC.Domain.Shared\\REAC.Domain.Shared.csproj": {
+    "D:\\Asga-work\\REAC\\BackEnd\\REAC.Domain.Shared\\REAC.Domain.Shared.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\admin\\source\\repos\\BackEndLast\\REAC.Domain.Shared\\REAC.Domain.Shared.csproj",
+        "projectUniqueName": "D:\\Asga-work\\REAC\\BackEnd\\REAC.Domain.Shared\\REAC.Domain.Shared.csproj",
         "projectName": "REAC.Domain.Shared",
-        "projectPath": "C:\\Users\\admin\\source\\repos\\BackEndLast\\REAC.Domain.Shared\\REAC.Domain.Shared.csproj",
-        "packagesPath": "C:\\Users\\admin\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\admin\\source\\repos\\BackEndLast\\REAC.Domain.Shared\\obj\\",
+        "projectPath": "D:\\Asga-work\\REAC\\BackEnd\\REAC.Domain.Shared\\REAC.Domain.Shared.csproj",
+        "packagesPath": "C:\\Users\\Windows10\\.nuget\\packages\\",
+        "outputPath": "D:\\Asga-work\\REAC\\BackEnd\\REAC.Domain.Shared\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\admin\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Windows10\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -641,8 +641,8 @@
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
-              "C:\\Users\\admin\\source\\repos\\BackEndLast\\Core\\Core.Shared\\Core.Shared.csproj": {
-                "projectPath": "C:\\Users\\admin\\source\\repos\\BackEndLast\\Core\\Core.Shared\\Core.Shared.csproj"
+              "D:\\Asga-work\\REAC\\BackEnd\\Core\\Core.Shared\\Core.Shared.csproj": {
+                "projectPath": "D:\\Asga-work\\REAC\\BackEnd\\Core\\Core.Shared\\Core.Shared.csproj"
               }
             }
           }

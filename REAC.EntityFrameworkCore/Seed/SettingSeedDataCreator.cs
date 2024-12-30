@@ -134,6 +134,20 @@ namespace Ticketing.EntityFrameworkCore.SeedData
                     },
 	                #endregion
 
+                    #region Ejar
+                    new SysSetting
+                    {
+                        Id = Guid.NewGuid(),
+                        Key = "Ejar_ContractDetails",
+                        Value = "https://api-dev.rega.gov.sa/v1/ejar/external/contracts/details?pageNumber=1&pageSize=1&contractNumber={0}",
+                    },new SysSetting
+                    {
+                        Id = Guid.NewGuid(),
+                        Key = "Ejar_ContractFinancialDetails",
+                        Value = "https://api-dev.rega.gov.sa/v1/ejar/external/financial-contracts/details?pageNumber=1&pageSize=1&contractNumber={0}",
+                    },
+	                #endregion
+
                     #region MC
 
                     new SysSetting

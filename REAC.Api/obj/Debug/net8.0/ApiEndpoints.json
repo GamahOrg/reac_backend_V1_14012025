@@ -1,6 +1,16 @@
 [
   {
     "ContainingType": "REAC.Api.Controllers.Security.AccountController",
+    "Method": "GetNafathTransactionList",
+    "RelativePath": "api/Account/GetNafathTransactionList",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "REAC.Api.Controllers.Security.AccountController",
     "Method": "Register",
     "RelativePath": "api/Account/Register",
     "HttpMethod": "POST",
@@ -1267,8 +1277,8 @@
   },
   {
     "ContainingType": "REAC.Api.Controllers.Litigation.CitizenController",
-    "Method": "GetDelegatedFacilities",
-    "RelativePath": "api/Citizen/GetDelegatedFacilities",
+    "Method": "GetDelegatedFacilitiesAgent",
+    "RelativePath": "api/Citizen/GetDelegatedFacilitiesAgent",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -1277,12 +1287,74 @@
   },
   {
     "ContainingType": "REAC.Api.Controllers.Litigation.CitizenController",
-    "Method": "GetDelegatedPersons",
-    "RelativePath": "api/Citizen/GetDelegatedPersons",
+    "Method": "GetDelegatedFacilitiesLawyer",
+    "RelativePath": "api/Citizen/GetDelegatedFacilitiesLawyer",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
     "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "REAC.Api.Controllers.Litigation.CitizenController",
+    "Method": "GetDelegatedPersonsAgent",
+    "RelativePath": "api/Citizen/GetDelegatedPersonsAgent",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "REAC.Api.Controllers.Litigation.CitizenController",
+    "Method": "GetDelegatedPersonsLawyer",
+    "RelativePath": "api/Citizen/GetDelegatedPersonsLawyer",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "REAC.Api.Controllers.Litigation.CitizenController",
+    "Method": "GetFacilities",
+    "RelativePath": "api/Citizen/GetFacilities",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "relationShipId",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "REAC.Api.Controllers.Litigation.CitizenController",
+    "Method": "GetOwnerFacilities",
+    "RelativePath": "api/Citizen/GetOwnerFacilities",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "REAC.Api.Controllers.Litigation.CitizenController",
+    "Method": "GetPersons",
+    "RelativePath": "api/Citizen/GetPersons",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "relationShipId",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
     "ReturnTypes": []
   },
   {
@@ -1472,6 +1544,22 @@
   },
   {
     "ContainingType": "REAC.Api.Controllers.Litigation.DelegatorController",
+    "Method": "DeleteLawyerDelegator",
+    "RelativePath": "api/Delegator/DeleteLawyerDelegator",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "delegatorId",
+        "Type": "System.Guid",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "REAC.Api.Controllers.Litigation.DelegatorController",
     "Method": "GetDelegatorById",
     "RelativePath": "api/Delegator/GetDelegatorById",
     "HttpMethod": "GET",
@@ -1514,6 +1602,48 @@
   },
   {
     "ContainingType": "REAC.Api.Controllers.Litigation.DelegatorController",
+    "Method": "GetLawyerDelegatorById",
+    "RelativePath": "api/Delegator/GetLawyerDelegatorById",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "delegatorId",
+        "Type": "System.Guid",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "REAC.Api.Controllers.Litigation.DelegatorController",
+    "Method": "GetLawyersDelegators",
+    "RelativePath": "api/Delegator/GetLawyersDelegators",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "pageIndex",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "pageSize",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "searchKey",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "REAC.Api.Controllers.Litigation.DelegatorController",
     "Method": "SaveDelegator",
     "RelativePath": "api/Delegator/SaveDelegator",
     "HttpMethod": "POST",
@@ -1530,6 +1660,38 @@
   },
   {
     "ContainingType": "REAC.Api.Controllers.Litigation.DelegatorController",
+    "Method": "SaveLawyerCitizenDelegator",
+    "RelativePath": "api/Delegator/SaveLawyerCitizenDelegator",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "delegatorDto",
+        "Type": "REAC.Application.Contracts.Dtos.Delegator.LawyerDelegatorDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "REAC.Api.Controllers.Litigation.DelegatorController",
+    "Method": "SaveLawyerDelegator",
+    "RelativePath": "api/Delegator/SaveLawyerDelegator",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "delegatorDto",
+        "Type": "REAC.Application.Contracts.Dtos.Delegator.LawyerDelegatorDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "REAC.Api.Controllers.Litigation.DelegatorController",
     "Method": "ValidateDelegator",
     "RelativePath": "api/Delegator/ValidateDelegator",
     "HttpMethod": "POST",
@@ -1539,6 +1701,22 @@
       {
         "Name": "validateDelegatorDto",
         "Type": "REAC.Application.Contracts.Dtos.Delegator.ValidateDelegatorDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "REAC.Api.Controllers.Litigation.DelegatorController",
+    "Method": "ValidateLawyerDelegator",
+    "RelativePath": "api/Delegator/ValidateLawyerDelegator",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "validateDelegatorDto",
+        "Type": "REAC.Application.Contracts.Dtos.Delegator.ValidateLawyerDelegatorDto",
         "IsRequired": true
       }
     ],
@@ -2272,8 +2450,8 @@
   },
   {
     "ContainingType": "REAC.Api.Controllers.Litigation.LitigationRequestController",
-    "Method": "GetLitigationAcceptanceOrRejectDocumentData",
-    "RelativePath": "api/LitigationRequest/GetLitigationAcceptanceOrRejectDocumentData",
+    "Method": "GetLitigationArbitrationTaskAcceptanceOrRejectDocumentData",
+    "RelativePath": "api/LitigationRequest/GetLitigationArbitrationTaskAcceptanceOrRejectDocumentData",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -2285,13 +2463,13 @@
       },
       {
         "Name": "requestId",
-        "Type": "System.Guid",
+        "Type": "System.Nullable\u00601[[System.Guid, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
         "IsRequired": false
       }
     ],
     "ReturnTypes": [
       {
-        "Type": "REAC.Application.Contracts.Dtos.Litigation.LitigationAcceptOrRejectDocumentDto",
+        "Type": "REAC.Application.Contracts.Dtos.Litigation.LitigationArbitrationTaskAcceptOrRejectDocumentDto",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -2386,6 +2564,37 @@
     "ReturnTypes": [
       {
         "Type": "REAC.Application.Contracts.Dtos.Litigation.Get.LitigationPartiesDetailsDto",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "REAC.Api.Controllers.Litigation.LitigationRequestController",
+    "Method": "GetLitigationReconciliationTaskAcceptanceOrRejectDocumentData",
+    "RelativePath": "api/LitigationRequest/GetLitigationReconciliationTaskAcceptanceOrRejectDocumentData",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "litigationId",
+        "Type": "System.Guid",
+        "IsRequired": false
+      },
+      {
+        "Name": "requestId",
+        "Type": "System.Nullable\u00601[[System.Guid, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "REAC.Application.Contracts.Dtos.Litigation.LitigationReconciliationTaskAcceptOrRejectDocumentDto",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -2677,6 +2886,32 @@
       }
     ],
     "ReturnTypes": []
+  },
+  {
+    "ContainingType": "REAC.Api.Controllers.Litigation.LitigationRequestContractController",
+    "Method": "AddModificationRequest",
+    "RelativePath": "api/LitigationRequestContract/AddModificationRequest",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "litigationModificationRequestDto",
+        "Type": "REAC.Application.Contracts.Dtos.Litigation.CreateUpdate.Litigation.LitigationModificationRequestDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "REAC.Application.Contracts.Dtos.Litigation.CreateUpdate.Litigation.LitigationModificationRequestDto",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
   },
   {
     "ContainingType": "REAC.Api.BaseController\u00604[[REAC.EntityFrameworkCore.Entities.Litigation.LitigationRequestContract, REAC.EntityFrameworkCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[REAC.Application.Contracts.Dtos.Litigation.LitigationRequestContractCreateUpdateDto, REAC.Application.Contracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[REAC.Application.Contracts.Dtos.Litigation.LitigationRequestContractCreateUpdateDto, REAC.Application.Contracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[System.Guid, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
@@ -2979,6 +3214,38 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "REAC.Api.Controllers.Litigation.LitigationRequestCorrespondenceController",
+    "Method": "AddLitigationCorrespondence",
+    "RelativePath": "api/LitigationRequestCorrespondence/AddLitigationCorrespondence",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "model",
+        "Type": "REAC.EntityFrameworkCore.Entities.Reconciliation.LitigationRequestCorrespondenceCreateUpdateDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "REAC.Api.Controllers.Litigation.LitigationRequestCorrespondenceController",
+    "Method": "AddLitigationCorrespondence",
+    "RelativePath": "api/LitigationRequestCorrespondence/AddLitigationCorrespondenceReply",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "model",
+        "Type": "REAC.Application.Contracts.Dtos.Reconciliation.LitigationRequestCorrespondenceReplyCreateUpdateDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "REAC.Api.BaseController\u00604[[REAC.EntityFrameworkCore.Entities.Litigation.LitigationRequestCorrespondence, REAC.EntityFrameworkCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[REAC.EntityFrameworkCore.Entities.Reconciliation.LitigationRequestCorrespondenceCreateUpdateDto, REAC.Application.Contracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[REAC.EntityFrameworkCore.Entities.Reconciliation.LitigationRequestCorrespondenceCreateUpdateDto, REAC.Application.Contracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[System.Guid, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
     "Method": "Create",
     "RelativePath": "api/LitigationRequestCorrespondence/Create",
@@ -3063,6 +3330,156 @@
       {
         "Name": "id",
         "Type": "System.Guid",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "REAC.Api.Controllers.Litigation.LitigationRequestCorrespondenceController",
+    "Method": "GetLitigationCorrespondenceReply",
+    "RelativePath": "api/LitigationRequestCorrespondence/GetLitigationCorrespondenceReply",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "pageIndex",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "pageSize",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "searchKey",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "RequestCode",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "CreatedOn",
+        "Type": "System.Nullable\u00601[[System.DateTime, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "FirstPartyName",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "SecondPartyName",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "InternalStatusId",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "ExternalStatusId",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "LitigationRequestContractTypeId",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "LitigationRequestContractType",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Id",
+        "Type": "System.Guid",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "REAC.Api.Controllers.Litigation.LitigationRequestCorrespondenceController",
+    "Method": "GetLitigationCorrespondences",
+    "RelativePath": "api/LitigationRequestCorrespondence/GetLitigationCorrespondences",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "litigationId",
+        "Type": "System.Guid",
+        "IsRequired": false
+      },
+      {
+        "Name": "litigationRequestCategoryIds",
+        "Type": "System.Int32[]",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "REAC.Api.Controllers.Litigation.LitigationRequestCorrespondenceController",
+    "Method": "GetLitigationCorrespondencesByLitigationRequestId",
+    "RelativePath": "api/LitigationRequestCorrespondence/GetLitigationCorrespondencesByLitigationRequestId",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "litigationRequestId",
+        "Type": "System.Guid",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "REAC.Api.Controllers.Litigation.LitigationRequestCorrespondenceController",
+    "Method": "GetLitigationRequestArbitrationCorrespondence",
+    "RelativePath": "api/LitigationRequestCorrespondence/GetLitigationRequestArbitrationCorrespondence",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "pageIndex",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "pageSize",
+        "Type": "System.Int32",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "REAC.Api.Controllers.Litigation.LitigationRequestCorrespondenceController",
+    "Method": "GetLitigationRequestReconciliationCorrespondence",
+    "RelativePath": "api/LitigationRequestCorrespondence/GetLitigationRequestReconciliationCorrespondence",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "pageIndex",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "pageSize",
+        "Type": "System.Int32",
         "IsRequired": false
       }
     ],
@@ -3837,6 +4254,22 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "REAC.Api.Controllers.Litigation.LitigationRequestNoteController",
+    "Method": "AddLitigationNote",
+    "RelativePath": "api/LitigationRequestNote/AddLitigationNote",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "model",
+        "Type": "REAC.EntityFrameworkCore.Entities.Reconciliation.LitigationRequestNoteCreateUpdateDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "REAC.Api.BaseController\u00604[[REAC.EntityFrameworkCore.Entities.Litigation.LitigationRequestNote, REAC.EntityFrameworkCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[REAC.EntityFrameworkCore.Entities.Reconciliation.LitigationRequestNoteCreateUpdateDto, REAC.Application.Contracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[REAC.EntityFrameworkCore.Entities.Reconciliation.LitigationRequestNoteCreateUpdateDto, REAC.Application.Contracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[System.Guid, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
     "Method": "Create",
     "RelativePath": "api/LitigationRequestNote/Create",
@@ -3901,6 +4334,22 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "REAC.Api.Controllers.Litigation.LitigationRequestNoteController",
+    "Method": "EditLitigationNote",
+    "RelativePath": "api/LitigationRequestNote/EditLitigationNote",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "model",
+        "Type": "REAC.EntityFrameworkCore.Entities.Reconciliation.LitigationRequestNoteCreateUpdateDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "REAC.Api.BaseController\u00604[[REAC.EntityFrameworkCore.Entities.Litigation.LitigationRequestNote, REAC.EntityFrameworkCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[REAC.EntityFrameworkCore.Entities.Reconciliation.LitigationRequestNoteCreateUpdateDto, REAC.Application.Contracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[REAC.EntityFrameworkCore.Entities.Reconciliation.LitigationRequestNoteCreateUpdateDto, REAC.Application.Contracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[System.Guid, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
     "Method": "Get",
     "RelativePath": "api/LitigationRequestNote/Get",
@@ -3922,6 +4371,27 @@
         "Name": "id",
         "Type": "System.Guid",
         "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "REAC.Api.Controllers.Litigation.LitigationRequestNoteController",
+    "Method": "GetLitigationNotes",
+    "RelativePath": "api/LitigationRequestNote/GetLitigationNotes",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "litigationId",
+        "Type": "System.Guid",
+        "IsRequired": false
+      },
+      {
+        "Name": "litigationRequestCategoryIds",
+        "Type": "System.Int32[]",
+        "IsRequired": true
       }
     ],
     "ReturnTypes": []
@@ -4790,16 +5260,6 @@
     "ReturnTypes": []
   },
   {
-    "ContainingType": "REAC.Api.Controllers.Integration.NafathController",
-    "Method": "NafathCheckStatus",
-    "RelativePath": "api/Nafath/NafathCheckStatus",
-    "HttpMethod": "POST",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [],
-    "ReturnTypes": []
-  },
-  {
     "ContainingType": "REAC.Api.Controllers.Notification.NotificationController",
     "Method": "GetNotificationListForBackOffice",
     "RelativePath": "api/Notification/GetNotificationListForBackOffice",
@@ -4905,12 +5365,110 @@
   },
   {
     "ContainingType": "REAC.Api.Controllers.Security.OTPController",
+    "Method": "GenerateZoomMeeting",
+    "RelativePath": "api/OTP/GenerateZoomMeeting",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "REAC.Application.Contracts.Dtos.Zoom.ZoomMeting",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "REAC.Api.Controllers.Security.OTPController",
+    "Method": "GetMeetingParticipantsById",
+    "RelativePath": "api/OTP/GetMeetingParticipantsById",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "MeetingId",
+        "Type": "System.Int64",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.List\u00601[[REAC.Application.Contracts.Dtos.Zoom.ZoomMeetingParticipantsDetails, REAC.Application.Contracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "REAC.Api.Controllers.Security.OTPController",
+    "Method": "GetOTPByMobile",
+    "RelativePath": "api/OTP/GetOTPByMobile/{mobileNumber}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "mobileNumber",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.String",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "REAC.Api.Controllers.Security.OTPController",
     "Method": "GetOTPTimeoutValue",
     "RelativePath": "api/OTP/GetOTPTimeoutValue",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
     "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "Core.Shared.Responses.BaseResponse",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "REAC.Api.Controllers.Security.OTPController",
+    "Method": "GetZoomMeeting",
+    "RelativePath": "api/OTP/GetZoomMeeting",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "MeetingId",
+        "Type": "System.Int64",
+        "IsRequired": false
+      }
+    ],
     "ReturnTypes": [
       {
         "Type": "Core.Shared.Responses.BaseResponse",
@@ -5294,6 +5852,134 @@
     "IsController": true,
     "Order": 0,
     "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "REAC.Api.Controllers.Reports.ReportsController",
+    "Method": "GetListOfLitigationArbitrationReport",
+    "RelativePath": "api/Reports/GetListOfLitigationArbitrationReport",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "filter",
+        "Type": "REAC.Application.Contracts.Dtos.Reports.GetListOfLitigationArbitrationReportFilter",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "REAC.Api.Controllers.Reports.ReportsController",
+    "Method": "GetListOfLitigationGeneralReport",
+    "RelativePath": "api/Reports/GetListOfLitigationGeneralReport",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "filter",
+        "Type": "REAC.Application.Contracts.Dtos.Reports.GetListOfLitigationGeneralReportFilter",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "REAC.Api.Controllers.Reports.ReportsController",
+    "Method": "GetListOfLitigationReformerReport",
+    "RelativePath": "api/Reports/GetListOfLitigationReformerReport",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "filter",
+        "Type": "REAC.Application.Contracts.Dtos.Reports.GetListOfLitigationReformerReportFilter",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "REAC.Api.Controllers.Reports.ReportsController",
+    "Method": "GetListOfLitigationReviewReport",
+    "RelativePath": "api/Reports/GetListOfLitigationReviewReport",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "filter",
+        "Type": "REAC.Application.Contracts.Dtos.Reports.GetListOfLitigationReviewReportFilter",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "REAC.Api.Controllers.Reports.ReportsController",
+    "Method": "GetLitigationStatisticsArbitrationReport",
+    "RelativePath": "api/Reports/GetLitigationStatisticsArbitrationReport",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "filter",
+        "Type": "REAC.Application.Contracts.Dtos.Reports.GetLitigationStatisticsMainReportFilter",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "REAC.Api.Controllers.Reports.ReportsController",
+    "Method": "GetLitigationStatisticsGeneralReport",
+    "RelativePath": "api/Reports/GetLitigationStatisticsGeneralReport",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "filter",
+        "Type": "REAC.Application.Contracts.Dtos.Reports.GetLitigationStatisticsMainReportFilter",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "REAC.Api.Controllers.Reports.ReportsController",
+    "Method": "GetLitigationStatisticsReformerReport",
+    "RelativePath": "api/Reports/GetLitigationStatisticsReformerReport",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "filter",
+        "Type": "REAC.Application.Contracts.Dtos.Reports.GetLitigationStatisticsMainReportFilter",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "REAC.Api.Controllers.Reports.ReportsController",
+    "Method": "GetLitigationStatisticsReviewReport",
+    "RelativePath": "api/Reports/GetLitigationStatisticsReviewReport",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "filter",
+        "Type": "REAC.Application.Contracts.Dtos.Reports.GetLitigationStatisticsMainReportFilter",
+        "IsRequired": true
+      }
+    ],
     "ReturnTypes": []
   },
   {
@@ -8548,6 +9234,149 @@
       {
         "Name": "entities",
         "Type": "System.Collections.Generic.List\u00601[[REAC.Application.Contracts.Dtos.System.SysMeetingLocationCreateUpdateDto, REAC.Application.Contracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "REAC.Api.BaseController\u00604[[REAC.EntityFrameworkCore.Entities.Litigation.OtherCategory, REAC.EntityFrameworkCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[REAC.Application.Contracts.Dtos.System.SysOtherCategory.SysOtherCategoryCreateUpdateDto, REAC.Application.Contracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[REAC.Application.Contracts.Dtos.System.SysOtherCategory.SysOtherCategoryDto, REAC.Application.Contracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[System.Guid, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+    "Method": "Create",
+    "RelativePath": "api/SysOtherCategories/Create",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "entity",
+        "Type": "REAC.Application.Contracts.Dtos.System.SysOtherCategory.SysOtherCategoryCreateUpdateDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "REAC.Api.BaseController\u00604[[REAC.EntityFrameworkCore.Entities.Litigation.OtherCategory, REAC.EntityFrameworkCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[REAC.Application.Contracts.Dtos.System.SysOtherCategory.SysOtherCategoryCreateUpdateDto, REAC.Application.Contracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[REAC.Application.Contracts.Dtos.System.SysOtherCategory.SysOtherCategoryDto, REAC.Application.Contracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[System.Guid, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+    "Method": "CreateRange",
+    "RelativePath": "api/SysOtherCategories/CreateRange",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "entities",
+        "Type": "System.Collections.Generic.List\u00601[[REAC.Application.Contracts.Dtos.System.SysOtherCategory.SysOtherCategoryCreateUpdateDto, REAC.Application.Contracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "REAC.Api.BaseController\u00604[[REAC.EntityFrameworkCore.Entities.Litigation.OtherCategory, REAC.EntityFrameworkCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[REAC.Application.Contracts.Dtos.System.SysOtherCategory.SysOtherCategoryCreateUpdateDto, REAC.Application.Contracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[REAC.Application.Contracts.Dtos.System.SysOtherCategory.SysOtherCategoryDto, REAC.Application.Contracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[System.Guid, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+    "Method": "Delete",
+    "RelativePath": "api/SysOtherCategories/Delete",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Guid",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "REAC.Api.BaseController\u00604[[REAC.EntityFrameworkCore.Entities.Litigation.OtherCategory, REAC.EntityFrameworkCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[REAC.Application.Contracts.Dtos.System.SysOtherCategory.SysOtherCategoryCreateUpdateDto, REAC.Application.Contracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[REAC.Application.Contracts.Dtos.System.SysOtherCategory.SysOtherCategoryDto, REAC.Application.Contracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[System.Guid, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+    "Method": "DeleteRange",
+    "RelativePath": "api/SysOtherCategories/DeleteRange",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "ids",
+        "Type": "System.Collections.Generic.List\u00601[[System.Guid, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "REAC.Api.BaseController\u00604[[REAC.EntityFrameworkCore.Entities.Litigation.OtherCategory, REAC.EntityFrameworkCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[REAC.Application.Contracts.Dtos.System.SysOtherCategory.SysOtherCategoryCreateUpdateDto, REAC.Application.Contracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[REAC.Application.Contracts.Dtos.System.SysOtherCategory.SysOtherCategoryDto, REAC.Application.Contracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[System.Guid, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+    "Method": "Get",
+    "RelativePath": "api/SysOtherCategories/Get",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "REAC.Api.BaseController\u00604[[REAC.EntityFrameworkCore.Entities.Litigation.OtherCategory, REAC.EntityFrameworkCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[REAC.Application.Contracts.Dtos.System.SysOtherCategory.SysOtherCategoryCreateUpdateDto, REAC.Application.Contracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[REAC.Application.Contracts.Dtos.System.SysOtherCategory.SysOtherCategoryDto, REAC.Application.Contracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[System.Guid, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+    "Method": "GetById",
+    "RelativePath": "api/SysOtherCategories/GetById",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Guid",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "REAC.Api.BaseController\u00604[[REAC.EntityFrameworkCore.Entities.Litigation.OtherCategory, REAC.EntityFrameworkCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[REAC.Application.Contracts.Dtos.System.SysOtherCategory.SysOtherCategoryCreateUpdateDto, REAC.Application.Contracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[REAC.Application.Contracts.Dtos.System.SysOtherCategory.SysOtherCategoryDto, REAC.Application.Contracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[System.Guid, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+    "Method": "GetPaged",
+    "RelativePath": "api/SysOtherCategories/GetPaged",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "pageIndex",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "pageSize",
+        "Type": "System.Int32",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "REAC.Api.BaseController\u00604[[REAC.EntityFrameworkCore.Entities.Litigation.OtherCategory, REAC.EntityFrameworkCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[REAC.Application.Contracts.Dtos.System.SysOtherCategory.SysOtherCategoryCreateUpdateDto, REAC.Application.Contracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[REAC.Application.Contracts.Dtos.System.SysOtherCategory.SysOtherCategoryDto, REAC.Application.Contracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[System.Guid, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+    "Method": "Update",
+    "RelativePath": "api/SysOtherCategories/Update",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "entity",
+        "Type": "REAC.Application.Contracts.Dtos.System.SysOtherCategory.SysOtherCategoryCreateUpdateDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "REAC.Api.BaseController\u00604[[REAC.EntityFrameworkCore.Entities.Litigation.OtherCategory, REAC.EntityFrameworkCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[REAC.Application.Contracts.Dtos.System.SysOtherCategory.SysOtherCategoryCreateUpdateDto, REAC.Application.Contracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[REAC.Application.Contracts.Dtos.System.SysOtherCategory.SysOtherCategoryDto, REAC.Application.Contracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[System.Guid, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+    "Method": "UpdateRange",
+    "RelativePath": "api/SysOtherCategories/UpdateRange",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "entities",
+        "Type": "System.Collections.Generic.List\u00601[[REAC.Application.Contracts.Dtos.System.SysOtherCategory.SysOtherCategoryCreateUpdateDto, REAC.Application.Contracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
         "IsRequired": true
       }
     ],

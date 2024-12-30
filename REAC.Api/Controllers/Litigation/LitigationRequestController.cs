@@ -51,13 +51,21 @@ public class LitigationRequestController : BaseController<LitigationRequest,
     {
         if (ModelState.IsValid)
         {
+            if (model.ContractType == Domain.Shared.Enum.LitigationRequestContractType.Rent)
+            {
+
+                var ejarReturnValue = await _litigationService.CreateEjarLitigationRequestManual(model);
+                return Ok(ejarReturnValue);
+
+            }
+
             var returnValue = await _litigationService.CreateLitigationRequestManual(model);
             return Ok(returnValue);
         }
 
         return BadRequest();
     }
-    
+
     [HttpGet(nameof(List))]
     //[AllowAnonymous]
     public async Task<ActionResult<IEnumerable<LitigationListDto>>> List([FromQuery] int pageIndex, [FromQuery] int pageSize, [FromQuery] string? searchKey, [FromQuery] LitigationListDto model)
@@ -183,7 +191,7 @@ public class LitigationRequestController : BaseController<LitigationRequest,
 
         return BadRequest();
     }
-    
+
     [HttpGet(nameof(GetLitigationReconciliationTaskAcceptanceOrRejectDocumentData))]
     [AllowAnonymous]
     public async Task<ActionResult<LitigationReconciliationTaskAcceptOrRejectDocumentDto>> GetLitigationReconciliationTaskAcceptanceOrRejectDocumentData(Guid litigationId, Guid? requestId = null)

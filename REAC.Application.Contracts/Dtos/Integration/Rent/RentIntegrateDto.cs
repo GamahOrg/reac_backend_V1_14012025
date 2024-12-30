@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore.Query;
+using REAC.Application.Contracts.Dtos.Integration.GEE;
 using REAC.Application.Contracts.Dtos.Integration.Party;
 using REAC.Application.Contracts.Dtos.Integration.Wafi;
 using REAC.Domain.Shared.Enum;
@@ -11,6 +12,7 @@ namespace REAC.Application.Contracts.Dtos.Integration.Rent
         public WafiData Wafiresponse { get; set; }
         public PartyDTO FirstPartyDto { get; set; }
         public PartyDTO SecondPartyDto { get; set; }
+        public EjarPropertyDto Property { get; set; }
         public string Key { get; set; }//رقم عقد الايجار
         [MaxLength(4)]
         public string SubKey { get; set; } = null!; // رقم النسخة
@@ -20,6 +22,7 @@ namespace REAC.Application.Contracts.Dtos.Integration.Rent
 
         public Data Project { get; set; }
         public bool IsDefendantRegistered { get; set; } = true;
+        public bool IsPlaintiffRegistered { get; set; } = true;
     }
 
     public class WafiProjectDetails

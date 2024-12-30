@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("REAC.Mobile")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+12ae7db73c6e29c795edc76ab972a460dbcd23ad")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e364523a06a9a99200a14dbe64c7d080e7ac7ec1")]
 [assembly: System.Reflection.AssemblyProductAttribute("REAC.Mobile")]
 [assembly: System.Reflection.AssemblyTitleAttribute("REAC.Mobile")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

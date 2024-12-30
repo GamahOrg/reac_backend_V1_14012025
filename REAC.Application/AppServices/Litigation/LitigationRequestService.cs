@@ -65,10 +65,11 @@ namespace REAC.Application.AppServices.Litigation
         private readonly ISysSettingService _sysSettingService;
         private readonly IGEELoginService _gEELoginService;
         private readonly INafathService _nafathService;
+        private readonly IRENTService _rentService;
 
         public LitigationRequestService(REACDBContext context, UserManager<User> userManager, IFacilityService facilityService, IServiceProvider service,
               IEntityRepository repository,
-            IMapper mapper, ILoggerManager loggerManager, IJwtReader jwtReader, ISysEmployeeService employeeService, INotificationService notificationService, ISysSettingService sysSettingService, IGEELoginService gEELoginService, INafathService nafathService) : base(repository, mapper, loggerManager, jwtReader)
+            IMapper mapper, ILoggerManager loggerManager, IJwtReader jwtReader, ISysEmployeeService employeeService, INotificationService notificationService, ISysSettingService sysSettingService, IGEELoginService gEELoginService, INafathService nafathService, IRENTService rentService) : base(repository, mapper, loggerManager, jwtReader)
 
         {
             _userManager = userManager;
@@ -82,6 +83,7 @@ namespace REAC.Application.AppServices.Litigation
             _sysSettingService = sysSettingService;
             _gEELoginService = gEELoginService;
             _nafathService = nafathService;
+            _rentService = rentService;
         }
 
         public async Task<BaseResponse> AddLitigation(LitigationCreateUpdateDto model)
@@ -698,7 +700,7 @@ namespace REAC.Application.AppServices.Litigation
         {
             var litigationRequest = (await _repository.GetQueryable<LitigationRequest, Guid>())
                          .Include(x => x.ArbitratorCitizen)
-                         .ThenInclude(x=>x.SigntureFile)
+                         .ThenInclude(x => x.SigntureFile)
                          .Include(x => x.LitigationRequestArbitratorAssigningRequests)
                          .ThenInclude(x => x.ArbitratorCitizen)
                          .Include(x => x.LitigationRequestAmount)
@@ -744,7 +746,7 @@ namespace REAC.Application.AppServices.Litigation
                 FirstPartyName = (litigationRequest.Contract.FirstPartyCitizen == null) ? litigationRequest.Contract.FirstPartyFacility.ArabicFacilityName : litigationRequest.Contract.FirstPartyCitizen.FullName,
                 SecondPartyName = (litigationRequest.Contract.SecondPartyCitizen == null) ? litigationRequest.Contract.SecondPartyFacility.ArabicFacilityName : litigationRequest.Contract.SecondPartyCitizen.FullName,
                 RejectReason = assigningRequest.RejectReason,
-                SigntureFile= litigationRequest.ArbitratorCitizen?.SigntureFile?.FilePath
+                SigntureFile = litigationRequest.ArbitratorCitizen?.SigntureFile?.FilePath
             };
 
             return new DataResponse<LitigationArbitrationTaskAcceptOrRejectDocumentDto> { Data = response, IsDone = true };
@@ -911,7 +913,7 @@ namespace REAC.Application.AppServices.Litigation
                 string inputFilePath = Path.Combine(Directory.GetCurrentDirectory(), citizenInfo?.SigntureFile?.FilePath);
                 // Read file and convert to Base64
                 byte[] fileBytes = File.ReadAllBytes(inputFilePath);
-                 base64String = Convert.ToBase64String(fileBytes);
+                base64String = Convert.ToBase64String(fileBytes);
             }
 
             var response = new LitigationReconciliationTaskAcceptOrRejectDocumentDto()
@@ -1372,6 +1374,7 @@ namespace REAC.Application.AppServices.Litigation
                 Id = litigationRequest.ContractId
             };
 
+
             if (litigationRequest.Contract.LitigationRequestContractTypeId == LitigationRequestContractType.Wafi)
             {
                 var wafiResult = await WafiGetUserInfo(litigationRequest.Contract.ContractKey);
@@ -1409,6 +1412,270 @@ namespace REAC.Application.AppServices.Litigation
                 IsDone = true,
                 Data = rentIntegrateDto
             };
+        }
+
+        private async Task<BaseResponse> ReturnEjarLitigationRequestDto(LitigationRequest litigationRequest, CreateLitigationRequestNoIntegrationDto litigationRequestNoIntegrationDto, PlaintiffDefendantSharedEjarDto plaintiffDefendantSharedEjarData)
+        {
+
+            RentIntegrateDto rentIntegrateDto = new RentIntegrateDto()
+            {
+                FirstPartyDto = new PartyDTO()
+                {
+
+                    IdentityNumber = plaintiffDefendantSharedEjarData.PlaintiffEjarNationalId,
+                    NationalAddress = (litigationRequest.Contract.FirstPartyCitizen == null) ? null : litigationRequest.Contract.FirstPartyCitizen.NationalAddress,
+                    CommercialRegistrationNo = (litigationRequest.Contract.FirstPartyFacility != null) ? litigationRequest.Contract.FirstPartyFacility.CommercialRegisterNumber : null,
+                    FacilityName = (litigationRequest.Contract.FirstPartyFacility == null) ? null : litigationRequest.Contract.FirstPartyFacility.ArabicFacilityName,
+                    Nationality = (litigationRequest.Contract.FirstPartyCitizen == null) ? null : litigationRequest.Contract.FirstPartyCitizen.Nationality.NationalityName,
+                    FullName = plaintiffDefendantSharedEjarData.PlaintiffEjarName,
+                    Mobile = (litigationRequest.Contract.FirstPartyCitizen == null) ? null : litigationRequest.Contract.FirstPartyCitizen.Mobile,
+                    Email = (litigationRequest.Contract.FirstPartyCitizen == null) ? null : litigationRequest.Contract.FirstPartyCitizen.Email,
+                    FacilityNumber = (litigationRequest.Contract.FirstPartyFacility != null) ? litigationRequest.Contract.FirstPartyFacility.Facility700Number : null,
+                    CommercialRegisterNumber = (litigationRequest.Contract.FirstPartyFacility != null) ? litigationRequest.Contract.FirstPartyFacility.CommercialRegisterNumber : null,
+
+                    BirthDate = (litigationRequest.Contract.FirstPartyCitizen != null) ? litigationRequest.Contract.FirstPartyCitizen.BirthDate : null,
+                    Capacity = plaintiffDefendantSharedEjarData.PlaintiffEjarCapacity,
+                    IsPretender = true,
+                    LawLicenseNumber = litigationRequest.ApplicantCitizen.LawyerLicenseNumber,
+                    LawLicenseExpirationDate = litigationRequest.ApplicantCitizen.LawyerLicenseExpirationDate,
+                    AgencyNumber = "1234567890", // (litigationRequest.LitigationRequestOwnerTypeId == LitigationRequestOwnerType.Lawyer) || (litigationRequest.LitigationRequestOwnerTypeId == LitigationRequestOwnerType.Agent ) ? litigationRequest.Contract. : null,
+                    AgancyAttachment = litigationRequest.LitigationRequestOwnerTypeId == LitigationRequestOwnerType.LawyerForIndividual ? new SysFileManagerCreateUpdateDto { Id = Guid.Parse("e86953a3-c747-49f4-b817-21592334321f"), FileDescription = "FileDescription", FilePath = "reac/e86953a3-c747-49f4-b817-21592334321f.png", FileType = "Pdf" } : null,
+                    LawLicenseAttachment = litigationRequest.LitigationRequestOwnerTypeId == LitigationRequestOwnerType.LawyerForIndividual ? ((litigationRequest.ApplicantCitizen.LawLicenseFile != null) ? new SysFileManagerCreateUpdateDto { Id = litigationRequest.ApplicantCitizen.LawLicenseFile.Id, FileDescription = litigationRequest.ApplicantCitizen.LawLicenseFile.FileDescription, FilePath = litigationRequest.ApplicantCitizen.LawLicenseFile.FilePath, FileType = litigationRequest.ApplicantCitizen.LawLicenseFile.FileType } : null) : null,
+                    EstablishmentContract = litigationRequest.LitigationRequestOwnerTypeId == LitigationRequestOwnerType.CompanyRepresentative ? new SysFileManagerCreateUpdateDto { Id = Guid.Parse("e86953a3-c747-49f4-b817-21592334321f"), FileDescription = "FileDescription", FilePath = "reac/e86953a3-c747-49f4-b817-21592334321f.png", FileType = "Pdf" } : null,
+                },
+                SecondPartyDto = new PartyDTO()
+                {
+                    IdentityNumber = plaintiffDefendantSharedEjarData.DefendantEjarNationalId,
+                    NationalAddress = (litigationRequest.Contract.SecondPartyCitizen == null) ? null : litigationRequest.Contract.SecondPartyCitizen.NationalAddress,
+                    CommercialRegistrationNo = (litigationRequest.Contract.SecondPartyFacility != null) ? litigationRequest.Contract.SecondPartyFacility.CommercialRegisterNumber : null,
+                    FacilityName = (litigationRequest.Contract.SecondPartyFacility != null) ? litigationRequest.Contract.SecondPartyFacility.ArabicFacilityName : null,
+                    Nationality = (litigationRequest.Contract.SecondPartyCitizen == null) ? null : (litigationRequest.Contract.SecondPartyCitizen.Nationality == null) ? null : litigationRequest.Contract.SecondPartyCitizen.Nationality.NationalityName,
+                    FullName = plaintiffDefendantSharedEjarData.DefendantEjarName,
+                    Mobile = (litigationRequest.Contract.SecondPartyCitizen == null) ? null : litigationRequest.Contract.SecondPartyCitizen.Mobile,
+                    Email = (litigationRequest.Contract.SecondPartyCitizen == null) ? null : litigationRequest.Contract.SecondPartyCitizen.Email,
+                    FacilityNumber = (litigationRequest.Contract.SecondPartyFacility != null) ? litigationRequest.Contract.SecondPartyFacility.Facility700Number : null,
+                    CommercialRegisterNumber = (litigationRequest.Contract.SecondPartyFacility != null) ? litigationRequest.Contract.SecondPartyFacility.CommercialRegisterNumber : null,
+
+                    BirthDate = (litigationRequest.Contract.SecondPartyCitizen != null) ? litigationRequest.Contract.SecondPartyCitizen.BirthDate : null,
+                    Capacity = plaintiffDefendantSharedEjarData.DefendantEjarCapacity,
+                    IsPretender = false,
+                    LawLicenseNumber = litigationRequest.ApplicantCitizen.LawyerLicenseNumber,
+                    LawLicenseExpirationDate = litigationRequest.ApplicantCitizen.LawyerLicenseExpirationDate,
+                    AgencyNumber = "1234567890", // (litigationRequest.LitigationRequestOwnerTypeId == LitigationRequestOwnerType.Lawyer) || (litigationRequest.LitigationRequestOwnerTypeId == LitigationRequestOwnerType.Agent ) ? litigationRequest.Contract. : null,
+                    AgancyAttachment = litigationRequest.LitigationRequestOwnerTypeId == LitigationRequestOwnerType.LawyerForIndividual ? new SysFileManagerCreateUpdateDto { Id = Guid.Parse("e86953a3-c747-49f4-b817-21592334321f"), FileDescription = "FileDescription", FilePath = "reac/e86953a3-c747-49f4-b817-21592334321f.png", FileType = "Pdf" } : null,
+                    LawLicenseAttachment = litigationRequest.LitigationRequestOwnerTypeId == LitigationRequestOwnerType.LawyerForIndividual ? ((litigationRequest.ApplicantCitizen.LawLicenseFile != null) ? new SysFileManagerCreateUpdateDto { Id = litigationRequest.ApplicantCitizen.LawLicenseFile.Id, FileDescription = litigationRequest.ApplicantCitizen.LawLicenseFile.FileDescription, FilePath = litigationRequest.ApplicantCitizen.LawLicenseFile.FilePath, FileType = litigationRequest.ApplicantCitizen.LawLicenseFile.FileType } : null) : null,
+                    EstablishmentContract = litigationRequest.LitigationRequestOwnerTypeId == LitigationRequestOwnerType.CompanyRepresentative ? new SysFileManagerCreateUpdateDto { Id = Guid.Parse("e86953a3-c747-49f4-b817-21592334321f"), FileDescription = "FileDescription", FilePath = "reac/e86953a3-c747-49f4-b817-21592334321f.png", FileType = "Pdf" } : null,
+                },
+                Property = plaintiffDefendantSharedEjarData.EjarProperty,
+                Key = litigationRequest.Contract.ContractKey,
+                SubKey = litigationRequest.Contract.VersionNumber,
+                LitigationRequestOwnerType = litigationRequest.LitigationRequestOwnerTypeId,
+                ContractAddress = litigationRequest.ContractAddress,
+                Id = litigationRequest.ContractId
+            };
+
+
+            return new DataResponse<RentIntegrateDto>()
+            {
+                IsDone = true,
+                Data = rentIntegrateDto
+            };
+        }
+
+        private async Task<DataResponse<EjarPartiesDto>> ReturnEjarPlaintiffAndDefendantData(EjarApiResponse input, CreateLitigationRequestNoIntegrationDto litigationRequestNoIntegrationDto, Guid plaintiffReferenceId, string? defendantNationalId = null)
+        {
+            try
+            {
+                // For Testing
+                var plaintiffNationalId = "101021547";
+
+                if (litigationRequestNoIntegrationDto.FirstPartyIndividualId != Guid.Empty)
+                {
+                    plaintiffNationalId = (await _repository.GetQueryable<Citizen, Guid>())
+                                                .FirstOrDefault(x => x.Id == litigationRequestNoIntegrationDto.FirstPartyIndividualId).IdentityNumber;
+
+                }
+                else
+                {
+                    plaintiffNationalId = (await _repository.GetQueryable<Citizen, Guid>())
+                                                   .FirstOrDefault(x => x.Id == plaintiffReferenceId).IdentityNumber;
+
+                }
+
+
+                _loggerManager.Log(Core.Log.Domain.Shared.Enums.LoggerType.Database
+                       , new LogDto()
+                       {
+                           Type = Core.Log.Domain.Shared.Enums.LogType.Debug,
+                           Message = $"Plaintiff National Id ======> {plaintiffNationalId}"
+                       });
+
+                var partiesDto = new EjarPartiesDto();
+
+                foreach (var data in input.Body.Included)
+                {
+                    if (data.Type == "contract_properties")
+                    {
+                        partiesDto.Property = new PropertyAttributes()
+                        {
+                            City = data.Attributes.city,
+                            Province = data.Attributes.province,
+                            Region = data.Attributes.regions,
+                            StreetName = data.Attributes.street_name,
+                            BuildingNumber = data.Attributes.building_no,
+                            PostCost = data.Attributes.post_cost,
+                            AdditionalNumber = data.Attributes.additional_number,
+                            Coordiantes = data.Attributes.coordiantes,
+                        };
+                    }
+
+                    if (data.Type == "lessor_individuals" && data.Attributes.lessor_id_number == plaintiffNationalId)
+                    {
+                        partiesDto.Plaintiff = new LessorAttributes()
+                        {
+                            ContractId = data.Attributes.contract_id,
+                            PartyRole = data.Attributes.party_role,
+                            FullLessorName = data.Attributes.full_lessor_name,
+                            LessorIdNumber = data.Attributes.lessor_id_number,
+                            LessorIdType = data.Attributes.lessor_id_type,
+                            PartyType = data.Attributes.party_type,
+                        };
+
+
+                        partiesDto.Defendant = new TenantAttributes()
+                        {
+                            ContractId = input.Body.Included.FirstOrDefault(a => a.Type == "tenant_individuals").Attributes.contract_id,
+                            PartyRole = input.Body.Included.FirstOrDefault(a => a.Type == "tenant_individuals").Attributes.party_role,
+                            FullTenantName = input.Body.Included.FirstOrDefault(a => a.Type == "tenant_individuals").Attributes.full_name_of_tenant,
+                            TenantIdNumber = input.Body.Included.FirstOrDefault(a => a.Type == "tenant_individuals").Attributes.tenant_id_number,
+                            TenantIdType = input.Body.Included.FirstOrDefault(a => a.Type == "tenant_individuals").Attributes.tenant_id_type,
+                            PartyType = input.Body.Included.FirstOrDefault(a => a.Type == "tenant_individuals").Attributes.party_type,
+                            TenantDobHijri = input.Body.Included.FirstOrDefault(a => a.Type == "tenant_individuals").Attributes.tenant_dob_hijri,
+                        };
+                    }
+                    else if (data.Type == "tenant_individuals" && data.Attributes.tenant_id_number == plaintiffNationalId)
+                    {
+
+                        partiesDto.Plaintiff = new TenantAttributes()
+                        {
+                            ContractId = data.Attributes.contract_id,
+                            PartyRole = data.Attributes.party_role,
+                            FullTenantName = data.Attributes.full_name_of_tenant,
+                            TenantIdNumber = data.Attributes.tenant_id_number,
+                            TenantIdType = data.Attributes.tenant_id_type,
+                            PartyType = data.Attributes.party_type,
+                            TenantDobHijri = data.Attributes.tenant_dob_hijri,
+                        }; ;
+
+                        if (string.IsNullOrEmpty(defendantNationalId))
+                        {
+
+                            partiesDto.Defendant = new LessorAttributes()
+                            {
+                                ContractId = input.Body.Included.FirstOrDefault(a => a.Type == "lessor_individuals").Attributes.contract_id,
+                                PartyRole = input.Body.Included.FirstOrDefault(a => a.Type == "lessor_individuals").Attributes.party_role,
+                                FullLessorName = input.Body.Included.FirstOrDefault(a => a.Type == "lessor_individuals").Attributes.full_lessor_name,
+                                LessorIdNumber = input.Body.Included.FirstOrDefault(a => a.Type == "lessor_individuals").Attributes.lessor_id_number,
+                                LessorIdType = input.Body.Included.FirstOrDefault(a => a.Type == "lessor_individuals").Attributes.lessor_id_type,
+                                PartyType = input.Body.Included.FirstOrDefault(a => a.Type == "lessor_individuals").Attributes.party_type,
+                            };
+                        }
+                        else
+                        {
+                            partiesDto.Defendant = new LessorAttributes()
+                            {
+                                ContractId = input.Body.Included.Where(a => a.Type == "lessor_individuals" && a.Attributes.lessor_id_number == defendantNationalId).Select(l => l.Attributes.contract_id.Value).Distinct().First(),
+                                PartyRole = input.Body.Included.Where(a => a.Type == "lessor_individuals" && a.Attributes.lessor_id_number == defendantNationalId).Select(l => l.Attributes.party_role).Distinct().First(),
+                                FullLessorName = input.Body.Included.Where(a => a.Type == "lessor_individuals" && a.Attributes.lessor_id_number == defendantNationalId).Select(l => l.Attributes.full_lessor_name).Distinct().First(),
+                                LessorIdNumber = input.Body.Included.Where(a => a.Type == "lessor_individuals" && a.Attributes.lessor_id_number == defendantNationalId).Select(l => l.Attributes.lessor_id_number).Distinct().First(),
+                                LessorIdType = input.Body.Included.Where(a => a.Type == "lessor_individuals" && a.Attributes.lessor_id_number == defendantNationalId).Select(l => l.Attributes.lessor_id_type).Distinct().First(),
+                                PartyType = input.Body.Included.Where(a => a.Type == "lessor_individuals" && a.Attributes.lessor_id_number == defendantNationalId).Select(l => l.Attributes.party_type).Distinct().First(),
+                            };
+                        }
+
+                    }
+                }
+
+                if (partiesDto.Plaintiff is null)
+                    return new DataResponse<EjarPartiesDto>() { IsDone = false, Message = "مقدم الطلب ليس طرفا من اطراف العقد" };
+
+
+
+                if (partiesDto.Plaintiff is null || partiesDto.Property is null)
+                    return new DataResponse<EjarPartiesDto>() { IsDone = false, Message = "خطأ في استخراج بيانات ايجار" };
+
+
+                return new DataResponse<EjarPartiesDto>() { IsDone = true, Data = partiesDto };
+            }
+            catch (Exception ex)
+            {
+                return new DataResponse<EjarPartiesDto>() { IsDone = false, Message = "خطأ داخلي في استخراج بيانات ايجار" };
+            }
+
+        }
+
+        private async Task<DataResponse<MultipleLessors>> CatchMultipleLessors(EjarApiResponse input, CreateLitigationRequestNoIntegrationDto litigationRequestNoIntegrationDto, Guid plaintiffReferenceId)
+        {
+            var plaintiffNationalId = "";
+
+            if (litigationRequestNoIntegrationDto.FirstPartyIndividualId != Guid.Empty)
+            {
+                plaintiffNationalId = (await _repository.GetQueryable<Citizen, Guid>())
+                                            .FirstOrDefault(x => x.Id == litigationRequestNoIntegrationDto.FirstPartyIndividualId).IdentityNumber;
+
+            }
+            else
+            {
+                plaintiffNationalId = (await _repository.GetQueryable<Citizen, Guid>())
+                                               .FirstOrDefault(x => x.Id == plaintiffReferenceId).IdentityNumber;
+
+            }
+
+            foreach (var data in input.Body.Included.Where(x => x.Type == "tenant_individuals"))
+            {
+
+                if (data.Attributes.tenant_id_number == plaintiffNationalId)
+                {
+                    var lessorsCount = input.Body.Included
+                            .Where(l => l.Type == "lessor_individuals" && l.Attributes.party_role.en == "Lessor")
+                            .Select(l => l.Attributes.lessor_id_number)
+                            .Distinct()
+                            .Count();
+
+                    if (lessorsCount > 1)
+                    {
+                        var lessors = input.Body.Included
+                            .Where(l => l.Type == "lessor_individuals" && l.Attributes.party_role.en == "Lessor")
+                            .GroupBy(l => l.Attributes.lessor_id_number)
+                            .Select(g => g.First())
+                            .ToList();
+
+                        var lessorsDto = new MultipleLessors();
+
+                        var lessorsList = new List<LessorAttributes>();
+
+                        foreach (var lessor in lessors)
+                        {
+                            lessorsList.Add(new LessorAttributes
+                            {
+                                FullLessorName = lessor.Attributes.full_lessor_name.Value,
+                                LessorIdNumber = lessor.Attributes.lessor_id_number.Value,
+                            });
+
+                        }
+
+                        lessorsDto.Lessors = lessorsList;
+                        lessorsDto.Multiple = true;
+
+                        return new DataResponse<MultipleLessors>() { IsDone = false, Message = "برجاء اختيار المدعي عليه", Data = lessorsDto };
+                    }
+
+
+                }
+
+
+            }
+            return new DataResponse<MultipleLessors>() { IsDone = true };
         }
 
         private async Task<DataResponse<Data>> WafiGetUserInfo(string licenseNumber)
@@ -2179,6 +2446,299 @@ namespace REAC.Application.AppServices.Litigation
                     Exception = ex.Message + "\n" + ex.ToString()
                 };
             }
+        }
+
+        public async Task<BaseResponse> CreateEjarLitigationRequestManual(CreateLitigationRequestNoIntegrationDto litigationRequestDto)
+        {
+            try
+            {
+                bool plaintiffCitizenExist;
+                bool defendantCitizenExist;
+
+
+                Guid referenceId = Guid.Empty;
+                _jwtReader.GetReferenceId(ref referenceId);
+
+                if (referenceId == Guid.Empty)
+                    return new BaseResponse() { IsDone = false };
+
+
+                var contract = (await _repository.GetQueryable<LitigationRequestContract, Guid>())
+                    .Include(x => x.LitigationRequests)
+                    .Where(x => x.ContractKey == litigationRequestDto.key & x.LitigationRequestContractTypeId == litigationRequestDto.ContractType).ToList();
+
+                if (contract != null)
+                {
+                    if (contract.Any())
+                    {
+                        if (contract.FirstOrDefault()?.LitigationRequests.FirstOrDefault()?.IsFinished != true)
+                        {
+                            return new BaseResponse()
+                            {
+                                IsDone = false,
+                                Message = "يوجد دعوى قائمة بالفعل على العقد"
+                            };
+                        }
+                    }
+                }
+
+
+                // Get Ejar Data
+                var ejarData = await _rentService.GetRentContractDetails(long.Parse(litigationRequestDto.key));
+
+                if (!ejarData.IsDone)
+                    return ejarData;
+
+                if (string.IsNullOrEmpty(litigationRequestDto.SecondPartyNationalId))
+                {
+
+                    // Catch Multiple Defendant lessors scenario
+                    var multipleLessors = await CatchMultipleLessors(ejarData.Data, litigationRequestDto, referenceId);
+
+                    if (!multipleLessors.IsDone)
+                        return multipleLessors;
+                }
+
+                // Get Plaintiff and Defendant Data from Ejar Response
+                var ejarPlaintiffAndDefendantData = await ReturnEjarPlaintiffAndDefendantData(ejarData.Data, litigationRequestDto, referenceId, litigationRequestDto.SecondPartyNationalId);
+
+                if (!ejarPlaintiffAndDefendantData.IsDone)
+                    return ejarPlaintiffAndDefendantData;
+
+
+                var plaintiffDefendantSharedData = await GetEjarPlaintiffAndDefendantData(ejarPlaintiffAndDefendantData.Data);
+
+                _loggerManager.Log(Core.Log.Domain.Shared.Enums.LoggerType.Database
+                       , new LogDto()
+                       {
+                           Type = Core.Log.Domain.Shared.Enums.LogType.Debug,
+                           Message = $" Ejar Data For Process =====> {JsonSerializer.Serialize(plaintiffDefendantSharedData)}"
+                       });
+
+                // Check if defendant exist ? if not insert his data Mobile, Email
+
+                defendantCitizenExist = (await _repository.GetQueryable<Citizen, Guid>())
+                                                .Any(x => x.IdentityNumber == plaintiffDefendantSharedData.DefendantEjarNationalId);
+
+                if (!defendantCitizenExist && string.IsNullOrEmpty(litigationRequestDto.SecondPartyPhone))
+                {
+
+                    return new DataResponse<RentIntegrateDto>()
+                    {
+                        IsDone = false,
+                        Data = new RentIntegrateDto() { IsDefendantRegistered = false },
+                        Message = "من فضلك أدخل بيانات المدعي عليه"
+                    };
+                }
+
+
+
+            TryGetDefendantCitizenAgain:
+
+                var defendantCitizen = (await _repository.GetQueryable<Citizen, Guid>())
+                                                .Where(x => x.IdentityNumber == plaintiffDefendantSharedData.DefendantEjarNationalId)
+                                                .ToList();
+
+
+                if (!defendantCitizen.Any())
+                {
+
+                    User user = new User { UserName = plaintiffDefendantSharedData.DefendantEjarNationalId, Email = litigationRequestDto.SecondPartyEmail is not null ? litigationRequestDto.SecondPartyEmail : null, EmailConfirmed = true };
+                    var identityUser = await _userManager.CreateAsync(user, "123456");
+                    if (!identityUser.Succeeded || identityUser.Errors.Any())
+                        return new BaseResponse() { IsDone = false, Message = "" };
+
+                    defendantCitizen.Add(new Citizen()
+                    {
+                        Id = Guid.NewGuid(),
+                        FullName = plaintiffDefendantSharedData.DefendantEjarName,
+                        Mobile = litigationRequestDto.SecondPartyPhone,
+                        Email = litigationRequestDto.SecondPartyEmail is not null ? litigationRequestDto.SecondPartyEmail : null,
+                        IdentityNumber = plaintiffDefendantSharedData.DefendantEjarNationalId,
+                        IsDraftAccount = true,
+                        UserId = user.Id
+                    });
+                    await _repository.AddAsync<Citizen, Guid>(defendantCitizen.FirstOrDefault());
+
+                    var addCitizenResponse = await _repository.SaveChangesAsync();
+                    if (!addCitizenResponse.IsDone)
+                        return addCitizenResponse;
+
+                    user.ReferenceId = defendantCitizen.FirstOrDefault()?.Id;
+                    var updateUser = await _userManager.UpdateAsync(user);
+                    if (!identityUser.Succeeded || identityUser.Errors.Any())
+                        return new BaseResponse() { IsDone = false, Message = "" };
+                    goto TryGetDefendantCitizenAgain;
+                }
+
+                if (defendantCitizen.SingleOrDefault()?.Id == referenceId)
+                    return new BaseResponse()
+                    {
+                        IsDone = false,
+                        Message = "لا يمكن ان يكون طرفى الدعوى لنفس الشخص"
+                    };
+
+
+                TryGetFacilityAgian:
+                Facility? facility = null;
+
+                if (!string.IsNullOrWhiteSpace(litigationRequestDto.SecondPartyFacilityCommercialRegistrationNo))
+                {
+                    facility = (await _repository.GetQueryable<Facility, Guid>())
+                        .FirstOrDefault(x => x.CommercialRegisterNumber == litigationRequestDto.SecondPartyFacilityCommercialRegistrationNo);
+
+                    if (facility == null)
+                    {
+                        var addNewFacilityFromIntegrationResponse = await _facilityService.ValidateAndAddFacility(litigationRequestDto.SecondPartyFacilityCommercialRegistrationNo, defendantCitizen.FirstOrDefault().Id);
+                        if (!addNewFacilityFromIntegrationResponse.IsDone)
+                            return addNewFacilityFromIntegrationResponse;
+
+                        goto TryGetFacilityAgian;
+                    }
+                }
+
+                LitigationRequestContract litigationRequestContract = new LitigationRequestContract()
+                {
+                    Id = Guid.NewGuid(),
+
+                    LitigationRequestContractTypeId = litigationRequestDto.ContractType,
+                    ContractKey = litigationRequestDto.key,
+                    VersionNumber = litigationRequestDto.SubKey,
+                    FirstPartyCitizenId = (litigationRequestDto.FirstPartyIndividualId == Guid.Empty) ? referenceId : litigationRequestDto.FirstPartyIndividualId,
+                    FirstPartyFacilityId = (litigationRequestDto.FirstPartyFacilityId != Guid.Empty) ? litigationRequestDto.FirstPartyFacilityId : null,
+                    FirstPartyCapacity = plaintiffDefendantSharedData.PlaintiffEjarCapacity,
+                    SecondPartyCitizenId = (facility == null) ? defendantCitizen.FirstOrDefault()?.Id : null,
+                    SecondPartyFacilityId = (facility == null) ? null : facility.Id,
+                    SecondPartyCapacity = plaintiffDefendantSharedData.DefendantEjarCapacity,
+                };
+
+
+
+                LitigationRequest litigationRequest = new LitigationRequest()
+                {
+                    Id = Guid.NewGuid(),
+                    LitigationRequestStage = LitigationRequestStage.Review,
+                    ContractId = litigationRequestContract.Id,
+                    ApplicantCitizenId = referenceId,
+                    LitigationRequestOwnerTypeId = litigationRequestDto.LitigationRequestOwnerType,
+                    InternalStatusId = RequestStatus.SaveAsDraft,
+                    ExternalStatusId = RequestStatus.SaveAsDraft,
+                    Fees = 0,
+                    IsPaid = false,
+                    CreatedOn = DateTime.Now,
+                    IsSent = false,
+                    IsAllowEdit = true,
+                    IsActive = true,
+                    IsFinished = false,
+                    //ContractAddress = litigationRequestDto.ContractAddress,
+                    ContractAddress = $"{plaintiffDefendantSharedData.EjarProperty.BuildingNumber},حي {plaintiffDefendantSharedData.EjarProperty.Province},شارع {plaintiffDefendantSharedData.EjarProperty.StreetName}, مدينة {plaintiffDefendantSharedData.EjarProperty.City}",
+                    OtherCategories = litigationRequestDto.OtherCategories
+                };
+                await _repository.AddAsync<LitigationRequestContract, Guid>(litigationRequestContract);
+
+                await _repository.AddAsync<LitigationRequest, Guid>(litigationRequest);
+
+                var saveResponse = await _repository.SaveChangesAsync();
+                if (saveResponse.IsDone)
+                {
+                    var newlitigationRequest = (await _repository.GetQueryable<LitigationRequest, Guid>())
+                              .Include(x => x.ApplicantCitizen)
+                              .Include(x => x.ApplicantCitizen.LawLicenseFile)
+                              .Include(x => x.ApplicantCitizen.IdentityFile)
+                              .Include(x => x.Contract)
+                              .Include(x => x.Contract.LitigationRequestContractType)
+                              .Include(x => x.Contract.FirstPartyCitizen)
+                              .Include(x => x.Contract.FirstPartyCitizen.Nationality)
+                              .Include(x => x.Contract.FirstPartyCitizen.FromDelegators)
+                              .Include(x => x.Contract.SecondPartyCitizen)
+                              .Include(x => x.Contract.SecondPartyCitizen.Nationality)
+                              .Include(x => x.Contract.SecondPartyCitizen.FromDelegators)
+                              .Include(x => x.Contract.FirstPartyFacility)
+                              .Include(x => x.Contract.FirstPartyFacility.Delegators)
+                              .Include(x => x.Contract.SecondPartyFacility)
+                              .Include(x => x.Contract.SecondPartyFacility.Delegators)
+                              .Where(x => x.Id == litigationRequest.Id).ToList().FirstOrDefault();
+
+                    newlitigationRequest.ReconciliationPeriod = newlitigationRequest.Contract.LitigationRequestContractType.ReconciliationPeriod;
+                    newlitigationRequest.PretenderRating = 10;
+                    var newSaveResponse = await _repository.SaveChangesAsync();
+                    if (saveResponse.IsDone)
+                    {
+                        return await ReturnEjarLitigationRequestDto(newlitigationRequest, litigationRequestDto, plaintiffDefendantSharedData);
+                    }
+                    else
+                        return saveResponse;
+                }
+                else
+                    return saveResponse;
+            }
+            catch (Exception ex)
+            {
+                return new ExceptionResponse()
+                {
+                    IsDone = false,
+                    Exception = ex.Message + "\n" + ex.ToString()
+                };
+            }
+        }
+
+        private async Task<PlaintiffDefendantSharedEjarDto> GetEjarPlaintiffAndDefendantData(EjarPartiesDto input)
+        {
+            var plaintiffDefendantSharedData = new PlaintiffDefendantSharedEjarDto();
+
+
+            plaintiffDefendantSharedData.EjarProperty = new EjarPropertyDto()
+            {
+
+                City = input.Property.City.ar,
+                Province = input.Property.Province.ar,
+                Region = input.Property.Region.ar,
+                StreetName = input.Property.StreetName.Value,
+                BuildingNumber = input.Property.BuildingNumber.Value,
+                PostCost = input.Property.PostCost.Value,
+                AdditionalNumber = input.Property.AdditionalNumber.Value,
+                Coordiantes = input.Property.Coordiantes.Value
+            };
+
+
+            if (input.Plaintiff is LessorAttributes lessorPlaintiff)
+            {
+
+                plaintiffDefendantSharedData.PlaintiffEjarNationalId = lessorPlaintiff.LessorIdNumber.Value;
+                plaintiffDefendantSharedData.PlaintiffEjarName = lessorPlaintiff.FullLessorName.Value;
+                plaintiffDefendantSharedData.PlaintiffEjarCapacity = lessorPlaintiff.PartyRole.ar;
+                plaintiffDefendantSharedData.PlaintiffEjarType = lessorPlaintiff.PartyType.ar;
+            }
+            else if (input.Plaintiff is TenantAttributes tenantPlaintiff)
+            {
+
+                plaintiffDefendantSharedData.PlaintiffEjarNationalId = tenantPlaintiff.TenantIdNumber.Value;
+                plaintiffDefendantSharedData.PlaintiffEjarName = tenantPlaintiff.FullTenantName.Value;
+                plaintiffDefendantSharedData.PlaintiffEjarCapacity = tenantPlaintiff.PartyRole.ar;
+                plaintiffDefendantSharedData.PlaintiffEjarType = tenantPlaintiff.PartyType.ar;
+                plaintiffDefendantSharedData.PlaintiffDOBHijri = tenantPlaintiff.TenantDobHijri.Value;
+            }
+
+            if (input.Defendant is LessorAttributes lessorDefendant)
+            {
+
+                plaintiffDefendantSharedData.DefendantEjarNationalId = lessorDefendant.LessorIdNumber.Value;
+                plaintiffDefendantSharedData.DefendantEjarName = lessorDefendant.FullLessorName.Value;
+                plaintiffDefendantSharedData.DefendantEjarCapacity = lessorDefendant.PartyRole.ar;
+                plaintiffDefendantSharedData.DefendantEjarType = lessorDefendant.PartyType.ar;
+            }
+            else if (input.Defendant is TenantAttributes tenantDefendant)
+            {
+
+                plaintiffDefendantSharedData.DefendantEjarNationalId = tenantDefendant.TenantIdNumber.Value;
+                plaintiffDefendantSharedData.DefendantEjarName = tenantDefendant.FullTenantName.Value;
+                plaintiffDefendantSharedData.DefendantEjarCapacity = tenantDefendant.PartyRole.ar;
+                plaintiffDefendantSharedData.DefendantEjarType = tenantDefendant.PartyType.ar;
+                plaintiffDefendantSharedData.DefendnatDOBHijri = tenantDefendant.TenantDobHijri.Value;
+
+            }
+
+            return plaintiffDefendantSharedData;
         }
 
         private async Task<BaseResponse> AddDefendantFromWafi(CreateLitigationRequestNoIntegrationDto litigationRequestDto)

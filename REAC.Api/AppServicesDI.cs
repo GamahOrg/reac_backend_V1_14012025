@@ -120,6 +120,7 @@ namespace REAC.Api
             services.AddScoped<IMailService, REAC.Application.AppServices.Email.MailService>();
             services.AddScoped<IMOJService, MOJService>();
             services.AddScoped<IGEELoginService, GEELoginService>();
+            services.AddScoped<IRENTService, RENTService>();
             services.AddScoped<INafathService, NafathService>();
             services.AddScoped<IUserRegisterService, UserRegisterService>();
             services.AddScoped<IAccountService, AccountService>();

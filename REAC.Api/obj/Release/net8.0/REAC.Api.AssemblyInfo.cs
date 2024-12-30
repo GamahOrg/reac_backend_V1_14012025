@@ -15,7 +15,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("REAC.Api")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+12ae7db73c6e29c795edc76ab972a460dbcd23ad")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+2318e999b54bdef7c54488bd5439f36ac26bd1ca")]
 [assembly: System.Reflection.AssemblyProductAttribute("REAC.Api")]
 [assembly: System.Reflection.AssemblyTitleAttribute("REAC.Api")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -7509,23 +7509,23 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\admin\\.nuget\\packages\\": {},
+    "C:\\Users\\Windows10\\.nuget\\packages\\": {},
     "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\admin\\source\\repos\\BackEndLast\\REAC.Application.Contracts\\REAC.Application.Contracts.csproj",
+      "projectUniqueName": "D:\\Asga-work\\REAC\\BackEnd\\REAC.Application.Contracts\\REAC.Application.Contracts.csproj",
       "projectName": "REAC.Application.Contracts",
-      "projectPath": "C:\\Users\\admin\\source\\repos\\BackEndLast\\REAC.Application.Contracts\\REAC.Application.Contracts.csproj",
-      "packagesPath": "C:\\Users\\admin\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\admin\\source\\repos\\BackEndLast\\REAC.Application.Contracts\\obj\\",
+      "projectPath": "D:\\Asga-work\\REAC\\BackEnd\\REAC.Application.Contracts\\REAC.Application.Contracts.csproj",
+      "packagesPath": "C:\\Users\\Windows10\\.nuget\\packages\\",
+      "outputPath": "D:\\Asga-work\\REAC\\BackEnd\\REAC.Application.Contracts\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
       ],
       "configFilePaths": [
-        "C:\\Users\\admin\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\Windows10\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
@@ -7541,17 +7541,17 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "projectReferences": {
-            "C:\\Users\\admin\\source\\repos\\BackEndLast\\Core\\Core.Shared\\Core.Shared.csproj": {
-              "projectPath": "C:\\Users\\admin\\source\\repos\\BackEndLast\\Core\\Core.Shared\\Core.Shared.csproj"
+            "D:\\Asga-work\\REAC\\BackEnd\\Core\\Core.Shared\\Core.Shared.csproj": {
+              "projectPath": "D:\\Asga-work\\REAC\\BackEnd\\Core\\Core.Shared\\Core.Shared.csproj"
             },
-            "C:\\Users\\admin\\source\\repos\\BackEndLast\\Core\\GenericRepository\\Core.GenericRepository.Shared\\Core.GenericRepository.Shared.csproj": {
-              "projectPath": "C:\\Users\\admin\\source\\repos\\BackEndLast\\Core\\GenericRepository\\Core.GenericRepository.Shared\\Core.GenericRepository.Shared.csproj"
+            "D:\\Asga-work\\REAC\\BackEnd\\Core\\GenericRepository\\Core.GenericRepository.Shared\\Core.GenericRepository.Shared.csproj": {
+              "projectPath": "D:\\Asga-work\\REAC\\BackEnd\\Core\\GenericRepository\\Core.GenericRepository.Shared\\Core.GenericRepository.Shared.csproj"
             },
-            "C:\\Users\\admin\\source\\repos\\BackEndLast\\REAC.Domain.Shared\\REAC.Domain.Shared.csproj": {
-              "projectPath": "C:\\Users\\admin\\source\\repos\\BackEndLast\\REAC.Domain.Shared\\REAC.Domain.Shared.csproj"
+            "D:\\Asga-work\\REAC\\BackEnd\\REAC.Domain.Shared\\REAC.Domain.Shared.csproj": {
+              "projectPath": "D:\\Asga-work\\REAC\\BackEnd\\REAC.Domain.Shared\\REAC.Domain.Shared.csproj"
             },
-            "C:\\Users\\admin\\source\\repos\\BackEndLast\\REAC.EntityFrameworkCore\\REAC.EntityFrameworkCore.csproj": {
-              "projectPath": "C:\\Users\\admin\\source\\repos\\BackEndLast\\REAC.EntityFrameworkCore\\REAC.EntityFrameworkCore.csproj"
+            "D:\\Asga-work\\REAC\\BackEnd\\REAC.EntityFrameworkCore\\REAC.EntityFrameworkCore.csproj": {
+              "projectPath": "D:\\Asga-work\\REAC\\BackEnd\\REAC.EntityFrameworkCore\\REAC.EntityFrameworkCore.csproj"
             }
           }
         }

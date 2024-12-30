@@ -8826,23 +8826,23 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\admin\\.nuget\\packages\\": {},
+    "C:\\Users\\Windows10\\.nuget\\packages\\": {},
     "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\admin\\source\\repos\\BackEndLast\\REAC.Api\\REAC.Api.csproj",
+      "projectUniqueName": "D:\\Asga-work\\REAC\\BackEnd\\REAC.Api\\REAC.Api.csproj",
       "projectName": "REAC.Api",
-      "projectPath": "C:\\Users\\admin\\source\\repos\\BackEndLast\\REAC.Api\\REAC.Api.csproj",
-      "packagesPath": "C:\\Users\\admin\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\admin\\source\\repos\\BackEndLast\\REAC.Api\\obj\\",
+      "projectPath": "D:\\Asga-work\\REAC\\BackEnd\\REAC.Api\\REAC.Api.csproj",
+      "packagesPath": "C:\\Users\\Windows10\\.nuget\\packages\\",
+      "outputPath": "D:\\Asga-work\\REAC\\BackEnd\\REAC.Api\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
       ],
       "configFilePaths": [
-        "C:\\Users\\admin\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\Windows10\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
@@ -8858,14 +8858,14 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "projectReferences": {
-            "C:\\Users\\admin\\source\\repos\\BackEndLast\\Core\\Log\\Core.Log.Application\\Core.Log.Application.csproj": {
-              "projectPath": "C:\\Users\\admin\\source\\repos\\BackEndLast\\Core\\Log\\Core.Log.Application\\Core.Log.Application.csproj"
+            "D:\\Asga-work\\REAC\\BackEnd\\Core\\Log\\Core.Log.Application\\Core.Log.Application.csproj": {
+              "projectPath": "D:\\Asga-work\\REAC\\BackEnd\\Core\\Log\\Core.Log.Application\\Core.Log.Application.csproj"
             },
-            "C:\\Users\\admin\\source\\repos\\BackEndLast\\REAC.Application.Contracts\\REAC.Application.Contracts.csproj": {
-              "projectPath": "C:\\Users\\admin\\source\\repos\\BackEndLast\\REAC.Application.Contracts\\REAC.Application.Contracts.csproj"
+            "D:\\Asga-work\\REAC\\BackEnd\\REAC.Application.Contracts\\REAC.Application.Contracts.csproj": {
+              "projectPath": "D:\\Asga-work\\REAC\\BackEnd\\REAC.Application.Contracts\\REAC.Application.Contracts.csproj"
             },
-            "C:\\Users\\admin\\source\\repos\\BackEndLast\\REAC.Application\\REAC.Application.csproj": {
-              "projectPath": "C:\\Users\\admin\\source\\repos\\BackEndLast\\REAC.Application\\REAC.Application.csproj"
+            "D:\\Asga-work\\REAC\\BackEnd\\REAC.Application\\REAC.Application.csproj": {
+              "projectPath": "D:\\Asga-work\\REAC\\BackEnd\\REAC.Application\\REAC.Application.csproj"
             }
           }
         }

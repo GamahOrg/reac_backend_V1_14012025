@@ -80,6 +80,12 @@
 
         #endregion
 
+        #region Ejar
+        public const string Ejar_ContractDetails = "Ejar_ContractDetails";
+        public const string Ejar_ContractFinancialDetails = "Ejar_ContractFinancialDetails";
+
+        #endregion
+
         #region Nafath Response Status keys
 
         public const string NafathStatus_COMPLETED = "COMPLETED";
