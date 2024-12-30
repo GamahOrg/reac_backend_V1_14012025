@@ -99,7 +99,7 @@ namespace REAC.Application.Contracts.Dtos.Integration.GEE
 
     public class UserInfoDto
     {
-        public string id { get; set; }
+        public long id { get; set; }
         [JsonPropertyName("full_name#ar")]
         public string full_name_ar { get; set; }
         [JsonPropertyName("first_name#ar")]
