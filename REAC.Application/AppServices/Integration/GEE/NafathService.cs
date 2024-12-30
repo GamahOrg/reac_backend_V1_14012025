@@ -470,7 +470,7 @@ _loggerManager.Log(Core.Log.Domain.Shared.Enums.LoggerType.Database
                 {
                     FullName = nafathUserInfoDto.user_info.full_name_ar,
                     FirstName = nafathUserInfoDto.user_info.first_name_ar,
-                    NationalId = nafathUserInfoDto.user_info.id,
+                    NationalId = nafathUserInfoDto.user_info.id.ToString(),
                     DateOfBirth = DateTime.Parse(nafathUserInfoDto.user_info.dob_g),
                     NationalIdExpiryDate = nafathUserInfoDto.user_info.id_expiry_date_g is not null ?
                         DateTime.Parse(nafathUserInfoDto.user_info.id_expiry_date_g) : null,
