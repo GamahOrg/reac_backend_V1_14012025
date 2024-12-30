@@ -79,12 +79,7 @@ namespace REAC.Application.AppServices.System
             List<FileDto> uploadedFiles = new();
             foreach (var file in files)
             {
-
-
                 if (file.Length == 0) continue;
-
-                
-
 
                 var extension = ExtractExtension(file, out var contentDisposition);
 
@@ -96,13 +91,13 @@ namespace REAC.Application.AppServices.System
                     // throw new ExceptionResponse(Localizations.ThisFileTypeNotAllowed);
                 }
 
-                if(extension.ToLower() == ".pdf")
-                {
-                    var pdfMaliciousResult = await FileHelper.CheckMaliciousPdf(file);
+                //if(extension.ToLower() == ".pdf")
+                //{
+                //    var pdfMaliciousResult = await FileHelper.CheckMaliciousPdf(file);
 
-                    if (!pdfMaliciousResult.IsDone)
-                        return pdfMaliciousResult;
-                }
+                //    if (!pdfMaliciousResult.IsDone)
+                //        return pdfMaliciousResult;
+                //}
 
                 var maliciousResult = await FileHelper.CheckMaliciousFile(file);
 
