@@ -263,19 +263,24 @@ namespace REAC.Application.AppServices.Integration.GEE
 
                                 var userInfo = await NafathGetUserInfo(nafathCheckStatusResponse.Data.Data.AccessToken, token);
 
-                                _loggerManager.Log(Core.Log.Domain.Shared.Enums.LoggerType.Database
-                                , new LogDto()
-                                {
-                                    Type = Core.Log.Domain.Shared.Enums.LogType.Debug,
-                                    Message = $"Token ==> {token}, Id ====> {nafathCheckRequestDto.Id}"
-                                });
+                             _loggerManager.Log(Core.Log.Domain.Shared.Enums.LoggerType.Database
+, new LogDto()
+{
+    Type = Core.Log.Domain.Shared.Enums.LogType.Information,
+    Message = $"User Info ==> {JsonSerializer.Serialize(userInfo)}"
+});
 
                                 if (!string.IsNullOrEmpty(token) && nafathCheckRequestDto is not null)
                                 {
                                     if (!string.IsNullOrEmpty(nafathCheckRequestDto.Id))
                                     {
                                         var userAddressInfo = await NafathGetUserAddressInfo(token, nafathCheckRequestDto.Id);
-
+_loggerManager.Log(Core.Log.Domain.Shared.Enums.LoggerType.Database
+, new LogDto()
+{
+    Type = Core.Log.Domain.Shared.Enums.LogType.Information,
+    Message = $"Address Info ==> {JsonSerializer.Serialize(userAddressInfo)}"
+});
                                         if (userAddressInfo is not null)
                                         {
                                             if (userAddressInfo.IsDone)
