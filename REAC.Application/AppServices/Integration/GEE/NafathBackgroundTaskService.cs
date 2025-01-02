@@ -39,9 +39,9 @@ namespace REAC.Application.AppServices.Integration.GEE
                     {
                         using (var scope = _scopeFactory.CreateScope())
                         {
-                            var nafathService = scope.ServiceProvider.GetRequiredService<INafathService>();
-                            if (nafathService is not null)
-                                await nafathService.CheckNafathStatus();
+                            //var nafathService = scope.ServiceProvider.GetRequiredService<INafathService>();
+                            //if (nafathService is not null)
+                            //    await nafathService.CheckNafathStatus();
                             
                             var nafathAgreementRequestService = scope.ServiceProvider.GetRequiredService<INafathService>();
                             if (nafathAgreementRequestService is not null)

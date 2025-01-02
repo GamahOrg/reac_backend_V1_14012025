@@ -35,7 +35,12 @@ namespace REAC.Api.Controllers.Security
         {
             return Ok(await _userRegister.Register(userRegisterDto));
         }
-        
+        [HttpGet(nameof(CheckStatus))]
+        public async Task<IActionResult> CheckStatus(string transactionId)
+        {
+            return Ok(await _nafathService.CheckStatusForMobile(transactionId));
+        }
+
         [HttpGet(nameof(GetNafathTransactionList))]
         public async Task<IActionResult> GetNafathTransactionList()
         {

@@ -22,6 +22,7 @@ using REAC.Domain.Shared.Constants;
 using REAC.EntityFrameworkCore.Entities.Actor;
 using REAC.EntityFrameworkCore.Entities.Integration;
 using REAC.EntityFrameworkCore.Entities.System;
+using System.Globalization;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net;
 using System.Net.Http.Json;
@@ -263,24 +264,19 @@ namespace REAC.Application.AppServices.Integration.GEE
 
                                 var userInfo = await NafathGetUserInfo(nafathCheckStatusResponse.Data.Data.AccessToken, token);
 
-                             _loggerManager.Log(Core.Log.Domain.Shared.Enums.LoggerType.Database
-, new LogDto()
-{
-    Type = Core.Log.Domain.Shared.Enums.LogType.Information,
-    Message = $"User Info ==> {JsonSerializer.Serialize(userInfo)}"
-});
+                                _loggerManager.Log(Core.Log.Domain.Shared.Enums.LoggerType.Database
+                                , new LogDto()
+                                {
+                                    Type = Core.Log.Domain.Shared.Enums.LogType.Information,
+                                    Message = $"User Info ==> {JsonSerializer.Serialize(userInfo)}"
+                                });
 
                                 if (!string.IsNullOrEmpty(token) && nafathCheckRequestDto is not null)
                                 {
                                     if (!string.IsNullOrEmpty(nafathCheckRequestDto.Id))
                                     {
                                         var userAddressInfo = await NafathGetUserAddressInfo(token, nafathCheckRequestDto.Id);
-_loggerManager.Log(Core.Log.Domain.Shared.Enums.LoggerType.Database
-, new LogDto()
-{
-    Type = Core.Log.Domain.Shared.Enums.LogType.Information,
-    Message = $"Address Info ==> {JsonSerializer.Serialize(userAddressInfo)}"
-});
+
                                         if (userAddressInfo is not null)
                                         {
                                             if (userAddressInfo.IsDone)
@@ -391,15 +387,27 @@ _loggerManager.Log(Core.Log.Domain.Shared.Enums.LoggerType.Database
                     var userInfo = JsonSerializer.Deserialize<NafathUserInfoDto>(serializePayloadToJsonObj);
 
                     var userInfoUpdated = await MapUserInfoDataAsync(userInfo);
+
+                    if(!userInfoUpdated.IsDone)
+                    return new DataResponse<UserInfoUpdatedDto> { IsDone = true, Message = "خطأ في استخراج بيانات العميل"  };
+
+
                     return new DataResponse<UserInfoUpdatedDto> { IsDone = true, Data = userInfoUpdated.Data };
                 }
                 else if (response.StatusCode == HttpStatusCode.Unauthorized)
-                    return new DataResponse<UserInfoUpdatedDto> { IsDone = false, Message = "" };
+                    return new DataResponse<UserInfoUpdatedDto> { IsDone = false, Message = "غير مصرح" };
                 else
-                    return new DataResponse<UserInfoUpdatedDto> { IsDone = false, Message = "" };
+                    return new DataResponse<UserInfoUpdatedDto> { IsDone = false, Message = "حدث خطأ بالاتصال بنفاذ" };
             }
             catch (Exception e)
             {
+                _loggerManager.Log(Core.Log.Domain.Shared.Enums.LoggerType.Database
+                               , new LogDto()
+                               {
+                                   Type = Core.Log.Domain.Shared.Enums.LogType.Exception,
+                                   Message = $"User Info Exception ==> {e}"
+                               });
+
                 return new DataResponse<UserInfoUpdatedDto>() { IsDone = false, Message = e.Message + e.InnerException };
             }
         }
@@ -463,6 +471,13 @@ _loggerManager.Log(Core.Log.Domain.Shared.Enums.LoggerType.Database
                 nationalityId = sysNationality.Id;
             }
 
+            _loggerManager.Log(Core.Log.Domain.Shared.Enums.LoggerType.Database
+                               , new LogDto()
+                               {
+                                   Type = Core.Log.Domain.Shared.Enums.LogType.Information,
+                                   Message = $"Nafath User Info Dto ==> {JsonSerializer.Serialize(nafathUserInfoDto)}"
+                               });
+
             return new DataResponse<UserInfoUpdatedDto>()
             {
                 IsDone = true,
@@ -471,9 +486,9 @@ _loggerManager.Log(Core.Log.Domain.Shared.Enums.LoggerType.Database
                     FullName = nafathUserInfoDto.user_info.full_name_ar,
                     FirstName = nafathUserInfoDto.user_info.first_name_ar,
                     NationalId = nafathUserInfoDto.user_info.id.ToString(),
-                    DateOfBirth = DateTime.Parse(nafathUserInfoDto.user_info.dob_g),
+                    DateOfBirth = nafathUserInfoDto.user_info.dob_g is not null ? DateTime.ParseExact(nafathUserInfoDto.user_info.dob_g.ToString(), "yyyy-MM-dd", CultureInfo.InvariantCulture) : null,
                     NationalIdExpiryDate = nafathUserInfoDto.user_info.id_expiry_date_g is not null ?
-                        DateTime.Parse(nafathUserInfoDto.user_info.id_expiry_date_g) : null,
+                        DateTime.ParseExact(nafathUserInfoDto.user_info.id_expiry_date_g.ToString(), "yyyy-MM-dd", CultureInfo.InvariantCulture) : null,
                     Gender = nafathUserInfoDto.user_info.gender == "M" ? Domain.Shared.Enum.Gender.Male : Domain.Shared.Enum.Gender.Female,
                     NationalityId = nationality?.Id ?? nationalityId,
                     Nationality = nationality?.NationalityName ?? nafathUserInfoDto.user_info.nationality_ar,
@@ -638,6 +653,8 @@ _loggerManager.Log(Core.Log.Domain.Shared.Enums.LoggerType.Database
                 };
 
                 var nafathCheckStatusResponse = (await NafathCheckStatus(nafathCheckRequestDto));
+
+
                 if (nafathCheckStatusResponse is not null && nafathCheckStatusResponse.Data is not null)
                 {
                     if (nafathCheckStatusResponse.Data?.Data?.Status == SysSettingKeyConstants.NafathStatus_COMPLETED
@@ -668,6 +685,16 @@ _loggerManager.Log(Core.Log.Domain.Shared.Enums.LoggerType.Database
                         IdentityStatus identityStatus = new IdentityStatus();
 
                         var userInfo = await NafathGetUserInfo(nafathCheckStatusResponse.Data.Data.AccessToken, token);
+
+                        if (!userInfo.IsDone)
+                            return new ExceptionResponse() { IsDone = false, Message = "خطأ في استخراج بيانات العميل" };
+
+                        _loggerManager.Log(Core.Log.Domain.Shared.Enums.LoggerType.Database
+                               , new LogDto()
+                               {
+                                   Type = Core.Log.Domain.Shared.Enums.LogType.Information,
+                                   Message = $"User Info ==> {JsonSerializer.Serialize(userInfo)}"
+                               });
 
                         if (!string.IsNullOrEmpty(token) && nafathCheckRequestDto is not null)
                         {
@@ -746,8 +773,16 @@ _loggerManager.Log(Core.Log.Domain.Shared.Enums.LoggerType.Database
 
 
             }
-            catch (Exception)
+            catch (Exception e)
             {
+
+                _loggerManager.Log(Core.Log.Domain.Shared.Enums.LoggerType.Database
+                               , new LogDto()
+                               {
+                                   Type = Core.Log.Domain.Shared.Enums.LogType.Exception,
+                                   Message = $"Nafath Exception ==> {e}"
+                               });
+
                 return new BaseResponse() { IsDone = false, Message = "خطأ داخلي" };
 
             }

@@ -1114,6 +1114,38 @@
   },
   {
     "ContainingType": "REAC.Api.Controllers.Litigation.CitizenController",
+    "Method": "ActivateArbitratorAccount",
+    "RelativePath": "api/Citizen/ActivateArbitratorAccount",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "reformerFreeUpDecisionCreateDto",
+        "Type": "REAC.Application.Contracts.Dtos.Citizen.ArbitratorFreeUpDecisionCreateDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "REAC.Api.Controllers.Litigation.CitizenController",
+    "Method": "ActivateReformerAccount",
+    "RelativePath": "api/Citizen/ActivateReformerAccount",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "reformerFreeUpDecisionCreateDto",
+        "Type": "REAC.Application.Contracts.Dtos.Citizen.ReformerFreeUpDecisionCreateDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "REAC.Api.Controllers.Litigation.CitizenController",
     "Method": "AddArbitratorFreeUpDecision",
     "RelativePath": "api/Citizen/AddArbitratorFreeUpDecision",
     "HttpMethod": "POST",
@@ -1164,6 +1196,38 @@
     "ContainingType": "REAC.Api.Controllers.Litigation.CitizenController",
     "Method": "AddReformerStopDecision",
     "RelativePath": "api/Citizen/AddReformerStopDecision",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "reformerStopDecisionCreateDto",
+        "Type": "REAC.Application.Contracts.Dtos.Citizen.ReformerStopDecisionCreateDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "REAC.Api.Controllers.Litigation.CitizenController",
+    "Method": "DeActivateArbitratorAccount",
+    "RelativePath": "api/Citizen/DeActivateArbitratorAccount",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "reformerStopDecisionCreateDto",
+        "Type": "REAC.Application.Contracts.Dtos.Citizen.ArbitratorStopDecisionCreateDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "REAC.Api.Controllers.Litigation.CitizenController",
+    "Method": "DeActivateReformerAccount",
+    "RelativePath": "api/Citizen/DeActivateReformerAccount",
     "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
@@ -2066,7 +2130,7 @@
         "IsRequired": false
       },
       {
-        "Name": "AuditngRemaningDays",
+        "Name": "PretenderRating",
         "Type": "System.Nullable\u00601[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
         "IsRequired": false
       },
@@ -2157,7 +2221,7 @@
         "IsRequired": false
       },
       {
-        "Name": "AuditngRemaningDays",
+        "Name": "PretenderRating",
         "Type": "System.Nullable\u00601[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
         "IsRequired": false
       },
@@ -2248,7 +2312,7 @@
         "IsRequired": false
       },
       {
-        "Name": "AuditngRemaningDays",
+        "Name": "PretenderRating",
         "Type": "System.Nullable\u00601[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
         "IsRequired": false
       },
@@ -2523,6 +2587,32 @@
   },
   {
     "ContainingType": "REAC.Api.Controllers.Litigation.LitigationRequestController",
+    "Method": "GetLitigationByIdForEmployee",
+    "RelativePath": "api/LitigationRequest/GetLitigationByIdForEmployee",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "litigationId",
+        "Type": "System.Guid",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[REAC.EntityFrameworkCore.Entities.Litigation.LitigationRequest, REAC.EntityFrameworkCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "REAC.Api.Controllers.Litigation.LitigationRequestController",
     "Method": "GetLitigationDetailsById",
     "RelativePath": "api/LitigationRequest/GetLitigationDetailsById",
     "HttpMethod": "GET",
@@ -2627,6 +2717,37 @@
   },
   {
     "ContainingType": "REAC.Api.Controllers.Litigation.LitigationRequestController",
+    "Method": "GetWafiData",
+    "RelativePath": "api/LitigationRequest/GetWafiData",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "licenseNumber",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "identityNumber",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "Core.Shared.Responses.DataResponse\u00601[[REAC.Application.Contracts.Dtos.Integration.Wafi.WafiDataDto, REAC.Application.Contracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "REAC.Api.Controllers.Litigation.LitigationRequestController",
     "Method": "List",
     "RelativePath": "api/LitigationRequest/List",
     "HttpMethod": "GET",
@@ -2666,6 +2787,11 @@
       {
         "Name": "SecondPartyName",
         "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "PretenderRating",
+        "Type": "System.Nullable\u00601[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
         "IsRequired": false
       },
       {
@@ -2747,6 +2873,11 @@
       {
         "Name": "SecondPartyName",
         "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "PretenderRating",
+        "Type": "System.Nullable\u00601[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
         "IsRequired": false
       },
       {
@@ -3231,7 +3362,7 @@
   },
   {
     "ContainingType": "REAC.Api.Controllers.Litigation.LitigationRequestCorrespondenceController",
-    "Method": "AddLitigationCorrespondence",
+    "Method": "AddLitigationCorrespondenceReply",
     "RelativePath": "api/LitigationRequestCorrespondence/AddLitigationCorrespondenceReply",
     "HttpMethod": "POST",
     "IsController": true,
@@ -3376,6 +3507,11 @@
       {
         "Name": "SecondPartyName",
         "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "PretenderRating",
+        "Type": "System.Nullable\u00601[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
         "IsRequired": false
       },
       {
@@ -4392,6 +4528,32 @@
         "Name": "litigationRequestCategoryIds",
         "Type": "System.Int32[]",
         "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "REAC.Api.Controllers.Litigation.LitigationRequestNoteController",
+    "Method": "GetLitigationRequestNotesForBackoffice",
+    "RelativePath": "api/LitigationRequestNote/GetLitigationRequestNotesForBackoffice",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "pageIndex",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "pageSize",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "litigationRequestCategoryId",
+        "Type": "System.Int32",
+        "IsRequired": false
       }
     ],
     "ReturnTypes": []
@@ -9526,7 +9688,7 @@
     "ReturnTypes": []
   },
   {
-    "ContainingType": "REAC.Api.BaseController\u00604[[REAC.EntityFrameworkCore.Entities.System.SysSetting, REAC.EntityFrameworkCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[REAC.EntityFrameworkCore.Entities.System.SysSettingCreateUpdateDto, REAC.Application.Contracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[REAC.EntityFrameworkCore.Entities.System.SysSettingCreateUpdateDto, REAC.Application.Contracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[System.Guid, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+    "ContainingType": "REAC.Api.BaseController\u00604[[REAC.EntityFrameworkCore.Entities.System.SysSetting, REAC.EntityFrameworkCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[REAC.Application.Contracts.Dtos.System.SysSettingCreateUpdateDto, REAC.Application.Contracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[REAC.Application.Contracts.Dtos.System.SysSettingCreateUpdateDto, REAC.Application.Contracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[System.Guid, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
     "Method": "Create",
     "RelativePath": "api/SysSetting/Create",
     "HttpMethod": "POST",
@@ -9535,14 +9697,14 @@
     "Parameters": [
       {
         "Name": "entity",
-        "Type": "REAC.EntityFrameworkCore.Entities.System.SysSettingCreateUpdateDto",
+        "Type": "REAC.Application.Contracts.Dtos.System.SysSettingCreateUpdateDto",
         "IsRequired": true
       }
     ],
     "ReturnTypes": []
   },
   {
-    "ContainingType": "REAC.Api.BaseController\u00604[[REAC.EntityFrameworkCore.Entities.System.SysSetting, REAC.EntityFrameworkCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[REAC.EntityFrameworkCore.Entities.System.SysSettingCreateUpdateDto, REAC.Application.Contracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[REAC.EntityFrameworkCore.Entities.System.SysSettingCreateUpdateDto, REAC.Application.Contracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[System.Guid, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+    "ContainingType": "REAC.Api.BaseController\u00604[[REAC.EntityFrameworkCore.Entities.System.SysSetting, REAC.EntityFrameworkCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[REAC.Application.Contracts.Dtos.System.SysSettingCreateUpdateDto, REAC.Application.Contracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[REAC.Application.Contracts.Dtos.System.SysSettingCreateUpdateDto, REAC.Application.Contracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[System.Guid, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
     "Method": "CreateRange",
     "RelativePath": "api/SysSetting/CreateRange",
     "HttpMethod": "POST",
@@ -9551,14 +9713,14 @@
     "Parameters": [
       {
         "Name": "entities",
-        "Type": "System.Collections.Generic.List\u00601[[REAC.EntityFrameworkCore.Entities.System.SysSettingCreateUpdateDto, REAC.Application.Contracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "Type": "System.Collections.Generic.List\u00601[[REAC.Application.Contracts.Dtos.System.SysSettingCreateUpdateDto, REAC.Application.Contracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
         "IsRequired": true
       }
     ],
     "ReturnTypes": []
   },
   {
-    "ContainingType": "REAC.Api.BaseController\u00604[[REAC.EntityFrameworkCore.Entities.System.SysSetting, REAC.EntityFrameworkCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[REAC.EntityFrameworkCore.Entities.System.SysSettingCreateUpdateDto, REAC.Application.Contracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[REAC.EntityFrameworkCore.Entities.System.SysSettingCreateUpdateDto, REAC.Application.Contracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[System.Guid, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+    "ContainingType": "REAC.Api.BaseController\u00604[[REAC.EntityFrameworkCore.Entities.System.SysSetting, REAC.EntityFrameworkCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[REAC.Application.Contracts.Dtos.System.SysSettingCreateUpdateDto, REAC.Application.Contracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[REAC.Application.Contracts.Dtos.System.SysSettingCreateUpdateDto, REAC.Application.Contracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[System.Guid, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
     "Method": "Delete",
     "RelativePath": "api/SysSetting/Delete",
     "HttpMethod": "DELETE",
@@ -9574,7 +9736,7 @@
     "ReturnTypes": []
   },
   {
-    "ContainingType": "REAC.Api.BaseController\u00604[[REAC.EntityFrameworkCore.Entities.System.SysSetting, REAC.EntityFrameworkCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[REAC.EntityFrameworkCore.Entities.System.SysSettingCreateUpdateDto, REAC.Application.Contracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[REAC.EntityFrameworkCore.Entities.System.SysSettingCreateUpdateDto, REAC.Application.Contracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[System.Guid, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+    "ContainingType": "REAC.Api.BaseController\u00604[[REAC.EntityFrameworkCore.Entities.System.SysSetting, REAC.EntityFrameworkCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[REAC.Application.Contracts.Dtos.System.SysSettingCreateUpdateDto, REAC.Application.Contracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[REAC.Application.Contracts.Dtos.System.SysSettingCreateUpdateDto, REAC.Application.Contracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[System.Guid, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
     "Method": "DeleteRange",
     "RelativePath": "api/SysSetting/DeleteRange",
     "HttpMethod": "DELETE",
@@ -9590,7 +9752,7 @@
     "ReturnTypes": []
   },
   {
-    "ContainingType": "REAC.Api.BaseController\u00604[[REAC.EntityFrameworkCore.Entities.System.SysSetting, REAC.EntityFrameworkCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[REAC.EntityFrameworkCore.Entities.System.SysSettingCreateUpdateDto, REAC.Application.Contracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[REAC.EntityFrameworkCore.Entities.System.SysSettingCreateUpdateDto, REAC.Application.Contracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[System.Guid, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+    "ContainingType": "REAC.Api.BaseController\u00604[[REAC.EntityFrameworkCore.Entities.System.SysSetting, REAC.EntityFrameworkCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[REAC.Application.Contracts.Dtos.System.SysSettingCreateUpdateDto, REAC.Application.Contracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[REAC.Application.Contracts.Dtos.System.SysSettingCreateUpdateDto, REAC.Application.Contracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[System.Guid, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
     "Method": "Get",
     "RelativePath": "api/SysSetting/Get",
     "HttpMethod": "GET",
@@ -9610,7 +9772,7 @@
     "ReturnTypes": []
   },
   {
-    "ContainingType": "REAC.Api.BaseController\u00604[[REAC.EntityFrameworkCore.Entities.System.SysSetting, REAC.EntityFrameworkCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[REAC.EntityFrameworkCore.Entities.System.SysSettingCreateUpdateDto, REAC.Application.Contracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[REAC.EntityFrameworkCore.Entities.System.SysSettingCreateUpdateDto, REAC.Application.Contracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[System.Guid, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+    "ContainingType": "REAC.Api.BaseController\u00604[[REAC.EntityFrameworkCore.Entities.System.SysSetting, REAC.EntityFrameworkCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[REAC.Application.Contracts.Dtos.System.SysSettingCreateUpdateDto, REAC.Application.Contracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[REAC.Application.Contracts.Dtos.System.SysSettingCreateUpdateDto, REAC.Application.Contracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[System.Guid, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
     "Method": "GetById",
     "RelativePath": "api/SysSetting/GetById",
     "HttpMethod": "GET",
@@ -9626,7 +9788,7 @@
     "ReturnTypes": []
   },
   {
-    "ContainingType": "REAC.Api.BaseController\u00604[[REAC.EntityFrameworkCore.Entities.System.SysSetting, REAC.EntityFrameworkCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[REAC.EntityFrameworkCore.Entities.System.SysSettingCreateUpdateDto, REAC.Application.Contracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[REAC.EntityFrameworkCore.Entities.System.SysSettingCreateUpdateDto, REAC.Application.Contracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[System.Guid, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+    "ContainingType": "REAC.Api.BaseController\u00604[[REAC.EntityFrameworkCore.Entities.System.SysSetting, REAC.EntityFrameworkCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[REAC.Application.Contracts.Dtos.System.SysSettingCreateUpdateDto, REAC.Application.Contracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[REAC.Application.Contracts.Dtos.System.SysSettingCreateUpdateDto, REAC.Application.Contracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[System.Guid, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
     "Method": "GetPaged",
     "RelativePath": "api/SysSetting/GetPaged",
     "HttpMethod": "GET",
@@ -9663,7 +9825,7 @@
     "ReturnTypes": []
   },
   {
-    "ContainingType": "REAC.Api.BaseController\u00604[[REAC.EntityFrameworkCore.Entities.System.SysSetting, REAC.EntityFrameworkCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[REAC.EntityFrameworkCore.Entities.System.SysSettingCreateUpdateDto, REAC.Application.Contracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[REAC.EntityFrameworkCore.Entities.System.SysSettingCreateUpdateDto, REAC.Application.Contracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[System.Guid, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+    "ContainingType": "REAC.Api.BaseController\u00604[[REAC.EntityFrameworkCore.Entities.System.SysSetting, REAC.EntityFrameworkCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[REAC.Application.Contracts.Dtos.System.SysSettingCreateUpdateDto, REAC.Application.Contracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[REAC.Application.Contracts.Dtos.System.SysSettingCreateUpdateDto, REAC.Application.Contracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[System.Guid, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
     "Method": "Update",
     "RelativePath": "api/SysSetting/Update",
     "HttpMethod": "PUT",
@@ -9672,7 +9834,7 @@
     "Parameters": [
       {
         "Name": "entity",
-        "Type": "REAC.EntityFrameworkCore.Entities.System.SysSettingCreateUpdateDto",
+        "Type": "REAC.Application.Contracts.Dtos.System.SysSettingCreateUpdateDto",
         "IsRequired": true
       }
     ],
@@ -9695,7 +9857,7 @@
     "ReturnTypes": []
   },
   {
-    "ContainingType": "REAC.Api.BaseController\u00604[[REAC.EntityFrameworkCore.Entities.System.SysSetting, REAC.EntityFrameworkCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[REAC.EntityFrameworkCore.Entities.System.SysSettingCreateUpdateDto, REAC.Application.Contracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[REAC.EntityFrameworkCore.Entities.System.SysSettingCreateUpdateDto, REAC.Application.Contracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[System.Guid, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+    "ContainingType": "REAC.Api.BaseController\u00604[[REAC.EntityFrameworkCore.Entities.System.SysSetting, REAC.EntityFrameworkCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[REAC.Application.Contracts.Dtos.System.SysSettingCreateUpdateDto, REAC.Application.Contracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[REAC.Application.Contracts.Dtos.System.SysSettingCreateUpdateDto, REAC.Application.Contracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[System.Guid, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
     "Method": "UpdateRange",
     "RelativePath": "api/SysSetting/UpdateRange",
     "HttpMethod": "PUT",
@@ -9704,106 +9866,16 @@
     "Parameters": [
       {
         "Name": "entities",
-        "Type": "System.Collections.Generic.List\u00601[[REAC.EntityFrameworkCore.Entities.System.SysSettingCreateUpdateDto, REAC.Application.Contracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "Type": "System.Collections.Generic.List\u00601[[REAC.Application.Contracts.Dtos.System.SysSettingCreateUpdateDto, REAC.Application.Contracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
         "IsRequired": true
       }
     ],
     "ReturnTypes": []
   },
   {
-    "ContainingType": "REAC.Api.BaseController\u00604[[REAC.EntityFrameworkCore.Entities.System.SysVacationRequest, REAC.EntityFrameworkCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[REAC.EntityFrameworkCore.Entities.System.SysVacationRequestCreateUpdateDto, REAC.Application.Contracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[REAC.EntityFrameworkCore.Entities.System.SysVacationRequestCreateUpdateDto, REAC.Application.Contracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[System.Guid, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
-    "Method": "Create",
-    "RelativePath": "api/SysVacationRequest/Create",
-    "HttpMethod": "POST",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "entity",
-        "Type": "REAC.EntityFrameworkCore.Entities.System.SysVacationRequestCreateUpdateDto",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "REAC.Api.BaseController\u00604[[REAC.EntityFrameworkCore.Entities.System.SysVacationRequest, REAC.EntityFrameworkCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[REAC.EntityFrameworkCore.Entities.System.SysVacationRequestCreateUpdateDto, REAC.Application.Contracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[REAC.EntityFrameworkCore.Entities.System.SysVacationRequestCreateUpdateDto, REAC.Application.Contracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[System.Guid, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
-    "Method": "CreateRange",
-    "RelativePath": "api/SysVacationRequest/CreateRange",
-    "HttpMethod": "POST",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "entities",
-        "Type": "System.Collections.Generic.List\u00601[[REAC.EntityFrameworkCore.Entities.System.SysVacationRequestCreateUpdateDto, REAC.Application.Contracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "REAC.Api.BaseController\u00604[[REAC.EntityFrameworkCore.Entities.System.SysVacationRequest, REAC.EntityFrameworkCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[REAC.EntityFrameworkCore.Entities.System.SysVacationRequestCreateUpdateDto, REAC.Application.Contracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[REAC.EntityFrameworkCore.Entities.System.SysVacationRequestCreateUpdateDto, REAC.Application.Contracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[System.Guid, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
-    "Method": "Delete",
-    "RelativePath": "api/SysVacationRequest/Delete",
-    "HttpMethod": "DELETE",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "id",
-        "Type": "System.Guid",
-        "IsRequired": false
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "REAC.Api.BaseController\u00604[[REAC.EntityFrameworkCore.Entities.System.SysVacationRequest, REAC.EntityFrameworkCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[REAC.EntityFrameworkCore.Entities.System.SysVacationRequestCreateUpdateDto, REAC.Application.Contracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[REAC.EntityFrameworkCore.Entities.System.SysVacationRequestCreateUpdateDto, REAC.Application.Contracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[System.Guid, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
-    "Method": "DeleteRange",
-    "RelativePath": "api/SysVacationRequest/DeleteRange",
-    "HttpMethod": "DELETE",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "ids",
-        "Type": "System.Collections.Generic.List\u00601[[System.Guid, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "REAC.Api.BaseController\u00604[[REAC.EntityFrameworkCore.Entities.System.SysVacationRequest, REAC.EntityFrameworkCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[REAC.EntityFrameworkCore.Entities.System.SysVacationRequestCreateUpdateDto, REAC.Application.Contracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[REAC.EntityFrameworkCore.Entities.System.SysVacationRequestCreateUpdateDto, REAC.Application.Contracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[System.Guid, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
-    "Method": "Get",
-    "RelativePath": "api/SysVacationRequest/Get",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "REAC.Api.BaseController\u00604[[REAC.EntityFrameworkCore.Entities.System.SysVacationRequest, REAC.EntityFrameworkCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[REAC.EntityFrameworkCore.Entities.System.SysVacationRequestCreateUpdateDto, REAC.Application.Contracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[REAC.EntityFrameworkCore.Entities.System.SysVacationRequestCreateUpdateDto, REAC.Application.Contracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[System.Guid, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
-    "Method": "GetById",
-    "RelativePath": "api/SysVacationRequest/GetById",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "id",
-        "Type": "System.Guid",
-        "IsRequired": false
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "REAC.Api.BaseController\u00604[[REAC.EntityFrameworkCore.Entities.System.SysVacationRequest, REAC.EntityFrameworkCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[REAC.EntityFrameworkCore.Entities.System.SysVacationRequestCreateUpdateDto, REAC.Application.Contracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[REAC.EntityFrameworkCore.Entities.System.SysVacationRequestCreateUpdateDto, REAC.Application.Contracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[System.Guid, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
-    "Method": "GetPaged",
-    "RelativePath": "api/SysVacationRequest/GetPaged",
+    "ContainingType": "REAC.Api.Controllers.System.SysVacationRequestController",
+    "Method": "AdminList",
+    "RelativePath": "api/SysVacationRequest/AdminList",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -9819,36 +9891,82 @@
         "IsRequired": false
       }
     ],
-    "ReturnTypes": []
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[REAC.Application.Contracts.Dtos.System.VacationDtos.SysVacationRequestCreateUpdateDto, REAC.Application.Contracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
   },
   {
-    "ContainingType": "REAC.Api.BaseController\u00604[[REAC.EntityFrameworkCore.Entities.System.SysVacationRequest, REAC.EntityFrameworkCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[REAC.EntityFrameworkCore.Entities.System.SysVacationRequestCreateUpdateDto, REAC.Application.Contracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[REAC.EntityFrameworkCore.Entities.System.SysVacationRequestCreateUpdateDto, REAC.Application.Contracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[System.Guid, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
-    "Method": "Update",
-    "RelativePath": "api/SysVacationRequest/Update",
-    "HttpMethod": "PUT",
+    "ContainingType": "REAC.Api.Controllers.System.SysVacationRequestController",
+    "Method": "CreateVacationAsync",
+    "RelativePath": "api/SysVacationRequest/CreateVacationAsync",
+    "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "entity",
-        "Type": "REAC.EntityFrameworkCore.Entities.System.SysVacationRequestCreateUpdateDto",
+        "Name": "holidayRequest",
+        "Type": "REAC.Application.Contracts.Dtos.System.VacationDtos.SysVacationRequestCreateUpdateDto",
         "IsRequired": true
       }
     ],
     "ReturnTypes": []
   },
   {
-    "ContainingType": "REAC.Api.BaseController\u00604[[REAC.EntityFrameworkCore.Entities.System.SysVacationRequest, REAC.EntityFrameworkCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[REAC.EntityFrameworkCore.Entities.System.SysVacationRequestCreateUpdateDto, REAC.Application.Contracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[REAC.EntityFrameworkCore.Entities.System.SysVacationRequestCreateUpdateDto, REAC.Application.Contracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[System.Guid, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
-    "Method": "UpdateRange",
-    "RelativePath": "api/SysVacationRequest/UpdateRange",
-    "HttpMethod": "PUT",
+    "ContainingType": "REAC.Api.Controllers.System.SysVacationRequestController",
+    "Method": "EmployeeList",
+    "RelativePath": "api/SysVacationRequest/EmployeeList",
+    "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "entities",
-        "Type": "System.Collections.Generic.List\u00601[[REAC.EntityFrameworkCore.Entities.System.SysVacationRequestCreateUpdateDto, REAC.Application.Contracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
-        "IsRequired": true
+        "Name": "pageIndex",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "pageSize",
+        "Type": "System.Int32",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[REAC.Application.Contracts.Dtos.System.VacationDtos.SysVacationRequestCreateUpdateDto, REAC.Application.Contracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "REAC.Api.Controllers.System.SysVacationRequestController",
+    "Method": "ProcessVacationRequestAsync",
+    "RelativePath": "api/SysVacationRequest/ProcessVacationRequestAsync",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "requestId",
+        "Type": "System.Guid",
+        "IsRequired": false
+      },
+      {
+        "Name": "result",
+        "Type": "System.Boolean",
+        "IsRequired": false
       }
     ],
     "ReturnTypes": []
