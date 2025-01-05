@@ -22,5 +22,6 @@ namespace REAC.Application.Contracts.IAppServices.Integration
         Task<DataResponse<NafathResponseDto>> NafathReconciliationReport(NafathRequestDto nafathRequestDto, NafathReconciliationReportTransactionDto listInput);
 
         Task CheckNafathReconciliationReportStatus();
+        Task<BaseResponse> CheckNafathReconciliationReportStatusForMobile(string transactionId);
     }
 }

@@ -262,6 +262,9 @@ namespace REAC.EntityFrameworkCore.Migrations
                     b.Property<bool>("HaveHostingExperience")
                         .HasColumnType("bit");
 
+                    b.Property<bool?>("IsFeesPaid")
+                        .HasColumnType("bit");
+
                     b.Property<bool>("IsRegisteredReconciliationCenter")
                         .HasColumnType("bit");
 
@@ -963,6 +966,9 @@ namespace REAC.EntityFrameworkCore.Migrations
                     b.Property<Guid>("ApplicantCitizenId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<decimal>("ArbitrationFees")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<int?>("ArbitrationPeriod")
                         .HasColumnType("int");
 
@@ -1056,6 +1062,9 @@ namespace REAC.EntityFrameworkCore.Migrations
                     b.Property<bool>("IsAllowEdit")
                         .HasColumnType("bit");
 
+                    b.Property<bool>("IsArbitrationFeesHaveBeenCollected")
+                        .HasColumnType("bit");
+
                     b.Property<bool?>("IsArbitratorAssigningRequestResponseFirstPeriodSent")
                         .HasColumnType("bit");
 
@@ -1083,6 +1092,15 @@ namespace REAC.EntityFrameworkCore.Migrations
                     b.Property<bool?>("IsArbitratorsChairmanDecisionRequired")
                         .HasColumnType("bit");
 
+                    b.Property<bool>("IsCollectionOfArbitrationFeesRequestIsBeingSent")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsCollectionOfLitigationFeesRequestIsBeingSent")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsCollectionOfReconciliationFeesRequestIsBeingSent")
+                        .HasColumnType("bit");
+
                     b.Property<bool?>("IsDefendantArbitratorNominationListDone")
                         .HasColumnType("bit");
 
@@ -1093,6 +1111,9 @@ namespace REAC.EntityFrameworkCore.Migrations
                         .HasColumnType("bit");
 
                     b.Property<bool?>("IsFinished")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsLitigationFeesHaveBeenCollected")
                         .HasColumnType("bit");
 
                     b.Property<bool?>("IsLitigationRequestReconciliationReportResponsePeriodSent")
@@ -1108,6 +1129,9 @@ namespace REAC.EntityFrameworkCore.Migrations
                         .HasColumnType("bit");
 
                     b.Property<bool?>("IsPlaintiffArbitratorNominationListDone")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsReconciliationFeesHaveBeenCollected")
                         .HasColumnType("bit");
 
                     b.Property<bool?>("IsReformerReminderForReconciliationFirstPeriodSent")
@@ -1172,6 +1196,9 @@ namespace REAC.EntityFrameworkCore.Migrations
 
                     b.Property<int?>("PretenderRating")
                         .HasColumnType("int");
+
+                    b.Property<decimal>("ReconciliationFees")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<int?>("ReconciliationPeriod")
                         .HasColumnType("int");

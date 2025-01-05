@@ -190,7 +190,7 @@ namespace REAC.Application.ModuleServices
                          .Include(x => x.Contract.SecondPartyCitizen)
                          .Include(x => x.Contract.LitigationRequestContractType)
 
-                         .Where(x => x.Id == requestId & x.LitigationRequestReconciliationReports.Count > 0 & x.ReformerCitizenId == referenceId).ToList().FirstOrDefault();
+                         .Where(x => x.Id == requestId & x.LitigationRequestReconciliationReports.Count > 0).ToList().FirstOrDefault();
             if (litigationRequest == null)
                 return new BaseResponse() { IsDone = false, Message = "غير مصرح" };
             var request = _mapper.Map<LitigationRequestShortDto>(litigationRequest);
@@ -259,6 +259,18 @@ namespace REAC.Application.ModuleServices
                                     allowAdd = false;
                             }
                         }
+
+                        if (litigationRequest.InternalStatus.Id == REAC.Domain.Shared.Enum.RequestStatus.WaiverOfRight || litigationRequest.InternalStatus.Id == REAC.Domain.Shared.Enum.RequestStatus.WaiverOfTheLitigation)
+                        {
+                            if (litigationRequest.Contract.SecondPartyCitizenId.HasValue)
+                            {
+                                if (litigationRequest.Contract.SecondPartyCitizenId == referenceId)
+                                {
+                                    litigationRequest.DefendantAgreementRequestResponse = ApproveRejectStatus.Approve;
+                                    allowAdd = false;
+                                }
+                            }
+                        };
 
                     }
                 }

@@ -1,24 +1,18 @@
 ﻿using AutoMapper;
-using Core.Contracts;
 using Core.GenericRepository.BaseRepository;
 using Core.GenericRepository.Shared.Pagging;
 using Core.Log.Application.Contracts.IAppServices;
 using Core.Shared.Responses;
-using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using REAC.Application.Contracts.Dtos.CitizenRequests;
+using REAC.Application.Contracts.Dtos.Integration.GEE;
+using REAC.Application.Contracts.Dtos.Notification;
 using REAC.Application.Contracts.IAppServices;
-using REAC.Application.Contracts.IAppServices.Integration;
 using REAC.Application.Contracts.IAppServices.Notification;
 using REAC.Application.Contracts.IAppServices.System;
-using REAC.Application.Contracts.Dtos.Notification;
-using REAC.Application.Contracts.Dtos.Integration.GEE;
 using REAC.Domain.Shared.Constants;
 using REAC.Domain.Shared.Enum;
 using REAC.EntityFrameworkCore.Entities.Actor;
-using REAC.EntityFrameworkCore.Entities.System;
-using Wafi.Application.Hubs;
-using Wafi.Application.Hubs.Contracts;
 
 namespace REAC.Application.AppServices
 {
@@ -382,10 +376,13 @@ namespace REAC.Application.AppServices
 
                 #endregion
 
-                if (citizenRequestCreateUpdateDto.IsSend & citizenRequests.StatusId == CitizenRequestStatus.Draft)
+                if (citizenRequestCreateUpdateDto.IsSend && citizenRequests.StatusId == CitizenRequestStatus.Draft)
                     await ExecuteAction(CitizenRequestAction.Send, citizenRequests.Id, null);
-                if (citizenRequestCreateUpdateDto.IsSend & citizenRequests.StatusId == CitizenRequestStatus.SentForEdit)
+                if (citizenRequestCreateUpdateDto.IsSend && citizenRequests.StatusId == CitizenRequestStatus.SentForEdit)
                     await ExecuteAction(CitizenRequestAction.SendFromEdit, citizenRequests.Id, null);
+
+                if (citizenRequestCreateUpdateDto.IsFeesPaid.HasValue && citizenRequestCreateUpdateDto.IsFeesPaid.Value && citizenRequests.StatusId == CitizenRequestStatus.SendToPayFees)
+                    await ExecuteAction(CitizenRequestAction.FeesPaid, citizenRequests.Id, null);
 
                 return response;
 
@@ -397,9 +394,7 @@ namespace REAC.Application.AppServices
             Guid referenceId = Guid.Empty;
             _jwtReader.GetReferenceId(ref referenceId);
 
-            var citizenInfo = (await _repository.GetQueryable<Citizen, Guid>())
-                    .Where(c => c.Id == referenceId)
-                    .FirstOrDefault();
+
 
             var citizenRequests = (await _repository.GetQueryable<CitizenRequest, Guid>())
                 .Include(c => c.Citizen)
@@ -407,6 +402,10 @@ namespace REAC.Application.AppServices
 
             if (citizenRequests is null)
                 return new BaseResponse() { IsDone = false, Message = "Not Found" };
+
+            var citizenInfo = (await _repository.GetQueryable<Citizen, Guid>())
+                    .Where(c => c.Id == citizenRequests.CitizenId)
+                    .FirstOrDefault();
 
             BaseResponse saveResponse = new BaseResponse() { IsDone = false, Message = "Not Found" };
 
@@ -1169,6 +1168,256 @@ namespace REAC.Application.AppServices
 
                             break;
                     }
+                    break;
+
+                case CitizenRequestAction.SendToPayFees:
+                    citizenRequests.StatusId = CitizenRequestStatus.SendToPayFees;
+                    saveResponse = await _repository.SaveChangesAsync();
+                    if (!saveResponse.IsDone) return saveResponse;
+
+                    switch (citizenRequests.CitizenRequestTypeId)
+                    {
+                        case CitizenRequestType.Arbitrator:
+                            // Send Notification
+                            // تم ارسال الطلب بالانضمام كمحكم لدفع الرسوم 
+
+                            try
+                            {
+
+                                msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.Arbitrator_UpdateJoiningRequest_ToPayFees).Result.Data?.Value;
+                                msg = msg.Replace("{CitizenName}", citizenRequests.Citizen.FullName);
+                                applicationNotifications.Add(new SysNotificationDto()
+                                {
+                                    ActorId = citizenRequests.Citizen.Id,
+                                    CreatedOn = DateTime.Now,
+                                    ActorTypeId = NotificationActorType.Arbitrator,
+                                    IsViewed = false,
+                                    ViewedOn = null,
+                                    RequestId = citizenRequests.Id,
+                                    RequestTypeId = RequestType.JoinRequestAsArbitratorRequest,
+                                    Message = msg
+                                });
+
+                                msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.Employee_Arbitrator_UpdateJoiningRequest_ToPayFees).Result.Data?.Value;
+                                msg = msg.Replace("{CitizenName}", citizenRequests.Citizen.FullName);
+                                applicationNotifications.Add(new SysNotificationDto()
+                                {
+                                    ActorId = deptAdminInfoArbitration.Data.Id,
+                                    CreatedOn = DateTime.Now,
+                                    ActorTypeId = NotificationActorType.Employee,
+                                    IsViewed = false,
+                                    ViewedOn = null,
+                                    RequestId = citizenRequests.Id,
+                                    RequestTypeId = RequestType.JoinRequestAsArbitratorRequest,
+                                    Message = msg
+                                });
+
+                                var notificationResultUpdatedArbitrator = _notificationService.SendNotifications(
+                                    new SendEmailDto()
+                                    {
+                                        To = new List<string>() { citizenRequests.Citizen.Email, deptAdminInfoArbitration.Data.Email },
+                                        Subject = "Arbitrator Update Joining Request To Pay Fees",
+                                        Body = msg
+                                    },
+                                    new SMSRequestDto()
+                                    {
+                                        message_text = msg,
+                                        recipients = new List<string>() { citizenRequests.Citizen.Mobile, deptAdminInfoArbitration.Data.Mobile },
+                                        notification_type = "SMS",
+
+                                    },
+                                    applicationNotifications
+                                    );
+                            }
+                            catch (Exception ex)
+                            {
+
+                            }
+
+                            break;
+                        case CitizenRequestType.Reformer:
+                            // Send Notification
+                            // تم ارسال الطلب بالانضمام كمصلح لدفع الرسوم 
+                            try
+                            {
+                                msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.Reformer_UpdateJoiningRequest_ToPayFees).Result.Data?.Value;
+                                msg = msg.Replace("{CitizenName}", citizenRequests.Citizen.FullName);
+                                applicationNotifications.Add(new SysNotificationDto()
+                                {
+                                    ActorId = citizenInfo.Id,
+                                    CreatedOn = DateTime.Now,
+                                    ActorTypeId = NotificationActorType.Reformer,
+                                    IsViewed = false,
+                                    ViewedOn = null,
+                                    RequestId = citizenRequests.Id,
+                                    RequestTypeId = RequestType.JoinRequestAsReformerRequest,
+                                    Message = msg
+                                });
+
+                                msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.Employee_Reformer_UpdateJoiningRequest_ToPayFees).Result.Data?.Value;
+                                msg = msg.Replace("{CitizenName}", citizenRequests.Citizen.FullName);
+                                applicationNotifications.Add(new SysNotificationDto()
+                                {
+                                    ActorId = deptAdminInfoArbitration.Data.Id,
+                                    CreatedOn = DateTime.Now,
+                                    ActorTypeId = NotificationActorType.Employee,
+                                    IsViewed = false,
+                                    ViewedOn = null,
+                                    RequestId = citizenRequests.Id,
+                                    RequestTypeId = RequestType.JoinRequestAsReformerRequest,
+                                    Message = msg
+                                });
+
+                                var notificationResultUpdatedArbitrator = _notificationService.SendNotifications(
+                                    new SendEmailDto()
+                                    {
+                                        To = new List<string>() { citizenInfo.Email, deptAdminInfoReconciliation.Data.Email },
+                                        Subject = "Reformer Update JoiningRequest To Pay Fees",
+                                        Body = msg
+                                    },
+                                    new SMSRequestDto()
+                                    {
+                                        message_text = msg,
+                                        recipients = new List<string>() { citizenInfo.Mobile, deptAdminInfoReconciliation.Data.Mobile },
+                                        notification_type = "SMS",
+
+                                    },
+                                    applicationNotifications
+                                    );
+                            }
+                            catch (Exception ex)
+                            {
+
+                            }
+
+                            break;
+                    }
+                    await _repository.SaveChangesAsync();
+                    break;
+
+                case CitizenRequestAction.FeesPaid:
+                    citizenRequests.IsFeesPaid = true;
+                    citizenRequests.StatusId = CitizenRequestStatus.FeesPaid;
+                    saveResponse = await _repository.SaveChangesAsync();
+                    if (!saveResponse.IsDone) return saveResponse;
+
+                    switch (citizenRequests.CitizenRequestTypeId)
+                    {
+                        case CitizenRequestType.Arbitrator:
+                            // Send Notification
+                            //تم دفع رسوم طلب بالانضمام كمحكم 
+
+                            try
+                            {
+                                msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.Arbitrator_UpdateJoiningRequest_PaidFees).Result.Data?.Value;
+                                msg = msg.Replace("{CitizenName}", citizenRequests.Citizen.FullName);
+                                applicationNotifications.Add(new SysNotificationDto()
+                                {
+                                    ActorId = citizenRequests.Citizen.Id,
+                                    CreatedOn = DateTime.Now,
+                                    ActorTypeId = NotificationActorType.Arbitrator,
+                                    IsViewed = false,
+                                    ViewedOn = null,
+                                    RequestId = citizenRequests.Id,
+                                    RequestTypeId = RequestType.JoinRequestAsArbitratorRequest,
+                                    Message = msg
+                                });
+
+                                msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.Employee_Arbitrator_UpdateJoiningRequest_PaidFees).Result.Data?.Value;
+                                msg = msg.Replace("{CitizenName}", citizenRequests.Citizen.FullName);
+                                applicationNotifications.Add(new SysNotificationDto()
+                                {
+                                    ActorId = deptAdminInfoArbitration.Data.Id,
+                                    CreatedOn = DateTime.Now,
+                                    ActorTypeId = NotificationActorType.Employee,
+                                    IsViewed = false,
+                                    ViewedOn = null,
+                                    RequestId = citizenRequests.Id,
+                                    RequestTypeId = RequestType.JoinRequestAsArbitratorRequest,
+                                    Message = msg
+                                });
+
+                                var notificationResultUpdatedArbitrator = _notificationService.SendNotifications(
+                                    new SendEmailDto()
+                                    {
+                                        To = new List<string>() { citizenRequests.Citizen.Email, deptAdminInfoArbitration.Data.Email },
+                                        Subject = "Arbitrator  Update JoiningRequest and Fees Paid",
+                                        Body = msg
+                                    },
+                                    new SMSRequestDto()
+                                    {
+                                        message_text = msg,
+                                        recipients = new List<string>() { citizenRequests.Citizen.Mobile, deptAdminInfoArbitration.Data.Mobile },
+                                        notification_type = "SMS",
+
+                                    },
+                                    applicationNotifications
+                                    );
+                            }
+                            catch (Exception ex)
+                            {
+
+                            }
+
+                            break;
+                        case CitizenRequestType.Reformer:
+                            // Send Notification
+                            //تم دفع رسوم طلب بالانضمام كمصلح 
+                            try
+                            {
+                                msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.Reformer_UpdateJoiningRequest_PaidFees).Result.Data?.Value;
+                                msg = msg.Replace("{CitizenName}", citizenRequests.Citizen.FullName);
+                                applicationNotifications.Add(new SysNotificationDto()
+                                {
+                                    ActorId = citizenInfo.Id,
+                                    CreatedOn = DateTime.Now,
+                                    ActorTypeId = NotificationActorType.Reformer,
+                                    IsViewed = false,
+                                    ViewedOn = null,
+                                    RequestId = citizenRequests.Id,
+                                    RequestTypeId = RequestType.JoinRequestAsReformerRequest,
+                                    Message = msg
+                                });
+
+                                msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.Employee_Reformer_UpdateJoiningRequest_PaidFees).Result.Data?.Value;
+                                msg = msg.Replace("{CitizenName}", citizenRequests.Citizen.FullName);
+                                applicationNotifications.Add(new SysNotificationDto()
+                                {
+                                    ActorId = deptAdminInfoArbitration.Data.Id,
+                                    CreatedOn = DateTime.Now,
+                                    ActorTypeId = NotificationActorType.Employee,
+                                    IsViewed = false,
+                                    ViewedOn = null,
+                                    RequestId = citizenRequests.Id,
+                                    RequestTypeId = RequestType.JoinRequestAsReformerRequest,
+                                    Message = msg
+                                });
+
+                                var notificationResultUpdatedArbitrator = _notificationService.SendNotifications(
+                                    new SendEmailDto()
+                                    {
+                                        To = new List<string>() { citizenInfo.Email, deptAdminInfoReconciliation.Data.Email },
+                                        Subject = "Reformer Update JoiningRequest and Fees Paid",
+                                        Body = msg
+                                    },
+                                    new SMSRequestDto()
+                                    {
+                                        message_text = msg,
+                                        recipients = new List<string>() { citizenInfo.Mobile, deptAdminInfoReconciliation.Data.Mobile },
+                                        notification_type = "SMS",
+
+                                    },
+                                    applicationNotifications
+                                    );
+                            }
+                            catch (Exception ex)
+                            {
+
+                            }
+
+                            break;
+                    }
+                    await _repository.SaveChangesAsync();
                     break;
             }
             return saveResponse;

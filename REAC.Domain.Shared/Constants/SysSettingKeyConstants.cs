@@ -113,6 +113,17 @@
 
         #region systemNotificationMessages
 
+        public const string Arbitrator_UpdateJoiningRequest_ToPayFees = "Arbitrator.UpdateJoiningRequest.ToPayFees";
+        public const string Employee_Arbitrator_UpdateJoiningRequest_ToPayFees = "Employee.Arbitrator.UpdateJoiningRequest.ToPayFees";
+
+        public const string Reformer_UpdateJoiningRequest_ToPayFees = "Reformer.UpdateJoiningRequest.ToPayFees";
+        public const string Employee_Reformer_UpdateJoiningRequest_ToPayFees = "Employee.Reformer.UpdateJoiningRequest.ToPayFees";
+
+        public const string Arbitrator_UpdateJoiningRequest_PaidFees = "Arbitrator.UpdateJoiningRequest.PaidFees";
+        public const string Employee_Arbitrator_UpdateJoiningRequest_PaidFees = "Employee.Arbitrator.UpdateJoiningRequest.PaidFees";
+
+        public const string Reformer_UpdateJoiningRequest_PaidFees = "Reformer.UpdateJoiningRequest.PaidFees";
+        public const string Employee_Reformer_UpdateJoiningRequest_PaidFees = "Employee.Reformer.UpdateJoiningRequest.PaidFees";
 
         public const string Citizen_AddBankAccount = "Citizen.AddBankAccount";
         public const string Citizen_EditBankAccount = "Citizen.EditBankAccount";
@@ -208,6 +219,11 @@
         public const string WorkFlow_Condition_Review = "Workflow.Condition.Review";
         public const string Reconciliation_Request_Added = "Reconciliation.Request.Added";
 
+        public const string LitigationRequest_CollectionOfLitigationFeesRequestIsBeingSent = "LitigationRequest.CollectionOfLitigationFeesRequestIsBeingSent";
+        public const string LitigationRequest_LitigationFeesHaveBeenCollected = "LitigationRequest.LitigationFeesHaveBeenCollected";
+        public const string LitigationRequest_CollectionOfReconciliationFeesRequestIsBeingSent = "LitigationRequest.CollectionOfReconciliationFeesRequestIsBeingSent";
+        public const string LitigationRequest_ReconciliationFeesHaveBeenCollected = "LitigationRequest.ReconciliationFeesHaveBeenCollected";
+
         public const string SLA_ReminderForReviewer = "SLA.ReminderForReviewer";
         public const string SLA_ReminderForReviewerManager = "SLA.ReminderForReviewerManager";
         public const string SLA_FirstEditReminderForRequestApplicant = "SLA.FirstEditReminderForRequestApplicant";
@@ -279,12 +295,12 @@
         public const string SLA_ArbitratorChairmanTaskRequest_ReAssign = "SLA.ArbitratorChairmanTaskRequest.ReAssign";
 
 
-      
+
 
         #endregion
 
 
-                            #region Email
+        #region Email
         public const string PrefexEmailConfiguration = "EmailConfiguration_";
         public const string EmailConfiguration_SendEmail = "EmailConfiguration_SendEmail";
         public const string EmailFromAddress = "EmailConfiguration_FromEmail";

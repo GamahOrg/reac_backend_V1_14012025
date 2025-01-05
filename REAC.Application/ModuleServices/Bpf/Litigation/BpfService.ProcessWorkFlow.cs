@@ -241,6 +241,77 @@ namespace Bpf.Application.ModuleServices
 
                 switch (litigationRequest.InternalStatusId)
                 {
+
+                    case RequestStatus.CollectionOfLitigationFeesRequestIsBeingSent:
+
+                        litigationRequest.IsCollectionOfLitigationFeesRequestIsBeingSent = true;
+
+                        // Send Notification
+                        // تم إرسال طلب  دفع رسوم الدعوي رقم ....... لمقدم الطلب - موظف التدقيق - مدير ادارة التدقيق
+                        try
+                        {
+                            msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.LitigationRequest_CollectionOfLitigationFeesRequestIsBeingSent).Result.Data?.Value;
+                            msg = msg.Replace("{LitigationCode}", litigationRequest.RequestCode);
+                            SendNotificationMSPlaintiff(msg, litigationRequest, RequestType.LitigationRequest, "Collection Of Litigation Fees Request Is Being Sent");
+                        }
+                        catch (Exception e)
+                        {
+
+                        }
+                        break;
+                    case RequestStatus.LitigationFeesHaveBeenCollected:
+
+                        litigationRequest.IsLitigationFeesHaveBeenCollected = true;
+
+                        // Send Notification
+                        // تم دفع رسوم الدعوي رقم ....... لمقدم الطلب - موظف التدقيق - مدير ادارة التدقيق
+                        try
+                        {
+                            msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.LitigationRequest_LitigationFeesHaveBeenCollected).Result.Data?.Value;
+                            msg = msg.Replace("{LitigationCode}", litigationRequest.RequestCode);
+                            SendNotificationMSPlaintiff(msg, litigationRequest, RequestType.LitigationRequest, "Collection Of Litigation Fees Request Is Being Sent");
+                        }
+                        catch (Exception e)
+                        {
+
+                        }
+                        break;
+                    case RequestStatus.CollectionOfReconciliationFeesRequestIsBeingSent:
+
+                        litigationRequest.IsCollectionOfReconciliationFeesRequestIsBeingSent = true;
+
+                        // Send Notification
+                        // تم إرسال طلب  دفع رسوم الصلح رقم ....... لمقدم الطلب - موظف التدقيق - مدير ادارة التدقيق
+                        try
+                        {
+                            msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.LitigationRequest_CollectionOfReconciliationFeesRequestIsBeingSent).Result.Data?.Value;
+                            msg = msg.Replace("{LitigationCode}", litigationRequest.RequestCode);
+                            SendNotificationMSPlaintiff(msg, litigationRequest, RequestType.LitigationRequest, "Collection Of Reconciliation Fees Request Is Being Sent");
+                        }
+                        catch (Exception e)
+                        {
+
+                        }
+                        break;
+                    
+                    case RequestStatus.ReconciliationFeesHaveBeenCollected:
+
+                        litigationRequest.IsReconciliationFeesHaveBeenCollected = true;
+
+                        // Send Notification
+                        // تم دفع رسوم الصلح رقم ....... لمقدم الطلب - موظف التدقيق - مدير ادارة التدقيق
+                        try
+                        {
+                            msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.LitigationRequest_ReconciliationFeesHaveBeenCollected).Result.Data?.Value;
+                            msg = msg.Replace("{LitigationCode}", litigationRequest.RequestCode);
+                            SendNotificationMSPlaintiff(msg, litigationRequest, RequestType.LitigationRequest, "Reconciliation Fees Have Been Collected");
+                        }
+                        catch (Exception e)
+                        {
+
+                        }
+                        break;
+
                     case RequestStatus.Rejected:
                         // Send Notification
                         // تم رفض الطلب
@@ -267,7 +338,7 @@ namespace Bpf.Application.ModuleServices
                             int reminderForApplicantSecondPeriod = 0;
                             int.TryParse(_sysSettingService.GetBySettingKey(SysSettingKeyConstants.SLA_SecondEditReminderForForRequestApplicant).Result.Data?.Value, out reminderForApplicantSecondPeriod);
                             msg = msg.Replace("{LitigationCode}", litigationRequest.RequestCode);
-                            msg = msg.Replace("{ExpirationDate}", $"{reminderForApplicantSecondPeriod/24}");
+                            msg = msg.Replace("{ExpirationDate}", $"{reminderForApplicantSecondPeriod / 24}");
                             SendNotificationMSPlaintiff(msg, litigationRequest, RequestType.LitigationRequest, "Litigation Request Resent");
                         }
                         catch (Exception)
@@ -282,6 +353,11 @@ namespace Bpf.Application.ModuleServices
                         switch (litigationRequest?.LitigationRequestCategoryId)
                         {
                             case REAC.Domain.Shared.Enum.LitigationRequestCategory.Arbitration:
+
+                                litigationRequest.IsReconciliationFeesHaveBeenCollected = true;
+                                // Send Notification
+                                // تم دفع رسوم الصلح رقم ....... لمقدم الطلب - موظف التدقيق - مدير ادارة التدقيق
+
                                 litigationRequest.LitigationRequestStage = LitigationRequestStage.Arbitration;
                                 litigationRequest.LitigationRequestSubStage = LitigationRequestSubStage.ArbitratorSelectionDuration;
                                 break;
@@ -392,6 +468,10 @@ namespace Bpf.Application.ModuleServices
                                 }
                                 break;
                         }
+
+
+
+
                         // Send Notification
                         // تم قبول الدعوى واستلامها
                         try

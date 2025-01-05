@@ -138,6 +138,42 @@ public partial class CitizenRequestStatusSeedDataCreator
                                 LanguageCode = Constants.ArabicLanguage
                             }
                         }
+                    },
+                     new SysCitizenRequestStatus
+                    {
+                        Id =  CitizenRequestStatus.SendToPayFees,
+                        RequestStatus = "تم الارسال لدفع الرسوم",
+                        Translations=new List<SysCitizenRequestStatusTranslation>
+                        {
+                            new SysCitizenRequestStatusTranslation
+                            {
+                                RequestStatus = "Sent To Pay Fees",
+                                LanguageCode = Constants.EnglishLanguage
+                            },
+                            new SysCitizenRequestStatusTranslation
+                            {
+                                RequestStatus ="تم الارسال لدفع الرسوم",
+                                LanguageCode = Constants.ArabicLanguage
+                            }
+                        }
+                    },
+                      new SysCitizenRequestStatus
+                    {
+                        Id =  CitizenRequestStatus.FeesPaid,
+                        RequestStatus = "تم دفع الرسوم",
+                        Translations=new List<SysCitizenRequestStatusTranslation>
+                        {
+                            new SysCitizenRequestStatusTranslation
+                            {
+                                RequestStatus = "Fees Paid",
+                                LanguageCode = Constants.EnglishLanguage
+                            },
+                            new SysCitizenRequestStatusTranslation
+                            {
+                                RequestStatus = "تم دفع الرسوم",
+                                LanguageCode = Constants.ArabicLanguage
+                            }
+                        }
                     }
             });
         context.SaveChanges();

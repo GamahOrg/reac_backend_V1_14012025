@@ -24,7 +24,7 @@ namespace REAC.Application.Contracts.Dtos.CitizenRequests
 
         public string? Brief { get; set; }
 
-
+        public bool? IsFeesPaid { get; set; }
         public virtual SysArbitratorClassDto? SysArbitratorClass { get; set; }
 
         public virtual CitizenShortDto Citizen { get; set; } = null!;

@@ -1,9 +1,6 @@
-﻿using Core.Security.Attributes;
-using Core.Security.Authorization;
-using Core.Shared.Responses;
+﻿using Core.Shared.Responses;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using REAC.Api.Middlewares;
 using REAC.Application.Contracts.Dtos.Integration.Wafi;
 using REAC.Application.Contracts.Dtos.Litigation;
 using REAC.Application.Contracts.Dtos.Litigation.Create.Litigation;
@@ -40,6 +37,31 @@ public class LitigationRequestController : BaseController<LitigationRequest,
         if (ModelState.IsValid)
         {
             var returnValue = await _litigationService.Add(model);
+            return Ok(returnValue);
+        }
+
+        return BadRequest();
+    }
+
+    [HttpPost("SendLitigationFeesRequestPaid")]
+    public async Task<IActionResult> SendLitigationFeesRequestPaid(Guid litigationId,
+          CancellationToken cancellationToken)
+    {
+        if (ModelState.IsValid)
+        {
+            var returnValue = await _litigationService.SendLitigationFeesRequestPaid(litigationId);
+            return Ok(returnValue);
+        }
+
+        return BadRequest();
+    }
+    [HttpPost("SendReconciliationFeesRequestPaid")]
+    public async Task<IActionResult> SendReconciliationFeesRequestPaid(Guid litigationId,
+          CancellationToken cancellationToken)
+    {
+        if (ModelState.IsValid)
+        {
+            var returnValue = await _litigationService.SendReconciliationFeesRequestPaid(litigationId);
             return Ok(returnValue);
         }
 
@@ -264,8 +286,8 @@ public class LitigationRequestController : BaseController<LitigationRequest,
     {
         if (ModelState.IsValid)
         {
-            //var returnValue = await _litigationService.AddCitizenLitigationRequestForAgreementRequestReply(agreementRequestPayload.RequestId, agreementRequestPayload.agreementRequestStatus);
-            var returnValue = await _litigationService.CallNafathForAgreementRequestReply(agreementRequestPayload.RequestId, agreementRequestPayload.agreementRequestStatus);
+            var returnValue = await _litigationService.AddCitizenLitigationRequestForAgreementRequestReply(agreementRequestPayload.RequestId, agreementRequestPayload.agreementRequestStatus);
+            //var returnValue = await _litigationService.CallNafathForAgreementRequestReply(agreementRequestPayload.RequestId, agreementRequestPayload.agreementRequestStatus);
             return Ok(returnValue);
         }
 

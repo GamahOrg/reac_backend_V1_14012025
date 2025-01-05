@@ -94,6 +94,18 @@ public partial class LitigationRequest : BaseEntity<Guid>
     public Guid? LitigationRequestAmountId { get; set; }
 
     public decimal Fees { get; set; } = 0;
+    public decimal ReconciliationFees { get; set; } = 0;
+    public decimal ArbitrationFees { get; set; } = 0;
+
+    /// <summary>
+    public bool IsCollectionOfLitigationFeesRequestIsBeingSent { get; set; } = false;
+    public bool IsLitigationFeesHaveBeenCollected { get; set; } = false;
+    public bool IsCollectionOfReconciliationFeesRequestIsBeingSent { get; set; } = false;
+    public bool IsReconciliationFeesHaveBeenCollected { get; set; } = false;
+    public bool IsCollectionOfArbitrationFeesRequestIsBeingSent { get; set; } = false;
+    public bool IsArbitrationFeesHaveBeenCollected { get; set; } = false;
+    /// </summary>
+
     public int? ReconciliationPeriod { get; set; }
     public int? ArbitrationPeriod { get; set; }
 

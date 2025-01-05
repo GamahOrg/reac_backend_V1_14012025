@@ -457,6 +457,7 @@ namespace REAC.EntityFrameworkCore.Seed
             return new List<WorkFlow>()
             {
                 // صلح
+                // صلح وتحكيم
                 new WorkFlow()
                 {
                     Id = Guid.Parse("15d87d0d-3cf4-4969-9c7e-933aeea0e5f5"),
@@ -505,7 +506,6 @@ namespace REAC.EntityFrameworkCore.Seed
                                     AllowChangeExternalStatus = true,
                                     ExternalStatusId = RequestStatus.Edited,
                                     AllowCompletionNotificationPlan = true,
-                                    //CompletionNotificationPlanId = Guid.Parse("f7c76133-2b18-4238-9081-d1fefbefb7cb"),
                                     AllowFileUpload = true,
                                     AllowChangeIsActive = true,
                                     IsActiveValue = true,
@@ -556,7 +556,7 @@ namespace REAC.EntityFrameworkCore.Seed
                                     CreationLogMessage = "Feedback is being processed"
                                 }
                             }
-                        }, // تعديل الدعوى الدعوى
+                        }, // تعديل الدعوى
                         new WorkFlowStep()
                         {
                             StepName = "قرار طلب المشارطة",
@@ -590,17 +590,322 @@ namespace REAC.EntityFrameworkCore.Seed
                                     CreationLogMessage = "Feedback is being processed"
                                 }
                             }
-                        }, // تعديل الدعوى الدعوى
-                        new WorkFlowStep()   //تدقيق الدعوى
+                        }, // طلب المشارطة
+                        new WorkFlowStep()
+                        {
+                            StepName = "دفع رسوم الدعوى",
+
+                            ProcessActorType = ProcessActorType.Employee,
+                            WorkModeId = StepWorkMode.None,
+                            Id = Guid.Parse("38108bef-1c1c-4b26-9ced-4f25df2235b6"),
+                            Order = 1,
+                            ActorTypeId = StepActorType.Department,
+                            CreationLogMessage = "تم إنشاء الدعوى وجارى إرسال طلب دفع رسوم الدعوى",
+                            CreatedOn = DateTime.Now,
+                            CreatedBy = Guid.NewGuid(),
+                            IsDeleted = false,
+
+                            DepartmentId = Guid.Parse("657004f4-57e1-4715-addc-0e5ff0b00938"),
+                            StageId = _context.WorkFlowStepStages.ToList().FirstOrDefault().Id,
+                            ShowForApplicant = true,
+                            WorkFlowStepEvents = new List<WorkFlowStepEvent>()
+                            {
+                                new WorkFlowStepEvent()
+                                {
+                                    Id = Guid.Parse("31a0e225-5bd5-430d-a73c-1126f1025156"),
+                                    EventName = "إرسال طلب تحصيل رسوم الدعوى",
+                                    AllowChangeInternalStatus = true,
+                                    InternalStatusId = RequestStatus.CollectionOfLitigationFeesRequestIsBeingSent,
+                                    AllowChangeExternalStatus = true,
+                                    ExternalStatusId = RequestStatus.CollectionOfLitigationFeesRequestIsBeingSent,
+                                    AllowFileUpload = false,
+                                    AllowNotes = false,
+                                    AllowChangeIsActive = false,
+                                    EventSecurityLevelId = EventSecurityLevel.UnSpecified,
+                                    LogMessage = "تم ارسال طلب تحصيل رسوم الدعوى",
+                                    ActionModeId = EventActionMode.SpecificStep,
+                                    CreatedOn = DateTime.Now,
+                                    CreatedBy = Guid.NewGuid(),
+                                    IsDeleted = false,
+                                    ShowLogForApplicant = true,
+                                    ShowProcessingLogForApplicant = true,
+                                    NextWorkFlowStepDestinationId = Guid.Parse("bba119cf-187e-4513-bba6-853506767bbc"),
+                                    Translations  = new List<WorkFlowStepEventTranslation>()
+                                    {
+                                        new WorkFlowStepEventTranslation()
+                                        {
+                                            LanguageCode = "ar-SA",
+                                            EventName = "إرسال طلب تحصيل رسوم الدعوى",
+                                            LogMessage = "تم ارسال طلب تحصيل رسوم الدعوى",
+                                        },
+                                        new WorkFlowStepEventTranslation()
+                                        {
+                                            LanguageCode = "en-US",
+                                            EventName = "Send Fees Request",
+                                            LogMessage = "Fee collection request has been sent.",
+                                        }
+                                    }
+                                }
+                            },
+                            Translations = new List<WorkFlowStepTranslation>()
+                            {
+                                new WorkFlowStepTranslation()
+                                {
+                                    LanguageCode = "en-US",
+                                    StepName = "Pay fees",
+                                    CreationLogMessage = "The case has been created and the fee payment request is being sent."
+                                },
+                                new WorkFlowStepTranslation()
+                                {
+                                    LanguageCode = "ar-SA",
+                                    StepName = "دفع رسوم الدعوى",
+                                    CreationLogMessage = "تم إنشاء الدعوى وجارى إرسال طلب دفع رسوم الدعوى",
+                                }
+                            }
+                        }, // ارسال طلب دفع رسوم الدعوة
+
+                        new WorkFlowStep()
+                        {
+                            StepName = "دفع رسوم الدعوى",
+                            ProcessActorType = ProcessActorType.Plaintiff,
+                            WorkModeId = StepWorkMode.None,
+                            Id = Guid.Parse("bba119cf-187e-4513-bba6-853506767bbc"),
+                            Order = 0,
+                            ActorTypeId = StepActorType.Client,
+                            CreationLogMessage = "جارى دفع رسوم الدعوى",
+                            CreatedOn = DateTime.Now,
+                            CreatedBy = Guid.NewGuid(),
+                            IsDeleted = false,
+                            //CreationNotificationPlanId = Guid.Parse("f7c76133-2b18-4238-9081-d1fefbefb7cb"),
+                            StageId = _context.WorkFlowStepStages.ToList().FirstOrDefault().Id,
+                            ShowForApplicant = true,
+                            WorkFlowStepEvents = new List<WorkFlowStepEvent>()
+                            {
+                                new WorkFlowStepEvent()
+                                {
+                                    Id = Guid.Parse("55d4546d-4daa-48b2-ba7f-5534f7e87b1b"),
+                                    EventName = "تم دفع رسوم الدعوى",
+                                    AllowChangeInternalStatus = true,
+                                    InternalStatusId = RequestStatus.LitigationFeesHaveBeenCollected,
+                                    AllowChangeExternalStatus = true,
+                                    ExternalStatusId = RequestStatus.LitigationFeesHaveBeenCollected,
+                                    AllowCompletionNotificationPlan = true,
+                                    AllowFileUpload = false,
+                                    AllowChangeIsActive = true,
+                                    IsActiveValue = true,
+                                    AllowNotes = false,
+                                    IsAdminApprovalRequired = false,
+                                    SameEmployee = true,
+                                    AllowChangeIsFinished = true,
+                                    IsFinishedValue = false,
+                                    AllowChangeIsAllowEdit = true,
+                                    IsAllowEditValue = false,
+                                    EventSecurityLevelId = EventSecurityLevel.UnSpecified,
+                                    LogMessage = "تم دفع رسوم الدعوى وإرسال الدعوى",
+                                    ActionModeId = EventActionMode.SpecificStep,
+                                    CreatedOn = DateTime.Now,
+                                    CreatedBy = Guid.NewGuid(),
+                                    IsDeleted = false,
+                                    NextWorkFlowStepDestinationId = Guid.Parse("15154695-a36b-4fda-8572-4874f661000e"),
+                                    ShowLogForApplicant = true,
+                                    ShowProcessingLogForApplicant = true,
+                                    Translations  = new List<WorkFlowStepEventTranslation>()
+                                    {
+                                        new WorkFlowStepEventTranslation()
+                                        {
+                                            LanguageCode = "ar-SA",
+                                            EventName = "تم دفع رسوم الدعوى",
+                                            LogMessage = "تم دفع رسوم الدعوى وإرسال الدعوى",
+                                        },
+                                        new WorkFlowStepEventTranslation()
+                                        {
+                                            LanguageCode = "en-US",
+                                            EventName = "Fees paid",
+                                            LogMessage = "Fees paid and claim sent",
+                                        }
+                                    }
+                                }
+                            },
+                            Translations = new List<WorkFlowStepTranslation>()
+                            {
+                                new WorkFlowStepTranslation()
+                                {
+                                    LanguageCode = "ar-SA",
+                                    StepName = "دفع رسوم الدعوى",
+                                    CreationLogMessage = "جارى دفع رسوم الدعوى",
+                                },
+                                new WorkFlowStepTranslation()
+                                {
+                                    LanguageCode = "en-US",
+                                    StepName = "Pay Fees",
+                                    CreationLogMessage = "Fees are being paid"
+                                }
+                            }
+                        }, // دفع رسوم الدعوى
+                       
+                        new WorkFlowStep()
+                        {
+                            StepName = "دفع رسوم الصلح",
+
+                            ProcessActorType = ProcessActorType.Employee,
+                            WorkModeId = StepWorkMode.None,
+                            Id = Guid.Parse("80ffddb4-1a64-4533-b02f-1af99675b774"),
+                            Order = 3,
+                            ActorTypeId = StepActorType.Department,
+                            CreationLogMessage = "تم قبول الدعوى وجارى إرسال طلب دفع رسوم الصلح",
+                            CreatedOn = DateTime.Now,
+                            CreatedBy = Guid.NewGuid(),
+                            IsDeleted = false,
+                           
+                            //CreationNotificationPlanId = Guid.Parse("f7c76133-2b18-4238-9081-d1fefbefb7cb"),
+                            DepartmentId = Guid.Parse("657004f4-57e1-4715-addc-0e5ff0b00938"),
+                            StageId = _context.WorkFlowStepStages.ToList().FirstOrDefault().Id,
+                            ShowForApplicant = true,
+                            WorkFlowStepEvents = new List<WorkFlowStepEvent>()
+                            {
+                                new WorkFlowStepEvent()
+                                {
+                                    Id = Guid.Parse("0acdfc5f-7d2b-4b8c-b121-5faf14b0feea"),
+                                    EventName = "إرسال طلب تحصيل رسوم الصلح",
+                                    AllowChangeInternalStatus = true,
+                                    InternalStatusId = RequestStatus.CollectionOfReconciliationFeesRequestIsBeingSent,
+                                    AllowChangeExternalStatus = true,
+                                    ExternalStatusId = RequestStatus.CollectionOfReconciliationFeesRequestIsBeingSent,
+                                    AllowFileUpload = false,
+                                    AllowNotes = false,
+                                    AllowChangeIsActive = false,
+                                    EventSecurityLevelId = EventSecurityLevel.UnSpecified,
+                                    LogMessage = "تم ارسال طلب تحصيل رسوم الصلح",
+                                    ActionModeId = EventActionMode.SpecificStep,
+                                    CreatedOn = DateTime.Now,
+                                    CreatedBy = Guid.NewGuid(),
+                                    IsDeleted = false,
+                                    ShowLogForApplicant = true,
+                                    ShowProcessingLogForApplicant = true,
+                                    NextWorkFlowStepDestinationId = Guid.Parse("f0e28556-e0ab-4b7e-97f1-8a9912d720a3"),
+                                    Translations  = new List<WorkFlowStepEventTranslation>()
+                                    {
+                                        new WorkFlowStepEventTranslation()
+                                        {
+                                            LanguageCode = "ar-SA",
+                                            EventName = "إرسال طلب تحصيل رسوم الصلح",
+                                            LogMessage = "تم ارسال طلب تحصيل رسوم الصلح",
+                                        },
+                                        new WorkFlowStepEventTranslation()
+                                        {
+                                            LanguageCode = "en-US",
+                                            EventName = "Send Fees Request",
+                                            LogMessage = "Fee collection reconciliation has been sent.",
+                                        }
+                                    }
+                                }
+                            },
+                            Translations = new List<WorkFlowStepTranslation>()
+                            {
+                                new WorkFlowStepTranslation()
+                                {
+                                    LanguageCode = "en-US",
+                                    StepName = "Pay fees",
+                                    CreationLogMessage = "The case has been created and the fee payment request is being sent."
+                                },
+                                new WorkFlowStepTranslation()
+                                {
+                                    LanguageCode = "ar-SA",
+                                    StepName = "دفع رسوم الدعوى",
+                                    CreationLogMessage = "تم قبول الدعوى وجارى إرسال طلب دفع رسوم الصلح",
+                                }
+                            }
+                        }, // ارسال طلب دفع رسوم الصلح
+                        new WorkFlowStep()
+                        {
+                            StepName = "دفع رسوم الصلح",
+                            ProcessActorType = ProcessActorType.Plaintiff,
+                            WorkModeId = StepWorkMode.None,
+                            Id = Guid.Parse("f0e28556-e0ab-4b7e-97f1-8a9912d720a3"),
+                            Order = 0,
+                            ActorTypeId = StepActorType.Client,
+                            CreationLogMessage = "جارى دفع رسوم الصلح",
+                            CreatedOn = DateTime.Now,
+                            CreatedBy = Guid.NewGuid(),
+                            IsDeleted = false,
+                            StageId = _context.WorkFlowStepStages.ToList().FirstOrDefault().Id,
+                            ShowForApplicant = true,
+                            WorkFlowStepEvents = new List<WorkFlowStepEvent>()
+                            {
+                                new WorkFlowStepEvent()
+                                {
+                                    Id = Guid.Parse("8d908df8-c897-4cd3-94cf-b8f5cd218f9f"),
+                                    EventName = "تم دفع رسوم الصلح",
+                                    AllowChangeInternalStatus = true,
+                                    InternalStatusId = RequestStatus.ReconciliationFeesHaveBeenCollected,
+                                    AllowChangeExternalStatus = true,
+                                    ExternalStatusId = RequestStatus.ReconciliationFeesHaveBeenCollected,
+                                    LitigationRequestStage = LitigationRequestStage.Reconciliation,
+                                    LitigationRequestSubStage = LitigationRequestSubStage.AddSession,
+                                    AllowCompletionNotificationPlan = true,
+                                    AllowFileUpload = false,
+                                    AllowChangeIsActive = true,
+                                    IsActiveValue = true,
+                                    AllowNotes = false,
+                                    IsAdminApprovalRequired = false,
+                                    SameEmployee = true,
+                                    AllowChangeIsFinished = true,
+                                    IsFinishedValue = false,
+                                    AllowChangeIsAllowEdit = true,
+                                    IsAllowEditValue = false,
+                                    EventSecurityLevelId = EventSecurityLevel.UnSpecified,
+                                    LogMessage = "تم دفع رسوم الدعوى وإرسال الدعوى",
+                                    CreatedOn = DateTime.Now,
+                                    CreatedBy = Guid.NewGuid(),
+                                    IsDeleted = false,
+                                    ShowLogForApplicant = true,
+                                    ShowProcessingLogForApplicant = true,
+                                    ActionModeId = EventActionMode.SpecificStep,
+                                    NextWorkFlowStepDestinationId = Guid.Parse("01c85df6-ee7c-4265-8544-65744910a941"),
+                                    Translations  = new List<WorkFlowStepEventTranslation>()
+                                    {
+                                        new WorkFlowStepEventTranslation()
+                                        {
+                                            LanguageCode = "ar-SA",
+                                            EventName = "تم دفع رسوم الصلح",
+                                            LogMessage = "تم دفع رسوم الصلح وإرسال الدعوى",
+                                        },
+                                        new WorkFlowStepEventTranslation()
+                                        {
+                                            LanguageCode = "en-US",
+                                            EventName = "Fees paid",
+                                            LogMessage = "Fees paid and claim sent",
+                                        }
+                                    }
+                                }
+                            },
+                            Translations = new List<WorkFlowStepTranslation>()
+                            {
+                                new WorkFlowStepTranslation()
+                                {
+                                    LanguageCode = "ar-SA",
+                                    StepName = "دفع رسوم الدعوى",
+                                    CreationLogMessage = "جارى دفع رسوم الدعوى",
+                                },
+                                new WorkFlowStepTranslation()
+                                {
+                                    LanguageCode = "en-US",
+                                    StepName = "Pay Fees",
+                                    CreationLogMessage = "Fees are being paid"
+                                }
+                            }
+                        }, // دفع رسوم الصلح
+                       
+                        new WorkFlowStep()
                         {
                             StepName = "تدقيق الدعوى",
 
                             ProcessActorType = ProcessActorType.Employee,
                             WorkModeId = StepWorkMode.None,
                             Id = Guid.Parse("15154695-a36b-4fda-8572-4874f661000e"),
-                            Order = 1,
+                            Order = 2,
                             ActorTypeId = StepActorType.Department,
-                            CreationLogMessage = "تم إنشاء الدعوى وجارى تدقيقها 1",
+                            CreationLogMessage = "تم إنشاء الدعوى وجارى تدقيقها",
                             CreatedOn = DateTime.Now,
                             CreatedBy = Guid.NewGuid(),
                             IsDeleted = false,
@@ -619,17 +924,17 @@ namespace REAC.EntityFrameworkCore.Seed
                                     Id = Guid.Parse("3f01924e-59f4-44b7-9506-75c85b89b773"),
                                     EventName = "قبول",
                                     AllowChangeInternalStatus = true,
-                                    InternalStatusId = RequestStatus.Received,
+                                    InternalStatusId = RequestStatus.LitigationApprovedCollectionOfReconciliationFeesRequestIsBeingSend,
                                     AllowChangeExternalStatus = true,
-                                    ExternalStatusId = RequestStatus.Received,
-                                    LitigationRequestStage = LitigationRequestStage.Reconciliation,
-                                    LitigationRequestSubStage = LitigationRequestSubStage.AddSession,
+                                    ExternalStatusId = RequestStatus.LitigationApprovedCollectionOfReconciliationFeesRequestIsBeingSend,
                                     AllowFileUpload = false,
                                     IsActiveValue = false,
                                     AllowChangeIsFinished = false,
                                     EventSecurityLevelId = EventSecurityLevel.UnSpecified,
                                     AllowNotes = false,
                                     IsAdminApprovalRequired = false,
+                                    ActionModeId = EventActionMode.SpecificStep,
+                                    NextWorkFlowStepDestinationId = Guid.Parse("80ffddb4-1a64-4533-b02f-1af99675b774"),
                                     LogMessage = "تم قبول الدعوى",
                                     CreatedOn = DateTime.Now,
                                     CreatedBy = Guid.NewGuid(),
@@ -740,7 +1045,7 @@ namespace REAC.EntityFrameworkCore.Seed
                                     AllowChangeExternalStatus = true,
                                     ExternalStatusId = RequestStatus.AgreementRequestHasBeenSent,
                                     AllowChangeIsActive = false,
-                                    AllowNotes = true,
+                                    AllowNotes = false,
                                     EventSecurityLevelId = EventSecurityLevel.UnSpecified,
                                     LogMessage = "تم إرسال طلب مشارطة",
                                     ActionModeId = EventActionMode.SpecificStep,
@@ -781,7 +1086,79 @@ namespace REAC.EntityFrameworkCore.Seed
                                     CreationLogMessage = "تم إنشاء الدعوى وجارى تدقيقها",
                                 }
                             }
-                        }, // تدقيق الدعوى
+                        }, //تدقيق الدعوى
+
+                        new WorkFlowStep()
+                        {
+                            StepName = "تأكيد دفع رسوم الصلح",
+
+                            ProcessActorType = ProcessActorType.Employee,
+                            WorkModeId = StepWorkMode.None,
+                            Id = Guid.Parse("01c85df6-ee7c-4265-8544-65744910a941"),
+                            Order = 3,
+                            ActorTypeId = StepActorType.Department,
+                            CreationLogMessage = "تم تأكيد دفع رسوم الصلح",
+                            CreatedOn = DateTime.Now,
+                            CreatedBy = Guid.NewGuid(),
+                            IsDeleted = false,
+                            DepartmentId = Guid.Parse("657004f4-57e1-4715-addc-0e5ff0b00938"),
+                            StageId = _context.WorkFlowStepStages.ToList().FirstOrDefault().Id,
+                            ShowForApplicant = true,
+                            WorkFlowStepEvents = new List<WorkFlowStepEvent>()
+                            {
+                                new WorkFlowStepEvent()
+                                {
+                                    Id = Guid.Parse("1783b541-f8a4-43a4-93ef-bab280a78c57"),
+                                    EventName = "تأكيد دفع رسوم الصلح",
+                                    AllowChangeInternalStatus = true,
+                                    InternalStatusId = RequestStatus.Received,
+                                    AllowChangeExternalStatus = true,
+                                    ExternalStatusId = RequestStatus.Received,
+                                    AllowFileUpload = false,
+                                    AllowNotes = false,
+                                    AllowChangeIsActive = false,
+                                    EventSecurityLevelId = EventSecurityLevel.UnSpecified,
+                                    LogMessage = "تم تأكيد تحصيل رسوم الصلح",
+                                    ActionModeId = EventActionMode.SpecificStep,
+                                    CreatedOn = DateTime.Now,
+                                    CreatedBy = Guid.NewGuid(),
+                                    IsDeleted = false,
+                                    ShowLogForApplicant = true,
+                                    ShowProcessingLogForApplicant = true,
+                                    Translations  = new List<WorkFlowStepEventTranslation>()
+                                    {
+                                        new WorkFlowStepEventTranslation()
+                                        {
+                                            LanguageCode = "ar-SA",
+                                            EventName = "تأكيد دفع رسوم الصلح",
+                                            LogMessage = "تم تأكيد تحصيل رسوم الصلح",
+                                        },
+                                        new WorkFlowStepEventTranslation()
+                                        {
+                                            LanguageCode = "en-US",
+                                            EventName = "Confirm Reconciliation Fees Collection",
+                                            LogMessage = "Reconciliation Fees Collected.",
+                                        }
+                                    }
+                                }
+                            },
+                            Translations = new List<WorkFlowStepTranslation>()
+                            {
+                                new WorkFlowStepTranslation()
+                                {
+                                    LanguageCode = "en-US",
+                                    StepName = "Pay fees",
+                                    CreationLogMessage = "The case has been created and the fee payment request is being sent."
+                                },
+                                new WorkFlowStepTranslation()
+                                {
+                                    LanguageCode = "ar-SA",
+                                    StepName = "دفع رسوم الدعوى",
+                                    CreationLogMessage = "تم قبول الدعوى وجارى إرسال طلب دفع رسوم الصلح",
+                                }
+                            }
+                        }, // تأكيد دفع رسوم الصلح
+
 #region
                         //new WorkFlowStep()
                         //{
@@ -1367,1151 +1744,7 @@ namespace REAC.EntityFrameworkCore.Seed
 #endregion
                     }
                 },
-#region
-                //// تحكيم
-                //new WorkFlow()
-                //{
-                //    Id = Guid.Parse("e8a449f5-b1a0-49e8-bbf2-73ac94ef55f5"),
-                //    WorkFlowName = "دعوة تحكيم",
-                //    CreatedOn = DateTime.Now,
-                //    CreatedBy = Guid.NewGuid(),
-                //    IsDeleted = false,
-                //    Translations = new List<WorkFlowTranslation>()
-                //    {
-                //        new WorkFlowTranslation()
-                //        {
-                //            LanguageCode = "ar-SA",
-                //            WorkFlowName = "دعوى تحكيم"
-                //        },
-                //        new WorkFlowTranslation()
-                //        {
-                //            LanguageCode = "en-US",
-                //            WorkFlowName = "Arbitration Lititgation"
-                //        }
-                //    },
-                //    WorkFlowSteps = new List<WorkFlowStep>()
-                //    {
-                //        new WorkFlowStep()
-                //        {
-                //            ProcessActorType = ProcessActorType.Plaintiff,
-                //            StepName = "معالجة الملاحظات",
-                //            WorkModeId = StepWorkMode.None,
-                //            Id = Guid.Parse("8ee69cf2-185b-4a31-b85a-f552d311a426"),
-                //            Order = 0,
-                //            ActorTypeId = StepActorType.Client,
-                //            CreationLogMessage = "جارى معالجة الملاحظات",
-                //            CreatedOn = DateTime.Now,
-                //            CreatedBy = Guid.NewGuid(),
-                //            IsDeleted = false,
-                //            //CreationNotificationPlanId = Guid.Parse("f7c76133-2b18-4238-9081-d1fefbefb7cb"),
-                //            StageId = _context.WorkFlowStepStages.ToList().FirstOrDefault().Id,
-                //            InternalStatusId = RequestStatus.SentBackForEdit,
-                //            ExternalStatusId = RequestStatus.SentBackForEdit,
-                //            ShowForApplicant = true,
-                //            WorkFlowStepEvents = new List<WorkFlowStepEvent>()
-                //            {
-                //                new WorkFlowStepEvent()
-                //                {
-                //                    Id = Guid.Parse("d1a94258-9e9f-4fbe-917f-dbb4de7e8d99"),
-                //                    EventName = "إرسال طلب الدعوى",
-                //                    AllowChangeInternalStatus = true,
-                //                    InternalStatusId = RequestStatus.Edited,
-                //                    AllowChangeExternalStatus = true,
-                //                    ExternalStatusId = RequestStatus.Edited,
-                //                    AllowCompletionNotificationPlan = true,
-                //                    //CompletionNotificationPlanId = Guid.Parse("f7c76133-2b18-4238-9081-d1fefbefb7cb"),
-                //                    AllowFileUpload = true,
-                //                    AllowChangeIsActive = true,
-                //                    IsActiveValue = true,
-                //                    AllowNotes = true,
-                //                    IsAdminApprovalRequired = false,
-                //                    SameEmployee = true,
-                //                    AllowChangeIsFinished = true,
-                //                    IsFinishedValue = false,
-                //                    AllowChangeIsAllowEdit = true,
-                //                    IsAllowEditValue = false,
-                //                    EventSecurityLevelId = EventSecurityLevel.UnSpecified,
-                //                    LogMessage = "تم معالجة الملاحظات وإرسال الدعوى",
-                //                    ActionModeId = EventActionMode.GoPreviousStep,
-                //                    CreatedOn = DateTime.Now,
-                //                    CreatedBy = Guid.NewGuid(),
-                //                    IsDeleted = false,
-                //                    ShowLogForApplicant = true,
-                //                    ShowProcessingLogForApplicant = true,
-                //                    Translations  = new List<WorkFlowStepEventTranslation>()
-                //                    {
-                //                        new WorkFlowStepEventTranslation()
-                //                        {
-                //                            LanguageCode = "ar-SA",
-                //                            EventName = "إرسال طلب الدعوى",
-                //                            LogMessage = "تم معالجة الملاحظات وإرسال الدعوى",
-                //                        },
-                //                        new WorkFlowStepEventTranslation()
-                //                        {
-                //                            LanguageCode = "en-US",
-                //                            EventName = "Send Litigation Request",
-                //                            LogMessage = "Feedback has been processed and the request has been sent",
-                //                        }
-                //                    }
-                //                }
-                //            },
-                //            Translations = new List<WorkFlowStepTranslation>()
-                //            {
-                //                new WorkFlowStepTranslation()
-                //                {
-                //                    LanguageCode = "ar-SA",
-                //                    StepName = "معالجة الملاحظات",
-                //                    CreationLogMessage = "جارى معالجة الملاحظات"
-                //                },
-                //                new WorkFlowStepTranslation()
-                //                {
-                //                    LanguageCode = "en-US",
-                //                    StepName = "Processing Notes",
-                //                    CreationLogMessage = "Feedback is being processed"
-                //                }
-                //            }
-                //        },
-                //        new WorkFlowStep()
-                //        {
-                //            StepName = "تدقيق الدعوى",
-                //            ProcessActorType = ProcessActorType.Employee,
 
-                //            WorkModeId = StepWorkMode.None,
-                //            Id = Guid.Parse("25270ef5-fc30-4460-919d-d9977bed328f"),
-                //            Order = 1,
-                //            ActorTypeId = StepActorType.Department,
-                //            CreationLogMessage = "تم إنشاء الدعوى وجارى تدقيقها",
-                //            CreatedOn = DateTime.Now,
-                //            CreatedBy = Guid.NewGuid(),
-                //            IsDeleted = false,
-                //            //CreationNotificationPlanId = Guid.Parse("f7c76133-2b18-4238-9081-d1fefbefb7cb"),
-                //            DepartmentId = Guid.Parse("657004f4-57e1-4715-addc-0e5ff0b00938"),
-                //            StageId = _context.WorkFlowStepStages.ToList().FirstOrDefault().Id,
-                //            InternalStatusId = RequestStatus.New,
-                //            ExternalStatusId = RequestStatus.New,
-                //            ShowForApplicant = true,
-                //            WorkFlowStepEvents = new List<WorkFlowStepEvent>()
-                //            {
-                //                new WorkFlowStepEvent()
-                //                {
-                //                    Id = Guid.Parse("fbdbb687-8f7d-40d0-bad5-50433996cf66"),
-                //                    EventName = "قبول",
-                //                    AllowChangeInternalStatus = true,
-                //                    InternalStatusId = RequestStatus.Received,
-                //                    AllowChangeExternalStatus = true,
-                //                    ExternalStatusId = RequestStatus.Received,
-
-                //                    AllowFileUpload = false,
-
-                //                    IsActiveValue = false,
-                //                    AllowChangeIsFinished = false,
-                //                    EventSecurityLevelId = EventSecurityLevel.UnSpecified,
-                //                    AllowNotes = false,
-                //                    IsAdminApprovalRequired = false,
-                //                    LogMessage = "تم قبول الدعوى",
-                //                    CreatedOn = DateTime.Now,
-                //                    CreatedBy = Guid.NewGuid(),
-                //                    IsDeleted = false,
-                //                    ShowLogForApplicant = true,
-                //                    ShowProcessingLogForApplicant = true,
-                //                    SameEmployee = false,
-                //                    Translations  = new List<WorkFlowStepEventTranslation>()
-                //                    {
-                //                        new WorkFlowStepEventTranslation()
-                //                        {
-                //                            LanguageCode = "ar-SA",
-                //                            EventName = "قبول",
-                //                            LogMessage = "تم قبول الدعوى",
-                //                        },
-                //                        new WorkFlowStepEventTranslation()
-                //                        {
-                //                            LanguageCode = "en-US",
-                //                            EventName = "Accept",
-                //                            LogMessage = "Litigation has been accepted",
-                //                        }
-                //                    }
-                //                },
-                //                new WorkFlowStepEvent()
-                //                {
-                //                    Id = Guid.Parse("36bbf82e-fccd-4487-bd05-adfb28adfbff"),
-                //                    EventName = "رفض",
-                //                    AllowChangeInternalStatus = true,
-                //                    InternalStatusId = RequestStatus.Rejected,
-                //                    AllowChangeExternalStatus = true,
-                //                    ExternalStatusId = RequestStatus.Rejected,
-                //                    AllowCompletionNotificationPlan = true,
-                //                    //CompletionNotificationPlanId = Guid.Parse("f7c76133-2b18-4238-9081-d1fefbefb7cb"),
-                //                    AllowFileUpload = false,
-                //                    IsAdminApprovalRequired = false,
-                //                    AllowChangeIsActive = true,
-                //                    AllowChangeIsFinished = true,
-                //                    IsFinishedValue = true,
-                //                    IsActiveValue = false,
-                //                    EventSecurityLevelId = EventSecurityLevel.UnSpecified,
-                //                    SameEmployee = false,
-                //                    AllowNotes = true,
-                //                    LogMessage = "تم رفض الدعوى",
-                //                    CreatedOn = DateTime.Now,
-                //                    CreatedBy = Guid.NewGuid(),
-                //                    IsDeleted = true,
-                //                    IsAllowEditValue = true,
-                //                    ShowLogForApplicant = true,
-                //                    ShowProcessingLogForApplicant = true,
-                //                    Translations  = new List<WorkFlowStepEventTranslation>()
-                //                    {
-                //                        new WorkFlowStepEventTranslation()
-                //                        {
-                //                            LanguageCode = "ar-SA",
-                //                            EventName = "رفض",
-                //                            LogMessage = "تم رفض الدعوى",
-                //                        },
-                //                        new WorkFlowStepEventTranslation()
-                //                        {
-                //                            LanguageCode = "en-US",
-                //                            EventName = "Reject",
-                //                            LogMessage = "Request has been Rejected",
-                //                        }
-                //                    }
-                //                },
-                //                new WorkFlowStepEvent()
-                //                {
-                //                    Id = Guid.Parse("5f3f6f13-599c-4665-8a51-7bb3f9267d15"),
-                //                    EventName = "إعادة الدعوى للتعديل",
-                //                    AllowChangeInternalStatus = true,
-                //                    InternalStatusId = RequestStatus.SentBackForEdit,
-                //                    AllowChangeExternalStatus = true,
-                //                    ExternalStatusId = RequestStatus.SentBackForEdit,
-                //                    AllowFileUpload = true,
-                //                    AllowChangeIsActive = false,
-                //                    AllowNotes = true,
-                //                    EventSecurityLevelId = EventSecurityLevel.UnSpecified,
-                //                    LogMessage = "تم إعادة الدعوى للتعديل",
-                //                    ActionModeId = EventActionMode.SpecificStep,
-                //                    CreatedOn = DateTime.Now,
-                //                    CreatedBy = Guid.NewGuid(),
-                //                    IsDeleted = false,
-                //                    ShowLogForApplicant = true,
-                //                    ShowProcessingLogForApplicant = true,
-                //                    NextWorkFlowStepDestinationId = Guid.Parse("8ee69cf2-185b-4a31-b85a-f552d311a426"),
-                //                    Translations  = new List<WorkFlowStepEventTranslation>()
-                //                    {
-                //                        new WorkFlowStepEventTranslation()
-                //                        {
-                //                            LanguageCode = "ar-SA",
-                //                            EventName = "إعادة  الدعوى للتعديل",
-                //                            LogMessage = "تم دراسة الدعوى وإعادتها للتعديل",
-                //                        },
-                //                        new WorkFlowStepEventTranslation()
-                //                        {
-                //                            LanguageCode = "en-US",
-                //                            EventName = "Send Back For Edit",
-                //                            LogMessage = "Request was studied and sent for edit",
-                //                        }
-                //                    }
-                //                }
-                //            },
-                //            Translations = new List<WorkFlowStepTranslation>()
-                //            {
-                //                new WorkFlowStepTranslation()
-                //                {
-                //                    LanguageCode = "en-US",
-                //                    StepName = "Request Studing",
-                //                    CreationLogMessage = "Request has been created and is being Studied"
-                //                },
-                //                new WorkFlowStepTranslation()
-                //                {
-                //                    LanguageCode = "ar-SA",
-                //                    StepName = "دراسة الدعوى",
-                //                    CreationLogMessage = "تم إنشاء الدعوى وجارى دراستها"
-                //                }
-                //            }
-                //        },
-                //        new WorkFlowStep()
-                //        {
-                //            StepName = "مرحلة التحكيم",
-                //            ProcessActorType = ProcessActorType.Arbitrator,
-
-                //            WorkModeId = StepWorkMode.None,
-                //            Id = Guid.Parse("8a10f0be-9b7f-4c1d-a652-ae68286ccab4"),
-                //            Order = 2,
-                //            ActorTypeId = StepActorType.Department,
-                //            CreationLogMessage = "تم تدقيق الدعوى وجارى مرحلة التحكيم",
-                //            CreatedOn = DateTime.Now,
-                //            CreatedBy = Guid.NewGuid(),
-                //            IsDeleted = false,
-                //            //CreationNotificationPlanId = Guid.Parse("f7c76133-2b18-4238-9081-d1fefbefb7cb"),
-                //            DepartmentId = Guid.Parse("a364bcfe-066a-473f-b852-621c5258945a"),
-                //            StageId = _context.WorkFlowStepStages.ToList().FirstOrDefault().Id,
-                //            InternalStatusId = RequestStatus.New,
-                //            ExternalStatusId = RequestStatus.New,
-                //            ShowForApplicant = true,
-                //            Translations = new List<WorkFlowStepTranslation>()
-                //            {
-                //                new WorkFlowStepTranslation()
-                //                {
-                //                    LanguageCode = "en-US",
-                //                    StepName = "Arbitration Step",
-                //                    CreationLogMessage = "Request has been created and is being Studied"
-                //                },
-                //                new WorkFlowStepTranslation()
-                //                {
-                //                    LanguageCode = "ar-SA",
-                //                    StepName = "مرحلة التحكيم",
-                //                    CreationLogMessage = "تم تدقيق الدعوى وجارى مرحلة التحكيم",
-                //                }
-                //            }
-                //        }
-                //    }
-                //},
-                //// صلح وتحكيم
-                //new WorkFlow()
-                //{
-                //    Id = Guid.Parse("832e07ba-354a-4d6e-8329-9adf2b28966a"),
-                //    WorkFlowName = "دعوة صلح وتحكيم",
-                //    CreatedOn = DateTime.Now,
-                //    CreatedBy = Guid.NewGuid(),
-                //    IsDeleted = false,
-                //    Translations = new List<WorkFlowTranslation>()
-                //    {
-                //        new WorkFlowTranslation()
-                //        {
-                //            LanguageCode = "ar-SA",
-                //            WorkFlowName = "دعوى صلح وتحكيم"
-                //        },
-                //        new WorkFlowTranslation()
-                //        {
-                //            LanguageCode = "en-US",
-                //            WorkFlowName = "Conciliation And Arbitration Lititgation"
-                //        }
-                //    },
-                //    WorkFlowSteps = new List<WorkFlowStep>()
-                //    {
-                //        new WorkFlowStep()
-                //        {
-                //            StepName = "معالجة الملاحظات",
-                //            ProcessActorType = ProcessActorType.Plaintiff,
-                //            WorkModeId = StepWorkMode.None,
-                //            Id = Guid.Parse("42c0f621-ab89-444a-9970-a82933974b3d"),
-                //            Order = 0,
-                //            ActorTypeId = StepActorType.Client,
-                //            CreationLogMessage = "جارى معالجة الملاحظات",
-                //            CreatedOn = DateTime.Now,
-                //            CreatedBy = Guid.NewGuid(),
-                //            IsDeleted = false,
-                //            //CreationNotificationPlanId = Guid.Parse("f7c76133-2b18-4238-9081-d1fefbefb7cb"),
-                //            StageId = _context.WorkFlowStepStages.ToList().FirstOrDefault().Id,
-                //            InternalStatusId = RequestStatus.SentBackForEdit,
-                //            ExternalStatusId = RequestStatus.SentBackForEdit,
-                //            ShowForApplicant = true,
-                //            WorkFlowStepEvents = new List<WorkFlowStepEvent>()
-                //            {
-                //                new WorkFlowStepEvent()
-                //                {
-                //                    Id = Guid.Parse("ac118ddb-15c2-4dcf-9663-bdc5d198ad86"),
-                //                    EventName = "إرسال طلب الدعوى",
-                //                    AllowChangeInternalStatus = true,
-                //                    InternalStatusId = RequestStatus.Edited,
-                //                    AllowChangeExternalStatus = true,
-                //                    ExternalStatusId = RequestStatus.Edited,
-                //                    AllowCompletionNotificationPlan = true,
-                //                    //CompletionNotificationPlanId = Guid.Parse("f7c76133-2b18-4238-9081-d1fefbefb7cb"),
-                //                    AllowFileUpload = true,
-                //                    AllowChangeIsActive = true,
-                //                    IsActiveValue = true,
-                //                    AllowNotes = true,
-                //                    IsAdminApprovalRequired = false,
-                //                    SameEmployee = true,
-                //                    AllowChangeIsFinished = true,
-                //                    IsFinishedValue = false,
-                //                    AllowChangeIsAllowEdit = true,
-                //                    IsAllowEditValue = false,
-                //                    EventSecurityLevelId = EventSecurityLevel.UnSpecified,
-                //                    LogMessage = "تم معالجة الملاحظات وإرسال الدعوى",
-                //                    ActionModeId = EventActionMode.GoPreviousStep,
-                //                    CreatedOn = DateTime.Now,
-                //                    CreatedBy = Guid.NewGuid(),
-                //                    IsDeleted = false,
-                //                    ShowLogForApplicant = true,
-                //                    ShowProcessingLogForApplicant = true,
-                //                    Translations  = new List<WorkFlowStepEventTranslation>()
-                //                    {
-                //                        new WorkFlowStepEventTranslation()
-                //                        {
-                //                            LanguageCode = "ar-SA",
-                //                            EventName = "إرسال طلب الدعوى",
-                //                            LogMessage = "تم معالجة الملاحظات وإرسال الدعوى",
-                //                        },
-                //                        new WorkFlowStepEventTranslation()
-                //                        {
-                //                            LanguageCode = "en-US",
-                //                            EventName = "Send Litigation Request",
-                //                            LogMessage = "Feedback has been processed and the request has been sent",
-                //                        }
-                //                    }
-                //                }
-                //            },
-                //            Translations = new List<WorkFlowStepTranslation>()
-                //            {
-                //                new WorkFlowStepTranslation()
-                //                {
-                //                    LanguageCode = "ar-SA",
-                //                    StepName = "معالجة الملاحظات",
-                //                    CreationLogMessage = "جارى معالجة الملاحظات"
-                //                },
-                //                new WorkFlowStepTranslation()
-                //                {
-                //                    LanguageCode = "en-US",
-                //                    StepName = "Processing Notes",
-                //                    CreationLogMessage = "Feedback is being processed"
-                //                }
-                //            }
-                //        },
-                //        new WorkFlowStep()
-                //        {
-                //            StepName = "تدقيق الدعوى",
-                //            ProcessActorType = ProcessActorType.Employee,
-
-                //            WorkModeId = StepWorkMode.None,
-                //            Id = Guid.Parse("f262881a-86b9-41eb-b679-ade1de303cb9"),
-                //            Order = 1,
-                //            ActorTypeId = StepActorType.Department,
-                //            CreationLogMessage = "تم إنشاء الدعوى وجارى تدقيقها",
-                //            CreatedOn = DateTime.Now,
-                //            CreatedBy = Guid.NewGuid(),
-                //            IsDeleted = false,
-                //            //CreationNotificationPlanId = Guid.Parse("f7c76133-2b18-4238-9081-d1fefbefb7cb"),
-                //            DepartmentId = Guid.Parse("657004f4-57e1-4715-addc-0e5ff0b00938"),
-                //            StageId = _context.WorkFlowStepStages.ToList().FirstOrDefault().Id,
-                //            InternalStatusId = RequestStatus.New,
-                //            ExternalStatusId = RequestStatus.New,
-                //            ShowForApplicant = true,
-                //            WorkFlowStepEvents = new List<WorkFlowStepEvent>()
-                //            {
-                //                new WorkFlowStepEvent()
-                //                {
-                //                    Id = Guid.Parse("4438fd81-dffb-4048-9ccc-323f33bdf59a"),
-                //                    EventName = "قبول",
-                //                    AllowChangeInternalStatus = true,
-                //                    InternalStatusId = RequestStatus.Received,
-                //                    AllowChangeExternalStatus = true,
-                //                    ExternalStatusId = RequestStatus.Received,
-
-                //                    AllowFileUpload = false,
-
-                //                    IsActiveValue = false,
-                //                    AllowChangeIsFinished = false,
-                //                    EventSecurityLevelId = EventSecurityLevel.UnSpecified,
-                //                    AllowNotes = false,
-                //                    IsAdminApprovalRequired = false,
-                //                    LogMessage = "تم قبول الدعوى",
-                //                    CreatedOn = DateTime.Now,
-                //                    CreatedBy = Guid.NewGuid(),
-                //                    IsDeleted = false,
-                //                    ShowLogForApplicant = true,
-                //                    ShowProcessingLogForApplicant = true,
-                //                    SameEmployee = false,
-                //                    Translations  = new List<WorkFlowStepEventTranslation>()
-                //                    {
-                //                        new WorkFlowStepEventTranslation()
-                //                        {
-                //                            LanguageCode = "ar-SA",
-                //                            EventName = "قبول",
-                //                            LogMessage = "تم قبول الدعوى",
-                //                        },
-                //                        new WorkFlowStepEventTranslation()
-                //                        {
-                //                            LanguageCode = "en-US",
-                //                            EventName = "Accept",
-                //                            LogMessage = "Litigation has been accepted",
-                //                        }
-                //                    }
-                //                },
-                //                new WorkFlowStepEvent()
-                //                {
-                //                    Id = Guid.Parse("7df0b2ed-4a6b-46c9-b1a7-86d5d667e75b"),
-                //                    EventName = "رفض",
-                //                    AllowChangeInternalStatus = true,
-                //                    InternalStatusId = RequestStatus.Rejected,
-                //                    AllowChangeExternalStatus = true,
-                //                    ExternalStatusId = RequestStatus.Rejected,
-                //                    AllowCompletionNotificationPlan = true,
-                //                    //CompletionNotificationPlanId = Guid.Parse("f7c76133-2b18-4238-9081-d1fefbefb7cb"),
-                //                    AllowFileUpload = false,
-                //                    IsAdminApprovalRequired = false,
-                //                    AllowChangeIsActive = true,
-                //                    AllowChangeIsFinished = true,
-                //                    IsFinishedValue = true,
-                //                    IsActiveValue = false,
-                //                    EventSecurityLevelId = EventSecurityLevel.UnSpecified,
-                //                    SameEmployee = false,
-                //                    AllowNotes = true,
-                //                    LogMessage = "تم رفض الدعوى",
-                //                    CreatedOn = DateTime.Now,
-                //                    CreatedBy = Guid.NewGuid(),
-                //                    IsDeleted = true,
-                //                    IsAllowEditValue = true,
-                //                    ShowLogForApplicant = true,
-                //                    ShowProcessingLogForApplicant = true,
-                //                    Translations  = new List<WorkFlowStepEventTranslation>()
-                //                    {
-                //                        new WorkFlowStepEventTranslation()
-                //                        {
-                //                            LanguageCode = "ar-SA",
-                //                            EventName = "رفض",
-                //                            LogMessage = "تم رفض الدعوى",
-                //                        },
-                //                        new WorkFlowStepEventTranslation()
-                //                        {
-                //                            LanguageCode = "en-US",
-                //                            EventName = "Reject",
-                //                            LogMessage = "Request has been Rejected",
-                //                        }
-                //                    }
-                //                },
-                //                new WorkFlowStepEvent()
-                //                {
-                //                    Id = Guid.Parse("556d214b-2a08-477d-b9da-7203f7fd59a5"),
-                //                    EventName = "إعادة الدعوى للتعديل",
-                //                    AllowChangeInternalStatus = true,
-                //                    InternalStatusId = RequestStatus.SentBackForEdit,
-                //                    AllowChangeExternalStatus = true,
-                //                    ExternalStatusId = RequestStatus.SentBackForEdit,
-                //                    AllowFileUpload = true,
-                //                    AllowChangeIsActive = false,
-                //                    AllowNotes = true,
-                //                    EventSecurityLevelId = EventSecurityLevel.UnSpecified,
-                //                    LogMessage = "تم إعادة الدعوى للتعديل",
-                //                    ActionModeId = EventActionMode.SpecificStep,
-                //                    CreatedOn = DateTime.Now,
-                //                    CreatedBy = Guid.NewGuid(),
-                //                    IsDeleted = false,
-                //                    ShowLogForApplicant = true,
-                //                    ShowProcessingLogForApplicant = true,
-                //                    NextWorkFlowStepDestinationId = Guid.Parse("42c0f621-ab89-444a-9970-a82933974b3d"),
-                //                    Translations  = new List<WorkFlowStepEventTranslation>()
-                //                    {
-                //                        new WorkFlowStepEventTranslation()
-                //                        {
-                //                            LanguageCode = "ar-SA",
-                //                            EventName = "إعادة  الدعوى للتعديل",
-                //                            LogMessage = "تم دراسة الدعوى وإعادتها للتعديل",
-                //                        },
-                //                        new WorkFlowStepEventTranslation()
-                //                        {
-                //                            LanguageCode = "en-US",
-                //                            EventName = "Send Back For Edit",
-                //                            LogMessage = "Request was studied and sent for edit",
-                //                        }
-                //                    }
-                //                }
-                //            },
-                //            Translations = new List<WorkFlowStepTranslation>()
-                //            {
-                //                new WorkFlowStepTranslation()
-                //                {
-                //                    LanguageCode = "en-US",
-                //                    StepName = "Request Studing",
-                //                    CreationLogMessage = "Request has been created and is being Studied"
-                //                },
-                //                new WorkFlowStepTranslation()
-                //                {
-                //                    LanguageCode = "ar-SA",
-                //                    StepName = "دراسة الدعوى",
-                //                    CreationLogMessage = "تم إنشاء الدعوى وجارى دراستها"
-                //                }
-                //            }
-                //        },
-                //        new WorkFlowStep()
-                //        {
-                //            StepName = "مرحلة الطلح",
-
-                //            ProcessActorType = ProcessActorType.Reformer,
-                //            WorkModeId = StepWorkMode.None,
-                //            Id = Guid.Parse("ea2122a7-59bb-4a19-84ee-e7e9d177ad21"),
-                //            Order = 2,
-                //            ActorTypeId = StepActorType.Department,
-                //            CreationLogMessage = "تم تدقيق الدعوى وجارى مرحلة الصلح",
-                //            CreatedOn = DateTime.Now,
-                //            CreatedBy = Guid.NewGuid(),
-                //            IsDeleted = false,
-                //            //CreationNotificationPlanId = Guid.Parse("f7c76133-2b18-4238-9081-d1fefbefb7cb"),
-                //            DepartmentId = Guid.Parse("fa69b94c-53f2-49ca-8384-072ea272fa08"),
-                //            StageId = _context.WorkFlowStepStages.ToList().FirstOrDefault().Id,
-                //            InternalStatusId = RequestStatus.New,
-                //            ExternalStatusId = RequestStatus.New,
-                //            ShowForApplicant = true,
-                //            Translations = new List<WorkFlowStepTranslation>()
-                //            {
-                //                new WorkFlowStepTranslation()
-                //                {
-                //                    LanguageCode = "en-US",
-                //                    StepName = "Request Studing",
-                //                    CreationLogMessage = "Request has been created and is being Studied"
-                //                },
-                //                new WorkFlowStepTranslation()
-                //                {
-                //                    LanguageCode = "ar-SA",
-                //                    StepName = "مرحلة الطلح",
-                //                    CreationLogMessage = "تم تدقيق الدعوى وجارى مرحلة الصلح",
-                //                }
-                //            }
-                //        },
-                //        new WorkFlowStep()
-                //        {
-                //            StepName = "مرحلة التحكيم",
-                //            ProcessActorType = ProcessActorType.Arbitrator,
-                //            WorkModeId = StepWorkMode.None,
-                //            Id = Guid.Parse("e6509bb4-4382-4796-b298-70e704e9d981"),
-                //            Order = 3,
-                //            ActorTypeId = StepActorType.Department,
-                //            CreationLogMessage = "تم مرحلة الصلح على الدعوى وجارى مرحلة التحكيم",
-                //            CreatedOn = DateTime.Now,
-                //            CreatedBy = Guid.NewGuid(),
-                //            IsDeleted = false,
-                //            //CreationNotificationPlanId = Guid.Parse("f7c76133-2b18-4238-9081-d1fefbefb7cb"),
-                //            DepartmentId = Guid.Parse("a364bcfe-066a-473f-b852-621c5258945a"),
-                //            StageId = _context.WorkFlowStepStages.ToList().FirstOrDefault().Id,
-                //            InternalStatusId = RequestStatus.New,
-                //            ExternalStatusId = RequestStatus.New,
-                //            ShowForApplicant = true,
-                //            Translations = new List<WorkFlowStepTranslation>()
-                //            {
-                //                new WorkFlowStepTranslation()
-                //                {
-                //                    LanguageCode = "en-US",
-                //                    StepName = "Arbitration Step",
-                //                    CreationLogMessage = "Request has been created and is being Studied"
-                //                },
-                //                new WorkFlowStepTranslation()
-                //                {
-                //                    LanguageCode = "ar-SA",
-                //                    StepName = "مرحلة التحكيم",
-                //                    CreationLogMessage = "تم مرحلة الصلح على الدعوى وجارى مرحلة التحكيم",
-                //                }
-                //            }
-                //        }
-                //    }
-                //},
-                
-                //// طلبات المواطنين
-                //new WorkFlow()
-                //{
-                //    Id = Guid.Parse("b7871240-69df-48cf-b9d4-2f644cb431d2"),
-                //    WorkFlowName = "طلب المصلح",
-                //    CreatedOn = DateTime.Now,
-                //    CreatedBy = Guid.NewGuid(),
-                //    IsDeleted = false,
-                //    Translations = new List<WorkFlowTranslation>()
-                //    {
-                //        new WorkFlowTranslation()
-                //        {
-                //            LanguageCode = "ar-SA",
-                //            WorkFlowName = "طلب المصلح",
-                //        },
-                //        new WorkFlowTranslation()
-                //        {
-                //            LanguageCode = "en-US",
-                //            WorkFlowName = "Reformer Request"
-                //        }
-                //    },
-                //    WorkFlowSteps = new List<WorkFlowStep>()
-                //    {
-                //        new WorkFlowStep()
-                //        {
-                //            StepName = "معالجة الملاحظات",
-                //            WorkModeId = StepWorkMode.None,
-                //            ProcessActorType = ProcessActorType.Plaintiff,
-                //            Id = Guid.Parse("5783c080-c18c-4351-a20c-b07801a2de57"),
-                //            Order = 0,
-                //            ActorTypeId = StepActorType.Client,
-                //            CreationLogMessage = "جارى معالجة الملاحظات",
-                //            CreatedOn = DateTime.Now,
-                //            CreatedBy = Guid.NewGuid(),
-                //            IsDeleted = false,
-                //            //CreationNotificationPlanId = Guid.Parse("f7c76133-2b18-4238-9081-d1fefbefb7cb"),
-                //            StageId = Guid.Parse("5406436a-9d9e-4996-81c6-87cc5e13a653"),
-                //            ShowForApplicant = true,
-                //            WorkFlowStepEvents = new List<WorkFlowStepEvent>()
-                //            {
-                //                new WorkFlowStepEvent()
-                //                {
-                //                    Id = Guid.Parse("3513b065-7c5a-472a-b1c5-6d91faaf33bb"),
-                //                    EventName = "إرسال الطلب",
-                //                    AllowChangeInternalStatus = true,
-                //                    InternalStatusId = RequestStatus.Edited,
-                //                    AllowChangeExternalStatus = true,
-                //                    ExternalStatusId = RequestStatus.Edited,
-                //                    AllowCompletionNotificationPlan = true,
-                //                    //CompletionNotificationPlanId = Guid.Parse("8bcfc019-d5c5-4e37-8141-8111df074b17"),
-                //                    AllowFileUpload = true,
-                //                    AllowChangeIsActive = true,
-                //                    IsActiveValue = true,
-                //                    AllowNotes = true,
-                //                    IsAdminApprovalRequired = false,
-                //                    SameEmployee = true,
-                //                    AllowChangeIsFinished = true,
-                //                    IsFinishedValue = false,
-                //                    AllowChangeIsAllowEdit = true,
-                //                    IsAllowEditValue = false,
-                //                    EventSecurityLevelId = EventSecurityLevel.UnSpecified,
-                //                    LogMessage = "تم معالجة الملاحظات وإرسال الطلب",
-                //                    ActionModeId = EventActionMode.GoPreviousStep,
-                //                    CreatedOn = DateTime.Now,
-                //                    CreatedBy = Guid.NewGuid(),
-                //                    IsDeleted = false,
-                //                    ShowLogForApplicant = true,
-                //                    ShowProcessingLogForApplicant = true,
-                //                    Translations  = new List<WorkFlowStepEventTranslation>()
-                //                    {
-                //                        new WorkFlowStepEventTranslation()
-                //                        {
-                //                            LanguageCode = "ar-SA",
-                //                            EventName = "إرسال الطلب",
-                //                            LogMessage = "تم معالجة الملاحظات وإرسال الطلب",
-                //                        },
-                //                        new WorkFlowStepEventTranslation()
-                //                        {
-                //                            LanguageCode = "en-US",
-                //                            EventName = "Send Reformer Request",
-                //                            LogMessage = "Feedback has been processed and the request has been sent",
-                //                        }
-                //                    }
-                //                }
-                //            },
-                //            Translations = new List<WorkFlowStepTranslation>()
-                //            {
-                //                new WorkFlowStepTranslation()
-                //                {
-                //                    LanguageCode = "ar-SA",
-                //                    StepName = "معالجة الملاحظات",
-                //                    CreationLogMessage = "جارى معالجة الملاحظات"
-                //                },
-                //                new WorkFlowStepTranslation()
-                //                {
-                //                    LanguageCode = "en-US",
-                //                    StepName = "Processing Notes",
-                //                    CreationLogMessage = "Feedback is being processed"
-                //                }
-                //            }
-                //        },
-                //        new WorkFlowStep()
-                //        {
-                //            StepName = "مراجعة الطلب",
-                //            ProcessActorType = ProcessActorType.Employee,
-
-                //            WorkModeId = StepWorkMode.None,
-                //            Id = Guid.Parse("c2af541d-83df-4a34-a7d4-831b6e32e3e1"),
-                //            Order = 1,
-                //            ActorTypeId = StepActorType.Department,
-                //            CreationLogMessage = "تم إنشاء الطلب وجارى مراجعته",
-                //            CreatedOn = DateTime.Now,
-                //            CreatedBy = Guid.NewGuid(),
-                //            IsDeleted = false,
-                //            //CreationNotificationPlanId = Guid.Parse("f7c76133-2b18-4238-9081-d1fefbefb7cb"),
-                //            DepartmentId = Guid.Parse("fa69b94c-53f2-49ca-8384-072ea272fa08"),
-                //            StageId = Guid.Parse("5406436a-9d9e-4996-81c6-87cc5e13a653"),
-                //            InternalStatusId =  RequestStatus.New,
-                //            ExternalStatusId =  RequestStatus.New,
-                //            ShowForApplicant = true,
-                //            WorkFlowStepEvents = new List<WorkFlowStepEvent>()
-                //            {
-                //                new WorkFlowStepEvent()
-                //                {
-                //                    Id = Guid.Parse("6c100bfa-5eb4-4838-84ae-6c7dcdf353cd"),
-                //                    EventName = "قبول",
-                //                    AllowChangeInternalStatus = true,
-                //                    InternalStatusId = RequestStatus.Received,
-                //                    AllowChangeExternalStatus = true,
-                //                    ExternalStatusId = RequestStatus.Received,
-
-                //                    AllowFileUpload = false,
-
-                //                    IsActiveValue = false,
-                //                    AllowChangeIsFinished = false,
-                //                    EventSecurityLevelId = EventSecurityLevel.UnSpecified,
-                //                    AllowNotes = false,
-                //                    IsAdminApprovalRequired = false,
-                //                    LogMessage = "تم قبول الطلب",
-                //                    CreatedOn = DateTime.Now,
-                //                    CreatedBy = Guid.NewGuid(),
-                //                    IsDeleted = false,
-                //                    ShowLogForApplicant = true,
-                //                    ShowProcessingLogForApplicant = true,
-                //                    SameEmployee = false,
-                //                    Translations  = new List<WorkFlowStepEventTranslation>()
-                //                    {
-                //                        new WorkFlowStepEventTranslation()
-                //                        {
-                //                            LanguageCode = "ar-SA",
-                //                            EventName = "قبول",
-                //                            LogMessage = "تم قبول الطلب",
-                //                        },
-                //                        new WorkFlowStepEventTranslation()
-                //                        {
-                //                            LanguageCode = "en-US",
-                //                            EventName = "Accept",
-                //                            LogMessage = "Request has been accepted",
-                //                        }
-                //                    }
-                //                },
-                //                new WorkFlowStepEvent()
-                //                {
-                //                    Id = Guid.Parse("75cbea2d-bcb3-4e57-b9e4-649e23d4f48b"),
-                //                    EventName = "رفض",
-                //                    AllowChangeInternalStatus = true,
-                //                    InternalStatusId = RequestStatus.Rejected,
-                //                    AllowChangeExternalStatus = true,
-                //                    ExternalStatusId = RequestStatus.Rejected,
-                //                    AllowCompletionNotificationPlan = true,
-                //                    ////CompletionNotificationPlanId = Guid.Parse("0891dab2-0bad-49c8-8ff6-993644e4eeb1"),
-                //                    AllowFileUpload = false,
-                //                    IsAdminApprovalRequired = false,
-                //                    AllowChangeIsActive = true,
-                //                    AllowChangeIsFinished = true,
-                //                    IsFinishedValue = true,
-                //                    IsActiveValue = false,
-                //                    EventSecurityLevelId = EventSecurityLevel.UnSpecified,
-                //                    SameEmployee = false,
-                //                    AllowNotes = true,
-                //                    LogMessage = "تم رفض الطلب",
-                //                    CreatedOn = DateTime.Now,
-                //                    CreatedBy = Guid.NewGuid(),
-                //                    IsDeleted = true,
-                //                    IsAllowEditValue = true,
-                //                    ShowLogForApplicant = true,
-                //                    ShowProcessingLogForApplicant = true,
-                //                    Translations  = new List<WorkFlowStepEventTranslation>()
-                //                    {
-                //                        new WorkFlowStepEventTranslation()
-                //                        {
-                //                            LanguageCode = "ar-SA",
-                //                            EventName = "رفض",
-                //                            LogMessage = "تم رفض الطلب",
-                //                        },
-                //                        new WorkFlowStepEventTranslation()
-                //                        {
-                //                            LanguageCode = "en-US",
-                //                            EventName = "Reject",
-                //                            LogMessage = "Request has been Rejected",
-                //                        }
-                //                    }
-                //                },
-                //                new WorkFlowStepEvent()
-                //                {
-                //                    Id = Guid.Parse("45bcaa4f-58ff-481a-9565-8304a5a1d1f2"),
-                //                    EventName = "إعادة الطلب للتعديل",
-                //                    AllowChangeInternalStatus = true,
-                //                    InternalStatusId = RequestStatus.SentBackForEdit,
-                //                    AllowChangeExternalStatus = true,
-                //                    ExternalStatusId = RequestStatus.SentBackForEdit,
-                //                    AllowFileUpload = false,
-                //                    AllowChangeIsActive = false,
-                //                    AllowNotes = true,
-                //                    EventSecurityLevelId = EventSecurityLevel.UnSpecified,
-                //                    LogMessage = "تم إعادة الطلب للتعديل",
-                //                    ActionModeId = EventActionMode.SpecificStep,
-                //                    CreatedOn = DateTime.Now,
-                //                    CreatedBy = Guid.NewGuid(),
-                //                    IsDeleted = false,
-                //                    ShowLogForApplicant = true,
-                //                    ShowProcessingLogForApplicant = true,
-                //                    NextWorkFlowStepDestinationId = Guid.Parse("5783c080-c18c-4351-a20c-b07801a2de57"),
-                //                    Translations  = new List<WorkFlowStepEventTranslation>()
-                //                    {
-                //                        new WorkFlowStepEventTranslation()
-                //                        {
-                //                            LanguageCode = "ar-SA",
-                //                            EventName = "إعادة الطلب للتعديل",
-                //                            LogMessage = "تم إعادة الطلب للتعديل",
-                //                        },
-                //                        new WorkFlowStepEventTranslation()
-                //                        {
-                //                            LanguageCode = "en-US",
-                //                            EventName = "Send Back For Edit",
-                //                            LogMessage = "Request was studied and sent for edit",
-                //                        }
-                //                    }
-                //                }
-                //            },
-                //            Translations = new List<WorkFlowStepTranslation>()
-                //            {
-                //                new WorkFlowStepTranslation()
-                //                {
-                //                    LanguageCode = "en-US",
-                //                    StepName = "Request Studing",
-                //                    CreationLogMessage = "Request has been created and is being Studied"
-                //                },
-                //                new WorkFlowStepTranslation()
-                //                {
-                //                    LanguageCode = "ar-SA",
-                //                    StepName = "دراسة الطلب",
-                //                    CreationLogMessage = "تم إنشاء الطلب وجارى دراسته"
-                //                }
-                //            }
-                //        }
-
-                //    }
-                //},
-                //new WorkFlow()
-                //{
-                //    Id = Guid.Parse("dd6d470a-d29d-4545-82b1-32ffc82182cc"),
-                //    WorkFlowName = "طلب المحكم",
-                //    CreatedOn = DateTime.Now,
-                //    CreatedBy = Guid.NewGuid(),
-                //    IsDeleted = false,
-                //    Translations = new List<WorkFlowTranslation>()
-                //    {
-                //        new WorkFlowTranslation()
-                //        {
-                //            LanguageCode = "ar-SA",
-                //            WorkFlowName = "طلب المحكم",
-                //        },
-                //        new WorkFlowTranslation()
-                //        {
-                //            LanguageCode = "en-US",
-                //            WorkFlowName = "Arbitrator Request"
-                //        }
-                //    },
-                //    WorkFlowSteps = new List<WorkFlowStep>()
-                //    {
-                //        new WorkFlowStep()
-                //        {
-                //            StepName = "معالجة الملاحظات",
-                //            ProcessActorType = ProcessActorType.Plaintiff,
-                //            WorkModeId = StepWorkMode.None,
-                //            Id = Guid.Parse("7696624b-a7de-477a-b08e-8345b779732e"),
-                //            Order = 0,
-                //            ActorTypeId = StepActorType.Client,
-                //            CreationLogMessage = "جارى معالجة الملاحظات",
-                //            CreatedOn = DateTime.Now,
-                //            CreatedBy = Guid.NewGuid(),
-                //            IsDeleted = false,
-                //            //CreationNotificationPlanId = Guid.Parse("f7c76133-2b18-4238-9081-d1fefbefb7cb"),
-                //            StageId = Guid.Parse("5406436a-9d9e-4996-81c6-87cc5e13a653"),
-                //            InternalStatusId = RequestStatus.SentBackForEdit,
-                //            ExternalStatusId = RequestStatus.SentBackForEdit,
-                //            ShowForApplicant = true,
-                //            WorkFlowStepEvents = new List<WorkFlowStepEvent>()
-                //            {
-                //                new WorkFlowStepEvent()
-                //                {
-                //                    Id = Guid.Parse("6b9265c3-b585-40aa-bd5c-bf022b62efea"),
-                //                    EventName = "إرسال الطلب",
-                //                    AllowChangeInternalStatus = true,
-                //                    InternalStatusId = RequestStatus.Edited,
-                //                    AllowChangeExternalStatus = true,
-                //                    ExternalStatusId = RequestStatus.Edited,
-                //                    AllowCompletionNotificationPlan = true,
-                //                    //CompletionNotificationPlanId = Guid.Parse("8bcfc019-d5c5-4e37-8141-8111df074b17"),
-                //                    AllowFileUpload = true,
-                //                    AllowChangeIsActive = true,
-                //                    IsActiveValue = true,
-                //                    AllowNotes = true,
-                //                    IsAdminApprovalRequired = false,
-                //                    SameEmployee = true,
-                //                    AllowChangeIsFinished = true,
-                //                    IsFinishedValue = false,
-                //                    AllowChangeIsAllowEdit = true,
-                //                    IsAllowEditValue = false,
-                //                    EventSecurityLevelId = EventSecurityLevel.UnSpecified,
-                //                    LogMessage = "تم معالجة الملاحظات وإرسال الطلب",
-                //                    ActionModeId = EventActionMode.GoPreviousStep,
-                //                    CreatedOn = DateTime.Now,
-                //                    CreatedBy = Guid.NewGuid(),
-                //                    IsDeleted = false,
-                //                    ShowLogForApplicant = true,
-                //                    ShowProcessingLogForApplicant = true,
-                //                    Translations  = new List<WorkFlowStepEventTranslation>()
-                //                    {
-                //                        new WorkFlowStepEventTranslation()
-                //                        {
-                //                            LanguageCode = "ar-SA",
-                //                            EventName = "إرسال الطلب",
-                //                            LogMessage = "تم معالجة الملاحظات وإرسال الطلب",
-                //                        },
-                //                        new WorkFlowStepEventTranslation()
-                //                        {
-                //                            LanguageCode = "en-US",
-                //                            EventName = "Send Reformer Request",
-                //                            LogMessage = "Feedback has been processed and the request has been sent",
-                //                        }
-                //                    }
-                //                }
-                //            },
-                //            Translations = new List<WorkFlowStepTranslation>()
-                //            {
-                //                new WorkFlowStepTranslation()
-                //                {
-                //                    LanguageCode = "ar-SA",
-                //                    StepName = "معالجة الملاحظات",
-                //                    CreationLogMessage = "جارى معالجة الملاحظات"
-                //                },
-                //                new WorkFlowStepTranslation()
-                //                {
-                //                    LanguageCode = "en-US",
-                //                    StepName = "Processing Notes",
-                //                    CreationLogMessage = "Feedback is being processed"
-                //                }
-                //            }
-                //        },
-                //        new WorkFlowStep()
-                //        {
-                //            StepName = "مراجعة الطلب",
-                //            ProcessActorType = ProcessActorType.Employee,
-                //            WorkModeId = StepWorkMode.None,
-                //            Id = Guid.Parse("fad68da1-8c59-4556-8c72-577cd2306e4e"),
-                //            Order = 1,
-                //            ActorTypeId = StepActorType.Department,
-                //            CreationLogMessage = "تم إنشاء الطلب وجارى مراجعته",
-                //            CreatedOn = DateTime.Now,
-                //            CreatedBy = Guid.NewGuid(),
-                //            IsDeleted = false,
-                //            //CreationNotificationPlanId = Guid.Parse("f7c76133-2b18-4238-9081-d1fefbefb7cb"),
-                //            DepartmentId = Guid.Parse("a364bcfe-066a-473f-b852-621c5258945a"),
-                //            StageId = Guid.Parse("5406436a-9d9e-4996-81c6-87cc5e13a653"),
-                //            InternalStatusId =  RequestStatus.New,
-                //            ExternalStatusId =  RequestStatus.New,
-                //            ShowForApplicant = true,
-                //            WorkFlowStepEvents = new List<WorkFlowStepEvent>()
-                //            {
-                //                new WorkFlowStepEvent()
-                //                {
-                //                    Id = Guid.Parse("5bd46d23-f8eb-458d-bca6-a1c7b8911371"),
-                //                    EventName = "قبول",
-                //                    AllowChangeInternalStatus = true,
-                //                    InternalStatusId = RequestStatus.Received,
-                //                    AllowChangeExternalStatus = true,
-                //                    ExternalStatusId = RequestStatus.Received,
-
-                //                    AllowFileUpload = false,
-
-                //                    IsActiveValue = false,
-                //                    AllowChangeIsFinished = false,
-                //                    EventSecurityLevelId = EventSecurityLevel.UnSpecified,
-                //                    AllowNotes = false,
-                //                    IsAdminApprovalRequired = false,
-                //                    LogMessage = "تم قبول الطلب",
-                //                    CreatedOn = DateTime.Now,
-                //                    CreatedBy = Guid.NewGuid(),
-                //                    IsDeleted = false,
-                //                    ShowLogForApplicant = true,
-                //                    ShowProcessingLogForApplicant = true,
-                //                    SameEmployee = false,
-                //                    Translations  = new List<WorkFlowStepEventTranslation>()
-                //                    {
-                //                        new WorkFlowStepEventTranslation()
-                //                        {
-                //                            LanguageCode = "ar-SA",
-                //                            EventName = "قبول",
-                //                            LogMessage = "تم قبول الطلب",
-                //                        },
-                //                        new WorkFlowStepEventTranslation()
-                //                        {
-                //                            LanguageCode = "en-US",
-                //                            EventName = "Accept",
-                //                            LogMessage = "Request has been accepted",
-                //                        }
-                //                    }
-                //                },
-                //                new WorkFlowStepEvent()
-                //                {
-                //                    Id = Guid.Parse("a3d3b4fc-6c80-44a5-94a0-e4cc794897a1"),
-                //                    EventName = "رفض",
-                //                    AllowChangeInternalStatus = true,
-                //                    InternalStatusId = RequestStatus.Rejected,
-                //                    AllowChangeExternalStatus = true,
-                //                    ExternalStatusId = RequestStatus.Rejected,
-                //                    AllowCompletionNotificationPlan = true,
-                //                    ////CompletionNotificationPlanId = Guid.Parse("0891dab2-0bad-49c8-8ff6-993644e4eeb1"),
-                //                    AllowFileUpload = false,
-                //                    IsAdminApprovalRequired = false,
-                //                    AllowChangeIsActive = true,
-                //                    AllowChangeIsFinished = true,
-                //                    IsFinishedValue = true,
-                //                    IsActiveValue = false,
-                //                    EventSecurityLevelId = EventSecurityLevel.UnSpecified,
-                //                    SameEmployee = false,
-                //                    AllowNotes = true,
-                //                    LogMessage = "تم رفض الطلب",
-                //                    CreatedOn = DateTime.Now,
-                //                    CreatedBy = Guid.NewGuid(),
-                //                    IsDeleted = true,
-                //                    IsAllowEditValue = true,
-                //                    ShowLogForApplicant = true,
-                //                    ShowProcessingLogForApplicant = true,
-                //                    Translations  = new List<WorkFlowStepEventTranslation>()
-                //                    {
-                //                        new WorkFlowStepEventTranslation()
-                //                        {
-                //                            LanguageCode = "ar-SA",
-                //                            EventName = "رفض",
-                //                            LogMessage = "تم رفض الطلب",
-                //                        },
-                //                        new WorkFlowStepEventTranslation()
-                //                        {
-                //                            LanguageCode = "en-US",
-                //                            EventName = "Reject",
-                //                            LogMessage = "Request has been Rejected",
-                //                        }
-                //                    }
-                //                },
-                //                new WorkFlowStepEvent()
-                //                {
-                //                    Id = Guid.Parse("ff702276-9c03-4c7a-9bf6-734548f5ca1a"),
-                //                    EventName = "إعادة الطلب للتعديل",
-                //                    AllowChangeInternalStatus = true,
-                //                    InternalStatusId = RequestStatus.SentBackForEdit,
-                //                    AllowChangeExternalStatus = true,
-                //                    ExternalStatusId = RequestStatus.SentBackForEdit,
-                //                    AllowFileUpload = false,
-                //                    AllowChangeIsActive = false,
-                //                    AllowNotes = true,
-                //                    EventSecurityLevelId = EventSecurityLevel.UnSpecified,
-                //                    LogMessage = "تم إعادة الطلب للتعديل",
-                //                    ActionModeId = EventActionMode.SpecificStep,
-                //                    CreatedOn = DateTime.Now,
-                //                    CreatedBy = Guid.NewGuid(),
-                //                    IsDeleted = false,
-                //                    ShowLogForApplicant = true,
-                //                    ShowProcessingLogForApplicant = true,
-                //                    NextWorkFlowStepDestinationId = Guid.Parse("7696624b-a7de-477a-b08e-8345b779732e"),
-                //                    Translations  = new List<WorkFlowStepEventTranslation>()
-                //                    {
-                //                        new WorkFlowStepEventTranslation()
-                //                        {
-                //                            LanguageCode = "ar-SA",
-                //                            EventName = "إعادة الطلب للتعديل",
-                //                            LogMessage = "تم إعادة الطلب للتعديل",
-                //                        },
-                //                        new WorkFlowStepEventTranslation()
-                //                        {
-                //                            LanguageCode = "en-US",
-                //                            EventName = "Send Back For Edit",
-                //                            LogMessage = "Request was studied and sent for edit",
-                //                        }
-                //                    }
-                //                }
-                //            },
-                //            Translations = new List<WorkFlowStepTranslation>()
-                //            {
-                //                new WorkFlowStepTranslation()
-                //                {
-                //                    LanguageCode = "en-US",
-                //                    StepName = "Request Studing",
-                //                    CreationLogMessage = "Request has been created and is being Studied"
-                //                },
-                //                new WorkFlowStepTranslation()
-                //                {
-                //                    LanguageCode = "ar-SA",
-                //                    StepName = "دراسة الطلب",
-                //                    CreationLogMessage = "تم إنشاء الطلب وجارى دراسته"
-                //                }
-                //            }
-                //        }
-
-                //    }
-                //}
-#endregion
             };
         }
         #endregion

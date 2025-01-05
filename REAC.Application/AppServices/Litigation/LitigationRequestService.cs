@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Azure.Core;
 using Core.GenericRepository.BaseRepository;
 using Core.GenericRepository.Shared.Pagging;
 using Core.Log.Application.Contracts.Dto;
@@ -7,10 +6,8 @@ using Core.Log.Application.Contracts.IAppServices;
 using Core.Security.Entities;
 using Core.Shared.Responses;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Server.Kestrel.Transport.NamedPipes;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Identity.Client;
 using Microsoft.IdentityModel.Tokens;
 using REAC.Application.Contracts.Dtos.Integration.GEE;
 using REAC.Application.Contracts.Dtos.Integration.Party;
@@ -24,7 +21,6 @@ using REAC.Application.Contracts.Dtos.Litigation.List;
 using REAC.Application.Contracts.Dtos.Notification;
 using REAC.Application.Contracts.Dtos.Reconciliation.Process;
 using REAC.Application.Contracts.Dtos.Wpf.Business;
-using REAC.Application.Contracts.Dtos.Zoom;
 using REAC.Application.Contracts.IAppServices;
 using REAC.Application.Contracts.IAppServices.Integration;
 using REAC.Application.Contracts.IAppServices.Litigation;
@@ -36,7 +32,6 @@ using REAC.Domain.Shared.Constants;
 using REAC.Domain.Shared.Enum;
 using REAC.EntityFrameworkCore.Entities;
 using REAC.EntityFrameworkCore.Entities.Actor;
-using REAC.EntityFrameworkCore.Entities.Arbitration;
 using REAC.EntityFrameworkCore.Entities.Litigation;
 using REAC.EntityFrameworkCore.Entities.System;
 using REAC.EntityFrameworkCore.Entities.Wpf.Business;
@@ -44,7 +39,6 @@ using REAC.EntityFrameworkCore.Seed.Integration;
 using System.Globalization;
 using System.Net;
 using System.Net.Http.Headers;
-using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
 using static REAC.Application.Contracts.IAppServices.Litigation.ILitigationRequestService;
@@ -288,7 +282,89 @@ namespace REAC.Application.AppServices.Litigation
             }
 
         }
-        public async Task<Guid> GetAddedLitigation()
+        public async Task<BaseResponse> SendLitigationFeesRequestPaid(Guid litigationId)        {            try            {                var litigationRequest = (await _repository.GetQueryable<LitigationRequest, Guid>())                          .Where(x => x.Id == litigationId).ToList().FirstOrDefault();                if (litigationRequest == null)                    return new ExceptionResponse()
+                    {
+                        Exception = "لم يتم العثور على الدعوى",
+                        IsDone = false,
+                    };                litigationRequest.IsLitigationFeesHaveBeenCollected = true;                litigationRequest.InternalStatusId = RequestStatus.LitigationFeesHaveBeenCollected;                litigationRequest.ExternalStatusId = RequestStatus.LitigationFeesHaveBeenCollected;                var saveResponse = _repository.SaveChangesAsync().Result;                if (!saveResponse.IsDone)                    return saveResponse;
+
+                var _bpfService = _serviceProvider.GetRequiredService<IBpfService>();
+                var _stepService = _serviceProvider.GetRequiredService<IWorkFlowStepService>();
+
+                var processingLog = (await _repository.GetQueryable<WorkFlowProcessingLog, Guid>())
+                    .Include(t => t.WorkFlowStep)
+                     .Include(t => t.WorkFlowStep.WorkFlowStepEvents)
+                .AsNoTracking()
+                      .Where(x => x.RequestId == litigationRequest.Id).ToList();
+
+                if (processingLog.Count > 0)
+                {
+                    var currentProcessingLog = processingLog.Where(t => t.IsFinished == false).OrderBy(t => t.CreatedOn).ToList();
+                    if (processingLog.Count > 0)
+                    {
+                        ProcessRequestPayload processRequestPayload = new ProcessRequestPayload();
+                        processRequestPayload.RequestId = litigationRequest.Id;
+                        processRequestPayload.ProcessingLogId = currentProcessingLog.LastOrDefault().Id;
+                        processRequestPayload.WorkflowStepEventId = currentProcessingLog.LastOrDefault().WorkFlowStep.WorkFlowStepEvents.FirstOrDefault().Id;
+                        processRequestPayload.Notes = "";
+                        processRequestPayload.UploadedFilesIds = new List<Guid>();
+                        await _bpfService.ProcessWorkFlow(processRequestPayload, default);
+                        return new DataResponse<LitigationCreateUpdateDto>()
+                        {
+                            IsDone = true,
+                            Message = ""
+                        };
+                    }
+                }
+                return new DataResponse<LitigationCreateUpdateDto>()
+                {
+                    IsDone = true,
+                    Message = ""
+                };            }            catch (Exception ex)            {                return new ExceptionResponse()                {                    Exception = ex.Message + "\n" + ex.ToString(),                    IsDone = false,                };            }        }
+
+        public async Task<BaseResponse> SendReconciliationFeesRequestPaid(Guid litigationId)        {            try            {                var litigationRequest = (await _repository.GetQueryable<LitigationRequest, Guid>())                          .Where(x => x.Id == litigationId).ToList().FirstOrDefault();
+                if (litigationRequest == null)                    return new ExceptionResponse()
+                    {
+                        Exception = "لم يتم العثور على الدعوى",
+                        IsDone = false,
+                    };                litigationRequest.IsReconciliationFeesHaveBeenCollected = true;
+
+
+                var saveResponse = _repository.SaveChangesAsync().Result;                if (!saveResponse.IsDone)                    return saveResponse;
+
+                var _bpfService = _serviceProvider.GetRequiredService<IBpfService>();
+                var _stepService = _serviceProvider.GetRequiredService<IWorkFlowStepService>();
+
+                var processingLog = (await _repository.GetQueryable<WorkFlowProcessingLog, Guid>())
+                    .Include(t => t.WorkFlowStep)
+                     .Include(t => t.WorkFlowStep.WorkFlowStepEvents)
+                .AsNoTracking()
+                      .Where(x => x.RequestId == litigationRequest.Id).ToList();
+
+                if (processingLog.Count > 0)
+                {
+                    var currentProcessingLog = processingLog.Where(t => t.IsFinished == false).OrderBy(t => t.CreatedOn).ToList();
+                    if (processingLog.Count > 0)
+                    {
+                        ProcessRequestPayload processRequestPayload = new ProcessRequestPayload();
+                        processRequestPayload.RequestId = litigationRequest.Id;
+                        processRequestPayload.ProcessingLogId = currentProcessingLog.LastOrDefault().Id;
+                        processRequestPayload.WorkflowStepEventId = currentProcessingLog.LastOrDefault().WorkFlowStep.WorkFlowStepEvents.FirstOrDefault().Id;
+                        processRequestPayload.Notes = "";
+                        processRequestPayload.UploadedFilesIds = new List<Guid>();
+                        await _bpfService.ProcessWorkFlow(processRequestPayload, default);
+                        return new DataResponse<LitigationCreateUpdateDto>()
+                        {
+                            IsDone = true,
+                            Message = ""
+                        };
+                    }
+                }
+                return new DataResponse<LitigationCreateUpdateDto>()
+                {
+                    IsDone = true,
+                    Message = ""
+                };            }            catch (Exception ex)            {                return new ExceptionResponse()                {                    Exception = ex.Message + "\n" + ex.ToString(),                    IsDone = false,                };            }        }        public async Task<Guid> GetAddedLitigation()
         {
             var quarable = await GetQueryableAsync();
             var latestAdded = quarable.OrderByDescending(x => x.CreatedOn).First();
@@ -725,7 +801,14 @@ namespace REAC.Application.AppServices.Litigation
 
             var assigningRequest = litigationRequest.LitigationRequestArbitratorAssigningRequests.FirstOrDefault(l => l.Id == requestId);
 
-
+            string base64String = string.Empty;
+            if (!string.IsNullOrEmpty(litigationRequest.ArbitratorCitizen?.SigntureFile?.FilePath))
+            {
+                string inputFilePath = Path.Combine(Directory.GetCurrentDirectory(), litigationRequest.ArbitratorCitizen?.SigntureFile?.FilePath);
+                // Read file and convert to Base64
+                byte[] fileBytes = File.ReadAllBytes(inputFilePath);
+                base64String = Convert.ToBase64String(fileBytes);
+            }
 
             var response = new LitigationArbitrationTaskAcceptOrRejectDocumentDto()
             {
@@ -746,7 +829,7 @@ namespace REAC.Application.AppServices.Litigation
                 FirstPartyName = (litigationRequest.Contract.FirstPartyCitizen == null) ? litigationRequest.Contract.FirstPartyFacility.ArabicFacilityName : litigationRequest.Contract.FirstPartyCitizen.FullName,
                 SecondPartyName = (litigationRequest.Contract.SecondPartyCitizen == null) ? litigationRequest.Contract.SecondPartyFacility.ArabicFacilityName : litigationRequest.Contract.SecondPartyCitizen.FullName,
                 RejectReason = assigningRequest.RejectReason,
-                SigntureFile = litigationRequest.ArbitratorCitizen?.SigntureFile?.FilePath
+                SigntureFile = base64String
             };
 
             return new DataResponse<LitigationArbitrationTaskAcceptOrRejectDocumentDto> { Data = response, IsDone = true };
@@ -787,6 +870,15 @@ namespace REAC.Application.AppServices.Litigation
                 .AsNoTracking()
                 .FirstOrDefault(x => x.Id == citizenId);
 
+            string base64String = string.Empty;
+            if (!string.IsNullOrEmpty(citizenInfo?.SigntureFile?.FilePath))
+            {
+                string inputFilePath = Path.Combine(Directory.GetCurrentDirectory(), citizenInfo?.SigntureFile?.FilePath);
+                // Read file and convert to Base64
+                byte[] fileBytes = File.ReadAllBytes(inputFilePath);
+                base64String = Convert.ToBase64String(fileBytes);
+            }
+
             var response = new LitigationArbitrationTaskAcceptOrRejectDocumentDto()
             {
                 ArbitratorName = citizenInfo != null ? citizenInfo.FullName : null,
@@ -801,7 +893,7 @@ namespace REAC.Application.AppServices.Litigation
                 RequestTypeId = litigationRequest.Contract.LitigationRequestContractType.Id.GetHashCode(),
                 FirstPartyName = (litigationRequest.Contract.FirstPartyCitizen == null) ? litigationRequest.Contract.FirstPartyFacility.ArabicFacilityName : litigationRequest.Contract.FirstPartyCitizen.FullName,
                 SecondPartyName = (litigationRequest.Contract.SecondPartyCitizen == null) ? litigationRequest.Contract.SecondPartyFacility.ArabicFacilityName : litigationRequest.Contract.SecondPartyCitizen.FullName,
-                SigntureFile = citizenInfo.SigntureFile?.FilePath
+                SigntureFile = base64String
 
             };
 
@@ -2282,7 +2374,7 @@ namespace REAC.Application.AppServices.Litigation
                 }
 
 
-            TryGetCitizenAgian:
+                TryGetCitizenAgian:
 
                 var citizen = (await _repository.GetQueryable<Citizen, Guid>())
                                                 .Where(x => x.IdentityNumber == litigationRequestDto.SecondPartyNationalId)

@@ -34,6 +34,7 @@ public partial class CitizenRequest : BaseEntity<Guid>
     public string? About { get; set; }
 
 
+    public bool? IsFeesPaid { get; set; }
     public CitizenRequestStatus StatusId { get; set; }
     public SysCitizenRequestStatus Status { get; set; } = null!;
 

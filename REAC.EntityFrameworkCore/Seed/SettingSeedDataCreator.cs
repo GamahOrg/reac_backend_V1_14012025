@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using REAC.Domain.Shared.Constants;
 using REAC.EntityFrameworkCore.Entities.System;
 
 namespace Ticketing.EntityFrameworkCore.SeedData
@@ -277,6 +278,62 @@ namespace Ticketing.EntityFrameworkCore.SeedData
                     #endregion
 
                     #region NotificationMessages
+
+                    new SysSetting
+                    {
+                        Id = Guid.NewGuid(),
+                        Key=SysSettingKeyConstants.Arbitrator_UpdateJoiningRequest_ToPayFees,
+                        Value="تنويه برجاء دفع رسوم الانضمام كمحكم {CitizenName}"
+                    },
+                     new SysSetting
+                    {
+                        Id = Guid.NewGuid(),
+                        Key=SysSettingKeyConstants.Employee_Arbitrator_UpdateJoiningRequest_ToPayFees,
+                        Value="تم ارسال طلب {CitizenName} للانضمام كمحكم لدفع الرسوم"
+                    },
+
+                     new SysSetting
+                    {
+                        Id = Guid.NewGuid(),
+                        Key=SysSettingKeyConstants.Reformer_UpdateJoiningRequest_ToPayFees,
+                        Value="تنويه برجاء دفع رسوم الانضمام كمصلح {CitizenName}"
+                    },
+                     new SysSetting
+                    {
+                        Id = Guid.NewGuid(),
+                        Key=SysSettingKeyConstants.Employee_Reformer_UpdateJoiningRequest_ToPayFees,
+                        Value="تم ارسال طلب {CitizenName} للانضمام كمصلح لدفع الرسوم"
+                    },
+
+                     new SysSetting
+                     {
+                         Id= Guid.NewGuid(),
+                         Key=SysSettingKeyConstants.Arbitrator_UpdateJoiningRequest_PaidFees,
+                         Value="تم اعادة ارسال طلب الانضمام كمحكم لاستكمال الدراسة"
+                     },
+
+                     new SysSetting
+                     {
+                         Id= Guid.NewGuid(),
+                         Key=SysSettingKeyConstants.Employee_Arbitrator_UpdateJoiningRequest_PaidFees,
+                         Value="تم دفع رسوم طلب {CitizenName} للانضمام كمحكم "
+                     },
+
+                     new SysSetting
+                     {
+                         Id= Guid.NewGuid(),
+                         Key=SysSettingKeyConstants.Reformer_UpdateJoiningRequest_PaidFees,
+                         Value="تم اعادة ارسال طلب الانضمام كمصلح لاستكمال الدراسة"
+                     },
+
+                     new SysSetting
+                     {
+                         Id= Guid.NewGuid(),
+                         Key=SysSettingKeyConstants.Employee_Reformer_UpdateJoiningRequest_PaidFees,
+                         Value="تم دفع رسوم طلب {CitizenName} للانضمام كمصلح "
+                     },
+
+
                     new SysSetting
                     {
                         Id = Guid.NewGuid(),
@@ -778,6 +835,26 @@ namespace Ticketing.EntityFrameworkCore.SeedData
                         Id = Guid.NewGuid(),
                         Key = "LitigationRequest.Decision.ReconciliationOnTradyPlatform",
                         Value = "تم الصلح بواسطة منصة تراضى لدعوي رقم {LitigationCode}",
+                    },new SysSetting
+                    {
+                        Id = Guid.NewGuid(),
+                        Key = "LitigationRequest.CollectionOfLitigationFeesRequestIsBeingSent",
+                        Value = "تم إرسال طلب  دفع رسوم الدعوي لدعوي رقم {LitigationCode}",
+                    },new SysSetting
+                    {
+                        Id = Guid.NewGuid(),
+                        Key = "LitigationRequest.LitigationFeesHaveBeenCollected",
+                        Value = "تم دفع رسوم الدعوي لدعوي رقم {LitigationCode}",
+                    },new SysSetting
+                    {
+                        Id = Guid.NewGuid(),
+                        Key = "LitigationRequest.CollectionOfReconciliationFeesRequestIsBeingSent",
+                        Value = "تم إرسال طلب  دفع رسوم الصلح لدعوي رقم {LitigationCode}",
+                    },new SysSetting
+                    {
+                        Id = Guid.NewGuid(),
+                        Key = "LitigationRequest.ReconciliationFeesHaveBeenCollected",
+                        Value = "تم دفع رسوم الصلح لدعوي رقم {LitigationCode}",
                     },
 	                #endregion
                   

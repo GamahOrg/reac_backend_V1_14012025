@@ -23,9 +23,11 @@ public partial class LitigationRequestShortDto : BaseEntity<Guid>
     public ApproveRejectStatus? MintuesOfMeetingApprovalDefendantStatus { get; set; }
     public DateTime? MintuesOfMeetingApprovalPlaintiffStatusOn { get; set; }
     public DateTime? MintuesOfMeetingApprovalDefendantStatusOn { get; set; }
-    //public ApproveRejectStatus? MintuesOfMeetingApprovalPlaintiffStatus { get; set; }
-    //public ApproveRejectStatus? MintuesOfMeetingApprovalDefendantStatus { get; set; }
-
+   
+    public ApproveRejectStatus? PlaintiffAgreementRequestResponse { get; set; }
+    public DateTime? PlaintiffAgreementRequestResponseOn { get; set; }
+    public ApproveRejectStatus? DefendantAgreementRequestResponse { get; set; }
+    public DateTime? DefendantAgreementRequestResponseOn { get; set; }
     public string? Title { get; set; }
     public string? Description { get; set; }
     public bool? IsFinancialLitigation { get; set; }

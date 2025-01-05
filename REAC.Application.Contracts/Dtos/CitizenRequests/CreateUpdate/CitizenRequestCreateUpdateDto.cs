@@ -18,7 +18,7 @@ namespace REAC.Application.Contracts.Dtos.CitizenRequests
         public string? About { get; set; }
         public bool IspassedRealEstateProgram { get; set; }
         public bool IsSend { get; set; }
-
+        public bool? IsFeesPaid { get; set; }
         public string AcademicDegreeName { get; set; } = null!;
         public int? ExperienceYears { get; set; }
         public Guid? ArbitratorClassId { get; set; }

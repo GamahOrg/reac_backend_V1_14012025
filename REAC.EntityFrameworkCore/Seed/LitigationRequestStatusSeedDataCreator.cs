@@ -467,9 +467,140 @@ public partial class LitigationRequestStatusSeedDataCreator
                                 LanguageCode = Constants.ArabicLanguage
                             }
                         }
+                    },
+                    new SysLitigationRequestStatus
+                    {
+                        Id = Domain.Shared.Enum.RequestStatus.CollectionOfLitigationFeesRequestIsBeingSent,
+                        RequestStatus = "تم إرسال طلب تحصيل رسوم الدعوة",
+                        CreatedOn = DateTime.Now,
+                        Translations=new List<SysLitigationRequestStatusTranslation>
+                        {
+                            new SysLitigationRequestStatusTranslation
+                            {
+                                RequestStatus = "Collection Of Litigation Fees Request Is Being Sent",
+                                LanguageCode = Constants.EnglishLanguage
+                            },
+                            new SysLitigationRequestStatusTranslation
+                            {
+                                RequestStatus = "تم إرسال طلب تحصيل رسوم الدعوة",
+                                LanguageCode = Constants.ArabicLanguage
+                            }
+                        }
+                    },
+                    new SysLitigationRequestStatus
+                    {
+                        Id = Domain.Shared.Enum.RequestStatus.LitigationFeesHaveBeenCollected,
+                        RequestStatus = "تم تحصيل رسوم الدعوة",
+                        CreatedOn = DateTime.Now,
+                        Translations=new List<SysLitigationRequestStatusTranslation>
+                        {
+                            new SysLitigationRequestStatusTranslation
+                            {
+                                RequestStatus = "Litigation Fees Have Been Collected",
+                                LanguageCode = Constants.EnglishLanguage
+                            },
+                            new SysLitigationRequestStatusTranslation
+                            {
+                                RequestStatus = "تم تحصيل رسوم الدعوة",
+                                LanguageCode = Constants.ArabicLanguage
+                            }
+                        }
+                    },
+                    new SysLitigationRequestStatus
+                    {
+                        Id = Domain.Shared.Enum.RequestStatus.CollectionOfReconciliationFeesRequestIsBeingSent,
+                        RequestStatus = "تم إرسال طلب تحصيل رسوم الصلح",
+                        CreatedOn = DateTime.Now,
+                        Translations=new List<SysLitigationRequestStatusTranslation>
+                        {
+                            new SysLitigationRequestStatusTranslation
+                            {
+                                RequestStatus = "Collection Of Reconciliation Fees Request Is Being Sent",
+                                LanguageCode = Constants.EnglishLanguage
+                            },
+                            new SysLitigationRequestStatusTranslation
+                            {
+                                RequestStatus = "تم إرسال طلب تحصيل رسوم الصلح",
+                                LanguageCode = Constants.ArabicLanguage
+                            }
+                        }
+                    },
+                    new SysLitigationRequestStatus
+                    {
+                        Id = Domain.Shared.Enum.RequestStatus.ReconciliationFeesHaveBeenCollected,
+                        RequestStatus = "تم تحصيل رسوم الصلح",
+                        CreatedOn = DateTime.Now,
+                        Translations=new List<SysLitigationRequestStatusTranslation>
+                        {
+                            new SysLitigationRequestStatusTranslation
+                            {
+                                RequestStatus = "Reconciliation Fees Have Been Collected",
+                                LanguageCode = Constants.EnglishLanguage
+                            },
+                            new SysLitigationRequestStatusTranslation
+                            {
+                                RequestStatus = "تم تحصيل رسوم الصلح",
+                                LanguageCode = Constants.ArabicLanguage
+                            }
+                        }
+                    },
+                    new SysLitigationRequestStatus
+                    {
+                        Id = Domain.Shared.Enum.RequestStatus.CollectionOfArbitrationFeesRequestIsBeingSent,
+                        RequestStatus = "تم إرسال طلب تحصيل رسوم التحكيم",
+                        CreatedOn = DateTime.Now,
+                        Translations=new List<SysLitigationRequestStatusTranslation>
+                        {
+                            new SysLitigationRequestStatusTranslation
+                            {
+                                RequestStatus = "Collection Of Arbitration Fees Request Is Being Sent",
+                                LanguageCode = Constants.EnglishLanguage
+                            },
+                            new SysLitigationRequestStatusTranslation
+                            {
+                                RequestStatus = "تم إرسال طلب تحصيل رسوم التحكيم",
+                                LanguageCode = Constants.ArabicLanguage
+                            }
+                        }
+                    },
+                    new SysLitigationRequestStatus
+                    {
+                        Id = Domain.Shared.Enum.RequestStatus.ArbitrationFeesHaveBeenCollected,
+                        RequestStatus = "تم تحصيل رسوم التحكيم",
+                        CreatedOn = DateTime.Now,
+                        Translations=new List<SysLitigationRequestStatusTranslation>
+                        {
+                            new SysLitigationRequestStatusTranslation
+                            {
+                                RequestStatus = "Arbitration Fees Have Been Collected",
+                                LanguageCode = Constants.EnglishLanguage
+                            },
+                            new SysLitigationRequestStatusTranslation
+                            {
+                                RequestStatus = "تم تحصيل رسوم التحكيم",
+                                LanguageCode = Constants.ArabicLanguage
+                            }
+                        }
+                    },
+                    new SysLitigationRequestStatus
+                    {
+                        Id = Domain.Shared.Enum.RequestStatus.LitigationApprovedCollectionOfReconciliationFeesRequestIsBeingSend,
+                        RequestStatus = "تم قبول الدعوى وجارى إرسال طلب تحصيل رسوم الصلح",
+                        CreatedOn = DateTime.Now,
+                        Translations=new List<SysLitigationRequestStatusTranslation>
+                        {
+                            new SysLitigationRequestStatusTranslation
+                            {
+                                RequestStatus = "Litigation Approved Collection Of Reconciliation Fees Request Is Being Send",
+                                LanguageCode = Constants.EnglishLanguage
+                            },
+                            new SysLitigationRequestStatusTranslation
+                            {
+                                RequestStatus = "تم قبول الدعوى وجارى إرسال طلب تحصيل رسوم الصلح",
+                                LanguageCode = Constants.ArabicLanguage
+                            }
+                        }
                     }
-
-
             });
         context.SaveChanges();
     }

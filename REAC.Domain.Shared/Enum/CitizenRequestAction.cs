@@ -13,6 +13,10 @@
         ///<summary>إرسال للتعديل</summary>
         SendForEdit = 5,
         ///<summary>تم التعديل والإرسال</summary>
-        SendFromEdit = 6
+        SendFromEdit = 6,
+        ///<summary>ارسال اشعار لدفع الرسوم</summary>
+        SendToPayFees = 7,
+        ///<summary>اتمام دفع الرسوم</summary>
+        FeesPaid = 8
     }
 }

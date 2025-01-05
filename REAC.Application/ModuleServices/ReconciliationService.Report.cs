@@ -56,7 +56,6 @@ namespace REAC.Application.ModuleServices
                         //litigationRequest.InternalStatusId = RequestStatus.ReconciliationWasMade;
                         //litigationRequest.ExternalStatusId = RequestStatus.ReconciliationWasMade;
                         //litigationRequest.IsActive = false;
-                        litigationRequest.LitigationRequestSubStage = LitigationRequestSubStage.LitigationRequestReportAdded;
                         litigationRequest.InternalStatusId = RequestStatus.TheMinutesOfTheMeetingWereWritten;
                         litigationRequest.ExternalStatusId = RequestStatus.TheMinutesOfTheMeetingWereWritten;
                         litigationRequest.IsMinutesOfMeetingApprovalRequired = true;
@@ -76,9 +75,8 @@ namespace REAC.Application.ModuleServices
                         break;
                     case ReconciliationRequestDecision.WaiverOfRight:
                         litigationRequest.InternalStatusId = RequestStatus.WaiverOfRight;
-                        litigationRequest.ExternalStatusId = RequestStatus.WaiverOfRight;
-                        litigationRequest.IsActive = false;
-                        litigationRequest.IsFinished = true;
+                        litigationRequest.ExternalStatusId = RequestStatus.TheMinutesOfTheMeetingWereWritten;
+                        litigationRequest.IsMinutesOfMeetingApprovalRequired = true;
                         litigationRequest.LitigationRequestSubStage = LitigationRequestSubStage.LitigationRequestReformerDecisionAdded;
                         // Send Notification
                         // تم التنازل عن الحق
@@ -86,25 +84,26 @@ namespace REAC.Application.ModuleServices
                         {
                             msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.LitigationRequest_Decision_WaiverOfRight).Result.Data?.Value;
                             msg = msg.Replace("{LitigationCode}", litigationRequest.RequestCode);
-                            await SendNotificationMSWithAllTypes(msg, litigationRequest, "Reconciliation Litigation Request For Report Reply Added");
+                            await SendNotificationMSWithAllTypes(msg, litigationRequest, "Reconciliation Litigation Request For defientive Report Reply Added");
                         }
                         catch (Exception e)
                         { }
                         break;
-               
+
                     case ReconciliationRequestDecision.WaiverOfTheLitigation:
                         litigationRequest.InternalStatusId = RequestStatus.WaiverOfTheLitigation;
-                        litigationRequest.ExternalStatusId = RequestStatus.WaiverOfTheLitigation;
-                        litigationRequest.IsActive = false;
-                        litigationRequest.IsFinished = true;
+                        litigationRequest.ExternalStatusId = RequestStatus.TheMinutesOfTheMeetingWereWritten;
+                        litigationRequest.IsMinutesOfMeetingApprovalRequired = true;
                         litigationRequest.LitigationRequestSubStage = LitigationRequestSubStage.LitigationRequestReformerDecisionAdded;
+                        //litigationRequest.IsActive = false;
+                        //litigationRequest.IsFinished = true;
                         // Send Notification
                         // تم التنازل عن الدعوى
                         try
                         {
                             msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.LitigationRequest_Decision_WaiverOfTheLitigation).Result.Data?.Value;
                             msg = msg.Replace("{LitigationCode}", litigationRequest.RequestCode);
-                            await SendNotificationMSWithAllTypes(msg, litigationRequest, "Decision of reconciliation was added");
+                            await SendNotificationMSWithAllTypes(msg, litigationRequest, "Reconciliation Litigation Request For defientive Report Reply Added");
                         }
                         catch (Exception e)
                         { }
@@ -112,11 +111,11 @@ namespace REAC.Application.ModuleServices
                     case ReconciliationRequestDecision.ReconciliationOnTradyPlatform:
                         //if (litigationRequest.LitigationRequestCategoryId == LitigationRequestCategory.ReconciliationAndArbitration)
                         //{
-                            litigationRequest.InternalStatusId = RequestStatus.ReconciliationOnTradyPlatform;
-                            litigationRequest.ExternalStatusId = RequestStatus.ReconciliationOnTradyPlatform;
-                            litigationRequest.IsActive = false;
-                            litigationRequest.IsFinished = true;
-                            litigationRequest.LitigationRequestSubStage = LitigationRequestSubStage.LitigationRequestReformerDecisionAdded;
+                        litigationRequest.InternalStatusId = RequestStatus.ReconciliationOnTradyPlatform;
+                        litigationRequest.ExternalStatusId = RequestStatus.ReconciliationOnTradyPlatform;
+                        litigationRequest.IsActive = false;
+                        litigationRequest.IsFinished = true;
+                        litigationRequest.LitigationRequestSubStage = LitigationRequestSubStage.LitigationRequestReformerDecisionAdded;
                         // Send Notification
                         //  الصلح بواسطة منصة تراضى 
                         try
@@ -124,12 +123,12 @@ namespace REAC.Application.ModuleServices
                             msg = _sysSettingService.GetBySettingKey(SysSettingKeyConstants.ReconciliationOnTradyPlatform).Result.Data?.Value;
                             msg = msg.Replace("{LitigationCode}", litigationRequest.RequestCode);
                             await SendNotificationMSWithAllTypes(msg, litigationRequest, "Reconciliation Litigation Request For Report Reply Added");
-                            }
-                            catch (Exception e)
-                            {
+                        }
+                        catch (Exception e)
+                        {
 
 
-                            }
+                        }
                         //}
                         break;
                     case ReconciliationRequestDecision.ReconciliationWasNotMade:
@@ -172,6 +171,8 @@ namespace REAC.Application.ModuleServices
                             catch (Exception e)
                             { }
                         }
+                        break;
+                    default:
                         break;
                 }
                 if (allowAdd)
